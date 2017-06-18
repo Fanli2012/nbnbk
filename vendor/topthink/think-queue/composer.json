@@ -1,0 +1,20 @@
+{
+    "name": "topthink/think-queue",
+    "description": "The ThinkPHP5 Queue Package",
+    "authors": [
+        {
+            "name": "yunwuxin",
+            "email": "448901948@qq.com"
+        }
+    ],
+    "license": "Apache-2.0",
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "think\\queue\\": "src"
+        },
+        "files": [
+            "src/config.php"
+        ]
+    }
+}

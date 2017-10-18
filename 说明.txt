@@ -4,7 +4,7 @@ git clone https://github.com/Fanli2012/nbnbk.git
 
 说明
 
-1、基于ThinkPHP5
+1、基于ThinkPHP5.0.11
 2、PHP+Mysql
 3、后台登录：/fladmin/Login，账号：admin888，密码：admin
 4、恢复后台默认账号密码：/fladmin/Login/recoverpwd

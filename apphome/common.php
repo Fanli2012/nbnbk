@@ -3,7 +3,6 @@
 
 //定义常量
 define('CMS_ADMIN', '/fladmin/');  // 后台模块，首字母最好大写
-define('CMS_VERSION', '1.1.0'); // 版本号
 
 function dataList($modelname, $map = '', $orderby = '', $field = '*', $listRows = 15)
 {
@@ -795,4 +794,37 @@ function dir_delete($dir)
     
     closedir($handle);
     return @rmdir($dir);
+}
+
+//读取动态配置
+function sysconfig($varname='')
+{
+	$sysconfig = cache('sysconfig');
+	$res = '';
+	
+	if(empty($sysconfig))
+	{
+		cache('sysconfig', NULL);
+        
+		$sysconfig = db('sysconfig')->field('varname,value')->select();
+		
+		cache('sysconfig',$sysconfig,86400);
+	}
+	
+	if($varname != '')
+	{
+		foreach($sysconfig as $row)
+		{
+			if($varname == $row['varname'])
+			{
+				$res = $row['value'];
+			}
+		}
+	}
+	else
+	{
+		$res = $sysconfig;
+	}
+	
+	return $res;
 }

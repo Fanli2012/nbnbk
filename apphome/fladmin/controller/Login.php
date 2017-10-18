@@ -32,7 +32,7 @@ class Login extends Controller
         
         if($User)
         {
-			$User['rolename'] = db("user_role")->where("id=".$User['role_id'])->find()['rolename'];
+			$User['rolename'] = db("user_role")->where("id=".$User['role_id'])->find()['name'];
 			
             Session::set("admin_user_info", $User);
 			

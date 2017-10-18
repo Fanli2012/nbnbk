@@ -3,7 +3,18 @@ namespace app\fladmin\controller;
 
 class Index extends Base
 {
+    public function _initialize()
+	{
+		parent::_initialize();
+    }
+    
 	public function index()
+	{
+        $this->assign('menus',model('menu')->getPermissionsMenu($this->admin_user_info['role_id']));
+        return $this->fetch();
+    }
+    
+    public function welcome()
 	{
         return $this->fetch();
     }

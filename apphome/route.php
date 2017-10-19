@@ -23,7 +23,7 @@ Route::domain('m',	function(){
         'search'            => 'wap/Index/search',
         'sitemap'              => array('wap/Index/sitemap',array('ext'=>'xml')),
         
-        'p/<id>'            => array('index/Index/detail',array()), //详情页
+        'p/<id>'            => array('wap/Index/detail',array()), //详情页
         'cat<cat>/<page>'   => array('wap/Index/category',array(),array('cat'=>'\d+','page'=>'\d+')), //分类页，分页
         'cat<cat>'          => ['wap/Index/category',[],['cat'=>'\d+']], //分类页
         

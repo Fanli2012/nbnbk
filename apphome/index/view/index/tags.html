@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>标签_<?php echo CMS_WEBNAME; ?></title>
+<title>标签_<?php echo sysconfig('CMS_WEBNAME'); ?></title>
 <link rel="stylesheet" href="/css/bootstrap.min.css"><link rel="stylesheet" href="/css/style.css"><script src="/js/jquery.min.js"></script><script src="/js/bootstrap.min.js"></script></head><body>
 
 {include file="common/header"/}
 <div class="container"><div class="row row-offcanvas row-offcanvas-right">
 <div class="col-xs-12 col-sm-9">
-<div class="bread"><a href="/"><?php echo CMS_INDEXNAME; ?></a> > 标签</div>
+<div class="bread"><a href="/"><?php echo sysconfig('CMS_INDEXNAME'); ?></a> > 标签</div>
 <h1 class="page-header">最新标签</h1>
 
 <?php $posts=tagslist(); foreach($posts as $row) { ?>

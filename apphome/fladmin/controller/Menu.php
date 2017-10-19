@@ -31,7 +31,7 @@ class Menu extends Base
 		$menuid = db('menu')->insert($_POST);
 		if($menuid)
         {
-			db('access')->insert(['role_id' => 1, 'menu_id' => $menuid]);
+			if(!db('access')->where(['role_id' => 1, 'menu_id' => $menuid])->find()){db('access')->insert(['role_id' => 1, 'menu_id' => $menuid]);}
 			
 			$this->success('添加成功！', CMS_ADMIN.'Menu' , 1);
         }

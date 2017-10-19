@@ -32,8 +32,8 @@ class Index extends Controller
 		$this->assign('sql',$sql);
 		
 		$counts=db("article")->where($sql)->count('id');
-		if($counts>CMS_MAXARC){$counts=CMS_MAXARC;}
-		$pagesize=CMS_PAGESIZE;$page=0;
+		if($counts>sysconfig('CMS_MAXARC')){$counts=sysconfig('CMS_MAXARC');}
+		$pagesize=sysconfig('CMS_PAGESIZE');$page=0;
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果
 		}else{$pages = $counts/$pagesize;}
@@ -87,8 +87,8 @@ class Index extends Controller
         $this->assign('post',$post);
 		
 		$counts=db("taglist")->where("tid=$tag")->count('aid');
-		if($counts>CMS_MAXARC){$counts=CMS_MAXARC;}
-		$pagesize=CMS_PAGESIZE;$page=0;
+		if($counts>sysconfig('CMS_MAXARC')){$counts=sysconfig('CMS_BASEHOST');}
+		$pagesize=sysconfig('CMS_PAGESIZE');$page=0;
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果
 		}else{$pages = $counts/$pagesize;}

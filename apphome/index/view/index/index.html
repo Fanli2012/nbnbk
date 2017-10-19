@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /><meta http-equiv="Cache-Control" content="no-siteapp" /><meta http-equiv="Cache-Control" content="no-transform" />
-<title><?php echo CMS_SEOTITLE; ?></title><meta name="keywords" content="<?php echo CMS_KEYWORDS; ?>" /><meta name="description" content="<?php echo CMS_DESCRIPTION; ?>" /><link rel="stylesheet" href="<?php echo CMS_BASEHOST; ?>/images/style.css" media="all"><script type="text/javascript" src="<?php echo CMS_BASEHOST; ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo CMS_BASEHOST; ?>/js/ad.js"></script></head><body><script>site();</script>
+<title><?php echo sysconfig('CMS_SEOTITLE'); ?></title><meta name="keywords" content="<?php echo sysconfig('CMS_KEYWORDS'); ?>" /><meta name="description" content="<?php echo sysconfig('CMS_DESCRIPTION'); ?>" /><link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/style.css" media="all"><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/ad.js"></script></head><body><script>site();</script>
 {include file="common/header"/}<div id="tad"><script>tjs();</script></div>
 
 <div class="box mt10">
@@ -27,7 +27,7 @@
 <script>
 function getmore(condition)
 {
-    var url = "<?php echo CMS_BASEHOST; ?>/api/listarc";
+    var url = "<?php echo sysconfig('CMS_BASEHOST'); ?>/api/listarc";
     //var typeid = "";
     $.post(url,condition,function(res){
         if(res.code==0)

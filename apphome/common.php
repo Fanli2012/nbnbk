@@ -828,3 +828,23 @@ function sysconfig($varname='')
 	
 	return $res;
 }
+
+if (! function_exists('dd')) {
+    /**
+     * Dump the passed variables and end the script.
+     * 
+     * @param  mixed
+     * @return void
+     */
+    function dd(...$args)
+    {
+        echo '<pre>';
+        foreach ($args as $x)
+        {
+            //var_dump($x);
+            print_r($x);
+        }
+        
+        die(1);
+    }
+}

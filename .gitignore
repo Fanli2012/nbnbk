@@ -1,2 +1,9 @@
 /runtime
-
+/public/uploads
+/.idea
+/.vagrant
+/.git
+/node_modules
+/.svn
+/build
+/.project

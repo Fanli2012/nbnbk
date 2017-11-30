@@ -1,5 +1,6 @@
 <?php
 namespace app\common\lib;
+use app\common\lib\ReturnData;
 
 class Token
 {
@@ -27,13 +28,13 @@ class Token
      */
     public static function checkToken($token)
     {
-        $token = DB::table('token')->where('token', $token)->first();
+        $token = db('token')->where('token', $token)->find();
 		
         if ($token)
 		{
-            self::$type = $token->type;
-            self::$uid  = $token->uid;
-            self::$data = $token->data ? json_decode($token->data, true) : array();
+            self::$type = $token['type'];
+            self::$uid  = $token['uid'];
+            self::$data = $token['data'] ? json_decode($token['data'], true) : array();
         }
 		
         return $token ? true : false;
@@ -52,13 +53,13 @@ class Token
      */
     public static function checkSign($appKey, $signTime, $sign)
     {
-        if (!$appRes = DB::table('appsign')->where('app_key', $appKey)->first())
+        if (!$appRes = db('appsign')->where('app_key', $appKey)->find())
 		{
             return false;
         }
 
         //验证sign
-        $newSign = md5($appKey . $appRes->app_secret . $signTime);
+        $newSign = md5($appKey . $appRes['app_secret'] . $signTime);
         if ($sign == $newSign)
 		{
             self::$type = self::TYPE_ADMIN;
@@ -81,11 +82,11 @@ class Token
     public static function getToken($type, $uid, $data = array())
     {
         //支持多账号登录
-        if ($token = DB::table('token')->where(array('type' => $type, 'uid' => $uid))->orderBy('id', 'desc')->first())
+        if ($token = db('token')->where(array('type' => $type, 'uid' => $uid))->order('id desc')->find())
 		{
-            if($data == $token->data && strtotime($token->expired_at)>time())
+            if($data == $token['data'] && strtotime($token['expired_at'])>time())
 			{
-                return array('access_token'=>$token->token,'expired_at'=>$token->expired_at);
+                return array('access_token'=>$token['token'],'expired_at'=>$token['expired_at']);
             }
         }
 		
@@ -93,7 +94,7 @@ class Token
         $token = md5($type . '-' . $uid . '-' . microtime() . rand(0, 9999));
         $expired_at = date("Y-m-d H:i:s",(time()+3600*24*30)); //token 30天过期
         
-        DB::table('token')->insert(array(
+        db('token')->insert(array(
             'token'      => $token,
             'type'       => $type,
             'uid'        => $uid,
@@ -102,5 +103,24 @@ class Token
         ));
 		
         return array('access_token'=>$token,'expired_at'=>$expired_at,'uid'=>$uid,'type'=>$type);
+    }
+    
+    /**
+     * Token验证
+     * token可以在header里面传递【Token】，也可以在参数里面传【token】，注意区分大小写
+     */
+    public static function TokenAuth($request)
+    {
+		$token = $request->header('AccessToken') ?: $request->param('access_token');
+        
+        if ($token == '')
+		{
+            exit(json_encode(ReturnData::create(ReturnData::FORBIDDEN)));
+        }
+        
+        if (!Token::checkToken($token))
+		{
+            exit(json_encode(ReturnData::create(ReturnData::TOKEN_ERROR)));
+        }
     }
 }

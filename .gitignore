@@ -7,3 +7,5 @@
 /.svn
 /build
 /.project
+/.settings
+/release

@@ -832,7 +832,7 @@ function sysconfig($varname='')
 if (! function_exists('dd')) {
     /**
      * Dump the passed variables and end the script.
-     * 
+     *
      * @param  mixed
      * @return void
      */
@@ -847,4 +847,20 @@ if (! function_exists('dd')) {
         
         die(1);
     }
+}
+
+function http_host($flag=true)
+{
+    $res = '';
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+    if($flag)
+    {
+        $res = "$protocol$_SERVER[HTTP_HOST]";
+    }
+    else
+    {
+        $res = "$protocol$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; //完整网址
+    }
+    
+    return $res;
 }

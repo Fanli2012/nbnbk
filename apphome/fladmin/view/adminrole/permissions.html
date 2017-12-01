@@ -2,9 +2,9 @@
 {block name="title"}角色权限设置{/block}
 
 {block name="content"}
-<h2 class="sub-header">角色权限设置</h2>[ <a href="/fladmin/userrole">角色列表</a> ]<br><br>
+<h2 class="sub-header">角色权限设置</h2>[ <a href="/fladmin/adminrole">角色列表</a> ]<br><br>
 
-<form method="post" action="/fladmin/userrole/dopermissions" role="form" enctype="multipart/form-data" class="table-responsive"><div class="table-responsive">
+<form method="post" action="/fladmin/adminrole/dopermissions" role="form" enctype="multipart/form-data" class="table-responsive"><div class="table-responsive">
 <input style="display:none;" name="role_id" type="text" id="role_id" value="<?php echo $role_id; ?>">
 <ul class="list-group">
 <?php if($menus){foreach($menus as $row){ ?>

@@ -4,6 +4,7 @@ use think\Db;
 use think\Request;
 use app\common\lib\Token;
 use app\common\lib\ReturnData;
+use app\common\model\Slide;
 
 class Slide extends Base
 {

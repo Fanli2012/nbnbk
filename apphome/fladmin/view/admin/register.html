@@ -32,7 +32,7 @@ $(function(){
         if(numError){return false;}
         
         $.ajax({
-            url: "/Fladmin/User/doregister",
+            url: "/fladmin/admin/doregister",
             type: "POST",
             dataType: "json",
             cache: false,
@@ -44,7 +44,7 @@ $(function(){
                 if(data.code==200)
                 {
                     //alert(data.info);
-                    window.location.replace("/Fladmin/User");
+                    window.location.replace("/fladmin/admin");
                 }
             }
         });

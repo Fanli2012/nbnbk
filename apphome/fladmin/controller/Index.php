@@ -12,6 +12,8 @@ class Index extends Base
 	{
         $this->assign('menus',model('menu')->getPermissionsMenu($this->admin_user_info['role_id']));
         
+        $this->assign('module_name',request()->module());
+        
         return $this->fetch();
     }
     

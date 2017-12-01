@@ -9,6 +9,7 @@ use think\Controller;
 class Common extends Controller
 {
     protected $admin_user_info;
+    
     /**
      * 初始化
      * @param void

@@ -1,5 +1,5 @@
 <?php
-namespace app\flapi\controller;
+namespace app\api\controller;
 
 use think\Request;
 use think\Db;

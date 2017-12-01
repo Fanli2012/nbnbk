@@ -1,13 +1,13 @@
 <?php
 namespace app\api\controller;
+use app\common\model\Article;
 
 class Index extends Base
 {
     public function index()
     {
-        echo ':)';
-		
-		return $this->fetch();
+		dd(Article::getList(array('typeid'=>1)));
+		//return $this->fetch();
     }
     
     public function arclist()

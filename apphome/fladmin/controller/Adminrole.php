@@ -1,7 +1,7 @@
 <?php
 namespace app\fladmin\controller;
 
-class UserRole extends Base
+class AdminRole extends Base
 {
     public function _initialize()
 	{
@@ -10,7 +10,7 @@ class UserRole extends Base
     
     public function index()
     {
-		$posts = parent::pageList('user_role', '', 'listorder desc');
+		$posts = parent::pageList('admin_role', '', 'listorder desc');
 		
         $this->assign('page',$posts->render());
         $this->assign('posts',$posts);
@@ -25,13 +25,13 @@ class UserRole extends Base
     
     public function doadd()
     {
-		if(db('user_role')->insert($_POST))
+		if(db('admin_role')->insert($_POST))
         {
-			$this->success('添加成功！', CMS_ADMIN.'userrole' , 1);
+			$this->success('添加成功！', CMS_ADMIN.'adminrole' , 1);
         }
 		else
 		{
-			$this->error('添加失败！请修改后重新添加', CMS_ADMIN.'userrole' , 3);
+			$this->error('添加失败！请修改后重新添加', CMS_ADMIN.'adminrole' , 3);
 		}
     }
     
@@ -41,7 +41,7 @@ class UserRole extends Base
         if(preg_match('/[0-9]*/',$id)){}else{exit;}
         
 		$this->assign('id',$id);
-        $this->assign('post',db('user_role')->where('id='.$id)->find());
+        $this->assign('post',db('admin_role')->where('id='.$id)->find());
         return $this->fetch();
     }
 	
@@ -49,13 +49,13 @@ class UserRole extends Base
     {
         if(!empty($_POST["id"])){$id = $_POST["id"];unset($_POST["id"]);}else {$id="";exit;}
         
-		if(db('user_role')->where('id='.$id)->update($_POST))
+		if(db('admin_role')->where('id='.$id)->update($_POST))
         {
-            $this->success('修改成功！', CMS_ADMIN.'UserRole' , 1);
+            $this->success('修改成功！', CMS_ADMIN.'adminrole' , 1);
         }
 		else
 		{
-			$this->error('修改失败！', CMS_ADMIN.'UserRole' , 3);
+			$this->error('修改失败！', CMS_ADMIN.'adminrole' , 3);
 		}
     }
 	
@@ -63,7 +63,7 @@ class UserRole extends Base
     {
 		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('删除失败！请重新提交');}
 		
-		if(db("user_role")->where("id in ($id)")->delete())
+		if(db("admin_role")->where("id in ($id)")->delete())
         {
             $this->success('删除成功');
         }

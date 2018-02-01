@@ -32,39 +32,67 @@ class Article extends Base
         'debug'       => false,
     ]; */
     
-    public static function getList($where = array(), $order = 'id desc', $field = '*', $limit = 15)
+    //列表
+    public function getList($where = array(), $order = '', $field = '*', $offset = 0, $limit = 15)
     {
-        //extract($where);
+        $res['count'] = self::where($where)->count();
+        $res['list'] = array();
         
+        if($res['count'] > 0)
+        {
+            $res['list'] = self::where($where)->field($field)->order($order)->limit($offset.','.$limit)->select();
+        }
+        
+        return $res;
+    }
+    
+    //分页，用于前端html输出
+    public function getPaginate($where = array(), $order = '', $field = '*', $limit = 15)
+    {
         return self::where($where)->field($field)->order($order)->paginate($limit, false, ['query' => request()->param()]);
     }
     
-    public static function getOne($where, $field = '*')
+    //获取一条
+    public function getOne($where, $field = '*')
     {
-        extract($where);
-        
         return self::where($where)->field($field)->find();
     }
     
-    public static function add($data)
+    //添加
+    public function add($data)
     {
         // 过滤数组中的非数据表字段数据
-        return $this->allowField(true)->isUpdate(false)->save($data);
+        //return $this->allowField(true)->isUpdate(false)->save($data);
         
         // 添加单条数据
-        //db('article')->insert($data);
+        return db('article')->insert($data);
         
         // 添加多条数据
         //db('article')->insertAll($list);
     }
     
-    public static function modify($data, $where = array())
+    //修改
+    public function modify($data, $where = array())
     {
         return $this->allowField(true)->isUpdate(true)->save($data, $where);
     }
     
-    public static function remove($where)
+    //删除
+    public function remove($where)
     {
         return $this->where($where)->delete();
+    }
+    
+    //是否审核
+    public function getIscheckAttr($data)
+    {
+        $arr = array[0 => '已审核', 1 => '未审核',];
+        return $arr[$data['ischeck']];
+    }
+    
+    //是否栏目名称
+    public function getTypenameAttr($data)
+    {
+        return db('arctype')->where(['id'=>$data['typeid']])->value('typename');
     }
 }

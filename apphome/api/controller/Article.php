@@ -14,7 +14,7 @@ class Article extends Base
 		parent::_initialize();
     }
     
-    public function articleList()
+    public function index()
 	{
         //参数
         $limit = input('param.limit',10);
@@ -35,7 +35,7 @@ class Article extends Base
 		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
     }
     
-    public function articleDetail()
+    public function detail()
 	{
         //参数
         $data['id'] = input('param.id','');

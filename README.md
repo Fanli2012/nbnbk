@@ -1,6 +1,7 @@
 # nbnbk
 基于thinkphp5的cms
 
+![alt text](/public/images/screenshots.jpg "网站截图")
 
 # 说明
 
@@ -8,10 +9,11 @@
 
 2、PHP+Mysql
 
-3、后台登录：/fladmin/Login，账号：admin888，密码：admin
+3、后台登录：http://www.nbnbk.com/fladmin/Login，账号：admin888，密码：admin
 
-4、恢复后台默认账号密码：/fladmin/Login/recoverpwd
+4、恢复后台默认账号密码：http://www.nbnbk.com/fladmin/Login/recoverpwd
 
+5、http://www.nbnbk.com只是示例域名，需换成自己绑定的域名
 
 # 安装
 
@@ -25,8 +27,9 @@
 
 打开/apphome/database.php文件,修改相关配置
 
-3、 登录后台->系统设置->系统配置参数，更新配置：fladmin/Index/upconfig
+3、 登录后台->系统设置->系统配置参数，更新配置：http://www.nbnbk.com/fladmin/Index/upconfig
 
 
 # 注意
-只能放在根目录
+
+站点只能放在根目录

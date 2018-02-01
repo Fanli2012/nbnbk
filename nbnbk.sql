@@ -26,7 +26,48 @@ CREATE TABLE `fl_access` (
 
 /*Data for the table `fl_access` */
 
-insert  into `fl_access`(`role_id`,`menu_id`) values (1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13),(1,14),(1,15),(1,16),(1,17),(1,18),(1,19),(1,20),(1,21),(1,22),(1,23),(1,24),(1,25),(1,26),(1,27),(1,28),(1,29),(1,30),(1,31),(1,32),(1,33),(1,34),(1,35),(1,36),(1,37),(1,38),(1,39),(1,40),(1,41),(1,42),(1,43),(1,44),(1,45),(1,46),(1,47),(1,48),(1,49),(1,50),(1,51),(1,52),(1,53),(1,54),(1,55),(1,56),(1,57),(1,58),(1,59),(1,60),(1,61),(1,62),(1,63),(1,64),(1,65),(1,66),(1,67),(1,68),(1,69),(1,70),(1,71),(1,72),(1,73),(1,74),(1,75),(1,76),(1,77),(1,78),(1,79),(1,80),(1,81),(1,82),(1,83),(1,84),(1,85),(1,86),(1,87),(1,88),(1,89),(1,90),(1,91),(1,92),(1,93),(1,94),(1,95),(1,96),(1,97),(1,98),(1,99),(1,100),(1,101),(1,102),(1,103);
+insert  into `fl_access`(`role_id`,`menu_id`) values (1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13),(1,14),(1,15),(1,16),(1,17),(1,18),(1,19),(1,20),(1,21),(1,22),(1,23),(1,24),(1,25),(1,26),(1,27),(1,28),(1,29),(1,30),(1,31),(1,32),(1,33),(1,34),(1,35),(1,36),(1,37),(1,38),(1,39),(1,40),(1,41),(1,42),(1,43),(1,44),(1,45),(1,46),(1,47),(1,48),(1,49),(1,50),(1,51),(1,52),(1,53),(1,54),(1,55),(1,56),(1,57),(1,58),(1,59),(1,60),(1,61),(1,62),(1,63),(1,64),(1,65),(1,66),(1,67),(1,68),(1,69),(1,70),(1,71),(1,72),(1,73),(1,74),(1,75),(1,76),(1,77),(1,78),(1,79),(1,80),(1,81),(1,82),(1,83),(1,84),(1,85),(1,86),(1,87),(1,88),(1,89),(1,90),(1,91),(1,92),(1,93),(1,94),(1,95),(1,96),(1,97),(1,98),(1,99),(1,100),(1,101),(1,102),(1,103),(2,1),(2,11),(2,12),(2,13),(2,14),(2,15),(2,16),(2,17),(2,18),(2,19),(2,20),(2,21),(2,22),(2,23),(2,24),(2,25),(2,32),(2,33),(2,34),(2,35),(2,36),(2,37);
+
+/*Table structure for table `fl_admin` */
+
+DROP TABLE IF EXISTS `fl_admin`;
+
+CREATE TABLE `fl_admin` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `username` char(30) DEFAULT '' COMMENT 'admin888',
+  `email` char(30) DEFAULT '' COMMENT '邮箱',
+  `logintime` int(10) DEFAULT '0' COMMENT '登录时间',
+  `pwd` char(32) NOT NULL DEFAULT '' COMMENT 'admin',
+  `role_id` smallint(4) DEFAULT '0' COMMENT '角色id',
+  `status` tinyint(2) DEFAULT '0' COMMENT '用户状态 0：正常； 1：禁用 ；2：未验证',
+  `mobile` varchar(20) DEFAULT '' COMMENT '手机号',
+  `avatar` varchar(150) DEFAULT '' COMMENT '头像',
+  `create_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+/*Data for the table `fl_admin` */
+
+insert  into `fl_admin`(`id`,`username`,`email`,`logintime`,`pwd`,`role_id`,`status`,`mobile`,`avatar`,`create_at`) values (1,'admin888','admin@qq.com',1512098583,'21232f297a57a5a743894a0e4a801fc3',1,0,'','','2012-12-12 00:00:00'),(2,'abc2','abc@qq.com',1497285296,'e10adc3949ba59abbe56e057f20f883e',2,0,'','','2017-06-07 15:10:18'),(3,'xyz','xyz@qq.com',0,'d16fb36f0911f878998c136191af705e',1,0,'','','2017-07-26 00:06:01'),(4,'aaa@qq.com','aaa@qq.com',0,'47bce5c74f589f4867dbd57e9ca9f808',2,0,'','','2017-12-01 10:10:55');
+
+/*Table structure for table `fl_admin_role` */
+
+DROP TABLE IF EXISTS `fl_admin_role`;
+
+CREATE TABLE `fl_admin_role` (
+  `id` smallint(4) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) NOT NULL COMMENT '角色名',
+  `des` varchar(150) NOT NULL DEFAULT '' COMMENT '描述',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态，0启用，1禁用',
+  `pid` smallint(4) NOT NULL DEFAULT '0' COMMENT '父角色id',
+  `listorder` tinyint(4) DEFAULT '0' COMMENT '排序',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `rolename` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='角色表';
+
+/*Data for the table `fl_admin_role` */
+
+insert  into `fl_admin_role`(`id`,`name`,`des`,`status`,`pid`,`listorder`) values (1,'超级管理员','拥有网站最高管理员权限！',0,0,0),(2,'普通角色','',0,0,0);
 
 /*Table structure for table `fl_arctype` */
 
@@ -138,6 +179,43 @@ CREATE TABLE `fl_keyword` (
 
 insert  into `fl_keyword`(`id`,`keyword`,`rpurl`) values (1,'优化','http://www.pe7.org/'),(2,'搜索引擎','http://www.baidu.com/'),(3,'百度移动','http://www.ui.com'),(4,'MACD','http://www.baidu.com/');
 
+/*Table structure for table `fl_member` */
+
+DROP TABLE IF EXISTS `fl_member`;
+
+CREATE TABLE `fl_member` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(60) NOT NULL DEFAULT '' COMMENT '邮箱',
+  `user_name` varchar(60) NOT NULL DEFAULT '' COMMENT '用户名',
+  `password` varchar(50) NOT NULL DEFAULT '' COMMENT '密码',
+  `pay_password` varchar(50) NOT NULL DEFAULT '' COMMENT '支付密码',
+  `head_img` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
+  `sex` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '性别1男2女',
+  `birthday` date NOT NULL DEFAULT '1990-01-01' COMMENT '生日',
+  `money` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '用户余额',
+  `frozen_money` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '用户冻结资金',
+  `point` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '用户能用积分',
+  `rank_points` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '会员等级积分',
+  `address_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '收货信息id,表值表user_address',
+  `add_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '注册时间',
+  `user_rank` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '用户等级',
+  `parent_id` mediumint(9) NOT NULL DEFAULT '0' COMMENT '推荐人id',
+  `nickname` varchar(30) NOT NULL DEFAULT '' COMMENT '昵称',
+  `mobile` varchar(20) NOT NULL DEFAULT '' COMMENT '手机号码',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '用户状态 1正常状态 2 删除至回收站 3锁定',
+  `group_id` mediumint(5) NOT NULL DEFAULT '0' COMMENT '分组',
+  `updated_at` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  `signin_time` timestamp NULL DEFAULT NULL COMMENT '签到时间',
+  `openid` varchar(100) NOT NULL DEFAULT '',
+  `unionid` varchar(100) NOT NULL DEFAULT '',
+  `push_id` varchar(30) NOT NULL DEFAULT '' COMMENT '推送id',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+/*Data for the table `fl_member` */
+
+insert  into `fl_member`(`id`,`email`,`user_name`,`password`,`pay_password`,`head_img`,`sex`,`birthday`,`money`,`frozen_money`,`point`,`rank_points`,`address_id`,`add_time`,`user_rank`,`parent_id`,`nickname`,`mobile`,`status`,`group_id`,`updated_at`,`signin_time`,`openid`,`unionid`,`push_id`) values (1,'ecshop@ecshop.com','ecshop','e10adc3949ba59abbe56e057f20f883e','123123','',0,'1960-03-03','234.00','0.00',20,0,11,0,0,0,'','15280719355',0,0,NULL,'2017-08-11 00:24:20','','',''),(2,'vip@ecshop.com','vip','e10adc3949ba59abbe56e057f20f883e','','',0,'1949-01-01','0.00','0.00',0,0,0,0,0,0,'','15280719356',0,0,NULL,NULL,'','',''),(3,'374861669@qq.com','FLi','e10adc3949ba59abbe56e057f20f883e','202cb962ac59075b964b07152d234b70','/uploads/2017/10/201710131156534963.jpeg',2,'1990-01-01','123.00','0.00',0,0,12,0,0,0,'阿什顿','15280719357',1,0,NULL,NULL,'','',''),(4,'','ockGfuLHR3lHQqBNTaTeBzPg-rNs','','','http://wx.qlogo.cn/mmopen/vi_32/tLnN9s8TMx2iaBK8gC3h62sBxQbZP9DvETG19nYyrlGgDAGVLVkJunA2bibmBvsExicP1QNYrULrAGjHAJias0vz4A/0',1,'1990-01-01','0.00','0.00',0,0,0,0,0,0,'林一峰','',1,0,NULL,NULL,'ockGfuLHR3lHQqBNTaTeBzPg-rNs','','');
+
 /*Table structure for table `fl_menu` */
 
 DROP TABLE IF EXISTS `fl_menu`;
@@ -162,7 +240,7 @@ CREATE TABLE `fl_menu` (
 
 /*Data for the table `fl_menu` */
 
-insert  into `fl_menu`(`id`,`pid`,`module`,`controller`,`action`,`data`,`type`,`status`,`name`,`icon`,`des`,`listorder`) values (1,0,'fladmin','article','fli','',0,1,'文章管理','glyphicon glyphicon-pencil','',0),(6,0,'fladmin','sysconfig','fli','',0,1,'设置','glyphicon glyphicon-wrench','',1000),(3,0,'fladmin','menu','fli','',0,1,'菜单管理','glyphicon glyphicon-th-list','',20),(4,0,'fladmin','user','fli','',0,1,'用户管理','glyphicon glyphicon-user','',30),(2,0,'fladmin','product','fli','',0,1,'商品管理','glyphicon glyphicon-shopping-cart','',10),(5,0,'fladmin','extension','fli','',0,1,'批量维护','glyphicon glyphicon-cloud','',40),(7,5,'fladmin','index','welcome','',1,0,'欢迎页面','','',5),(8,5,'fladmin','index','index','',1,0,'后台首页','','',2),(9,5,'fladmin','index','upconfig','',1,0,'更新系统参数配置','','',3),(10,5,'fladmin','index','upcache','',1,0,'更新缓存','','',4),(11,1,'fladmin','article','index','',1,1,'文章列表','','',50),(12,1,'fladmin','article','add','',1,1,'发布文章','','',50),(13,12,'fladmin','article','doadd','',1,0,'发布文章提交','','',50),(14,1,'fladmin','article','edit','',1,0,'文章修改','','',50),(15,14,'fladmin','article','doedit','',1,0,'文章修改提交','','',50),(16,1,'fladmin','article','del','',1,0,'文章删除','','',50),(17,1,'fladmin','article','repetarc','',1,1,'重复文档检测','','',50),(18,1,'fladmin','article','recommendarc','',1,0,'文章推荐','','',50),(19,1,'fladmin','article','articleexists','',1,0,'文章是否存在','','',50),(20,1,'fladmin','category','index','',1,1,'文章栏目','','',50),(21,20,'fladmin','category','add','',1,0,'文章栏目添加','','',50),(22,21,'fladmin','category','doadd','',1,0,'文章栏目添加提交','','',50),(23,20,'fladmin','category','edit','',1,0,'文章栏目修改','','',50),(24,23,'fladmin','category','doedit','',1,0,'文章栏目修改提交','','',50),(25,20,'fladmin','category','del','',1,0,'文章栏目删除','','',50),(26,5,'fladmin','tag','index','',1,1,'Tag标签管理','','',50),(27,26,'fladmin','tag','add','',1,0,'Tag标签添加','','',50),(28,27,'fladmin','tag','doadd','',1,0,'Tag标签添加提交','','',50),(29,26,'fladmin','tag','edit','',1,0,'Tag标签修改','','',50),(30,29,'fladmin','tag','doedit','',1,0,'Tag标签修改提交','','',50),(31,26,'fladmin','tag','del','',1,0,'Tag标签删除','','',50),(32,1,'fladmin','page','index','',1,1,'单页管理','','',50),(33,32,'fladmin','page','add','',1,0,'单页添加','','',50),(34,33,'fladmin','page','doadd','',1,0,'单页添加提交','','',50),(35,32,'fladmin','page','edit','',1,0,'单页修改','','',50),(36,35,'fladmin','page','doedit','',1,0,'单页修改提交','','',50),(37,32,'fladmin','page','del','',1,0,'单页删除','','',50),(38,2,'fladmin','product','index','',1,1,'商品列表','','',50),(39,2,'fladmin','product','add','',1,1,'商品添加','','',50),(40,39,'fladmin','product','doadd','',1,0,'商品添加提交','','',50),(41,2,'fladmin','product','edit','',1,0,'商品修改','','',50),(42,41,'fladmin','product','doedit','',1,0,'商品修改提交','','',50),(43,2,'fladmin','product','del','',1,0,'商品删除','','',50),(44,2,'fladmin','product','recommendarc','',1,0,'重复商品','','',50),(45,2,'fladmin','product','productexists','',1,0,'商品是否存在','','',50),(46,2,'fladmin','producttype','index','',1,1,'商品分类','','',50),(47,46,'fladmin','producttype','add','',1,1,'商品分类添加','','',50),(48,47,'fladmin','producttype','doadd','',1,0,'商品分类添加提交','','',50),(49,46,'fladmin','producttype','edit','',1,0,'商品分类修改','','',50),(50,42,'fladmin','producttype','doedit','',1,0,'商品分类修改提交','','',50),(51,46,'fladmin','producttype','del','',1,0,'商品分类删除','','',50),(52,5,'fladmin','friendlink','index','',1,1,'友情链接','','',50),(53,52,'fladmin','friendlink','add','',1,0,'友情链接添加','','',50),(54,53,'fladmin','friendlink','doadd','',1,0,'友情链接添加提交','','',50),(55,52,'fladmin','friendlink','edit','',1,0,'友情链接修改','','',50),(56,55,'fladmin','friendlink','doedit','',1,0,'友情链接修改提交','','',50),(57,52,'fladmin','friendlink','del','',1,0,'友情链接删除','','',50),(58,5,'fladmin','keyword','index','',1,1,'关键词管理','','',50),(59,58,'fladmin','keyword','add','',1,0,'关键词添加','','',50),(60,59,'fladmin','keyword','doadd','',1,0,'关键词添加提交','','',50),(61,58,'fladmin','keyword','edit','',1,0,'关键词修改','','',50),(62,61,'fladmin','keyword','doedit','',1,0,'关键词修改提交','','',50),(63,58,'fladmin','keyword','del','',1,0,'关键词删除','','',50),(64,5,'fladmin','searchword','index','',1,1,'搜索关键词','','',50),(65,64,'fladmin','searchword','add','',1,0,'搜索关键词添加','','',50),(66,65,'fladmin','searchword','doadd','',1,0,'搜索关键词添加提交','','',50),(67,64,'fladmin','searchword','edit','',1,0,'搜索关键词修改','','',50),(68,67,'fladmin','searchword','doedit','',1,0,'搜索关键词修改提交','','',50),(69,64,'fladmin','searchword','del','',1,0,'搜索关键词删除','','',50),(70,5,'fladmin','slide','index','',1,1,'轮播图','','',50),(71,70,'fladmin','slide','add','',1,0,'轮播图添加','','',50),(72,71,'fladmin','slide','doadd','',1,0,'轮播图添加提交','','',50),(73,70,'fladmin','slide','edit','',1,0,'轮播图修改','','',50),(74,73,'fladmin','slide','doedit','',1,0,'轮播图修改提交','','',50),(75,70,'fladmin','slide','del','',1,0,'轮播图删除','','',50),(76,5,'fladmin','guestbook','index','',1,1,'在线留言','','',50),(77,76,'fladmin','guestbook','del','',1,0,'在线留言删除','','',50),(78,6,'fladmin','sysconfig','index','',1,1,'系统基本参数','','',50),(79,78,'fladmin','sysconfig','add','',1,0,'系统参数添加','','',50),(80,79,'fladmin','sysconfig','doadd','',1,0,'系统参数添加提交','','',50),(81,78,'fladmin','sysconfig','edit','',1,0,'系统参数修改','','',50),(82,81,'fladmin','sysconfig','doedit','',1,0,'系统参数修改提交','','',50),(83,78,'fladmin','sysconfig','del','',1,0,'系统参数删除','','',50),(84,4,'fladmin','user','index','',1,1,'管理员','','',50),(85,84,'fladmin','user','add','',1,0,'管理员添加','','',50),(86,85,'fladmin','user','doadd','',1,0,'管理员添加提交','','',50),(87,84,'fladmin','user','edit','',1,0,'管理员修改','','',50),(88,87,'fladmin','user','doedit','',1,0,'管理员修改提交','','',50),(89,84,'fladmin','user','del','',1,0,'管理员删除','','',50),(90,4,'fladmin','userrole','index','',1,1,'角色管理','','',50),(91,90,'fladmin','userrole','add','',1,0,'角色添加','','',50),(92,91,'fladmin','userrole','doadd','',1,0,'角色添加修改','','',50),(93,90,'fladmin','userrole','edit','',1,0,'角色修改','','',50),(94,93,'fladmin','userrole','doedit','',1,0,'角色修改提交','','',50),(95,90,'fladmin','userrole','del','',1,0,'角色删除','','',50),(96,3,'fladmin','menu','index','',1,1,'后台菜单','','',50),(97,96,'fladmin','menu','add','',1,0,'菜单添加','','',50),(98,97,'fladmin','menu','doadd','',1,0,'菜单添加提交','','',50),(99,96,'fladmin','menu','edit','',1,0,'菜单修改','','',50),(100,99,'fladmin','menu','doedit','',1,0,'菜单修改提交','','',50),(101,96,'fladmin','menu','del','',1,0,'菜单删除','','',50),(102,90,'fladmin','userrole','permissions','',1,0,'权限设置','','',50),(103,102,'fladmin','userrole','dopermissions','',1,0,'权限设置提交','','',50);
+insert  into `fl_menu`(`id`,`pid`,`module`,`controller`,`action`,`data`,`type`,`status`,`name`,`icon`,`des`,`listorder`) values (1,0,'fladmin','article','fli','',0,1,'文章管理','glyphicon glyphicon-pencil','',0),(6,0,'fladmin','sysconfig','fli','',0,1,'设置','glyphicon glyphicon-wrench','',1000),(3,0,'fladmin','menu','fli','',0,1,'菜单管理','glyphicon glyphicon-th-list','',20),(4,0,'fladmin','admin','fli','',0,1,'用户管理','glyphicon glyphicon-user','',30),(2,0,'fladmin','product','fli','',0,1,'商品管理','glyphicon glyphicon-shopping-cart','',10),(5,0,'fladmin','extension','fli','',0,1,'批量维护','glyphicon glyphicon-cloud','',40),(7,5,'fladmin','index','welcome','',1,0,'欢迎页面','','',5),(8,5,'fladmin','index','index','',1,0,'后台首页','','',2),(9,5,'fladmin','index','upconfig','',1,0,'更新系统参数配置','','',3),(10,5,'fladmin','index','upcache','',1,0,'更新缓存','','',4),(11,1,'fladmin','article','index','',1,1,'文章列表','','',50),(12,1,'fladmin','article','add','',1,1,'发布文章','','',50),(13,12,'fladmin','article','doadd','',1,0,'发布文章提交','','',50),(14,1,'fladmin','article','edit','',1,0,'文章修改','','',50),(15,14,'fladmin','article','doedit','',1,0,'文章修改提交','','',50),(16,1,'fladmin','article','del','',1,0,'文章删除','','',50),(17,1,'fladmin','article','repetarc','',1,1,'重复文档检测','','',50),(18,1,'fladmin','article','recommendarc','',1,0,'文章推荐','','',50),(19,1,'fladmin','article','articleexists','',1,0,'文章是否存在','','',50),(20,1,'fladmin','category','index','',1,1,'文章栏目','','',50),(21,20,'fladmin','category','add','',1,0,'文章栏目添加','','',50),(22,21,'fladmin','category','doadd','',1,0,'文章栏目添加提交','','',50),(23,20,'fladmin','category','edit','',1,0,'文章栏目修改','','',50),(24,23,'fladmin','category','doedit','',1,0,'文章栏目修改提交','','',50),(25,20,'fladmin','category','del','',1,0,'文章栏目删除','','',50),(26,5,'fladmin','tag','index','',1,1,'Tag标签管理','','',50),(27,26,'fladmin','tag','add','',1,0,'Tag标签添加','','',50),(28,27,'fladmin','tag','doadd','',1,0,'Tag标签添加提交','','',50),(29,26,'fladmin','tag','edit','',1,0,'Tag标签修改','','',50),(30,29,'fladmin','tag','doedit','',1,0,'Tag标签修改提交','','',50),(31,26,'fladmin','tag','del','',1,0,'Tag标签删除','','',50),(32,1,'fladmin','page','index','',1,1,'单页管理','','',50),(33,32,'fladmin','page','add','',1,0,'单页添加','','',50),(34,33,'fladmin','page','doadd','',1,0,'单页添加提交','','',50),(35,32,'fladmin','page','edit','',1,0,'单页修改','','',50),(36,35,'fladmin','page','doedit','',1,0,'单页修改提交','','',50),(37,32,'fladmin','page','del','',1,0,'单页删除','','',50),(38,2,'fladmin','product','index','',1,1,'商品列表','','',50),(39,2,'fladmin','product','add','',1,1,'商品添加','','',50),(40,39,'fladmin','product','doadd','',1,0,'商品添加提交','','',50),(41,2,'fladmin','product','edit','',1,0,'商品修改','','',50),(42,41,'fladmin','product','doedit','',1,0,'商品修改提交','','',50),(43,2,'fladmin','product','del','',1,0,'商品删除','','',50),(44,2,'fladmin','product','recommendarc','',1,0,'重复商品','','',50),(45,2,'fladmin','product','productexists','',1,0,'商品是否存在','','',50),(46,2,'fladmin','producttype','index','',1,1,'商品分类','','',50),(47,46,'fladmin','producttype','add','',1,1,'商品分类添加','','',50),(48,47,'fladmin','producttype','doadd','',1,0,'商品分类添加提交','','',50),(49,46,'fladmin','producttype','edit','',1,0,'商品分类修改','','',50),(50,42,'fladmin','producttype','doedit','',1,0,'商品分类修改提交','','',50),(51,46,'fladmin','producttype','del','',1,0,'商品分类删除','','',50),(52,5,'fladmin','friendlink','index','',1,1,'友情链接','','',50),(53,52,'fladmin','friendlink','add','',1,0,'友情链接添加','','',50),(54,53,'fladmin','friendlink','doadd','',1,0,'友情链接添加提交','','',50),(55,52,'fladmin','friendlink','edit','',1,0,'友情链接修改','','',50),(56,55,'fladmin','friendlink','doedit','',1,0,'友情链接修改提交','','',50),(57,52,'fladmin','friendlink','del','',1,0,'友情链接删除','','',50),(58,5,'fladmin','keyword','index','',1,1,'关键词管理','','',50),(59,58,'fladmin','keyword','add','',1,0,'关键词添加','','',50),(60,59,'fladmin','keyword','doadd','',1,0,'关键词添加提交','','',50),(61,58,'fladmin','keyword','edit','',1,0,'关键词修改','','',50),(62,61,'fladmin','keyword','doedit','',1,0,'关键词修改提交','','',50),(63,58,'fladmin','keyword','del','',1,0,'关键词删除','','',50),(64,5,'fladmin','searchword','index','',1,1,'搜索关键词','','',50),(65,64,'fladmin','searchword','add','',1,0,'搜索关键词添加','','',50),(66,65,'fladmin','searchword','doadd','',1,0,'搜索关键词添加提交','','',50),(67,64,'fladmin','searchword','edit','',1,0,'搜索关键词修改','','',50),(68,67,'fladmin','searchword','doedit','',1,0,'搜索关键词修改提交','','',50),(69,64,'fladmin','searchword','del','',1,0,'搜索关键词删除','','',50),(70,5,'fladmin','slide','index','',1,1,'轮播图','','',50),(71,70,'fladmin','slide','add','',1,0,'轮播图添加','','',50),(72,71,'fladmin','slide','doadd','',1,0,'轮播图添加提交','','',50),(73,70,'fladmin','slide','edit','',1,0,'轮播图修改','','',50),(74,73,'fladmin','slide','doedit','',1,0,'轮播图修改提交','','',50),(75,70,'fladmin','slide','del','',1,0,'轮播图删除','','',50),(76,5,'fladmin','guestbook','index','',1,1,'在线留言','','',50),(77,76,'fladmin','guestbook','del','',1,0,'在线留言删除','','',50),(78,6,'fladmin','sysconfig','index','',1,1,'系统基本参数','','',50),(79,78,'fladmin','sysconfig','add','',1,0,'系统参数添加','','',50),(80,79,'fladmin','sysconfig','doadd','',1,0,'系统参数添加提交','','',50),(81,78,'fladmin','sysconfig','edit','',1,0,'系统参数修改','','',50),(82,81,'fladmin','sysconfig','doedit','',1,0,'系统参数修改提交','','',50),(83,78,'fladmin','sysconfig','del','',1,0,'系统参数删除','','',50),(84,4,'fladmin','admin','index','',1,1,'管理员','','',50),(85,84,'fladmin','admin','add','',1,0,'管理员添加','','',50),(86,85,'fladmin','admin','doadd','',1,0,'管理员添加提交','','',50),(87,84,'fladmin','admin','edit','',1,0,'管理员修改','','',50),(88,87,'fladmin','admin','doedit','',1,0,'管理员修改提交','','',50),(89,84,'fladmin','admin','del','',1,0,'管理员删除','','',50),(90,4,'fladmin','adminrole','index','',1,1,'角色管理','','',50),(91,90,'fladmin','adminrole','add','',1,0,'角色添加','','',50),(92,91,'fladmin','adminrole','doadd','',1,0,'角色添加修改','','',50),(93,90,'fladmin','adminrole','edit','',1,0,'角色修改','','',50),(94,93,'fladmin','adminrole','doedit','',1,0,'角色修改提交','','',50),(95,90,'fladmin','adminrole','del','',1,0,'角色删除','','',50),(96,3,'fladmin','menu','index','',1,1,'后台菜单','','',50),(97,96,'fladmin','menu','add','',1,0,'菜单添加','','',50),(98,97,'fladmin','menu','doadd','',1,0,'菜单添加提交','','',50),(99,96,'fladmin','menu','edit','',1,0,'菜单修改','','',50),(100,99,'fladmin','menu','doedit','',1,0,'菜单修改提交','','',50),(101,96,'fladmin','menu','del','',1,0,'菜单删除','','',50),(102,90,'fladmin','adminrole','permissions','',1,0,'权限设置','','',50),(103,102,'fladmin','adminrole','dopermissions','',1,0,'权限设置提交','','',50);
 
 /*Table structure for table `fl_order` */
 
@@ -443,44 +521,6 @@ CREATE TABLE `fl_taglist` (
 /*Data for the table `fl_taglist` */
 
 insert  into `fl_taglist`(`tid`,`aid`) values (1,1),(1,4),(2,2),(3,3);
-
-/*Table structure for table `fl_user` */
-
-DROP TABLE IF EXISTS `fl_user`;
-
-CREATE TABLE `fl_user` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `username` char(30) DEFAULT '' COMMENT 'admin888',
-  `email` char(30) DEFAULT '',
-  `logintime` int(10) DEFAULT '0',
-  `pwd` char(32) NOT NULL DEFAULT '' COMMENT 'admin',
-  `role_id` smallint(4) DEFAULT '0',
-  `status` tinyint(1) DEFAULT '0' COMMENT '用户状态 0：正常； 1：禁用 ；2：未验证',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-
-/*Data for the table `fl_user` */
-
-insert  into `fl_user`(`id`,`username`,`email`,`logintime`,`pwd`,`role_id`,`status`) values (1,'admin888','admin@qq.com',1508373924,'21232f297a57a5a743894a0e4a801fc3',1,0),(2,'abc','abc@qq.com',0,'21232f297a57a5a743894a0e4a801fc3',2,0),(3,'qwe2','qwe@qq.com',0,'202cb962ac59075b964b07152d234b70',2,0);
-
-/*Table structure for table `fl_user_role` */
-
-DROP TABLE IF EXISTS `fl_user_role`;
-
-CREATE TABLE `fl_user_role` (
-  `id` smallint(4) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(30) NOT NULL COMMENT '角色名',
-  `des` varchar(150) NOT NULL DEFAULT '' COMMENT '描述',
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态，0启用，1禁用',
-  `pid` smallint(4) NOT NULL DEFAULT '0' COMMENT '父角色id',
-  `listorder` tinyint(4) DEFAULT '0' COMMENT '排序',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `rolename` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='角色表';
-
-/*Data for the table `fl_user_role` */
-
-insert  into `fl_user_role`(`id`,`name`,`des`,`status`,`pid`,`listorder`) values (1,'超级管理员','拥有网站最高管理员权限！',0,0,0),(2,'普通角色','',0,0,0),(3,'asd22','asd22',0,0,0);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

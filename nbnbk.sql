@@ -48,7 +48,7 @@ CREATE TABLE `fl_admin` (
 
 /*Data for the table `fl_admin` */
 
-insert  into `fl_admin`(`id`,`username`,`email`,`logintime`,`pwd`,`role_id`,`status`,`mobile`,`avatar`,`create_at`) values (1,'admin888','admin@qq.com',1512098583,'21232f297a57a5a743894a0e4a801fc3',1,0,'','','2012-12-12 00:00:00'),(2,'abc2','abc@qq.com',1497285296,'e10adc3949ba59abbe56e057f20f883e',2,0,'','','2017-06-07 15:10:18'),(3,'xyz','xyz@qq.com',0,'d16fb36f0911f878998c136191af705e',1,0,'','','2017-07-26 00:06:01'),(4,'aaa@qq.com','aaa@qq.com',0,'47bce5c74f589f4867dbd57e9ca9f808',2,0,'','','2017-12-01 10:10:55');
+insert  into `fl_admin`(`id`,`username`,`email`,`logintime`,`pwd`,`role_id`,`status`,`mobile`,`avatar`,`create_at`) values (1,'admin888','admin@qq.com',1516414956,'21232f297a57a5a743894a0e4a801fc3',1,0,'','','2012-12-12 00:00:00'),(2,'abc2','abc@qq.com',1497285296,'e10adc3949ba59abbe56e057f20f883e',2,0,'','','2017-06-07 15:10:18'),(3,'xyz','xyz@qq.com',0,'d16fb36f0911f878998c136191af705e',1,0,'','','2017-07-26 00:06:01'),(4,'aaa@qq.com','aaa@qq.com',0,'47bce5c74f589f4867dbd57e9ca9f808',2,0,'','','2017-12-01 10:10:55');
 
 /*Table structure for table `fl_admin_role` */
 
@@ -104,22 +104,22 @@ DROP TABLE IF EXISTS `fl_article`;
 
 CREATE TABLE `fl_article` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `typeid` smallint(5) NOT NULL COMMENT '栏目id',
+  `typeid` int(5) NOT NULL COMMENT '栏目id',
   `tuijian` tinyint(1) DEFAULT '0' COMMENT '推荐等级',
   `click` mediumint(8) DEFAULT '0' COMMENT '点击量',
   `title` varchar(150) NOT NULL DEFAULT '' COMMENT '标题',
   `body` mediumtext COMMENT '内容',
-  `writer` char(20) DEFAULT '' COMMENT '作者',
-  `source` char(30) DEFAULT '' COMMENT '来源',
+  `writer` varchar(20) DEFAULT '' COMMENT '作者',
+  `source` varchar(30) DEFAULT '' COMMENT '来源',
   `litpic` varchar(100) DEFAULT '' COMMENT '缩略图',
   `pubdate` int(11) DEFAULT '0' COMMENT '更新时间',
   `addtime` int(11) DEFAULT '0' COMMENT '添加时间',
-  `keywords` char(60) DEFAULT '' COMMENT '关键词',
+  `keywords` varchar(60) DEFAULT '' COMMENT '关键词',
   `seotitle` varchar(150) DEFAULT '' COMMENT 'seo标题',
   `description` varchar(255) DEFAULT '' COMMENT '描述',
   `ischeck` tinyint(1) DEFAULT '0' COMMENT '是否审核，默认0审核',
-  `typeid2` smallint(5) DEFAULT '0' COMMENT '副栏目id',
-  `user_id` int(10) DEFAULT NULL COMMENT '是谁发布的',
+  `typeid2` int(5) DEFAULT '0' COMMENT '副栏目id',
+  `user_id` int(11) DEFAULT '0' COMMENT '是谁发布的',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
@@ -521,6 +521,25 @@ CREATE TABLE `fl_taglist` (
 /*Data for the table `fl_taglist` */
 
 insert  into `fl_taglist`(`tid`,`aid`) values (1,1),(1,4),(2,2),(3,3);
+
+/*Table structure for table `fl_token` */
+
+DROP TABLE IF EXISTS `fl_token`;
+
+CREATE TABLE `fl_token` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `token` varchar(128) NOT NULL,
+  `type` tinyint(4) NOT NULL COMMENT '0:app, 1:admin, 2:weixin, 3:wap, 4: pc',
+  `uid` int(11) NOT NULL,
+  `data` text COMMENT 'token相关信息,json_encode字串',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expired_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='接口用户token表';
+
+/*Data for the table `fl_token` */
+
+insert  into `fl_token`(`id`,`token`,`type`,`uid`,`data`,`created_at`,`expired_at`) values (1,'72d623d26a1a6d61186a97f9ccf752f7',1,1,NULL,'2017-08-07 13:29:01','2018-05-22 11:15:27'),(2,'fecf090f27340c72dc715faca15339de',2,3,'','2017-12-01 00:31:12','2017-12-31 00:31:12'),(3,'2edc36780b280701102ead2ab27e6fb7',2,3,'','2017-12-01 00:33:09','2017-12-31 00:33:09'),(4,'16e47addf80ef5337375804038f3092c',2,3,'','2017-12-14 10:37:42','2018-01-13 10:37:42'),(5,'1d2e308d19d462498a7fba9882f81c90',2,3,'','2017-12-14 19:47:56','2018-01-13 19:47:56'),(6,'deb61dc8c049c51ffd79b269e75f7024',2,3,'','2017-12-15 09:15:17','2018-01-14 09:15:17'),(7,'2908616c5ec6952d859461e1f024c3e1',2,3,'','2017-12-25 17:18:02','2018-01-24 17:18:02'),(8,'843c76ccee3e4d16a7a09d817a1e2570',2,3,'','2018-01-11 14:26:09','2018-02-10 14:26:09'),(9,'9713d105871f840f5c5e48a78bda975b',2,3,'','2018-01-11 14:31:37','2018-02-10 14:31:37'),(10,'89130e57b3e1633ef90bcdbeadc18457',2,3,'','2018-01-23 14:08:00','2018-02-22 14:08:00');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

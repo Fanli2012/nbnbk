@@ -90,7 +90,7 @@ function arclist(array $param)
 	if(isset($param['orderby'])){$orderby=$param['orderby'];}else{$orderby='id desc';}
 	$article = db("article");
     if(isset($param['field'])){$article = $article->field($param['field']);}else{$article = $article->field('body',true);}
-    $article = db("article")->limit($limit);
+    $article = $article->limit($limit);
     
 	if(isset($param['sql']))
 	{
@@ -894,4 +894,29 @@ function getDataAttr($dataModel,$data = [])
     }
     
     return $data;
+}
+
+//根据当前网站获取上一页下一页网址
+function get_pagination_url($http_host,$query_string,$page=0)
+{
+    $res = '';
+    foreach(explode("&",$query_string) as $row)
+    {
+        if($row)
+        {
+            $canshu = explode("=",$row);
+            $res[$canshu[0]] = $canshu[1];
+        }
+    }
+    
+    if(isset($res['page']))
+    {
+        unset($res['page']);
+    }
+    
+    if($page==1 || $page==0){}else{$res['page'] = $page;}
+    
+    if($res){$res = $http_host.'?'.http_build_query($res);}
+    
+    return $res;
 }

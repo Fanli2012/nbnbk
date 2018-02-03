@@ -21,14 +21,17 @@ class Article extends Base
         $offset = input('param.offset', 0);
         if(input('param.typeid', '') !== ''){$data['typeid'] = input('param.typeid');}
         if(input('param.keyword', '') !== ''){$data['title'] = ['like','%'.input('param.keyword').'%'];}
+        if(input('tuijian', '') !== ''){$data['tuijian'] = input('tuijian');}
         $data['ischeck'] = 0;
+        $orderby = input('orderby','');
         
-        $res = db('article')->where($data)->field('body',true)->limit("$offset,$limit")->select();
+        $res = db('article')->where($data)->field('body',true)->order($orderby)->limit("$offset,$limit")->select();
 		
         foreach($res as $k=>$v)
         {
             $res[$k]['pubdate'] = date('Y-m-d',$v['pubdate']);
             $res[$k]['addtime'] = date('Y-m-d',$v['addtime']);
+            $res[$k]['url'] = http_host().get_front_url(array("id"=>$v['id'],"type"=>'content'));
             if(!empty($v['litpic'])){$res[$k]['litpic'] = http_host().$v['litpic'];}
         }
         

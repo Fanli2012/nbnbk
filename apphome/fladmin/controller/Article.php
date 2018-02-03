@@ -103,7 +103,7 @@ class Article extends Base
 				$_POST['keywords']=get_keywords($title);//标题分词
 			}
 		}
-		
+        
 		if(isset($_POST["dellink"]) && $_POST["dellink"]==1 && !empty($content)){$content=replacelinks($content,array(CMS_BASEHOST));} //删除非站内链接
 		$_POST['body']=$content;
 		
@@ -133,8 +133,26 @@ class Article extends Base
 		unset($_POST["dellink"]);
 		unset($_POST["autolitpic"]);
         if(isset($_POST['editorValue'])){unset($_POST['editorValue']);}
-		if(db('article')->insert($_POST))
+        if(!empty($_POST["tags"])){$tags = $_POST["tags"];}else{$tags = '';}unset($_POST["tags"]);
+        
+        $res = db('article')->insertGetId($_POST);
+		if($res)
         {
+            //Tag
+            if(!empty($tags))
+            {
+                $tags = explode(",",str_replace("，",",",$tags));
+                foreach($tags as $v)
+                {
+                    if($tagindex = db('tagindex')->where(array('tag'=>$v))->find())
+                    {
+                        $where['tid'] = $tagindex['id'];
+                        $where['aid'] = $res;
+                        if(!db('taglist')->where($where)->find()){db('taglist')->insert($where);}
+                    }
+                }
+            }
+            
             $this->success('添加成功！', CMS_ADMIN.'Article' , 1);
         }
 		else
@@ -149,6 +167,18 @@ class Article extends Base
         
         $this->assign('id',$id);
 		$this->assign('post',db('article')->where("id=$id")->find());
+        
+        $tags = '';
+        $taglist = db('taglist')->where("aid=$id")->select();
+        if($taglist)
+        {
+            foreach($taglist as $k=>$v)
+            {
+                $tmp[] = db('tagindex')->where('id='.$v['tid'])->value('tag');
+            }
+            $tags = implode(',',$tmp);
+        }
+        $this->assign('tags',$tags);
         
         return $this->fetch();
     }
@@ -205,6 +235,25 @@ class Article extends Base
 		
 		unset($_POST["dellink"]);
 		unset($_POST["autolitpic"]);
+        
+        //Tag
+        if(!empty($_POST["tags"]))
+        {
+            $tags = explode(",",str_replace("，",",",$_POST["tags"]));
+            db('taglist')->where(array('aid'=>$id))->delete();
+            
+            foreach($tags as $v)
+            {
+                if($tagindex = db('tagindex')->where(array('tag'=>$v))->find())
+                {
+                    $where['tid'] = $tagindex['id'];
+                    $where['aid'] = $id;
+                    if(!db('taglist')->where($where)->find()){db('taglist')->insert($where);}
+                }
+            }
+        }
+        unset($_POST["tags"]);
+        
         if(isset($_POST['editorValue'])){unset($_POST['editorValue']);}
         if(db('article')->where("id=$id")->update($_POST))
         {

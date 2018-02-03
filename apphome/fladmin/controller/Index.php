@@ -24,7 +24,7 @@ class Index extends Base
 	
     public function upconfig()
 	{
-        updateconfig();
+        //updateconfig();
         $this->success('缓存更新成功！');
     }
     

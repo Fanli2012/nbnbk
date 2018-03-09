@@ -10,7 +10,7 @@ class Article extends Base
     //protected $table = 'fl_article';
     
     // 默认主键为自动识别，如果需要指定，可以设置属性
-    protected $pk = 'id'; 
+    protected $pk = 'id';
     
     // 设置当前模型的数据库连接
     /* protected $connection = [
@@ -32,67 +32,134 @@ class Article extends Base
         'debug'       => false,
     ]; */
     
-    //列表
+    public function getDb()
+    {
+        return db('article');
+    }
+    
+    /**
+     * 列表
+     * @param array $where 查询条件
+     * @param string $order 排序
+     * @param string $field 字段
+     * @param int $offset 偏移量
+     * @param int $limit 取多少条
+     * @return array
+     */
     public function getList($where = array(), $order = '', $field = '*', $offset = 0, $limit = 15)
     {
-        $res['count'] = self::where($where)->count();
+        $res['count'] = $this->getDb()->where($where)->count();
         $res['list'] = array();
         
         if($res['count'] > 0)
         {
-            $res['list'] = self::where($where)->field($field)->order($order)->limit($offset.','.$limit)->select();
+            $res['list'] = $this->getDb()->where($where)->field($field)->order($order)->limit($offset.','.$limit)->select();
         }
         
         return $res;
     }
     
-    //分页，用于前端html输出
+    /**
+     * 分页，用于前端html输出
+     * @param array $where 查询条件
+     * @param string $order 排序
+     * @param string $field 字段
+     * @param int $limit 每页几条
+     * @param int $page 当前第几页
+     * @return array
+     */
     public function getPaginate($where = array(), $order = '', $field = '*', $limit = 15)
     {
-        return self::where($where)->field($field)->order($order)->paginate($limit, false, ['query' => request()->param()]);
+        return $this->getDb()->where($where)->field($field)->order($order)->paginate($limit, false, array('query' => request()->param()));
     }
     
-    //获取一条
+    /**
+     * 获取一条
+     * @param array $where 条件
+     * @param string $field 字段
+     * @return array
+     */
     public function getOne($where, $field = '*')
     {
-        return self::where($where)->field($field)->find();
+        return $this->getDb()->where($where)->field($field)->find();
     }
     
-    //添加
-    public function add($data)
+    /**
+     * 添加
+     * @param array $data 数据
+     * @return int
+     */
+    public function add($data,$type=0)
     {
         // 过滤数组中的非数据表字段数据
-        //return $this->allowField(true)->isUpdate(false)->save($data);
+        // return $this->allowField(true)->isUpdate(false)->save($data);
         
-        // 添加单条数据
-        return db('article')->insert($data);
-        
-        // 添加多条数据
-        //db('article')->insertAll($list);
+        if($type==0)
+        {
+            // 新增单条数据并返回主键值
+            return $this->getDb()->insertGetId($data);
+        }
+        elseif($type==1)
+        {
+            // 添加单条数据
+            return $this->getDb()->insert($data);
+        }
+        elseif($type==2)
+        {
+            /**
+             * 添加多条数据
+             * $data = [
+             *     ['foo' => 'bar', 'bar' => 'foo'],
+             *     ['foo' => 'bar1', 'bar' => 'foo1'],
+             *     ['foo' => 'bar2', 'bar' => 'foo2']
+             * ];
+             */
+            
+            return $this->getDb()->insertAll($data);
+        }
     }
     
-    //修改
-    public function modify($data, $where = array())
+    /**
+     * 修改
+     * @param array $data 数据
+     * @param array $where 条件
+     * @return bool
+     */
+    public function edit($data, $where = array())
     {
         return $this->allowField(true)->isUpdate(true)->save($data, $where);
     }
     
-    //删除
-    public function remove($where)
+    /**
+     * 删除
+     * @param array $where 条件
+     * @return bool
+     */
+    public function del($where)
     {
         return $this->where($where)->delete();
+    }
+    
+    /**
+     * 统计
+     * @param array $where 条件
+     * @return int
+     */
+    public function count($where = array())
+    {
+        return $this->where($where)->count();
     }
     
     //是否审核
     public function getIscheckAttr($data)
     {
-        $arr = array[0 => '已审核', 1 => '未审核',];
+        $arr = array(0 => '已审核', 1 => '未审核');
         return $arr[$data['ischeck']];
     }
     
     //是否栏目名称
     public function getTypenameAttr($data)
     {
-        return db('arctype')->where(['id'=>$data['typeid']])->value('typename');
+        return db('arctype')->where(array('id'=>$data['typeid']))->value('typename');
     }
 }

@@ -15,17 +15,8 @@ class Common extends Controller
      */
 	public function _initialize()
 	{
-		$request = Request::instance();
-		
-		// 批量赋值
-        $this->assign([
-            'action_name'  => $request->action(),
-            'controller_name' => $request->controller(),
-            'module_name' => $request->module()
-        ]);
-		
-		unset($request);
-		
+        parent::_initialize();
+        
 		/* if(!Session::has('admin_user_info'))
 		{
 			$this->error('您访问的页面不存在或已被删除！', '/',3);

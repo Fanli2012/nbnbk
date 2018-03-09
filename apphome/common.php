@@ -920,3 +920,10 @@ function get_pagination_url($http_host,$query_string,$page=0)
     
     return $res;
 }
+
+//输出json
+function echo_json($data)
+{
+    header("content-type:application/json");
+    exit(json_encode($data));
+}

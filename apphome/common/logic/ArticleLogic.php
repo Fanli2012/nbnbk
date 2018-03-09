@@ -1,83 +1,103 @@
 <?php
 namespace app\common\logic;
-
-use app\common\model\Article;
 use think\Loader;
+use app\common\lib\ReturnData;
+use app\common\lib\Factory;
+use app\common\model\Article;
 
 class ArticleLogic extends BaseLogic
 {
-    public $_model;
-    public $_validate;
-    
     protected function initialize()
     {
         parent::initialize();
-        
-        $this->_model = new Article();
-        $this->_validate = Loader::validate('Article');
     }
     
-    public function getList($where = array(), $order = '', $field = '*', $offset = 0, $limit = 15)
+    public function getModel()
     {
-        $rs = $this->_model->getList($where, $order, $field, $offset, $limit);
-        
-        return $rs;
+        return Factory::getInstance(Article::class);
     }
     
-    public function getOne($data = [])
+    public function getValidate()
     {
-        extract($data);
+        return Loader::validate('Article');
+    }
+    
+    //列表
+    public function getList($where = array(), $order = '', $field = '*', $offset = '', $limit = '')
+    {
+        $res = $this->getModel()->getList($where, $order, $field, $offset, $limit);
         
-        if (empty($data)){return false;}
-        
-        $res = $this->_model->getOne($data);
+        if($res['list'])
+        {
+            foreach($res['list'] as $k=>$v)
+            {
+                $res['list'][$k] = $this->getDataView($v);
+                $res['list'][$k]['typename'] = $this->getModel()->getTypenameAttr($v);
+            }
+        }
         
         return $res;
     }
     
-    public function add($data = [])
+    //分页html
+    public function getPaginate($where = array(), $order = '', $field = '*', $limit = '')
     {
-        if (empty($data))
-        {
-            return false;
-        }
+        $res = $this->getModel()->getPaginate($where, $order, $field, $limit);
         
-        $rs = $this->_validate->scene('add')->check($data);
-        if ($rs !== false)
-        {
-            $data['addtime'] = $data['pubdate'] = time();
-            return ReturnData::create(ReturnData::SUCCESS,$this->_model->add($data));
-        }
-        else
-        {
-            return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->_validate->getError());
-        }
+        return $res;
     }
     
+    //详情
+    public function getOne($where = array())
+    {
+        $res = $this->getModel()->getOne($where);
+        if(!$res){return false;}
+        
+        $res = $this->getDataView($res);
+        $res['typename'] = $this->getModel()->getTypenameAttr($res);
+        
+        db('article')->where($where)->setInc('click', 1);
+        
+        return $res;
+    }
+    
+    //添加
+    public function add($data = array())
+    {
+        if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
+        
+        $check = $this->getValidate()->scene('add')->check($data);
+        if($check === false){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        
+        $res = $this->getModel()->add($data);
+        if($res === false){return ReturnData::create(ReturnData::SYSTEM_FAIL);}
+        
+        return ReturnData::create(ReturnData::SUCCESS,$res);
+    }
+    
+    //修改
     public function edit($data,$where)
     {
-        extract($data);
+        if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
-        if (empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
+        $res = $this->getModel()->edit($data,$where);
+        if($res === false){return ReturnData::create(ReturnData::SYSTEM_FAIL);}
         
-        return $this->_model->modify($data,$where);
+        return ReturnData::create(ReturnData::SUCCESS,$res);
     }
     
-    public function del($data)
+    //删除
+    public function del($where = array())
     {
-        extract($data);
+        if(empty($where)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
-        $where = '';
-        if(isset($car_id)){$where['car_id'] = $car_id;}
+        $check = $this->getValidate()->scene('del')->check($where);
+        if($check === false){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
-        if($this->_model->remove($where))
-        {
-            return ReturnData::create(ReturnData::SUCCESS);
-        }
-        else
-        {
-            return ReturnData::create(ReturnData::SYSTEM_FAIL);
-        }
+        $res = $this->getModel()->del($where);
+        if($res === false){return ReturnData::create(ReturnData::SYSTEM_FAIL);}
+        
+        return ReturnData::create(ReturnData::SUCCESS,$res);
     }
     
     /**
@@ -85,8 +105,8 @@ class ArticleLogic extends BaseLogic
      * @param array $data 要转化的数据
      * @return array
      */
-    private function getDataView($data = [])
+    private function getDataView($data = array())
     {
-        return getDataAttr($this->_model,$data);
+        return getDataAttr($this->getModel(),$data);
     }
 }

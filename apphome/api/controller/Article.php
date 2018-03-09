@@ -8,15 +8,16 @@ use app\common\logic\ArticleLogic;
 
 class Article extends Base
 {
-    public $_logic;
-    
 	public function _initialize()
 	{
         //Token::TokenAuth(request()); //TOKEN验证
         
 		parent::_initialize();
-        
-        $this->_logic = new ArticleLogic();
+    }
+    
+    public function getLogic()
+    {
+        return new ArticleLogic();
     }
     
     //列表
@@ -31,7 +32,7 @@ class Article extends Base
         $where['ischeck'] = 0;
         $orderby = input('orderby','');
         
-        $res = $this->_logic->getList($where,$orderby,'id,title,typeid,tuijian,click,litpic,pubdate,addtime,description,ischeck',$offset,$limit);
+        $res = $this->getLogic()->getList($where,$orderby,['body'],$offset,$limit);
 		
         if($res['list'])
         {
@@ -53,7 +54,7 @@ class Article extends Base
         
         if($where['id'] == ''){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
-		$res = $this->_logic->getOne($where);
+		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
         if(!empty($res['litpic'])){$res['litpic'] = http_host().$res['litpic'];}
@@ -66,7 +67,7 @@ class Article extends Base
     {
         if(IS_POST)
         {
-            $res = $this->_logic->add($_POST);
+            $res = $this->getLogic()->add($_POST);
             
             exit(json_encode($res));
         }
@@ -82,7 +83,7 @@ class Article extends Base
             unset($_POST['id']);
             $where['id'] = $id;
             
-            $res = $this->_logic->edit($_POST,$where);
+            $res = $this->getLogic()->edit($_POST,$where);
             
             exit(json_encode($res));
         }
@@ -98,7 +99,7 @@ class Article extends Base
             unset($_POST['id']);
             $where['id'] = $id;
             
-            $res = $this->_logic->del($where);
+            $res = $this->getLogic()->del($where);
             
             exit(json_encode($res));
         }

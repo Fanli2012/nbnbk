@@ -3,11 +3,11 @@ namespace app\common\model;
 
 use think\Db;
 
-class Article extends Base
+class Page extends Base
 {
     // 模型会自动对应数据表，模型类的命名规则是除去表前缀的数据表名称，采用驼峰法命名，并且首字母大写，例如：模型名UserType，约定对应数据表think_user_type(假设数据库的前缀定义是 think_)
     // 设置当前模型对应的完整数据表名称
-    //protected $table = 'fl_article';
+    //protected $table = 'fl_page';
     
     // 默认主键为自动识别，如果需要指定，可以设置属性
     protected $pk = 'id';
@@ -34,7 +34,7 @@ class Article extends Base
     
     public function getDb()
     {
-        return db('article');
+        return db('page');
     }
     
     /**

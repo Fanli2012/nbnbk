@@ -3,7 +3,7 @@ namespace app\common\validate;
 
 use think\Validate;
 
-class Article extends Validate
+class Page extends Validate
 {
     // 验证规则
     protected $rule = [

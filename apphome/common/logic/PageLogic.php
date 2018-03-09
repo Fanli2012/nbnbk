@@ -2,9 +2,9 @@
 namespace app\common\logic;
 use think\Loader;
 use app\common\lib\ReturnData;
-use app\common\model\Article;
+use app\common\model\Page;
 
-class ArticleLogic extends BaseLogic
+class PageLogic extends BaseLogic
 {
     protected function initialize()
     {
@@ -13,12 +13,12 @@ class ArticleLogic extends BaseLogic
     
     public function getModel()
     {
-        return new Article();
+        return new Page();
     }
     
     public function getValidate()
     {
-        return Loader::validate('Article');
+        return Loader::validate('Page');
     }
     
     //列表
@@ -55,7 +55,7 @@ class ArticleLogic extends BaseLogic
         $res = $this->getDataView($res);
         $res['typename'] = $this->getModel()->getTypenameAttr($res);
         
-        db('article')->where($where)->setInc('click', 1);
+        db('Page')->where($where)->setInc('click', 1);
         
         return $res;
     }

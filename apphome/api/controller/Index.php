@@ -1,6 +1,7 @@
 <?php
 namespace app\api\controller;
-use app\common\model\Article;
+use app\common\lib\Token;
+use app\common\lib\ReturnData;
 
 class Index extends Base
 {
@@ -10,6 +11,27 @@ class Index extends Base
 		//return $this->fetch();
     }
     
+    //安卓升级信息
+	public function andriodUpgrade()
+	{
+		$res = array(
+			'appname'       => 'nbnbk', //app名字
+			'serverVersion' => 2, //服务器版本号
+            'serverFlag'    => 1, //服务器标志
+			'lastForce'     => 0, //是否强制更新，0不强制，1强制
+            'updateurl'     => 'http://www.baidu.com/wap/app-release.apk', //apk下载地址
+			'upgradeinfo'   => '描述：3.0.0' //版本更新的描述
+		);
+        
+        exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+	}
+    
+	//关于
+    public function about(Request $request)
+    {
+        return ReturnData::create(ReturnData::SUCCESS,array('url'=>'http://www.baidu.com'));
+    }
+	
     public function arclist()
     {
         echo ':():';

@@ -448,15 +448,11 @@ function get_keywords($keyword)
 }
 
 //获取二维码
-function get_erweima($url="")
+function get_erweima($url,$size=6)
 {
 	Vendor('phpqrcode.qrlib');
-	
-	$url = str_replace("%26","&",$url);
-	$url = str_replace("%3F","?",$url);
-	$url = str_replace("%3D","=",$url);
-	
-	return QRcode::png($url, false, "H", 6);
+	ob_end_clean();
+	return 'data:image/png;base64,'.base64_encode(\QRcode::png($url, false, "H", $size));
 }
 
 //根据栏目id获取栏目信息

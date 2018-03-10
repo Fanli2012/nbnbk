@@ -2,9 +2,9 @@
 namespace app\common\logic;
 use think\Loader;
 use app\common\lib\ReturnData;
-use app\common\model\Article;
+use app\common\model\Payment;
 
-class ArticleLogic extends BaseLogic
+class PaymentLogic extends BaseLogic
 {
     protected function initialize()
     {
@@ -13,12 +13,12 @@ class ArticleLogic extends BaseLogic
     
     public function getModel()
     {
-        return new Article();
+        return new Payment();
     }
     
     public function getValidate()
     {
-        return Loader::validate('Article');
+        return Loader::validate('Payment');
     }
     
     //列表
@@ -31,9 +31,24 @@ class ArticleLogic extends BaseLogic
             foreach($res['list'] as $k=>$v)
             {
                 $res['list'][$k] = $this->getDataView($v);
-                $res['list'][$k]['typename'] = $this->getModel()->getTypenameAttr($v);
             }
         }
+        
+        return $res;
+    }
+    
+    //全部列表
+    public function getAll($where = array(), $order = '', $field = '*', $limit = '')
+    {
+        $res = $this->getModel()->getAll($where, $order, $field, $limit);
+        
+        /* if($res)
+        {
+            foreach($res as $k=>$v)
+            {
+                $res[$k] = $this->getDataView($v);
+            }
+        } */
         
         return $res;
     }
@@ -53,9 +68,6 @@ class ArticleLogic extends BaseLogic
         if(!$res){return false;}
         
         $res = $this->getDataView($res);
-        $res['typename'] = $this->getModel()->getTypenameAttr($res);
-        
-        $this->getModel()->getDb()->where($where)->setInc('click', 1);
         
         return $res;
     }

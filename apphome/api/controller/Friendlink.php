@@ -4,9 +4,9 @@ use think\Db;
 use think\Request;
 use app\common\lib\Token;
 use app\common\lib\ReturnData;
-use app\common\logic\PageLogic;
+use app\common\logic\FriendlinkLogic;
 
-class Page extends Base
+class Friendlink extends Base
 {
 	public function _initialize()
 	{
@@ -15,7 +15,7 @@ class Page extends Base
     
     public function getLogic()
     {
-        return new PageLogic();
+        return new FriendlinkLogic();
     }
     
     //列表
@@ -25,20 +25,11 @@ class Page extends Base
         $where = array();
         $limit = input('limit',10);
         $offset = input('offset', 0);
-        if(input('keyword', null) !== null){$where['title'] = ['like','%'.input('keyword').'%'];}
-        $orderby = input('orderby','id desc');
+        if(input('group_id', null) !== null){$where['group_id'] = input('group_id');}
+        $orderby = input('orderby','rank asc');
         
-        $res = $this->getLogic()->getList($where,$orderby,['body'],$offset,$limit);
+        $res = $this->getLogic()->getList($where,$orderby,'*',$offset,$limit);
 		
-        if($res['list'])
-        {
-            foreach($res['list'] as $k=>$v)
-            {
-                $res['list'][$k]['url'] = http_host().get_front_url(array('pagename'=>$v['filename'],'type'=>'page'));
-                if(!empty($v['litpic'])){$res['list'][$k]['litpic'] = http_host().$v['litpic'];}
-            }
-        }
-        
 		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
     }
     
@@ -47,13 +38,10 @@ class Page extends Base
 	{
         //参数
         if(input('id', null) !== null){$where['id'] = input('id');}
-        if(input('filename', null) !== null){$where['filename'] = input('filename');}
         if(!isset($where)){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
-        
-        if(!empty($res['litpic'])){$res['litpic'] = http_host().$res['litpic'];}
         
 		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
     }
@@ -72,7 +60,7 @@ class Page extends Base
     //修改
     public function edit()
     {
-        if(input('id',null)!=null){$id = input('id');}else{$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(input('id',null)!=null){$id = input('id');}else{$id='';}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
         if(IS_POST)
         {
@@ -88,7 +76,7 @@ class Page extends Base
     //删除
     public function del()
     {
-        if(input('id',null)!=null){$id = input('id');}else{$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(input('id',null)!=null){$id = input('id');}else{$id='';}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
         if(IS_POST)
         {

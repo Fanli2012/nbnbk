@@ -9,7 +9,7 @@ class Index extends Controller
 {
     //首页
     public function index()
-	{
+	{echo '<pre>';print_r($_SERVER['DOCUMENT_ROOT']);exit;
         return $this->fetch();
     }
 	

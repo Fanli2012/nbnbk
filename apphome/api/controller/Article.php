@@ -10,8 +10,6 @@ class Article extends Base
 {
 	public function _initialize()
 	{
-        //Token::TokenAuth(request()); //TOKEN验证
-        
 		parent::_initialize();
     }
     
@@ -26,11 +24,11 @@ class Article extends Base
         //参数
         $limit = input('param.limit',10);
         $offset = input('param.offset', 0);
-        if(input('param.typeid', '') !== ''){$where['typeid'] = input('param.typeid');}
-        if(input('param.keyword', '') !== ''){$where['title'] = ['like','%'.input('param.keyword').'%'];}
-        if(input('tuijian', '') !== ''){$where['tuijian'] = input('tuijian');}
+        if(input('param.typeid', null) !== null){$where['typeid'] = input('param.typeid');}
+        if(input('param.keyword', null) !== null){$where['title'] = ['like','%'.input('param.keyword').'%'];}
+        if(input('tuijian', null) !== null){$where['tuijian'] = input('tuijian');}
         $where['ischeck'] = 0;
-        $orderby = input('orderby','');
+        $orderby = input('orderby','id desc');
         
         $res = $this->getLogic()->getList($where,$orderby,['body'],$offset,$limit);
 		
@@ -50,9 +48,9 @@ class Article extends Base
     public function detail()
 	{
         //参数
-        $where['id'] = input('param.id','');
+        $where['id'] = input('param.id',null);
         
-        if($where['id'] == ''){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if($where['id'] == null){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
@@ -76,7 +74,7 @@ class Article extends Base
     //修改
     public function edit()
     {
-        if(input('id','')!=''){$id = input('id');}else{$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(input('id',null)!=null){$id = input('id');}else{$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
         if(IS_POST)
         {
@@ -88,11 +86,11 @@ class Article extends Base
             exit(json_encode($res));
         }
     }
-
+    
     //删除
     public function del()
     {
-        if(input('id','')!=''){$id = input('id');}else{$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(input('id',null)!=null){$id = input('id');}else{$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
         if(IS_POST)
         {

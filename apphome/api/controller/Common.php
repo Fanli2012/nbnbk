@@ -16,15 +16,6 @@ class Common extends Controller
 	public function _initialize()
 	{
         parent::_initialize();
-        
-		/* if(!Session::has('admin_user_info'))
-		{
-			$this->error('您访问的页面不存在或已被删除！', '/',3);
-		}
-        else
-        {
-            $this->user_info = Session::get('admin_user_info');
-        } */
     }
 	
     /**

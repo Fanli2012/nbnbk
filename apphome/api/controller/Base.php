@@ -1,5 +1,6 @@
 <?php
 namespace app\api\controller;
+use app\common\lib\Token;
 use app\common\lib\ReturnData;
 
 class Base extends Common
@@ -15,18 +16,13 @@ class Base extends Common
 	{
         parent::_initialize();
         
-        //权限验证
-        /* if(session('admin_user_info')['role_id'] <> 1)
+        //哪些方法不需要TOKEN验证
+        $uncheck = array('article/index','article/detail','page/index','page/detail','friendlink/index','payment/index','slide/index','sysconfig/index');
+        if(!in_array(strtolower(request()->controller()).'/'.request()->action(), $uncheck))
         {
-            $this->check();
-        } */
-        
-        /* $request = Request::instance();
-        $uncheck = array('article/index','article/detail','banner/index','banner/detail','brand/index','brand/detail','car/index','car/detail','fsproduct/index','fsproduct/detail','index/index','index/detail','orderloan/index','orderloan/detail');
-        if(!in_array(strtolower($request->controller()).'/'.$request->action(), $uncheck))
-        {
-            $this->check_token();
-        } */
+            //TOKEN验证
+            Token::TokenAuth(request());
+        }
     }
 	
     /**

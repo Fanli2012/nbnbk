@@ -2,9 +2,9 @@
 namespace app\common\logic;
 use think\Loader;
 use app\common\lib\ReturnData;
-use app\common\model\Article;
+use app\common\model\Sysconfig;
 
-class ArticleLogic extends BaseLogic
+class SysconfigLogic extends BaseLogic
 {
     protected function initialize()
     {
@@ -13,12 +13,12 @@ class ArticleLogic extends BaseLogic
     
     public function getModel()
     {
-        return new Article();
+        return new Sysconfig();
     }
     
     public function getValidate()
     {
-        return Loader::validate('Article');
+        return Loader::validate('Sysconfig');
     }
     
     //列表
@@ -31,7 +31,6 @@ class ArticleLogic extends BaseLogic
             foreach($res['list'] as $k=>$v)
             {
                 $res['list'][$k] = $this->getDataView($v);
-                $res['list'][$k]['typename'] = $this->getModel()->getTypenameAttr($v);
             }
         }
         
@@ -53,9 +52,6 @@ class ArticleLogic extends BaseLogic
         if(!$res){return false;}
         
         $res = $this->getDataView($res);
-        $res['typename'] = $this->getModel()->getTypenameAttr($res);
-        
-        $this->getModel()->getDb()->where($where)->setInc('click', 1);
         
         return $res;
     }

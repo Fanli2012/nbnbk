@@ -162,16 +162,6 @@ class Article extends Base
         return $this->where($where)->delete();
     }
     
-    /**
-     * 统计
-     * @param array $where 条件
-     * @return int
-     */
-    public function count($where = array())
-    {
-        return $this->where($where)->count();
-    }
-    
     //是否审核
     public function getIscheckAttr($data)
     {

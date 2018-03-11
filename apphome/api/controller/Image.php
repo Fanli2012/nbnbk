@@ -13,13 +13,14 @@ class Image extends Common
     }
     
     public $path;
-    public $public_path = $_SERVER['DOCUMENT_ROOT'];
+    public $public_path;
     
     public function __construct()
     {
         parent::__construct();
         
         $this->path = '/uploads/'.date('Y/m',time());
+        $this->public_path = $_SERVER['DOCUMENT_ROOT'];
     }
     
     //单文件/图片上传，成功返回路径，不含域名
@@ -38,14 +39,14 @@ class Image extends Common
         if(!in_array($type, $allow_type))
         {
             //如果不被允许，则直接停止程序运行
-            return ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件格式不正确');
+            exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件格式不正确')));
         }
         
         //判断是否是通过HTTP POST上传的
         if(!is_uploaded_file($file['tmp_name']))
         {
             //如果不是通过HTTP POST上传的
-            return ReturnData::create(ReturnData::SYSTEM_FAIL);
+            exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL)));
         }
         
         //文件小于1M
@@ -53,7 +54,7 @@ class Image extends Common
         {
             if ($file["error"] > 0)
             {
-                return ReturnData::create(ReturnData::SYSTEM_FAIL,null,$file["error"]);
+                exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,$file["error"])));
             }
             else
             {
@@ -67,10 +68,10 @@ class Image extends Common
         }
         else
         {
-            return ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件不得超过2M');
+            exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件不得超过2M')));
         }
         
-        return ReturnData::create(ReturnData::SUCCESS,$image_path);
+        exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$image_path)));
     }
     
     /**
@@ -100,14 +101,14 @@ class Image extends Common
                 if(!in_array($type, $allow_type))
                 {
                     //如果不被允许，则直接停止程序运行
-                    return ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件格式不正确');
+                    exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件格式不正确')));
                 }
                 
                 //判断是否是通过HTTP POST上传的
                 if(!is_uploaded_file($file['tmp_name'][$key]))
                 {
                     //如果不是通过HTTP POST上传的
-                    return ReturnData::create(ReturnData::SYSTEM_FAIL);
+                    exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL)));
                 }
                 
                 //文件小于2M
@@ -115,7 +116,7 @@ class Image extends Common
                 {
                     if ($file["error"][$key] > 0)
                     {
-                        return ReturnData::create(ReturnData::SYSTEM_FAIL,null,$file["error"][$key]);
+                        exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,$file["error"][$key])));
                     }
                     else
                     {
@@ -129,14 +130,14 @@ class Image extends Common
                 }
                 else
                 {
-                    return ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件不得超过2M');
+                    exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件不得超过2M')));
                 }
                 
                 $res[] = $image_path;
             }
         }
         
-        return ReturnData::create(ReturnData::SUCCESS,$res);
+        exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
     }
     
     /**
@@ -166,14 +167,14 @@ class Image extends Common
                 if(!in_array($type, $allow_type))
                 {
                     //如果不被允许，则直接停止程序运行
-                    return ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件格式不正确');
+                    exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件格式不正确')));
                 }
                 
                 //判断是否是通过HTTP POST上传的
                 if(!is_uploaded_file($file['tmp_name']))
                 {
                     //如果不是通过HTTP POST上传的
-                    return ReturnData::create(ReturnData::SYSTEM_FAIL);
+                    exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL)));
                 }
                 
                 //文件小于1M
@@ -181,7 +182,7 @@ class Image extends Common
                 {
                     if ($file["error"] > 0)
                     {
-                        return ReturnData::create(ReturnData::SYSTEM_FAIL,null,$file["error"]);
+                        exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,$file["error"])));
                     }
                     else
                     {
@@ -195,13 +196,13 @@ class Image extends Common
                 }
                 else
                 {
-                    return ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件不得超过2M');
+                    exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件不得超过2M')));
                 }
                 
                 $res[] = $image_path;
             }
         }
         
-        return ReturnData::create(ReturnData::SUCCESS,$res);
+        exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
     }
 }

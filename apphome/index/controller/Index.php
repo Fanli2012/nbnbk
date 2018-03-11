@@ -9,7 +9,7 @@ class Index extends Controller
 {
     //首页
     public function index()
-	{echo '<pre>';print_r($_SERVER['DOCUMENT_ROOT']);exit;
+	{
         return $this->fetch();
     }
 	
@@ -222,15 +222,18 @@ class Index extends Controller
     
 	public function test()
     {
+        //echo '<pre>';print_r(request());exit;
 		//echo (dirname('/images/uiui/1.jpg'));
 		//echo '<pre>';
-		$str='<p><img border="0" src="./images/1.jpg" alt=""/></p>';
+		//$str='<p><img border="0" src="./images/1.jpg" alt=""/></p>';
 		
 		//echo getfirstpic($str);
-		$imagepath='.'.getfirstpic($str);
-		$image = new \Think\Image(); 
-		$image->open($imagepath);
+		//$imagepath='.'.getfirstpic($str);
+		//$image = new \Think\Image(); 
+		//$image->open($imagepath);
 		// 按照原图的比例生成一个最大为240*180的缩略图并保存为thumb.jpg
-		$image->thumb(CMS_IMGWIDTH, CMS_IMGHEIGHT)->save('./images/1thumb.jpg');
+		//$image->thumb(CMS_IMGWIDTH, CMS_IMGHEIGHT)->save('./images/1thumb.jpg');
+        
+        return $this->fetch();
     }
 }

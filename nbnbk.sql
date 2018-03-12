@@ -80,15 +80,14 @@ CREATE TABLE `fl_arctype` (
   `typename` varchar(30) NOT NULL DEFAULT '' COMMENT '栏目名称',
   `seotitle` varchar(150) DEFAULT '' COMMENT 'seo标题',
   `keywords` varchar(60) DEFAULT '' COMMENT '关键词',
-  `description` varchar(255) DEFAULT '' COMMENT '描述',
+  `description` varchar(250) DEFAULT '' COMMENT '描述',
   `content` text COMMENT '内容',
-  `sortrank` smallint(5) DEFAULT '50' COMMENT '排序',
+  `listorder` smallint(5) DEFAULT '50' COMMENT '排序',
   `typedir` varchar(30) NOT NULL DEFAULT '' COMMENT '别名',
   `templist` varchar(50) DEFAULT '' COMMENT '列表页模板',
   `temparticle` varchar(50) DEFAULT '' COMMENT '文章页模板',
   `litpic` varchar(100) DEFAULT '' COMMENT '封面或缩略图',
   `seokeyword` varchar(60) DEFAULT '' COMMENT '判断相关,可不填',
-  `model` int(4) DEFAULT '0' COMMENT '栏目所属的模型',
   PRIMARY KEY (`id`),
   UNIQUE KEY `typename` (`typename`),
   UNIQUE KEY `typedir` (`typedir`)
@@ -96,7 +95,7 @@ CREATE TABLE `fl_arctype` (
 
 /*Data for the table `fl_arctype` */
 
-insert  into `fl_arctype`(`id`,`reid`,`addtime`,`typename`,`seotitle`,`keywords`,`description`,`content`,`sortrank`,`typedir`,`templist`,`temparticle`,`litpic`,`seokeyword`,`model`) values (1,0,1483345707,'新闻中心','新闻中心_72pcms','新闻中心','新闻中心','<p>新闻中心</p>',50,'news','category','detail','/uploads/2016/10/201610100341073966.jpg','新闻中心',0),(2,0,1476063429,'案例中心','企业新闻_72pcms','企业新闻','企业新闻','<p>企业新闻</p>',50,'qiye','category','detail','','企业新闻',0),(3,1,1476063419,'行业新闻','行业新闻_72pcms','行业新闻','行业新闻','<p>行业新闻</p>',50,'hangye','category','detail','','行业新闻',0),(4,1,1476068069,'企业新闻','','','','<p>案例中心内容</p>',50,'case','category','detail','','',0);
+insert  into `fl_arctype`(`id`,`reid`,`addtime`,`typename`,`seotitle`,`keywords`,`description`,`content`,`listorder`,`typedir`,`templist`,`temparticle`,`litpic`,`seokeyword`) values (1,0,1483345707,'新闻中心','新闻中心_72pcms','新闻中心','新闻中心','<p>新闻中心</p>',50,'news','category','detail','/uploads/2016/10/201610100341073966.jpg','新闻中心'),(2,0,1476063429,'案例中心','企业新闻_72pcms','企业新闻','企业新闻','<p>企业新闻</p>',50,'qiye','category','detail','','企业新闻'),(3,1,1476063419,'行业新闻','行业新闻_72pcms','行业新闻','行业新闻','<p>行业新闻</p>',50,'hangye','category','detail','','行业新闻'),(4,1,1476068069,'企业新闻','','','','<p>案例中心内容</p>',50,'case','category','detail','','');
 
 /*Table structure for table `fl_article` */
 
@@ -193,43 +192,6 @@ CREATE TABLE `fl_keyword` (
 /*Data for the table `fl_keyword` */
 
 insert  into `fl_keyword`(`id`,`keyword`,`rpurl`) values (1,'优化','http://www.pe7.org/'),(2,'搜索引擎','http://www.baidu.com/'),(3,'百度移动','http://www.ui.com'),(4,'MACD','http://www.baidu.com/');
-
-/*Table structure for table `fl_member` */
-
-DROP TABLE IF EXISTS `fl_member`;
-
-CREATE TABLE `fl_member` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `email` varchar(60) NOT NULL DEFAULT '' COMMENT '邮箱',
-  `user_name` varchar(60) NOT NULL DEFAULT '' COMMENT '用户名',
-  `password` varchar(50) NOT NULL DEFAULT '' COMMENT '密码',
-  `pay_password` varchar(50) NOT NULL DEFAULT '' COMMENT '支付密码',
-  `head_img` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
-  `sex` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '性别1男2女',
-  `birthday` date NOT NULL DEFAULT '1990-01-01' COMMENT '生日',
-  `money` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '用户余额',
-  `frozen_money` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '用户冻结资金',
-  `point` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '用户能用积分',
-  `rank_points` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '会员等级积分',
-  `address_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '收货信息id,表值表user_address',
-  `add_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '注册时间',
-  `user_rank` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '用户等级',
-  `parent_id` mediumint(9) NOT NULL DEFAULT '0' COMMENT '推荐人id',
-  `nickname` varchar(30) NOT NULL DEFAULT '' COMMENT '昵称',
-  `mobile` varchar(20) NOT NULL DEFAULT '' COMMENT '手机号码',
-  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '用户状态 1正常状态 2 删除至回收站 3锁定',
-  `group_id` mediumint(5) NOT NULL DEFAULT '0' COMMENT '分组',
-  `updated_at` timestamp NULL DEFAULT NULL COMMENT '更新时间',
-  `signin_time` timestamp NULL DEFAULT NULL COMMENT '签到时间',
-  `openid` varchar(100) NOT NULL DEFAULT '',
-  `unionid` varchar(100) NOT NULL DEFAULT '',
-  `push_id` varchar(30) NOT NULL DEFAULT '' COMMENT '推送id',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-
-/*Data for the table `fl_member` */
-
-insert  into `fl_member`(`id`,`email`,`user_name`,`password`,`pay_password`,`head_img`,`sex`,`birthday`,`money`,`frozen_money`,`point`,`rank_points`,`address_id`,`add_time`,`user_rank`,`parent_id`,`nickname`,`mobile`,`status`,`group_id`,`updated_at`,`signin_time`,`openid`,`unionid`,`push_id`) values (1,'ecshop@ecshop.com','ecshop','e10adc3949ba59abbe56e057f20f883e','123123','',0,'1960-03-03','234.00','0.00',20,0,11,0,0,0,'','15280719355',0,0,NULL,'2017-08-11 00:24:20','','',''),(2,'vip@ecshop.com','vip','e10adc3949ba59abbe56e057f20f883e','','',0,'1949-01-01','0.00','0.00',0,0,0,0,0,0,'','15280719356',0,0,NULL,NULL,'','',''),(3,'374861669@qq.com','FLi','e10adc3949ba59abbe56e057f20f883e','202cb962ac59075b964b07152d234b70','/uploads/2017/10/201710131156534963.jpeg',2,'1990-01-01','123.00','0.00',0,0,12,0,0,0,'阿什顿','15280719357',1,0,NULL,NULL,'','',''),(4,'','ockGfuLHR3lHQqBNTaTeBzPg-rNs','','','http://wx.qlogo.cn/mmopen/vi_32/tLnN9s8TMx2iaBK8gC3h62sBxQbZP9DvETG19nYyrlGgDAGVLVkJunA2bibmBvsExicP1QNYrULrAGjHAJias0vz4A/0',1,'1990-01-01','0.00','0.00',0,0,0,0,0,0,'林一峰','',1,0,NULL,NULL,'ockGfuLHR3lHQqBNTaTeBzPg-rNs','','');
 
 /*Table structure for table `fl_menu` */
 

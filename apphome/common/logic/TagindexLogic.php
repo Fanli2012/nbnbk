@@ -2,9 +2,9 @@
 namespace app\common\logic;
 use think\Loader;
 use app\common\lib\ReturnData;
-use app\common\model\Arctype;
+use app\common\model\Tagindex;
 
-class ArctypeLogic extends BaseLogic
+class TagindexLogic extends BaseLogic
 {
     protected function initialize()
     {
@@ -13,12 +13,12 @@ class ArctypeLogic extends BaseLogic
     
     public function getModel()
     {
-        return new Arctype();
+        return new Tagindex();
     }
     
     public function getValidate()
     {
-        return Loader::validate('Arctype');
+        return Loader::validate('Tagindex');
     }
     
     //列表
@@ -52,8 +52,6 @@ class ArctypeLogic extends BaseLogic
         if(!$res){return false;}
         
         $res = $this->getDataView($res);
-        
-        $this->getModel()->getDb()->where($where)->setInc('click', 1);
         
         return $res;
     }

@@ -3,7 +3,7 @@ namespace app\common\model;
 
 use think\Db;
 
-class Token extends Base
+class Tagindex extends Base
 {
     // 模型会自动对应数据表，模型类的命名规则是除去表前缀的数据表名称，采用驼峰法命名，并且首字母大写，例如：模型名UserType，约定对应数据表think_user_type(假设数据库的前缀定义是 think_)
     // 设置当前模型对应的完整数据表名称
@@ -14,7 +14,7 @@ class Token extends Base
     
     public function getDb()
     {
-        return db('token');
+        return db('tagindex');
     }
     
     /**
@@ -142,10 +142,17 @@ class Token extends Base
         return $this->where($where)->delete();
     }
     
-    //类型，0:app, 1:admin, 2:weixin, 3:wap, 4: pc
+    //类型，0通用，注册，1:手机绑定业务验证码，2:密码修改业务验证码
     public function getTypeAttr($data)
     {
-        $arr = array(0 => 'app', 1 => 'admin', 2 => 'weixin', 3 => 'wap', 4 => 'pc');
+        $arr = array(0 => '通用', 1 => '手机绑定业务验证码', 2 => '密码修改业务验证码');
         return $arr[$data['type']];
+    }
+    
+    //状态
+    public function getStatusAttr($data)
+    {
+        $arr = array(0 => '未使用', 1 => '已使用');
+        return $arr[$data['status']];
     }
 }

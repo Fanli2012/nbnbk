@@ -414,11 +414,11 @@ CREATE TABLE `fl_sysconfig` (
   `info` varchar(100) NOT NULL DEFAULT '' COMMENT '变量值',
   `value` text NOT NULL COMMENT '变量说明',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC COMMENT='系统参数配置表';
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC COMMENT='系统参数配置表';
 
 /*Data for the table `fl_sysconfig` */
 
-insert  into `fl_sysconfig`(`id`,`varname`,`info`,`value`) values (1,'CMS_WEBNAME','网站名称','nbnbk'),(2,'CMS_BASEHOST','站点根网址','http://www.nbnbk.com'),(3,'CMS_UPLOADS','图片/上传文件默认路径','/uploads'),(4,'CMS_CSS','css默认存放路径','/css'),(5,'CMS_JS','js默认存放路径','/js'),(6,'CMS_INDEXNAME','主页链接名','首页'),(7,'CMS_POWERBY','网站版权信息','© nbnbk'),(8,'CMS_IMGWIDTH','缩略图默认宽度','240'),(9,'CMS_IMGHEIGHT','缩略图默认高度','180'),(10,'CMS_SEOTITLE','网站seotitle','nbnbk seotitle'),(11,'CMS_KEYWORDS','网站关键词Keywords','nbnbk keywords'),(12,'CMS_DESCRIPTION','网站描述','nbnbk des'),(13,'CMS_ISCACHE','是否开启缓存，1开启，0关闭','1'),(14,'CMS_MAXARC','最大返回列表结果数，默认220','220'),(15,'CMS_PAGESIZE','列表每页显示的数量，默认11','11'),(16,'CMS_WEBSITE_MAIN_KEYWORD','网站主题，主要关键词','宠文');
+insert  into `fl_sysconfig`(`id`,`varname`,`info`,`value`) values (1,'CMS_WEBNAME','网站名称','nbnbk'),(2,'CMS_BASEHOST','站点根网址','http://www.nbnbk.com'),(3,'CMS_UPLOADS','图片/上传文件默认路径','/uploads'),(4,'CMS_CSS','css默认存放路径','/css'),(5,'CMS_JS','js默认存放路径','/js'),(6,'CMS_INDEXNAME','主页链接名','首页'),(7,'CMS_POWERBY','网站版权信息','© nbnbk'),(8,'CMS_IMGWIDTH','缩略图默认宽度','240'),(9,'CMS_IMGHEIGHT','缩略图默认高度','180'),(10,'CMS_SEOTITLE','网站seotitle','nbnbk seotitle'),(11,'CMS_KEYWORDS','网站关键词Keywords','nbnbk keywords'),(12,'CMS_DESCRIPTION','网站描述','nbnbk des'),(13,'CMS_ISCACHE','是否开启缓存，1开启，0关闭','1'),(14,'CMS_MAXARC','最大返回列表结果数，默认220','220'),(15,'CMS_PAGESIZE','列表每页显示的数量，默认11','11'),(16,'CMS_WEBSITE_MAIN_KEYWORD','网站主题，主要关键词','宠文'),(17,'CMS_WX_COMPONENT_VERIFY_TICKET','微信后台推送的ticket','zxs'),(18,'CMS_WX_COMPONENT_APPID','第三方平台appid','第三方平台appid'),(19,'CMS_WX_COMPONENT_APPSECRET','第三方平台appsecret','第三方平台appid'),(20,'CMS_WX_APPID','微信appid','wx2ac97c40c4050e24'),(21,'CMS_WX_APPSECRET','微信appsecret','a0aad71844bbacbe8928447741c82a43'),(22,'CMS_WX_MCHID','微信支付商户号','1331184301'),(23,'CMS_WX_SHAER_TITLE','微信分享标题','微信分享测试-标题'),(24,'CMS_WX_SHAER_DESC','微信分享描述','微信分享描述'),(25,'CMS_WX_SHAER_LINK','微信分享链接','http://www.lqycms.com/weixin'),(26,'CMS_WX_SHAER_IMGURL','微信分享图标','http://www.lqycms.com/images/weixin/no_user.jpg'),(27,'CMS_WX_TOKEN','公众号消息校验Token，公众平台上，开发者设置的token','公众号消息校验Token，公众平台上，开发者设置的token'),(28,'CMS_WX_ENCODINGAESKEY','公众号消息加解密Key，公众平台上，开发者设置的EncodingAESKey','CMS_WX_ENCODINGAESKEY');
 
 /*Table structure for table `fl_tagindex` */
 

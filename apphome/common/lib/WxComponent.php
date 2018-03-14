@@ -141,16 +141,16 @@ class WxComponent
 
     /**
      * 获得预授权码
-     * @param $access_token
+     * @param $component_access_token
      * @return bool|mixed{
      *    "pre_auth_code":"Cx_Dk6qiBE0Dmx4EmlT3oRfArPvwSQ-oa3NL_fwHM7VI08r52wazoZX2Rhpz1dEw",
      *    "expires_in":600
      *    }
      */
-    public function getPreauthCode($access_token)
+    public function getPreauthCode($component_access_token)
     {
         $arr    = array('component_appid' => $this->component_appid);
-        $result = $this->httpPost(self::API_URL_PREFIX . self::GET_PREAUTHCODE_URL . $access_token, json_encode($arr));
+        $result = $this->httpPost(self::API_URL_PREFIX . self::GET_PREAUTHCODE_URL . $component_access_token, json_encode($arr));
         if ($result) {
             $json = json_decode($result, true);
             if (!$json || !empty($json['errcode'])) {

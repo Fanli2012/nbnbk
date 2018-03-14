@@ -22,7 +22,9 @@ class Login extends Common
             Cache::set('component_access_token', $api_component_token['component_access_token'], 3600);
         }
         
-        $login_url = "https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=".sysconfig('CMS_WX_COMPONENT_APPID')."&pre_auth_code=".."&redirect_uri=".url('authcallback');
+        $pre_auth_code = $WxComponent->getPreauthCode(Cache::get('component_access_token'));
+        
+        $login_url = "https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=".sysconfig('CMS_WX_COMPONENT_APPID')."&pre_auth_code=$pre_auth_code".."&redirect_uri=".url('authcallback');
         $this->assign('login_url',$login_url);
         
         return $this->fetch();

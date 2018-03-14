@@ -1,20 +1,84 @@
 <?php
 namespace app\common\model;
 
+use app\common\lib\Helper;
+use app\common\lib\Sms;
 use think\Db;
 
 class VerifyCode extends Base
 {
-    // 模型会自动对应数据表，模型类的命名规则是除去表前缀的数据表名称，采用驼峰法命名，并且首字母大写，例如：模型名UserType，约定对应数据表think_user_type(假设数据库的前缀定义是 think_)
-    // 设置当前模型对应的完整数据表名称
-    //protected $table = 'fl_page';
-    
-    // 默认主键为自动识别，如果需要指定，可以设置属性
     protected $pk = 'id';
     
     public function getDb()
     {
         return db('verify_code');
+    }
+    
+    const STATUS_UNUSE = 0;
+    const STATUS_USE = 1;                                                       //验证码已被使用
+    
+    const TYPE_GENERAL = 0;                                                     //通用
+    const TYPE_REGISTER = 1;                                                    //用户注册业务验证码
+    const TYPE_CHANGE_PASSWORD = 2;                                             //密码修改业务验证码
+    const TYPE_MOBILEE_BIND = 3;                                                //手机绑定业务验证码
+	const TYPE_VERIFYCODE_LOGIN = 4;                                            //验证码登录
+	const TYPE_CHANGE_MOBILE = 5;                                               //修改手机号码
+	
+    //验证码校验
+    public function isVerify($mobile, $code, $type)
+    {
+        return $this->getOne(array('code'=>$code,'mobile'=>$mobile,'type'=>$type,'status'=>self::STATUS_UNUSE,'expired_at'=>array('>',date('Y-m-d H:i:s'))));
+    }
+    
+    //生成验证码
+    public function getVerifyCode($mobile,$type,$text='')
+    {
+        //验证手机号
+        if (!Helper::isValidMobile($mobile))
+        {
+            return ReturnData::create(ReturnData::MOBILE_FORMAT_FAIL);
+        }
+        
+        switch ($type)
+        {
+            case self::TYPE_GENERAL;//通用
+                break;
+            case self::TYPE_REGISTER: //用户注册业务验证码
+                break;
+            case self::TYPE_CHANGE_PASSWORD: //密码修改业务验证码
+                break;
+            case self::TYPE_MOBILEE_BIND: //手机绑定业务验证码
+                break;
+            case self::TYPE_VERIFYCODE_LOGIN: //验证码登录
+                break;
+            case self::TYPE_CHANGE_MOBILE: //修改手机号码
+                break;
+            default:
+                return ReturnData::create(ReturnData::INVALID_VERIFYCODE);
+        }
+        
+        $data['type'] = $type;
+        $data['mobile'] = $mobile;
+        $data['code'] = rand(1000, 9999);
+        $data['status'] = self::STATUS_UNUSE;
+        //10分钟有效
+        $data['expired_at'] = date('Y-m-d H:i:s',(time()+60*20));
+        
+        //短信发送验证码
+        if (strpos($data['mobile'], '+') !== false)
+        {
+            $text = "【hoo】Your DC verification Code is: ".$data['code'];
+        }
+        else
+        {
+            $text = "【后】您的验证码是".$data['code']."，有效期20分钟。";
+        }
+        
+        Sms::sendByYp($text,$data['mobile']);
+		
+		$this->add($data);
+		
+        return ReturnData::create(ReturnData::SUCCESS,array('code' => $data['code']));
     }
     
     /**
@@ -73,6 +137,32 @@ class VerifyCode extends Base
         }
         
         return $res->order($order)->paginate($limit, false, array('query' => request()->param()));
+    }
+    
+    /**
+     * 查询全部
+     * @param array $where 查询条件
+     * @param string $order 排序
+     * @param string $field 字段
+     * @param int $limit 取多少条
+     * @return array
+     */
+    public function getAll($where = array(), $order = '', $field = '*', $limit = '')
+    {
+        $res = $this->getDb()->where($where);
+            
+        if(is_array($field))
+        {
+            $res = $res->field($field[0],true);
+        }
+        else
+        {
+            $res = $res->field($field);
+        }
+        
+        $res = $res->order($order)->limit($limit)->select();
+        
+        return $res;
     }
     
     /**

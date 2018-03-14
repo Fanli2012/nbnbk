@@ -76,6 +76,32 @@ class Sysconfig extends Base
     }
     
     /**
+     * 查询全部
+     * @param array $where 查询条件
+     * @param string $order 排序
+     * @param string $field 字段
+     * @param int $limit 取多少条
+     * @return array
+     */
+    public function getAll($where = array(), $order = '', $field = '*', $limit = '')
+    {
+        $res = $this->getDb()->where($where);
+            
+        if(is_array($field))
+        {
+            $res = $res->field($field[0],true);
+        }
+        else
+        {
+            $res = $res->field($field);
+        }
+        
+        $res = $res->order($order)->limit($limit)->select();
+        
+        return $res;
+    }
+    
+    /**
      * 获取一条
      * @param array $where 条件
      * @param string $field 字段

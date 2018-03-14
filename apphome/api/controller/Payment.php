@@ -3,6 +3,7 @@ namespace app\api\controller;
 use think\Db;
 use think\Request;
 use app\common\lib\Token;
+use app\common\lib\Helper;
 use app\common\lib\ReturnData;
 use app\common\logic\PaymentLogic;
 
@@ -47,7 +48,7 @@ class Payment extends Base
     //添加
     public function add()
     {
-        if(IS_POST)
+        if(Helper::isPostRequest())
         {
             $res = $this->getLogic()->add($_POST);
             
@@ -60,7 +61,7 @@ class Payment extends Base
     {
         if(input('id',null)!=null){$id = input('id');}else{$id='';}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
-        if(IS_POST)
+        if(Helper::isPostRequest())
         {
             unset($_POST['id']);
             $where['id'] = $id;
@@ -76,7 +77,7 @@ class Payment extends Base
     {
         if(input('id',null)!=null){$id = input('id');}else{$id='';}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
-        if(IS_POST)
+        if(Helper::isPostRequest())
         {
             unset($_POST['id']);
             $where['id'] = $id;

@@ -45,6 +45,22 @@ class FriendlinkLogic extends BaseLogic
         return $res;
     }
     
+    //全部列表
+    public function getAll($where = array(), $order = '', $field = '*', $limit = '')
+    {
+        $res = $this->getModel()->getAll($where, $order, $field, $limit);
+        
+        /* if($res)
+        {
+            foreach($res as $k=>$v)
+            {
+                $res[$k] = $this->getDataView($v);
+            }
+        } */
+        
+        return $res;
+    }
+    
     //详情
     public function getOne($where = array())
     {

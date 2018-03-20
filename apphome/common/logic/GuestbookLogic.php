@@ -2,9 +2,9 @@
 namespace app\common\logic;
 use think\Loader;
 use app\common\lib\ReturnData;
-use app\common\model\Page;
+use app\common\model\Guestbook;
 
-class PageLogic extends BaseLogic
+class GuestbookLogic extends BaseLogic
 {
     protected function initialize()
     {
@@ -13,12 +13,12 @@ class PageLogic extends BaseLogic
     
     public function getModel()
     {
-        return new Page();
+        return new Guestbook();
     }
     
     public function getValidate()
     {
-        return Loader::validate('Page');
+        return Loader::validate('Guestbook');
     }
     
     //列表
@@ -41,6 +41,22 @@ class PageLogic extends BaseLogic
     public function getPaginate($where = array(), $order = '', $field = '*', $limit = '')
     {
         $res = $this->getModel()->getPaginate($where, $order, $field, $limit);
+        
+        return $res;
+    }
+    
+    //全部列表
+    public function getAll($where = array(), $order = '', $field = '*', $limit = '')
+    {
+        $res = $this->getModel()->getAll($where, $order, $field, $limit);
+        
+        /* if($res)
+        {
+            foreach($res as $k=>$v)
+            {
+                $res[$k] = $this->getDataView($v);
+            }
+        } */
         
         return $res;
     }

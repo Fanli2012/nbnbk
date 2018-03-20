@@ -832,7 +832,7 @@ if (! function_exists('dd')) {
      * @param  mixed
      * @return void
      */
-    function dd(...$args)
+    function dd($args)
     {
         echo '<pre>';
         foreach ($args as $x)

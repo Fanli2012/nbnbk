@@ -27,8 +27,8 @@ class Login extends Controller
         if(!empty($_POST["username"])){$username = $_POST["username"];}else{$username='';}//用户名
         if(!empty($_POST["pwd"])){$pwd = md5($_POST["pwd"]);}else{$pwd='';}//密码
 		
-		$sql = "(username = '".$username."' and pwd = '".$pwd."') or (email = '".$username."' and pwd = '".$pwd."')";
-        $admin = db("admin")->where($sql)->find();
+		//$sql = "(username = '".$username."' and pwd = '".$pwd."') or (email = '".$username."' and pwd = '".$pwd."')";
+        $admin = db("admin")->where(function($query) use ($username,$pwd){$query->where('username',$username)->where('pwd',$pwd);})->whereOr(function($query) use ($username,$pwd){$query->where('email',$username)->where('pwd',$pwd);})->find();
         
         if($admin)
         {

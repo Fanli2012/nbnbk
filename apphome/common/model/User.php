@@ -142,17 +142,17 @@ class User extends Base
         return $this->where($where)->delete();
     }
     
-    //类型，0通用，注册，1:手机绑定业务验证码，2:密码修改业务验证码
-    public function getTypeAttr($data)
+    //性别，性别1男2女 
+    public function getSexAttr($data)
     {
-        $arr = array(0 => '通用', 1 => '手机绑定业务验证码', 2 => '密码修改业务验证码');
-        return $arr[$data['type']];
+        $arr = array(1 => '男', 2 => '女');
+        return $arr[$data['sex']];
     }
     
-    //状态
+    //用户状态 1正常状态 2 删除至回收站 3锁定
     public function getStatusAttr($data)
     {
-        $arr = array(0 => '未使用', 1 => '已使用');
+        $arr = array(1 => '正常', 2 => '删除', 3 => '锁定');
         return $arr[$data['status']];
     }
 }

@@ -10,10 +10,10 @@
 // +----------------------------------------------------------------------
 namespace tests;
 
-class ExampleTest extends TestCase
+class IndexTest extends TestCase
 {
-    public function testBasicExample()
+    public function testSomethingIsTrue()
     {
-        $this->visit('/')->see('ThinkPHP');
+        $this->assertTrue(true);
     }
 }

@@ -387,6 +387,19 @@ CREATE TABLE `fl_searchword` (
 
 insert  into `fl_searchword`(`id`,`name`,`title`,`description`,`content`,`pubdate`,`keywords`,`click`,`litpic`,`template`,`filename`,`ischeck`,`showaway`) values (1,'全本小说','全本小说_免费全本小说_全本免费小说_好看的全本小说_全本小说推荐','全本小说_免费全本小说_全本免费小说_好看的全本小说_全本小说推荐','<p>全本小说_免费全本小说_全本免费小说_好看的全本小说_全本小说推荐</p>',1486627422,'全本小说',319,'/zc/uploads/2017/02/201702091603283821.jpg','tag','quanbenxiaoshuo',0,0),(2,'星河','','','',1486643716,'',480,'/zc/uploads/2017/02/201702092035101085.jpg','tag','liuwenyang',1,0),(3,'柳文扬',NULL,NULL,NULL,1486634456,'',249,'',NULL,NULL,0,0),(4,'凡尔纳',NULL,NULL,NULL,1486634577,'',478,'',NULL,NULL,0,0);
 
+/*Table structure for table `fl_session` */
+
+DROP TABLE IF EXISTS `fl_session`;
+
+CREATE TABLE `fl_session` (
+  `session_id` varchar(255) NOT NULL,
+  `session_expire` int(11) NOT NULL DEFAULT '0',
+  `session_data` blob,
+  UNIQUE KEY `session_id` (`session_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+/*Data for the table `fl_session` */
+
 /*Table structure for table `fl_slide` */
 
 DROP TABLE IF EXISTS `fl_slide`;

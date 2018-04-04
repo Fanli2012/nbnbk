@@ -189,12 +189,12 @@ class VerifyCode extends Base
         if($type==0)
         {
             // 新增单条数据并返回主键值
-            return $this->getDb()->insertGetId($data);
+            return $this->getDb()->strict(false)->insertGetId($data);
         }
         elseif($type==1)
         {
             // 添加单条数据
-            return $this->getDb()->insert($data);
+            return $this->getDb()->strict(false)->insert($data);
         }
         elseif($type==2)
         {
@@ -207,7 +207,7 @@ class VerifyCode extends Base
              * ];
              */
             
-            return $this->getDb()->insertAll($data);
+            return $this->getDb()->strict(false)->insertAll($data);
         }
     }
     

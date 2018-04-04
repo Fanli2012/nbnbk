@@ -1,11 +1,18 @@
 <?php
 namespace app\fladmin\controller;
+use app\common\lib\ReturnData;
+use app\common\logic\GoodsLogic;
 
-class Product extends Base
+class Goods extends Base
 {
 	public function _initialize()
 	{
 		parent::_initialize();
+    }
+    
+    public function getLogic()
+    {
+        return new GoodsLogic();
     }
     
     public function index()
@@ -24,12 +31,12 @@ class Product extends Base
             $where['typeid'] = $_REQUEST["id"];
         }
         
-		$prolist = parent::pageList('product',$where);
+        $prolist = $this->getLogic()->getPaginate($where, '', ['body']);
 		$posts = array();
 		foreach($prolist as $key=>$value)
         {
-            $info = db('product_type')->field('content',true)->where("id=".$value['typeid'])->find();
-            $value['typename'] = $info['typename'];
+            $info = db('goods_type')->field('content',true)->where("id=".$value['typeid'])->find();
+            $value['name'] = $info['name'];
 			$posts[] = $value;
         }
 		

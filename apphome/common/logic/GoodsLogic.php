@@ -2,9 +2,9 @@
 namespace app\common\logic;
 use think\Loader;
 use app\common\lib\ReturnData;
-use app\common\model\Article;
+use app\common\model\Goods;
 
-class ArticleLogic extends BaseLogic
+class GoodsLogic extends BaseLogic
 {
     protected function initialize()
     {
@@ -13,12 +13,12 @@ class ArticleLogic extends BaseLogic
     
     public function getModel()
     {
-        return new Article();
+        return new Goods();
     }
     
     public function getValidate()
     {
-        return Loader::validate('Article');
+        return Loader::validate('Goods');
     }
     
     //列表
@@ -63,9 +63,9 @@ class ArticleLogic extends BaseLogic
     }
     
     //详情
-    public function getOne($where = array(), $field = '*')
+    public function getOne($where = array())
     {
-        $res = $this->getModel()->getOne($where, $field);
+        $res = $this->getModel()->getOne($where);
         if(!$res){return false;}
         
         $res = $this->getDataView($res);

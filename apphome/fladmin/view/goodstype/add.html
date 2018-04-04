@@ -2,18 +2,18 @@
 {block name="title"}添加分类{/block}
 
 {block name="content"}
-<h5 class="sub-header"><a href="/fladmin/Producttype">商品分类管理</a> > 添加分类</h5>
+<h5 class="sub-header"><a href="{:url('index')}">商品分类管理</a> > 添加分类</h5>
 
-<form method="post" action="/fladmin/Producttype/doadd" role="form" id="addcat" class="table-responsive">
+<form method="post" action="{:url('doadd')}" role="form" id="addcat" class="table-responsive">
 <table class="table table-striped table-bordered">
   <tbody>
     <tr>
       <td align="right">分类名称：</td>
-      <td><input name="typename" type="text" value="" id="typename" size="30" class="required"></td>
+      <td><input name="name" type="text" value="" id="name" size="30" class="required"></td>
     </tr>
 	<tr>
       <td align="right">上级目录：</td>
-      <td><?php if($id==0){echo "顶级栏目";}else{echo $postone["typename"];} ?><input style="display:none;" type="text" name="prid" id="prid" value="<?php if($id==0){echo "top";}else{echo $id;} ?>"></td>
+      <td><?php if($id==0){echo "顶级栏目";}else{echo $postone["name"];} ?><input style="display:none;" type="text" name="prid" id="prid" value="<?php if($id==0){echo "top";}else{echo $id;} ?>"></td>
     </tr>
     <tr>
     <td align="right">别名：</td>
@@ -21,11 +21,11 @@
     </tr>
     <tr>
       <td align="right">列表模板：</td>
-      <td><input name="templist" id="templist" type="text" value="productcategory" class="required" size="20"></td>
+      <td><input name="templist" id="templist" type="text" value="goodscat" class="required" size="20"></td>
     </tr>
     <tr>
       <td align="right">文章模板：</td>
-      <td><input name="temparticle" id="temparticle" type="text" value="productdetail" class="required" size="20"></td>
+      <td><input name="temparticle" id="temparticle" type="text" value="goods" class="required" size="20"></td>
     </tr>
     <tr>
         <td align="right" style="vertical-align:middle;">缩略图：</td>

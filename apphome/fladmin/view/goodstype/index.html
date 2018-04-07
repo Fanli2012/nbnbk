@@ -11,7 +11,7 @@
 <?php foreach($catlist as $row){ ?>
 <tr id="cat-<?php echo $row["id"]; ?>">
 <td><?php echo $row["id"]; ?></td>
-<td><a href="{:url('index',array('id'=>$row['id']))}"><?php for($i=0;$i<$row["deep"];$i++){echo "— ";}echo $row["name"]; ?></a></td>
+<td><a href="{:url('fladmin/goods/index')}?id=<?php echo $row["id"]; ?>"><?php for($i=0;$i<$row["deep"];$i++){echo "— ";}echo $row["name"]; ?></a></td>
 <td><?php echo catarcnum($row["id"].'goods'); ?></td>
 <td><?php echo $row["typedir"]; ?></td>
 <td><?php echo date('Y-m-d',$row["addtime"]); ?></td>

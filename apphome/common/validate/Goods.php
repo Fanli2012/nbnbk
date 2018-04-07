@@ -14,7 +14,7 @@ class Goods extends Validate
         ['title', 'require|max:150','标题必填|标题不能超过150个字符'],
         ['sn', 'max:60','货号不能超过60个字符'],
         ['price',  'require|regex:/^\d{0,10}(\.\d{0,2})?$/', '产品价格必填|产品价格只能带2位小数的数字'],
-        ['litpic', 'max:100','缩略图不能超过100个字符'],
+        ['litpic', 'require|max:100','缩略图必须上传|缩略图不能超过100个字符'],
         ['pubdate', 'number', '更新时间格式不正确'],
         ['add_time', 'require|number', '添加时间必填|添加时间必须是数字'],
         ['keywords', 'max:60','关键词不能超过60个字符'],

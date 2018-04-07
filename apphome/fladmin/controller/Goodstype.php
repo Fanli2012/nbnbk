@@ -51,11 +51,11 @@ class Goodstype extends Base
         $res = $this->getLogic()->add($_POST);
 		if($res['code']==ReturnData::SUCCESS)
         {
-            $this->success('添加成功！', url('index'), '', 1);
+            $this->success($res['msg'], url('index'), '', 1);
         }
 		else
 		{
-			$this->error('添加失败！请修改后重新添加');
+			$this->error($res['msg']);
 		}
     }
     
@@ -79,11 +79,11 @@ class Goodstype extends Base
         $res = $this->getLogic()->edit($_POST,array('id'=>$id));
 		if ($res['code'] == ReturnData::SUCCESS)
         {
-            $this->success('修改成功！', url('index'), '', 1);
+            $this->success($res['msg'], url('index'), '', 1);
         }
 		else
 		{
-			$this->error('修改失败！请修改后重新添加', url('edit').'?id='.$_POST["id"], '', 3);
+			$this->error($res['msg']);
 		}
     }
     

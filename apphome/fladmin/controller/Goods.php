@@ -2,6 +2,7 @@
 namespace app\fladmin\controller;
 use app\common\lib\ReturnData;
 use app\common\logic\GoodsLogic;
+use app\common\logic\GoodsBrandLogic;
 
 class Goods extends Base
 {
@@ -35,8 +36,7 @@ class Goods extends Base
 		$posts = array();
 		foreach($prolist as $key=>$value)
         {
-            $info = db('goods_type')->field('content',true)->where("id=".$value['typeid'])->find();
-            $value['name'] = $info['name'];
+            $value['name'] = db('goods_type')->field('content',true)->where("id=".$value['typeid'])->value('name');
 			$posts[] = $value;
         }
 		
@@ -50,6 +50,9 @@ class Goods extends Base
     {
 		if(!empty($_GET["catid"])){$this->assign('catid',$_GET["catid"]);}else{$this->assign('catid',0);}
 		
+        $goods_brand_logic = new GoodsBrandLogic();
+        $this->assign('goodsbrand_list', $goods_brand_logic->getAll('', 'listorder asc', 'id,title'));
+        
         return $this->fetch();
     }
     
@@ -57,7 +60,7 @@ class Goods extends Base
     {
         $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
         if(empty($_POST["description"])){if(!empty($_POST["body"])){$_POST['description']=cut_str($_POST["body"]);}} //description
-        $_POST['addtime'] = $_POST['pubdate'] = time(); //添加&更新时间
+        $_POST['add_time'] = $_POST['pubdate'] = time(); //添加&更新时间
 		$_POST['user_id'] = session('admin_user_info')['id']; // 发布者id
 		
 		//关键词
@@ -76,15 +79,18 @@ class Goods extends Base
 			}
 		}
 		
-		if(isset($_POST['editorValue'])){unset($_POST['editorValue']);}
-		
-		if(db('product')->insert($_POST))
+        if(isset($_POST['promote_start_date'])){$_POST['promote_start_date'] = strtotime($_POST['promote_start_date']);}
+        if(isset($_POST['promote_end_date'])){$_POST['promote_end_date'] = strtotime($_POST['promote_end_date']);}
+        if(empty($_POST['promote_price'])){unset($_POST['promote_price']);}
+        
+        $res = $this->getLogic()->add($_POST);
+		if($res['code']==ReturnData::SUCCESS)
         {
-            $this->success('添加成功！', CMS_ADMIN.'Product' , 1);
+            $this->success($res['msg'], url('index'), '', 1);
         }
 		else
 		{
-			$this->error('添加失败！请修改后重新添加', CMS_ADMIN.'Product/add' , 3);
+			$this->error($res['msg']);
 		}
     }
     
@@ -92,8 +98,15 @@ class Goods extends Base
     {
         if(!empty($_GET["id"])){$id = $_GET["id"];}else {$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit;}
         
+        $post = $this->getLogic()->getOne(array('id'=>$id));
+        if($post['promote_start_date'] != 0){$post['promote_start_date'] = date('Y-m-d H:i:s',$post['promote_start_date']);}
+        if($post['promote_end_date'] != 0){$post['promote_end_date'] = date('Y-m-d H:i:s',$post['promote_end_date']);}
+        
         $this->assign('id',$id);
-		$this->assign('post',db('product')->where("id=$id")->find());
+		$this->assign('post', $post);
+        
+        $goods_brand_logic = new GoodsBrandLogic();
+        $this->assign('goodsbrand_list', $goods_brand_logic->getAll('', 'listorder asc', 'id,title'));
         
         return $this->fetch();
     }
@@ -123,51 +136,54 @@ class Goods extends Base
 			}
 		}
 		
-        if(isset($_POST['editorValue'])){unset($_POST['editorValue']);}
-		
-        if(db('product')->where("id=$id")->update($_POST))
+        if(isset($_POST['promote_start_date'])){$_POST['promote_start_date'] = strtotime($_POST['promote_start_date']);}
+        if(isset($_POST['promote_end_date'])){$_POST['promote_end_date'] = strtotime($_POST['promote_end_date']);}
+        if(empty($_POST['promote_price'])){unset($_POST['promote_price']);}
+        
+        $res = $this->getLogic()->edit($_POST,array('id'=>$id));
+		if ($res['code'] == ReturnData::SUCCESS)
         {
-            $this->success('修改成功！', CMS_ADMIN.'Product' , 1);
+            $this->success($res['msg'], url('index'), '', 1);
         }
 		else
 		{
-			$this->error('修改失败！', CMS_ADMIN.'Product/edit?id='.$_POST["id"] , 3);
+			$this->error($res['msg']);
 		}
     }
     
     public function del()
     {
-		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('删除失败！请重新提交',CMS_ADMIN.'Product' , 3);}if(preg_match('/[0-9]*/',$id)){}else{exit;}
+		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('删除失败！请重新提交');}if(preg_match('/[0-9]*/',$id)){}else{exit;}
 		
-		if(db('product')->where("id in ($id)")->delete())
+		if(db('goods')->where("id in ($id)")->delete())
         {
-            $this->success("$id ,删除成功", CMS_ADMIN.'Product' , 1);
+            $this->success("$id ,删除成功", url('index'), '', 1);
         }
 		else
 		{
-			$this->error("$id ,删除失败！请重新提交", CMS_ADMIN.'Product', 3);
+			$this->error("$id ,删除失败！请重新提交");
 		}
     }
     
 	//商品推荐
 	public function recommendarc()
     {
-		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('删除失败！请重新提交',CMS_ADMIN.'Product' , 3);} //if(preg_match('/[0-9]*/',$id)){}else{exit;}
+		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('删除失败！请重新提交');} //if(preg_match('/[0-9]*/',$id)){}else{exit;}
 		
 		$data['tuijian'] = 1;
 
-        if(db('product')->where("id in ($id)")->update($data))
+        if(db('goods')->where("id in ($id)")->update($data))
         {
-            $this->success("$id ,推荐成功", CMS_ADMIN.'Product', 1);
+            $this->success("$id ,推荐成功", url('index'), '', 1);
         }
 		else
 		{
-			$this->error("$id ,推荐失败！请重新提交", CMS_ADMIN.'Product', 3);
+			$this->error("$id ,推荐失败！请重新提交");
 		}
     }
     
 	//商品是否存在
-    public function productexists()
+    public function goodsexists()
     {
         if(!empty($_GET["title"]))
         {
@@ -183,6 +199,6 @@ class Goods extends Base
             $map['id'] = array('NEQ',$_GET["id"]);
         }
         
-        return db('product')->where($map)->count();
+        return db('goods')->where($map)->count();
     }
 }

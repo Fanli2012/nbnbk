@@ -5,9 +5,9 @@ use think\Request;
 use app\common\lib\Token;
 use app\common\lib\Helper;
 use app\common\lib\ReturnData;
-use app\common\logic\ProductLogic;
+use app\common\logic\GoodsLogic;
 
-class Product extends Base
+class Goods extends Base
 {
 	public function _initialize()
 	{
@@ -16,7 +16,7 @@ class Product extends Base
     
     public function getLogic()
     {
-        return new ProductLogic();
+        return new GoodsLogic();
     }
     
     //列表
@@ -31,7 +31,7 @@ class Product extends Base
         $where['status'] = 0;
         $orderby = input('orderby','id desc');
         
-        $res = $this->getLogic()->getList($where,$orderby,['body'],$offset,$limit);
+        $res = $this->getLogic()->getList($where, $orderby, ['body'], $offset, $limit);
 		
         if($res['list'])
         {
@@ -66,7 +66,7 @@ class Product extends Base
     {
         if(Helper::isPostRequest())
         {
-            $_POST['addtime'] = $_POST['pubdate'] = time();
+            $_POST['add_time'] = $_POST['pubdate'] = time();
             $res = $this->getLogic()->add($_POST);
             
             exit(json_encode($res));
@@ -82,6 +82,7 @@ class Product extends Base
         {
             unset($_POST['id']);
             $where['id'] = $id;
+            $_POST['pubdate'] = time();
             
             $res = $this->getLogic()->edit($_POST,$where);
             

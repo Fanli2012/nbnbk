@@ -5,9 +5,9 @@ use think\Request;
 use app\common\lib\Token;
 use app\common\lib\Helper;
 use app\common\lib\ReturnData;
-use app\common\logic\ProductTypeLogic;
+use app\common\logic\GoodsBrandLogic;
 
-class Producttype extends Base
+class Goodsbrand extends Base
 {
 	public function _initialize()
 	{
@@ -16,7 +16,7 @@ class Producttype extends Base
     
     public function getLogic()
     {
-        return new ProductTypeLogic();
+        return new GoodsBrandLogic();
     }
     
     //列表
@@ -27,7 +27,7 @@ class Producttype extends Base
         $limit = input('limit',10);
         $offset = input('offset', 0);
         $orderby = input('orderby','listorder asc');
-        if(input('reid', null) !== null){$where['reid'] = input('reid');}
+        if(input('parent_id', null) != null){$where['parent_id'] = input('parent_id');}
         
         $res = $this->getLogic()->getList($where,$orderby,['content'],$offset,$limit);
 		

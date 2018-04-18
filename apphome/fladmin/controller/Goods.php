@@ -32,7 +32,7 @@ class Goods extends Base
             $where['typeid'] = $_REQUEST["id"];
         }
         
-        $prolist = $this->getLogic()->getPaginate($where, '', ['body']);
+        $prolist = $this->getLogic()->getPaginate($where, 'id desc', ['body']);
 		$posts = array();
 		foreach($prolist as $key=>$value)
         {
@@ -82,10 +82,26 @@ class Goods extends Base
         if(isset($_POST['promote_start_date'])){$_POST['promote_start_date'] = strtotime($_POST['promote_start_date']);}
         if(isset($_POST['promote_end_date'])){$_POST['promote_end_date'] = strtotime($_POST['promote_end_date']);}
         if(empty($_POST['promote_price'])){unset($_POST['promote_price']);}
+        if(!empty($_POST['goods_img']))
+        {
+            $goods_img = $_POST['goods_img'];
+            $_POST['goods_img'] = $_POST['goods_img'][0];
+        }
         
         $res = $this->getLogic()->add($_POST);
 		if($res['code']==ReturnData::SUCCESS)
         {
+            if(isset($goods_img))
+            {
+                $tmp = [];
+                foreach($goods_img as $k=>$v)
+                {
+                    $tmp[] = ['url'=>$v,'goods_id'=>$goods_id,'add_time'=>time()];
+                }
+                
+                db('goods_img')->insertAll($tmp);
+            }
+            
             $this->success($res['msg'], url('index'), '', 1);
         }
 		else
@@ -107,6 +123,7 @@ class Goods extends Base
         
         $goods_brand_logic = new GoodsBrandLogic();
         $this->assign('goodsbrand_list', $goods_brand_logic->getAll('', 'listorder asc', 'id,title'));
+        $this->assign('goods_img_list', db('goods_img')->where(array('goods_id'=>$id))->order('listorder asc')->select());
         
         return $this->fetch();
     }
@@ -139,10 +156,27 @@ class Goods extends Base
         if(isset($_POST['promote_start_date'])){$_POST['promote_start_date'] = strtotime($_POST['promote_start_date']);}
         if(isset($_POST['promote_end_date'])){$_POST['promote_end_date'] = strtotime($_POST['promote_end_date']);}
         if(empty($_POST['promote_price'])){unset($_POST['promote_price']);}
+        if(!empty($_POST['goods_img']))
+        {
+            $goods_img = $_POST['goods_img'];
+            $_POST['goods_img'] = $_POST['goods_img'][0];
+        }
         
         $res = $this->getLogic()->edit($_POST,array('id'=>$id));
 		if ($res['code'] == ReturnData::SUCCESS)
         {
+            if(isset($goods_img))
+            {
+                $tmp = [];
+                foreach($goods_img as $k=>$v)
+                {
+                    $tmp[] = ['url'=>$v,'goods_id'=>$id,'add_time'=>time()];
+                }
+                
+                db('goods_img')->where(array('goods_id'=>$id))->delete();
+                db('goods_img')->insertAll($tmp);
+            }
+            
             $this->success($res['msg'], url('index'), '', 1);
         }
 		else

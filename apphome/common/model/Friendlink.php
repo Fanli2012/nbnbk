@@ -168,7 +168,7 @@ class Friendlink extends Base
      */
     public function edit($data, $where = array())
     {
-        return $this->allowField(true)->isUpdate(true)->save($data, $where);
+        return $this->getDb()->strict(false)->where($where)->update($data);
     }
     
     /**
@@ -178,6 +178,6 @@ class Friendlink extends Base
      */
     public function del($where)
     {
-        return $this->where($where)->delete();
+        return $this->getDb()->where($where)->delete();
     }
 }

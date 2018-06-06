@@ -925,3 +925,14 @@ function echo_json($data)
     header("content-type:application/json");
     exit(json_encode($data));
 }
+
+/**
+ * 密码加密
+ * @param  string $str 要加密的密码
+ * @return string 加密后的密码
+ */
+function pwd_encrypt($str)
+{
+    $pwd_key = 'pwd:';
+    return md5($str.$pwd_key);
+}

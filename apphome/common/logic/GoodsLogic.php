@@ -43,6 +43,11 @@ class GoodsLogic extends BaseLogic
     {
         $res = $this->getModel()->getPaginate($where, $order, $field, $limit);
         
+        $res = $res->each(function($item, $key){
+            $item = $this->getDataView($item);
+            return $item;
+        });
+        
         return $res;
     }
     
@@ -85,9 +90,9 @@ class GoodsLogic extends BaseLogic
         if($check === false){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->add($data,$type);
-        if($res === false){return ReturnData::create(ReturnData::SYSTEM_FAIL);}
+        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
-        return ReturnData::create(ReturnData::SUCCESS,$res);
+        return ReturnData::create(ReturnData::SYSTEM_FAIL);
     }
     
     //修改
@@ -96,9 +101,9 @@ class GoodsLogic extends BaseLogic
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
         $res = $this->getModel()->edit($data,$where);
-        if($res === false){return ReturnData::create(ReturnData::SYSTEM_FAIL);}
+        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
-        return ReturnData::create(ReturnData::SUCCESS,$res);
+        return ReturnData::create(ReturnData::SYSTEM_FAIL);
     }
     
     //删除
@@ -110,9 +115,9 @@ class GoodsLogic extends BaseLogic
         if($check === false){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->del($where);
-        if($res === false){return ReturnData::create(ReturnData::SYSTEM_FAIL);}
+        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
-        return ReturnData::create(ReturnData::SUCCESS,$res);
+        return ReturnData::create(ReturnData::SYSTEM_FAIL);
     }
     
     /**

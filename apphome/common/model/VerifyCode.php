@@ -232,7 +232,7 @@ class VerifyCode extends Base
      */
     public function edit($data, $where = array())
     {
-        return $this->allowField(true)->isUpdate(true)->save($data, $where);
+        return $this->getDb()->strict(false)->where($where)->update($data);
     }
     
     /**
@@ -242,7 +242,7 @@ class VerifyCode extends Base
      */
     public function del($where)
     {
-        return $this->where($where)->delete();
+        return $this->getDb()->where($where)->delete();
     }
     
     //类型，0通用，注册，1:手机绑定业务验证码，2:密码修改业务验证码

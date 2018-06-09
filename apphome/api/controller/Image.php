@@ -123,8 +123,20 @@ class Image extends Common
      */
     public function base64ImageUpload(Request $request)
 	{
+        $res = $this->base64ImageSave($_POST['img']);
+        
+        if($res['code'] == ReturnData::SUCCESS)
+        {
+            exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res['data'])));
+        }
+        
+        exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL, null, $res['msg'])));
+    }
+    
+    public function base64ImageSave($files)
+    {
         $res = [];
-        $base64_img = $_POST['img'];
+        $base64_img = $files;
         
         if($base64_img)
         {
@@ -143,26 +155,26 @@ class Image extends Common
                     
                     if(file_put_contents($this->public_path.$image_path, base64_decode(str_replace($result[1], '', $base64_img))))
                     {
-                        exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $image_path)));
+                        return ReturnData::create(ReturnData::SUCCESS, $image_path);
                     }
                     else
                     {
-                        exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,'图片上传失败')));
+                        return ReturnData::create(ReturnData::SYSTEM_FAIL, null, '图片上传失败');
                     }
                 }
                 else
                 {
                     //文件类型错误
-                    exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,'图片上传类型错误')));
+                    return ReturnData::create(ReturnData::SYSTEM_FAIL, null, '图片上传类型错误');
                 }
             }
             else
             {
                 //文件错误
-                exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件错误')));
+                return ReturnData::create(ReturnData::SYSTEM_FAIL, null, '文件错误');
             }
         }
         
-        exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL, '请上传文件')));
+        return ReturnData::create(ReturnData::SYSTEM_FAIL, null, '请上传文件');
     }
 }

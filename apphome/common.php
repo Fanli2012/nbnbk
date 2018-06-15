@@ -936,3 +936,20 @@ function pwd_encrypt($str)
     $pwd_key = 'pwd:';
     return md5($str.$pwd_key);
 }
+
+//判断是否为数字
+function checkIsNumber($data)
+{
+	if($data == '' || $data == null)
+	{
+		return false;
+	}
+	
+    if(preg_match("/^\d*$/",$data))
+	{
+		return true;
+	}
+    
+	return false;
+}
+

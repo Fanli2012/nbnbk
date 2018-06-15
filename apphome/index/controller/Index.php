@@ -9,7 +9,7 @@ class Index extends Controller
 {
     //首页
     public function index()
-	{
+	{echo time();exit;
         return $this->fetch();
     }
 	

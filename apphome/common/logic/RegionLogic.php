@@ -58,6 +58,11 @@ class RegionLogic extends BaseLogic
     {
         $res = $this->getModel()->getPaginate($where, $order, $field, $limit);
         
+        $res = $res->each(function($item, $key){
+            $item = $this->getDataView($item);
+            return $item;
+        });
+        
         return $res;
     }
     

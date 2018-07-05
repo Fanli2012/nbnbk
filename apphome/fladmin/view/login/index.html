@@ -139,11 +139,16 @@ button.btn:hover { opacity: 0.6; color: #fff; }
 			<form method="post" action="/fladmin/Login/dologin" class="login-form" role="form">
 				<div class="form-group">
 					<label class="sr-only" for="form-username">Username</label>
-					<input type="text" id="username" name="username" placeholder="用户名/邮箱/手机号..." class="form-username form-control">
+					<input type="text" id="username" name="username" placeholder="用户名/邮箱/手机号..." class="form-username form-control" required>
 				</div>
 				<div class="form-group">
 					<label class="sr-only" for="form-password">Password</label>
-					<input type="password" id="pwd" name="pwd" placeholder="输入密码..." class="form-password form-control">
+					<input type="password" id="pwd" name="pwd" placeholder="输入密码..." class="form-password form-control" required>
+				</div>
+                <div class="form-group">
+                    <label class="sr-only" for="form-captcha">验证码</label>
+                    <input style="width:200px;display:inline;" type="text" id="captcha" name="captcha" placeholder="请输入验证码..." class="form-captcha form-control" required>
+                    <img id="captcha-img" onclick="javascript:document.getElementById('captcha-img').src='{:captcha_src()}?'+Math.random();" style="width:150px;height:48px;" src="{:captcha_src()}" alt="captcha" />
 				</div>
 				<button type="submit" class="btn">立即登录</button>
 			</form>

@@ -24,6 +24,12 @@ class Login extends Controller
      */
     public function dologin()
     {
+        //验证码验证
+        if(!captcha_check(input('captcha',null)))
+        {
+            $this->error('验证码错误');
+        }
+        
         if(!empty($_POST["username"])){$username = $_POST["username"];}else{$username='';}//用户名
         if(!empty($_POST["pwd"])){$pwd = md5($_POST["pwd"]);}else{$pwd='';}//密码
 		

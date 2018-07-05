@@ -1,5 +1,5 @@
 <?php
-namespace app\common\lib;
+namespace app\common\lib\wechat;
 
 if (!class_exists("WXBizMsgCrypt"))
 {

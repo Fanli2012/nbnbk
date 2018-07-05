@@ -1,6 +1,6 @@
 <?php
 namespace app\index\controller;
-
+use think\Log;
 use think\Request;
 use think\Session;
 use think\Controller;
@@ -9,7 +9,7 @@ class Index extends Controller
 {
     //首页
     public function index()
-	{echo time();exit;
+	{echo APP_PATH;exit;
         return $this->fetch();
     }
 	

@@ -1,7 +1,8 @@
 <?php
 namespace app\common\model;
-
+use app\common\service\Smsbao;
 use app\common\lib\Helper;
+use app\common\lib\ReturnData;
 use app\common\lib\Sms;
 use think\Db;
 
@@ -31,7 +32,7 @@ class VerifyCode extends Base
     }
     
     //生成验证码
-    public function getVerifyCode($mobile,$type,$text='')
+    public function getVerifyCodeBySmsbao($mobile,$type,$text='')
     {
         //验证手机号
         if (!Helper::isValidMobile($mobile))
@@ -61,8 +62,55 @@ class VerifyCode extends Base
         $data['mobile'] = $mobile;
         $data['code'] = rand(1000, 9999);
         $data['status'] = self::STATUS_UNUSE;
-        //10分钟有效
-        $data['expired_at'] = date('Y-m-d H:i:s',(time()+60*20));
+        //30分钟有效
+        $time = time();
+        $data['expired_at'] = date('Y-m-d H:i:s',($time+60*30));
+        $data['created_at'] = date('Y-m-d H:i:s',$time);
+        
+        //短信发送验证码
+        $text = '【'.sysconfig('CMS_WEBNAME').'】您的验证码是'.$data['code'].'，有效期30分钟。';
+        $smsbao = new Smsbao('whhmk', 'whhmk');
+		$res = $smsbao->sms($text, $mobile);
+        if($res['code'] != 0){return ReturnData::create(ReturnData::PARAMS_ERROR, null, $res['msg']);}
+        
+		$this->add($data);
+		
+        return ReturnData::create(ReturnData::SUCCESS, array('smscode' => $data['code']));
+    }
+    
+    //生成验证码
+    public function getVerifyCodeByYunpian($mobile,$type,$text='')
+    {
+        //验证手机号
+        if (!Helper::isValidMobile($mobile))
+        {
+            return ReturnData::create(ReturnData::MOBILE_FORMAT_FAIL);
+        }
+        
+        switch ($type)
+        {
+            case self::TYPE_GENERAL;//通用
+                break;
+            case self::TYPE_REGISTER: //用户注册业务验证码
+                break;
+            case self::TYPE_CHANGE_PASSWORD: //密码修改业务验证码
+                break;
+            case self::TYPE_MOBILEE_BIND: //手机绑定业务验证码
+                break;
+            case self::TYPE_VERIFYCODE_LOGIN: //验证码登录
+                break;
+            case self::TYPE_CHANGE_MOBILE: //修改手机号码
+                break;
+            default:
+                return ReturnData::create(ReturnData::INVALID_VERIFYCODE);
+        }
+        
+        $data['type'] = $type;
+        $data['mobile'] = $mobile;
+        $data['code'] = rand(1000, 9999);
+        $data['status'] = self::STATUS_UNUSE;
+        //30分钟有效
+        $data['expired_at'] = date('Y-m-d H:i:s',(time()+60*30));
         
         //短信发送验证码
         if (strpos($data['mobile'], '+') !== false)
@@ -120,11 +168,10 @@ class VerifyCode extends Base
      * @param string $order 排序
      * @param string $field 字段
      * @param int $limit 每页几条
-     * @param int|bool $simple 是否简洁模式或者总记录数
      * @param int $page 当前第几页
      * @return array
      */
-    public function getPaginate($where = array(), $order = '', $field = '*', $limit = 15, $simple = false)
+    public function getPaginate($where = array(), $order = '', $field = '*', $limit = 15)
     {
         $res = $this->getDb()->where($where);
         
@@ -137,7 +184,7 @@ class VerifyCode extends Base
             $res = $res->field($field);
         }
         
-        return $res->order($order)->paginate($limit, $simple, array('query' => request()->param()));
+        return $res->order($order)->paginate($limit, false, array('query' => request()->param()));
     }
     
     /**

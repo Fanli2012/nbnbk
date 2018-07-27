@@ -1,6 +1,7 @@
 <?php
 namespace app\common\service;
 
+
 /**
  * 短信宝
  */
@@ -43,7 +44,15 @@ class Smsbao
         $sendurl = $this->smsapi."sms?u=".$user."&p=".$pass."&m=".$phone."&c=".urlencode($content);
         $result  = file_get_contents($sendurl) ;
         
-        return $this->status_str[$result];
+        //添加短信发送记录
+        $data['mobile'] = $sms_phone;
+        $data['text'] = $content;
+        $data['status'] = 2;
+        if($result==0){$data['status'] = 1;}
+        $data['add_time'] = time();
+        model('SmsLog')->add($data);
+        
+        return ['code'=>$result, 'msg'=>$this->status_str[$result], 'data'=>null];
     }
     
     /**
@@ -62,7 +71,14 @@ class Smsbao
         $sendurl = $this->smsapi."wsms?u=".$user."&p=".$pass."&m=".$phone."&c=".urlencode($content);
         $result  = file_get_contents($sendurl) ;
         
-        return $this->status_str[$result];
+        //添加短信发送记录
+        $data['mobile'] = $sms_phone;
+        $data['text'] = $content;
+        $data['status'] = 2;
+        if($result==0){$data['status'] = 1;}
+        model('SmsLog')->add($data);
+        
+        return ['code'=>$result, 'msg'=>$this->status_str[$result], 'data'=>null];
     }
     
     /**
@@ -81,6 +97,6 @@ class Smsbao
         $sendurl = $this->smsapi."voice?u=".$user."&p=".$pass."&m=".$phone."&c=".urlencode($content);
         $result  = file_get_contents($sendurl) ;
         
-        return $this->status_str[$result];
+        return ['code'=>$result, 'msg'=>$this->status_str[$result], 'data'=>null];
     }
 }

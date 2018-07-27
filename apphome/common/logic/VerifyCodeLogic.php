@@ -67,12 +67,12 @@ class VerifyCodeLogic extends BaseLogic
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
         $check = $this->getValidate()->scene('add')->check($data);
-        if($check === false){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->add($data,$type);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
-        return ReturnData::create(ReturnData::SYSTEM_FAIL);
+        return ReturnData::create(ReturnData::FAIL);
     }
     
     //修改
@@ -83,7 +83,7 @@ class VerifyCodeLogic extends BaseLogic
         $res = $this->getModel()->edit($data,$where);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
-        return ReturnData::create(ReturnData::SYSTEM_FAIL);
+        return ReturnData::create(ReturnData::FAIL);
     }
     
     //删除
@@ -92,12 +92,12 @@ class VerifyCodeLogic extends BaseLogic
         if(empty($where)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
         $check = $this->getValidate()->scene('del')->check($where);
-        if($check === false){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->del($where);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
-        return ReturnData::create(ReturnData::SYSTEM_FAIL);
+        return ReturnData::create(ReturnData::FAIL);
     }
     
     /**

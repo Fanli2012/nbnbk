@@ -27,7 +27,7 @@ class AdminRole extends Base
     {
 		if(db('admin_role')->insert($_POST))
         {
-			$this->success('添加成功！', CMS_ADMIN.'adminrole' , 1);
+			$this->success('添加成功', CMS_ADMIN.'adminrole' , 1);
         }
 		else
 		{
@@ -51,11 +51,11 @@ class AdminRole extends Base
         
 		if(db('admin_role')->where('id='.$id)->update($_POST))
         {
-            $this->success('修改成功！', CMS_ADMIN.'adminrole' , 1);
+            $this->success('修改成功', CMS_ADMIN.'adminrole' , 1);
         }
 		else
 		{
-			$this->error('修改失败！', CMS_ADMIN.'adminrole' , 3);
+			$this->error('修改失败', CMS_ADMIN.'adminrole' , 3);
 		}
     }
 	
@@ -76,7 +76,7 @@ class AdminRole extends Base
 	//角色权限设置视图
 	public function permissions()
     {
-		if(!empty($_GET["id"])){$role_id = $_GET["id"];}else{$this->error('您访问的页面不存在或已被删除！');}
+		if(!empty($_GET["id"])){$role_id = $_GET["id"];}else{$this->error('您访问的页面不存在或已被删除');}
 		
 		$menu = array();
 		$access = db('access')->where('role_id='.$role_id)->select();
@@ -121,7 +121,7 @@ class AdminRole extends Base
 		}
 		else
 		{
-			$this->error('操作失败！');
+			$this->error('操作失败');
 		}
 		
 		$access = db('access');
@@ -129,11 +129,11 @@ class AdminRole extends Base
 		
 		if($access->insertAll($menus))
         {
-            $this->success('操作成功！');
+            $this->success('操作成功');
         }
 		else
 		{
-			$this->error('操作失败！');
+			$this->error('操作失败');
 		}
     }
 	

@@ -153,7 +153,7 @@ class Article extends Base
                 }
             }
             
-            $this->success('添加成功！', url('index'), '', 1);
+            $this->success('添加成功', url('index'), '', 1);
         }
 		else
 		{
@@ -260,11 +260,11 @@ class Article extends Base
         {
             if(!empty($_POST['ischeck']))
             {
-                $this->success('修改成功！', url('index',array('ischeck'=>1)), '', 1);
+                $this->success('修改成功', url('index',array('ischeck'=>1)), '', 1);
             }
             else
             {
-                $this->success('修改成功！', url('index'), '', 1);
+                $this->success('修改成功', url('index'), '', 1);
             }
         }
 		else

@@ -36,7 +36,7 @@ class Guestbook extends Base
         if(!empty($_POST["username"])){$data['username'] = $map['username'] = $_POST["username"];}else{$this->success('用户名不能为空', CMS_ADMIN.'User/edit' , 3);exit;}//用户名
         if(!empty($_POST["oldpwd"])){$map['pwd'] = md5($_POST["oldpwd"]);}else{$this->success('旧密码错误', CMS_ADMIN.'User/edit' , 3);exit;}
         if($_POST["newpwd"]==$_POST["newpwd2"]){$data['pwd'] = md5($_POST["newpwd"]);}else{$this->success('密码错误', CMS_ADMIN.'User/edit' , 3);exit;}
-        if($_POST["oldpwd"]==$_POST["newpwd"]){$this->error('新旧密码不能一致！', CMS_ADMIN.'User/edit' ,1);exit;}
+        if($_POST["oldpwd"]==$_POST["newpwd"]){$this->error('新旧密码不能一致', CMS_ADMIN.'User/edit' ,1);exit;}
         
         $User = db("guestbook")->where($map)->find();
         

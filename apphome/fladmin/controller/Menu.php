@@ -33,7 +33,7 @@ class Menu extends Base
         {
 			if(!db('access')->where(['role_id' => 1, 'menu_id' => $menuid])->find()){db('access')->strict(false)->insertGetId(['role_id' => 1, 'menu_id' => $menuid]);}
 			
-			$this->success('添加成功！', url('index'), 1);
+			$this->success('添加成功', url('index'), 1);
         }
 		else
 		{
@@ -59,11 +59,11 @@ class Menu extends Base
         
 		if(db('menu')->where('id='.$id)->update($_POST))
         {
-            $this->success('修改成功！', url('index'), 1);
+            $this->success('修改成功', url('index'), 1);
         }
 		else
 		{
-			$this->error('修改失败！');
+			$this->error('修改失败');
 		}
     }
 	

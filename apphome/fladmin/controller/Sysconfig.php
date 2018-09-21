@@ -37,7 +37,7 @@ class Sysconfig extends Base
         //参数名称
         if(!empty($_POST["varname"]))
         {
-			if(!preg_match("/^CMS_[a-z]+$/i", $_POST["varname"]))
+			if(!preg_match("/^CMS_[A-Z_]+$/i", $_POST["varname"]))
 			{
 				$this->error('添加失败！参数名称不正确', CMS_ADMIN.'Sysconfig/add');exit;
 			}
@@ -50,7 +50,7 @@ class Sysconfig extends Base
 		if($_POST['varname']!="" && db('sysconfig')->insert($_POST))
         {
             updateconfig();
-            $this->success('添加成功！', CMS_ADMIN.'Sysconfig' , 1);
+            $this->success('添加成功', CMS_ADMIN.'Sysconfig' , 1);
         }
 		else
 		{
@@ -65,7 +65,7 @@ class Sysconfig extends Base
         //参数名称
         if(!empty($_POST["varname"]))
         {
-            if(!preg_match("/^CMS_[a-z]+$/i", $_POST["varname"]))
+            if(!preg_match("/^CMS_[A-Z_]+$/i", $_POST["varname"]))
 			{
 				$this->error('更新失败！参数名称不正确', CMS_ADMIN.'Sysconfig/edit?id='.$id);exit;
 			}
@@ -78,7 +78,7 @@ class Sysconfig extends Base
 		if(db('sysconfig')->where("id=$id")->update($_POST))
         {
             updateconfig();
-            $this->success('更新成功！', CMS_ADMIN.'Sysconfig');
+            $this->success('更新成功', CMS_ADMIN.'Sysconfig');
         }
 		else
 		{

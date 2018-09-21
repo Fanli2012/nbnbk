@@ -49,7 +49,7 @@ class Category extends Base
 		
 		if(db('arctype')->insert($_POST))
         {
-            $this->success('添加成功！', CMS_ADMIN.'Category' , 1);
+            $this->success('添加成功', CMS_ADMIN.'Category' , 1);
         }
 		else
 		{
@@ -77,7 +77,7 @@ class Category extends Base
         
 		if(db('arctype')->where("id=$id")->update($_POST))
         {
-            $this->success('修改成功！', CMS_ADMIN.'Category' , 1);
+            $this->success('修改成功', CMS_ADMIN.'Category' , 1);
         }
 		else
 		{
@@ -105,7 +105,7 @@ class Category extends Base
 					}
 					else
 					{
-						$this->error('栏目下的文章删除失败！', CMS_ADMIN.'Category', 3);
+						$this->error('栏目下的文章删除失败', CMS_ADMIN.'Category', 3);
 					}
 				}
 				else

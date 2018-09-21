@@ -432,11 +432,12 @@ function cut_str($string, $sublen=250, $omitted = '', $start=0, $code='UTF-8')
 //PhpAnalysis获取中文分词
 function get_keywords($keyword)
 {
-	Vendor('phpAnalysis.phpAnalysis');
+	//Vendor('phpAnalysis.phpAnalysis');
+	include(EXTEND_PATH.'phpAnalysis/phpAnalysis.php'); //引入phpAnalysis类
 	//import("Vendor.phpAnalysis.phpAnalysis");
 	//初始化类
-	PhpAnalysis::$loadInit = false;
-    $pa = new PhpAnalysis('utf-8', 'utf-8', false);
+	\PhpAnalysis::$loadInit = false;
+    $pa = new \PhpAnalysis('utf-8', 'utf-8', false);
 	//载入词典
 	$pa->LoadDict();
 	//执行分词
@@ -450,7 +451,8 @@ function get_keywords($keyword)
 //获取二维码
 function get_erweima($url,$size=6)
 {
-	Vendor('phpqrcode.qrlib');
+	//Vendor('phpqrcode.qrlib');
+	include(EXTEND_PATH.'phpqrcode/qrlib.php'); //引入phpqrcode类
 	ob_end_clean();
 	return 'data:image/png;base64,'.base64_encode(\QRcode::png($url, false, "H", $size));
 }

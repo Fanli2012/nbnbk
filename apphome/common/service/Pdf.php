@@ -3,7 +3,7 @@
 // | 阿里云OSS服务
 // +----------------------------------------------------------------------
 namespace app\common\service;
-require_once __DIR__ . '/../../../extend/mpdf/mpdf.php';
+require_once EXTEND_PATH.'mpdf/mpdf.php';
 
 class Pdf
 {

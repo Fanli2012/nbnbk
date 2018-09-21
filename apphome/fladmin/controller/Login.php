@@ -44,7 +44,7 @@ class Login extends Controller
 			
 			db("admin")->where("id=".$admin['id'])->setField('logintime',time());
 			
-			$this->success('登录成功！', CMS_ADMIN , 1);
+			$this->success('登录成功', CMS_ADMIN , 1);
         }
         else
         {
@@ -56,7 +56,7 @@ class Login extends Controller
     public function loginout()
     {
         Session::clear(); // 清除session
-		$this->success('退出成功！', '/');
+		$this->success('退出成功', '/');
     }
     
     //密码恢复
@@ -67,11 +67,11 @@ class Login extends Controller
         
         if(db('admin')->where("id=1")->update($data))
         {
-            $this->success('密码恢复成功！', CMS_ADMIN.'Login' , 1);
+            $this->success('密码恢复成功', CMS_ADMIN.'Login' , 1);
         }
 		else
 		{
-			$this->error('密码恢复失败！', CMS_ADMIN.'Login' , 3);
+			$this->error('密码恢复失败', CMS_ADMIN.'Login' , 3);
 		}
     }
 	

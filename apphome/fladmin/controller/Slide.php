@@ -23,7 +23,7 @@ class Slide extends Base
 		if(isset($_POST['editorValue'])){unset($_POST['editorValue']);}
 		if(db('slide')->insert($_POST))
         {
-            $this->success('添加成功！', CMS_ADMIN.'Slide' , 1);
+            $this->success('添加成功', CMS_ADMIN.'Slide' , 1);
         }
 		else
 		{
@@ -54,11 +54,11 @@ class Slide extends Base
 		
 		if(db('slide')->where("id=$id")->update($_POST))
         {
-            $this->success('修改成功！', CMS_ADMIN.'Slide' , 1);
+            $this->success('修改成功', CMS_ADMIN.'Slide' , 1);
         }
 		else
 		{
-			$this->error('修改失败！', CMS_ADMIN.'Slide/edit?id='.$id , 3);
+			$this->error('修改失败', CMS_ADMIN.'Slide/edit?id='.$id , 3);
 		}
     }
     

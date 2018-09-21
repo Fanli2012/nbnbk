@@ -7,5 +7,4 @@ class Test extends Base
     {
         echo md5('admin');
     }
-    
 }

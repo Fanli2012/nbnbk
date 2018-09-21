@@ -3,8 +3,9 @@
 // | 阿里云OSS服务
 // +----------------------------------------------------------------------
 namespace app\common\service;
-require_once __DIR__ . '/../../../extend/OSS/OssClient.php';
-require_once __DIR__ . '/../../../extend/OSS/Core/OssException.php';
+require_once EXTEND_PATH.'OSS/OssClient.php';
+require_once EXTEND_PATH.'OSS/Core/OssException.php';
+
 use OSS\OssClient;
 use OSS\Core\OssException;
 

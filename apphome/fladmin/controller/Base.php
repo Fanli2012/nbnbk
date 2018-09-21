@@ -35,7 +35,7 @@ class Base extends Common
         			
         		if(empty($check))
                 {
-        			$this->error('您暂时无权限浏览,请联系管理员！');
+        			$this->error('您暂时无权限浏览,请联系管理员');
         		}
         	}
         }

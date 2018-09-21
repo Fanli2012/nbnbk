@@ -47,8 +47,9 @@ class Index extends Base
 		$url = str_replace("%26","&",$url);
 		$url = str_replace("%3F","?",$url);
 		$url = str_replace("%3D","=",$url); */
-		Vendor('phpqrcode.phpqrcode');
-		
+		//Vendor('phpqrcode.phpqrcode');
+		include(EXTEND_PATH.'phpqrcode/phpqrcode.php'); //引入phpqrcode类
+
         //\QRcode::png("http://www.baidu.com", false, "L", 4 ,2);
 		//\QRcode::png('http://www.baidu.com', './uploads/erweima.png', 'L',6, 2);
 		return \QRcode::png("http://www.baidu.com",false,"H",6);
@@ -65,7 +66,8 @@ class Index extends Base
 	
 	public function hprose()
     {
-		Vendor('hprose.HproseHttpClient');
+		//导入类库
+		include(EXTEND_PATH.'hprose/HproseHttpClient.php'); //引入Hprose类
 		$client = new \HproseHttpClient('http://www.thinkphp5.com/flapi/Api');
         //$client = new \Hprose\Http\Client('http://www.thinkphp5.com/flapi/Api/test1', false); // 创建一个同步的 HTTP 客户端
         // 或者采用

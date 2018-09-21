@@ -29,7 +29,7 @@ class Admin extends Base
 		$_POST['pwd'] = md5($_POST['pwd']);
 		if(db('admin')->insert($_POST))
         {
-			$this->success('添加成功！', CMS_ADMIN.'admin' , 1);
+			$this->success('添加成功', CMS_ADMIN.'admin' , 1);
         }
 		else
 		{
@@ -57,11 +57,11 @@ class Admin extends Base
 		$_POST['pwd'] = md5($_POST['pwd']);
 		if(db('admin')->where('id='.$id)->update($_POST))
         {
-            $this->success('修改成功！', CMS_ADMIN.'admin' , 1);
+            $this->success('修改成功', CMS_ADMIN.'admin' , 1);
         }
 		else
 		{
-			$this->error('修改失败！', CMS_ADMIN.'admin' , 3);
+			$this->error('修改失败', CMS_ADMIN.'admin' , 3);
 		}
     }
 	

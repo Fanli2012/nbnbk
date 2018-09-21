@@ -40,7 +40,7 @@ class Tag extends Base
                     db("taglist")->insert($data2);
                 }
             }
-            $this->success('添加成功！', CMS_ADMIN.'Tag' , 1);
+            $this->success('添加成功', CMS_ADMIN.'Tag' , 1);
         }
 		else
 		{
@@ -117,11 +117,11 @@ class Tag extends Base
                 db("taglist")->where("tid=$id")->delete();
             }
             
-            $this->success('修改成功！', CMS_ADMIN.'Tag' , 1);
+            $this->success('修改成功', CMS_ADMIN.'Tag' , 1);
         }
 		else
 		{
-			$this->error('修改失败！', CMS_ADMIN.'Tag/edit?id='.$_POST["id"] , 3);
+			$this->error('修改失败', CMS_ADMIN.'Tag/edit?id='.$_POST["id"] , 3);
 		}
     }
     

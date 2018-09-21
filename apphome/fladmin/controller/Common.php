@@ -30,7 +30,7 @@ class Common extends Controller
         
 		if(!Session::has('admin_user_info'))
 		{
-			$this->error('您访问的页面不存在或已被删除！', '/',3);
+			$this->error('您访问的页面不存在或已被删除', '/',3);
 		}
         else
         {
@@ -50,13 +50,13 @@ class Common extends Controller
 			else
 			{
 				$menu_id = db('menu')->where(array('module'=>$request->module(), 'controller'=>$request->controller(), 'action'=>$request->action()))->value('id');
-				if(!$menu_id){$this->error('你没有权限访问，请联系管理员！', CMS_ADMIN, 3);}
+				if(!$menu_id){$this->error('你没有权限访问，请联系管理员', CMS_ADMIN, 3);}
 				
 				$check = db('access')->where(array('role_id' => $this->admin_user_info['role_id'], 'menu_id' => $menu_id))->find();
 				
 				if(!$check)
 				{
-					$this->error('你没有权限访问，请联系管理员！', CMS_ADMIN, 3);
+					$this->error('你没有权限访问，请联系管理员', CMS_ADMIN, 3);
 				}
 			}
         }
@@ -96,6 +96,6 @@ class Common extends Controller
     //设置空操作
     public function _empty()
     {
-        return $this->error('您访问的页面不存在或已被删除！');
+        return $this->error('您访问的页面不存在或已被删除');
     }
 }

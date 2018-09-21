@@ -21,7 +21,7 @@ class Page extends Base
         
         if(db("page")->insert($_POST))
         {
-            $this->success('添加成功！', CMS_ADMIN.'Page' , 1);
+            $this->success('添加成功', CMS_ADMIN.'Page' , 1);
         }
 		else
 		{
@@ -52,7 +52,7 @@ class Page extends Base
         
         if(db('page')->where("id=$id")->update($_POST))
         {
-            $this->success('修改成功！', CMS_ADMIN.'Page' , 1);
+            $this->success('修改成功', CMS_ADMIN.'Page' , 1);
         }
 		else
 		{

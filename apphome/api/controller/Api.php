@@ -25,8 +25,9 @@ class Api extends Hprose
 		$url = str_replace("%26","&",$url);
 		$url = str_replace("%3F","?",$url);
 		$url = str_replace("%3D","=",$url); */
-		Vendor('phpqrcode.phpqrcode');
-		
+		//Vendor('phpqrcode.phpqrcode');
+        include(EXTEND_PATH.'phpqrcode/phpqrcode.php'); //引入phpqrcode类
+
         //\QRcode::png("http://www.baidu.com", false, "L", 4 ,2);
 		//\QRcode::png('http://www.baidu.com', './uploads/erweima.png', 'L',6, 2);
 		return \QRcode::png("http://www.baidu.com",false,"H",6);

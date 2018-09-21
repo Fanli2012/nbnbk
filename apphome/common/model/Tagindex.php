@@ -56,10 +56,11 @@ class Tagindex extends Base
      * @param string $order 排序
      * @param string $field 字段
      * @param int $limit 每页几条
+     * @param int|bool $simple 是否简洁模式或者总记录数
      * @param int $page 当前第几页
      * @return array
      */
-    public function getPaginate($where = array(), $order = '', $field = '*', $limit = 15)
+    public function getPaginate($where = array(), $order = '', $field = '*', $limit = 15, $simple = false)
     {
         $res = $this->getDb()->where($where);
         
@@ -72,7 +73,7 @@ class Tagindex extends Base
             $res = $res->field($field);
         }
         
-        return $res->order($order)->paginate($limit, false, array('query' => request()->param()));
+        return $res->order($order)->paginate($limit, $simple, array('query' => request()->param()));
     }
     
     /**

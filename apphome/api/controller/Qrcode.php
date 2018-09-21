@@ -38,9 +38,9 @@ class Qrcode extends Common
 		$url = str_replace("%26","&",$url);
 		$url = str_replace("%3F","?",$url);
 		$url = str_replace("%3D","=",$url);
-		
-        require_once(resource_path('org/phpqrcode/phpqrcode.php'));
-        
+
+		require_once(EXTEND_PATH.'phpqrcode/phpqrcode.php'); //引入phpqrcode类
+
 		return \QRcode::png($url,false,"H",6);
 	}
 }

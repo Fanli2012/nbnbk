@@ -28,7 +28,7 @@
 $(function(){
 	var bempty = true;
     $("#varname").blur(function(){
-        var reg = /^cms_[a-z]+$/i; // 创建正则表达式模式
+        var reg = /^CMS_[A-Z_]+$/i; // 创建正则表达式模式
         var str = this.value;
         if(!str.match(reg)){bempty=false;alert('输入错误，请重新输入！');}else{bempty=true}
     });

@@ -1,5 +1,7 @@
 <?php
 namespace app\flapi\controller;
+use think\Loader;
+
 /**
  * ThinkPHP Hprose控制器类
  */
@@ -22,7 +24,7 @@ class Hprose
             $this->_initialize();
 		
         //导入类库
-        Vendor('hprose.HproseHttpServer');
+        include(EXTEND_PATH.'hprose/HproseHttpServer.php'); //引入Hprose类
         //实例化HproseHttpServer
         $server         =   new \HproseHttpServer();
 		

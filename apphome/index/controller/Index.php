@@ -9,7 +9,7 @@ class Index extends Controller
 {
     //首页
     public function index()
-	{echo APP_PATH;exit;
+	{echo dirname(__FILE__);exit;
         return $this->fetch();
     }
 	
@@ -19,9 +19,9 @@ class Index extends Controller
         $cat=input('cat');
         $pagenow=input('page');
         
-		if(empty($cat) || !preg_match('/[0-9]+/',$cat)){$this->error('您访问的页面不存在或已被删除！', '/' , 3);exit;}
+		if(empty($cat) || !preg_match('/[0-9]+/',$cat)){$this->error('您访问的页面不存在或已被删除', '/' , 3);exit;}
         
-		if(cache("catid$cat")){$post=cache("catid$cat");}else{$post = db('arctype')->where("id=$cat")->find();if(empty($post)){$this->error('您访问的页面不存在或已被删除！', '/' , 3);exit;}cache("catid$cat",$post,2592000);}
+		if(cache("catid$cat")){$post=cache("catid$cat");}else{$post = db('arctype')->where("id=$cat")->find();if(empty($post)){$this->error('您访问的页面不存在或已被删除', '/' , 3);exit;}cache("catid$cat",$post,2592000);}
         $this->assign('post',$post);
         
 		$subcat="";$sql="";
@@ -37,7 +37,7 @@ class Index extends Controller
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果
 		}else{$pages = $counts/$pagesize;}
-		if(!empty($pagenow)){if($pagenow==1 || $pagenow>$pages){header("HTTP/1.0 404 Not Found");$this->error('您访问的页面不存在或已被删除！');exit;}$page = $pagenow-1;$nextpage=$pagenow+1;$previouspage=$pagenow-1;}else{$page = 0;$nextpage=2;$previouspage=0;}
+		if(!empty($pagenow)){if($pagenow==1 || $pagenow>$pages){header("HTTP/1.0 404 Not Found");$this->error('您访问的页面不存在或已被删除');exit;}$page = $pagenow-1;$nextpage=$pagenow+1;$previouspage=$pagenow-1;}else{$page = 0;$nextpage=2;$previouspage=0;}
 		$this->assign('page',$page);
 		$this->assign('pages',$pages);
 		$this->assign('counts',$counts);
@@ -53,10 +53,10 @@ class Index extends Controller
     public function detail()
 	{
         $id=input('id');
-        if(empty($id) || !preg_match('/[0-9]+/',$id)){$this->error('您访问的页面不存在或已被删除！', '/' , 3);exit;}
+        if(empty($id) || !preg_match('/[0-9]+/',$id)){$this->error('您访问的页面不存在或已被删除', '/' , 3);exit;}
         $article = db('article');
 		
-		if(cache("detailid$id")){$post=cache("detailid$id");}else{$post = db('article')->where("id=$id")->find();if(empty($post)){$this->error('您访问的页面不存在或已被删除！', '/' , 3);exit;}$post['name'] = db('arctype')->where("id=".$post['typeid'])->value('name');cache("detailid$id",$post,2592000);}
+		if(cache("detailid$id")){$post=cache("detailid$id");}else{$post = db('article')->where("id=$id")->find();if(empty($post)){$this->error('您访问的页面不存在或已被删除', '/' , 3);exit;}$post['name'] = db('arctype')->where("id=".$post['typeid'])->value('name');cache("detailid$id",$post,2592000);}
 		if($post)
         {
 			$cat=$post['typeid'];
@@ -69,7 +69,7 @@ class Index extends Controller
         }
         else
         {
-            $this->error('您访问的页面不存在或已被删除！', '/' , 3);exit;
+            $this->error('您访问的页面不存在或已被删除', '/' , 3);exit;
         }
         
         //获取最新列表
@@ -90,7 +90,7 @@ class Index extends Controller
         $tag=input('tag');
         $pagenow=input('page');
         
-		if(empty($tag) || !preg_match('/[0-9]+/',$tag)){$this->error('您访问的页面不存在或已被删除！', '/' , 3);exit;}
+		if(empty($tag) || !preg_match('/[0-9]+/',$tag)){$this->error('您访问的页面不存在或已被删除', '/' , 3);exit;}
         
 		$post = db('tagindex')->where("id=$tag")->find();
         $this->assign('post',$post);
@@ -101,7 +101,7 @@ class Index extends Controller
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果
 		}else{$pages = $counts/$pagesize;}
-		if(!empty($pagenow)){if($pagenow==1 || $pagenow>$pages){header("HTTP/1.0 404 Not Found");$this->error('您访问的页面不存在或已被删除！');exit;}$page = $pagenow-1;$nextpage=$pagenow+1;$previouspage=$pagenow-1;}else{$page = 0;$nextpage=2;$previouspage=0;}
+		if(!empty($pagenow)){if($pagenow==1 || $pagenow>$pages){header("HTTP/1.0 404 Not Found");$this->error('您访问的页面不存在或已被删除');exit;}$page = $pagenow-1;$nextpage=$pagenow+1;$previouspage=$pagenow-1;}else{$page = 0;$nextpage=2;$previouspage=0;}
 		$this->assign('page',$page);
 		$this->assign('pages',$pages);
 		$this->assign('counts',$counts);
@@ -153,7 +153,7 @@ class Index extends Controller
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果
 		}else{$pages = $counts/$pagesize;}
-		if(!empty($pagenow)){if($pagenow==1 || $pagenow>$pages){header("HTTP/1.0 404 Not Found");$this->error('您访问的页面不存在或已被删除！');exit;}$page = $pagenow-1;$nextpage=$pagenow+1;$previouspage=$pagenow-1;}else{$page = 0;$nextpage=2;$previouspage=0;}
+		if(!empty($pagenow)){if($pagenow==1 || $pagenow>$pages){header("HTTP/1.0 404 Not Found");$this->error('您访问的页面不存在或已被删除');exit;}$page = $pagenow-1;$nextpage=$pagenow+1;$previouspage=$pagenow-1;}else{$page = 0;$nextpage=2;$previouspage=0;}
 		$this->assign('page',$page);
 		$this->assign('pages',$pages);
 		$this->assign('counts',$counts);
@@ -204,14 +204,14 @@ class Index extends Controller
             }
             else
             {
-                $this->error('您访问的页面不存在或已被删除！', '/' , 3);exit;
+                $this->error('您访问的页面不存在或已被删除', '/' , 3);exit;
             }
             
             return $this->fetch($post['template']);
         }
         else
         {
-            $this->error('您访问的页面不存在或已被删除！', '/' , 3);exit;
+            $this->error('您访问的页面不存在或已被删除', '/' , 3);exit;
         }
     }
     

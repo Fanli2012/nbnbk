@@ -31,10 +31,10 @@ class Article extends Base
         {
             $where['typeid'] = $_REQUEST["id"];
         }
-        $where['ischeck'] = 0; //审核过的文章
-        if(!empty($_REQUEST["ischeck"]))
+        $where['is_check'] = 0; //审核过的文章
+        if(!empty($_REQUEST["is_check"]))
         {
-            $where['ischeck'] = $_REQUEST["ischeck"]; //未审核过的文章
+            $where['is_check'] = $_REQUEST["is_check"]; //未审核过的文章
         }
         
         $posts = $this->getLogic()->getPaginate($where,'id desc',['body'],15);
@@ -84,8 +84,8 @@ class Article extends Base
         $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
         if(empty($_POST["description"])){if(!empty($_POST["body"])){$_POST['description']=cut_str($_POST["body"]);}} //description
         $content="";if(!empty($_POST["body"])){$content = $_POST["body"];}
-        $_POST['pubdate'] = time();//更新时间
-        $_POST['addtime'] = time();//添加时间
+        $_POST['update_time'] = time();//更新时间
+        $_POST['add_time'] = time();//添加时间
 		$_POST['user_id'] = session('admin_user_info')['id']; // 发布者id
         
 		//关键词
@@ -189,7 +189,7 @@ class Article extends Base
         $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
         if(empty($_POST["description"])){if(!empty($_POST["body"])){$_POST['description']=cut_str($_POST["body"]);}} //description
         $content="";if(!empty($_POST["body"])){$content = $_POST["body"];}
-        $_POST['pubdate'] = time();//更新时间
+        $_POST['update_time'] = time();//更新时间
         $_POST['user_id'] = session('admin_user_info')['id']; // 修改者id
         
 		if(!empty($_POST["keywords"]))

@@ -1,11 +1,12 @@
 <?php
 namespace app\index\controller;
-
+use think\Db;
+use think\Log;
 use think\Request;
 use think\Session;
-use think\Controller;
+use app\common\lib\ReturnData;
 
-class Server extends Controller
+class Server extends Base
 {
     //文章列表页
     public function listarc()

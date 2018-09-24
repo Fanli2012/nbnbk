@@ -28,7 +28,7 @@ class Article extends Base
         if(input('param.typeid', null) !== null){$where['typeid'] = input('param.typeid');}
         if(input('param.keyword', null) !== null){$where['title'] = ['like','%'.input('param.keyword').'%'];}
         if(input('tuijian', null) !== null){$where['tuijian'] = input('tuijian');}
-        $where['ischeck'] = 0;
+        $where['is_check'] = 0;
         $orderby = input('orderby','id desc');
         
         $res = $this->getLogic()->getList($where,$orderby,['body'],$offset,$limit);
@@ -66,7 +66,7 @@ class Article extends Base
     {
         if(Helper::isPostRequest())
         {
-            $_POST['addtime'] = time();
+            $_POST['add_time'] = time();
             $res = $this->getLogic()->add($_POST);
             
             exit(json_encode($res));

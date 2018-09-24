@@ -45,6 +45,7 @@ class ArticleLogic extends BaseLogic
         
         $res = $res->each(function($item, $key){
             $item = $this->getDataView($item);
+            $item['typename'] = $this->getModel()->getTypenameAttr($item);
             return $item;
         });
         
@@ -56,13 +57,13 @@ class ArticleLogic extends BaseLogic
     {
         $res = $this->getModel()->getAll($where, $order, $field, $limit);
         
-        /* if($res)
+        if($res)
         {
             foreach($res as $k=>$v)
             {
                 $res[$k] = $this->getDataView($v);
             }
-        } */
+        }
         
         return $res;
     }

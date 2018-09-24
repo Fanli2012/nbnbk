@@ -1,0 +1,22 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport"><meta http-equiv="Cache-Control" content="no-siteapp" /><meta http-equiv="Cache-Control" content="no-transform" />
+<title><?php echo $title; if( input('page',1) > 1 ){ echo '_第'.input('page').'页'; } echo '-'.sysconfig('CMS_WEBNAME'); ?></title><meta name="keywords" content="<?php echo $keyword; ?>" /><meta name="description" content="宁柏批发网为您提供<?php echo $keyword; ?>相关信息，海量货源、商品、批发价格表、报价，进货直接联系商家。" /><?php if(isset($province) && !empty($province)){ ?><meta name="location" content="province=<?php echo $province; ?>;city=<?php if(isset($city)){echo $city;} ?>;coord="><?php } ?><link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/style.css" media="all"><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/ad.js"></script></head><body><script>site();</script>
+{include file="common/header"/}<div id="tad"><script>tjs();</script></div>
+
+<div class="box mt10">
+<?php if($list->total() > 0){ ?><ul class="goodsul" id="goods_list">
+<?php foreach($list as $k=>$v){ ?>
+<li><a href="/goods/<?php echo $v['id']; ?>" target="_blank"><img src="<?php echo $v['litpic']; ?>" alt="<?php echo $v['title']; ?>">
+<p class="title"><?php echo $v['title']; ?></p>
+<p class="desc"><?php echo $v['description']; ?></p>
+<div class="item-prices green"><div class="item-link">立即<br>抢购</div><div class="item-info"><div class="price"><i>¥</i><em class="J_actPrice"><span class="yen"><?php echo ceil($v['price']); ?></span></em></div>
+<div class="dock"><div class="dock-price"><del class="orig-price">¥<?php echo $v['market_price']; ?></del></div><div class="prompt"><div class="sold-num"><em><?php echo $v['click']; ?></em> 人气</div></div></div>
+</div></div>
+</a></li>
+<?php } ?><div class="cl"></div></ul><?php }else{ ?><div style="text-align:center;padding:20px;">暂无记录</div><?php } ?>
+
+<div class="bootstrap-front-pagination"><?php echo $page; ?><div class="cl"></div></div>
+
+<?php if(isset($region_list) && !empty($region_list)){ ?><div style="border-bottom: 20px solid #f8f8f8;"></div><div class="banner_tit" style="margin-left:20px;margin-right:20px;">相关推荐</div><div class="ws-tag" style="padding:20px;"><?php foreach($region_list as $row){ ?><a href="/goodslist/c<?php echo $row['id']; ?><?php if(isset($category_name)){echo 'f'.$category_id;} ?>"><?php echo $row['name']; ?><?php if(isset($category_name)){echo $category_name;} ?>批发市场</a><?php } ?></div><div class="cl"></div><?php } ?>
+</div><!-- box end -->
+
+{include file="common/footer"/}</body></html>

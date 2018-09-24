@@ -9,7 +9,6 @@
 <tr>
   <th>编号</th>
   <th>标签</th>
-  <th>文档数</th>
   <th>更新时间</th>
   <th>管理</th>
 </tr>
@@ -18,7 +17,7 @@
 <?php foreach($posts as $row){ ?>
 <tr>
   <td><?php echo $row["id"]; ?></td>
-  <td><a href="/fladmin/Tag/edit?id=<?php echo $row["id"]; ?>"><?php echo $row["tag"]; ?></a></td><td><?php echo tagarcnum($row["id"]); ?></td>
+  <td><a href="/fladmin/Tag/edit?id=<?php echo $row["id"]; ?>"><?php echo $row["tag"]; ?></a></td>
   <td><?php echo date('Y-m-d',$row["pubdate"]); ?></td>
   <td><a target="_blank" href="<?php echo get_front_url(array("type"=>"tags","tagid"=>$row["id"])); ?>">预览</a>&nbsp;<a href="/fladmin/Tag/edit?id=<?php echo $row["id"]; ?>">修改</a>&nbsp;<a onclick="delconfirm('/fladmin/Tag/del?id=<?php echo $row["id"]; ?>')" href="javascript:;">删除</a></td>
 </tr>

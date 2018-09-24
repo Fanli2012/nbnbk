@@ -1,15 +1,71 @@
 <?php
 namespace app\index\controller;
+use think\Db;
 use think\Log;
 use think\Request;
 use think\Session;
-use think\Controller;
+use app\common\lib\ReturnData;
+use app\common\lib\Helper;
+use app\common\logic\ShopLogic;
 
-class Index extends Controller
+class Index extends Base
 {
     //首页
     public function index()
-	{echo dirname(__FILE__);exit;
+	{
+        $pagesize = 10;
+        $offset = 0;
+        if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
+        $where['delete_time'] = 0;
+        $where['add_time'] = ['<',time()];
+		$res = logic('Article')->getList($where, 'id desc', ['body'], $offset, $pagesize);
+        if($res['list'])
+        {
+            foreach($res['list'] as $k => $v)
+            {
+                
+            }
+        }
+        $this->assign('list',$res['list']);
+        $totalpage = ceil($res['count']/$pagesize);
+        $this->assign('totalpage',$totalpage);
+        if(isset($_REQUEST['page_ajax']) && $_REQUEST['page_ajax']==1)
+        {
+    		$html = '';
+            if($res['list'])
+            {
+                foreach($res['list'] as $k => $v)
+                {
+                    $html .= '<div class="list">';
+                    if(!empty($v['litpic'])){$html .= '<a class="limg" href="/p/'.$v['id'].'"><img alt="'.$v['title'].'" src="'.$v['litpic'].'"></a>';}
+                    $html .= '<strong class="tit"><a href="/p/'.$v['id'].'" target="_blank">'.$v['title'].'</a></strong><p>'.mb_strcut($v['description'],0,150,'UTF-8').'..</p>';
+                    $html .= '<div class="cl"></div></div>';
+                }
+            }
+            
+    		exit(json_encode($html));
+    	}
+        
+        //推荐文章
+        $where2['delete_time'] = 0;
+        //$where2['add_time'] = ['>',(time()-30*3600*24)];
+        $article_tj_list = logic('Article')->getAll($where2, 'click desc', ['body'], 5);
+        $this->assign('article_tj_list',$article_tj_list);
+        
+        //随机文章
+        $where3['delete_time'] = 0;
+        $article_rand_list = logic('Article')->getAll($where3, 'rand()', ['body'], 5);
+        $this->assign('article_rand_list',$article_rand_list);
+        
+        //标签
+        $where4['ischeck'] = 0;
+        $tag_list = logic('Tagindex')->getAll($where4, 'id desc', ['content'], 5);
+        $this->assign('tag_list',$tag_list);
+        
+        //友情链接
+        $tag_list = logic('Friendlink')->getAll('', 'id desc', '*', 5);
+        $this->assign('friendlink_list',$tag_list);
+        
         return $this->fetch();
     }
 	

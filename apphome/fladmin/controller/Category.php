@@ -44,7 +44,7 @@ class Category extends Base
     public function doadd()
     {
         if(!empty($_POST["prid"])){if($_POST["prid"]=="top"){$_POST['parent_id']=0;}else{$_POST['parent_id'] = $_POST["prid"];}}//父级栏目id
-        $_POST['addtime'] = time();//添加时间
+        $_POST['add_time'] = time();//添加时间
 		unset($_POST["prid"]);
 		
 		if(db('arctype')->insert($_POST))
@@ -63,7 +63,7 @@ class Category extends Base
         
 		$this->assign('id',$id);
         $post = db('arctype')->where("id=$id")->find();
-        $reid = $post['reid'];
+        $reid = input('reid',0);
         if($reid!=0){$this->assign('postone',db('arctype')->where("id=$reid")->find());}
         
         $this->assign('post',$post);
@@ -73,7 +73,7 @@ class Category extends Base
     public function doedit()
     {
         if(!empty($_POST["id"])){$id = $_POST["id"];unset($_POST["id"]);}else {$id="";exit;}
-        $_POST['addtime'] = time();//添加时间
+        $_POST['add_time'] = time();//添加时间
         
 		if(db('arctype')->where("id=$id")->update($_POST))
         {

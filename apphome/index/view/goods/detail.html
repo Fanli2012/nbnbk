@@ -1,0 +1,71 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
+<title><?php if(!empty($post['seotitle'])){echo $post['seotitle'];}else{echo $post['title'];} if($post['category_text']){echo '_'.$post['category_text'].'批发';} echo '-'.sysconfig('CMS_WEBNAME'); ?></title><meta name="keywords" content="<?php echo $post["keywords"]; ?>" /><meta name="description" content="<?php echo $post["description"]; ?>" /><?php if(isset($post['shop']['province_text']) && !empty($post['shop']['province_text'])){ ?><meta name="location" content="province=<?php echo $post['shop']['province_text']; ?>;city=<?php echo $post['shop']['city_text']; ?>;coord="><?php } ?><link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/style.css" media="all"><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/ad.js"></script></head><body><script>site();</script>
+{include file="common/header"/}<div id="tad"><script>tjs();</script></div>
+
+<div class="box mt10"><div class="fl_640">
+<h1 class="arct" style="padding:20px 20px 0 20px;"><?php echo $post["title"]; ?> <br><span style="color:#f60;font-weight:400;">￥<?php echo $post["price"]; ?></span></h1>
+<div style="padding:0 20px 10px 20px;color:#b2b2b2;"><?php echo date("Y-m-d",$post['updated_at']); ?> <a href="/store/<?php echo $post['shop_id']; ?>" style="display: inline-block;margin-left:6px;color:#586C94;"><?php echo $post['shop']['company_name']; ?></a> <a href="/goodslist/<?php if($post['shop']['city_text']){echo 'c'.$post['shop']['city_id'];}if($post['category_text']){echo 'f'.$post['category_id'];} ?>" style="display: inline-block;margin-left:6px;color:#586C94;"><?php if($post['shop']['city_text']){echo $post['shop']['city_text'];}if($post['category_text']){echo $post['category_text'];} ?>批发市场</a></div>
+
+<!--商品图片-start-->
+<?php if($post['goods_img_list']){ ?>
+<div style="padding:10px 0 10px 20px;width:360px;">
+    <!-- Swiper -->
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+        <?php foreach($post['goods_img_list'] as $k=>$v){ ?>
+            <div class="swiper-slide"><a href="javascript:;"><img src="<?php echo $v['url']; ?>" alt=""></a></div>
+        <?php } ?>
+        </div>
+        <!-- Add Pagination -->
+        <div class="swiper-pagination swiper-pagination-white"></div>
+    </div>
+</div>
+<?php } ?>
+<link rel="stylesheet" href="/css/swiper.min.css">
+<script type="text/javascript" src="/js/swiper.min.js"></script>
+<style>
+.swiper-container{width:100%;height:auto;}
+.swiper-slide{text-align:center;font-size:18px;background:#fff;}
+.swiper-slide img{width:100%;height:360px;}
+</style>
+<script>
+//Swiper轮播
+var swiper = new Swiper('.swiper-container', {
+    pagination: '.swiper-pagination',
+    paginationClickable: true,
+    autoHeight: true, //enable auto height
+    slidesPerView: 1,
+    paginationClickable: true,
+    spaceBetween: 30,
+    loop: true,
+    centeredSlides: true,
+    autoplay: 3000,
+    autoplayDisableOnInteraction: false
+});
+</script>
+<!--商品图片-end-->
+<style>
+.title{
+position: relative;
+margin: 25px 0 10px 20px;
+padding-left: 12px;
+font-size:20px;
+color: #333;
+border-left:2px solid #47b751;
+}
+</style>
+<h2 class="title">详细介绍</h2>
+<div class="content"><?php echo $post["body"]; ?><div class="dad2"><script>djs2();</script></div></div><div class="dad3"><script>djs3('goods-<?php echo $post["id"]; ?>');</script></div>
+</div><!-- fl_640 end -->
+
+<div class="fr_300"><div id="rad1"><script>rjs1();</script></div>
+<div class="side"><div class="stit"><h2>最新批发货源</h2><a href="/goodslist/s<?php echo $post['shop_id']; ?>" class="more">更多</a><div class="cl"></div></div>
+<div class="uli2" id="zxlist"><?php if($shop_posts){foreach($shop_posts as $row){ ?><div class="suli"><?php if(!empty($row['litpic'])){ ?><a class="limg" href="/goods/<?php echo $row['id']; ?>"><img alt="<?php echo $row['title']; ?>" src="<?php echo $row['litpic']; ?>"></a><?php } ?><a target="_blank" href="/goods/<?php echo $row['id']; ?>"><?php echo $row['title']; ?></a><div class="sulii"><span class="time">￥<?php echo $row['price']; ?></span> 人气(<?php echo $row['click']; ?>)</div><div class="cl"></div></div><?php }} ?><div class="cl"></div></div></div>
+
+<div id="rad3"><script>rjs3();</script></div>
+<div class="side"><div class="stit"><h2>批发货源推荐</h2><div class="cl"></div></div>
+<div class="uli2" id="xglist"><?php if($pingtai_posts){foreach($pingtai_posts as $row){ ?><div class="suli"><?php if(!empty($row['litpic'])){ ?><a class="limg" href="/goods/<?php echo $row['id']; ?>"><img alt="<?php echo $row['title']; ?>" src="<?php echo $row['litpic']; ?>"></a><?php } ?><a target="_blank" href="/goods/<?php echo $row['id']; ?>"><?php echo $row['title']; ?></a><div class="sulii"><span class="time">￥<?php echo $row['price']; ?></span> 人气(<?php echo $row['click']; ?>)</div><div class="cl"></div></div><?php }} ?><div class="cl"></div></div></div>
+
+<div id="rad2"><script>rjs2();</script></div></div><!-- fr_300 end --></div><!-- box end -->
+
+{include file="common/footer"/}</body></html>

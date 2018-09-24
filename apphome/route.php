@@ -48,12 +48,19 @@ return [
     'search'            => 'index/Index/search',
     'sitemap'              => array('index/Index/sitemap',array('ext'=>'xml')),
     
-    'p/<id>'            => array('index/Index/detail',array()), //详情页
+    'p/<id>'            => array('index/Article/detail',array()), //详情页
     'cat<cat>/<page>'   => array('index/Index/category',array(),array('cat'=>'\d+','page'=>'\d+')), //分类页，分页
     'cat<cat>'          => array('index/Index/category',array(),['cat'=>'\d+']), //分类页
     
     'tag<tag>/<page>'   => array('index/Index/tag',array('tag'=>'\d+','page'=>'\d+')), //标签页，分页
     'tag<tag>'          => array('index/Index/tag',array('tag'=>'\d+')), //标签页
+    
+    'shoplist/<key>'    => array('index/Shop/index',array('key'=>'[a-z0-9]+')), //店铺列表，分页
+    'shoplist'          => 'index/Shop/index', //店铺列表
+    'goodslist/<key>'   => array('index/Goods/index',array('key'=>'[a-z0-9]+')), //商品列表，分页
+    'goodslist'         => 'index/Goods/index', //商品列表
+    'articlelist/<key>' => array('index/Article/index',array('key'=>'[a-z0-9]+')), //文章列表，分页
+    'articlelist'       => 'index/Article/index', //文章列表
     
     'tuijian/<page>'   => array('index/Index/tuijian',array('page'=>'\d+')), //推荐页，分页
     'tuijian'          => 'index/Index/tuijian', //推荐页

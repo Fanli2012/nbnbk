@@ -46,7 +46,7 @@ class Goodstype extends Base
     public function doadd()
     {
         if(isset($_POST["prid"])){if($_POST["prid"]=="top"){$_POST['parent_id']=0;}else{$_POST['parent_id'] = $_POST["prid"];}unset($_POST["prid"]);}//父级栏目id
-        $_POST['addtime'] = time();//添加时间
+        $_POST['add_time'] = time();//添加时间
         
         $res = $this->getLogic()->add($_POST);
 		if($res['code']==ReturnData::SUCCESS)

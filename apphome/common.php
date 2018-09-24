@@ -4,6 +4,63 @@
 //定义常量
 define('CMS_ADMIN', '/fladmin/');  // 后台模块，首字母最好大写
 
+if (! function_exists('curl_request'))
+{
+    function curl_request($api, $params = array(), $method = 'GET', $headers = array())
+    {
+        $curl = curl_init();
+
+        switch (strtoupper($method))
+		{
+            case 'GET' :
+                if (!empty($params))
+				{
+                    $api .= (strpos($api, '?') ? '&' : '?') . http_build_query($params);
+                }
+                curl_setopt($curl, CURLOPT_HTTPGET, TRUE);
+                break;
+            case 'POST' :
+                curl_setopt($curl, CURLOPT_POST, TRUE);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+                break;
+            case 'PUT' :
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+                break;
+            case 'DELETE' :
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+                break;
+        }
+        
+        curl_setopt($curl, CURLOPT_URL, $api);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl, CURLOPT_HEADER, 0);
+        
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        
+        $response = curl_exec($curl);
+        
+        if ($response === FALSE)
+		{
+            $error = curl_error($curl);
+            curl_close($curl);
+            return FALSE;
+        }
+		else
+		{
+            // 解决windows 服务器 BOM 问题
+            $response = trim($response,chr(239).chr(187).chr(191));
+            $response = json_decode($response, true);
+        }
+        
+        curl_close($curl);
+        
+        return $response;
+    }
+}
+
 function dataList($modelname, $map = '', $orderby = '', $field = '*', $listRows = 15)
 {
 	return db($modelname)->where($map)->field($field)->order($orderby)->limit($listRows)->select();
@@ -65,112 +122,6 @@ function murl(array $param)
     }
     
     return $url;
-}
-
-/**
- * 获取文章列表
- * @param int $tuijian=0 推荐等级
- * @param int $typeid=0 分类
- * @param int $image=1 是否存在图片
- * @param int $row=10 需要返回的数量
- * @param string $orderby='id desc' 排序，默认id降序，随机rand()
- * @param string $limit='0,10' 如果存在$row，$limit就无效
- * @return string
- */
-function arclist(array $param)
-{
-    $map=array();
-    $Artlist = '';
-    
-    if(isset($param['where'])){$map=$param['where'];}
-	if(isset($param['tuijian'])){$map['tuijian']=$param['tuijian'];}
-	if(isset($param['typeid'])){$map['typeid']=$param['typeid'];}
-	if(isset($param['image'])){$map['litpic']=array('NEQ','');}
-	if(isset($param['limit'])){$limit=$param['limit'];}else{if(isset($param['row'])){$limit="0,".$param['row'];}else{$limit='0,'.CMS_PAGESIZE;}}
-	if(isset($param['orderby'])){$orderby=$param['orderby'];}else{$orderby='id desc';}
-	$article = db("article");
-    if(isset($param['field'])){$article = $article->field($param['field']);}else{$article = $article->field('body',true);}
-    $article = $article->limit($limit);
-    
-	if(isset($param['sql']))
-	{
-		$Artlist = $article->where($param['sql'])->order($orderby)->select();
-	}
-	else
-	{
-        $Artlist = $article->where($map)->order($orderby)->select();
-	}
-    
-    if($Artlist==''){$Artlist = $article->order("rand()")->select();}
-	
-	return $Artlist;
-}
-
-/**
- * 获取tag标签列表
- * @param int $row=10 需要返回的数量，如果存在$limit,$row就无效
- * @param string $orderby='id desc' 排序，默认id降序，随机rand()
- * @param string $limit='0,10'
- * @return string
- */
-function tagslist($param="")
-{
-    $orderby=$limit="";
-	if(isset($param['limit'])){$limit=$param['limit'];}else{if(isset($param['row'])){$limit=$param['row'];}}
-	if(isset($param['orderby'])){$orderby=$param['orderby'];}else{$orderby='id desc';}
-	
-	return db("tagindex")->field('content',true)->order($orderby)->select();
-}
-
-/**
- * 获取友情链接
- * @param string $orderby='id desc' 排序，默认id降序，随机rand()
- * @param int||string $limit='0,10'
- * @return string
- */
-function flinklist($param="")
-{
-	if(isset($param['row'])){$limit=$param['row'];}else{$limit="";}
-	if(isset($param['orderby'])){$orderby=$param['orderby'];}else{$orderby='id desc';}
-	
-	return db("friendlink")->order($orderby)->limit($limit)->select();
-}
-
-/**
- * 获取文章上一篇，下一篇id
- * @param $param['aid'] 当前文章id
- * @param $param['typeid'] 当前文章typeid
- * @param string $type 获取类型
- *       pre:上一篇 next:下一篇
- * @return array
- */
-function get_article_prenext(array $param)
-{
-    $sql = $typeid = $res = '';
-    $sql='id='.$param["aid"];
-    
-    if(!empty($param["typeid"]))
-    {
-        $typeid = $param["typeid"];
-    }
-    else
-    {
-        $Article = db("article")->field('typeid')->where($sql)->find();
-        $typeid = $Article["typeid"];
-    }
-    
-    if($param["type"]=='pre')
-    {
-        $sql='id<'.$param['aid'].' and typeid='.$typeid;
-        $res = db("article")->field('id,typeid,title')->where($sql)->order('id desc')->find();
-    }
-    else if($param["type"]=='next')
-    {
-        $sql='id>'.$param['aid'].' and typeid='.$typeid;
-        $res = db("article")->field('id,typeid,title')->where($sql)->order('id asc')->find();
-    }
-    
-    return $res;
 }
 
 /**
@@ -393,22 +344,8 @@ function GetCurUrl()
     {
         $nowurl = $_SERVER['PHP_SELF'];
     }
+    
     return $nowurl;
-}
-
-/**
- * 获取单页列表
- * @param int $row=8 需要返回的数量
- * @param string $orderby='id desc' 排序，默认id降序，随机rand()
- * @param string $limit='0,8' 如果存在$row，$limit就无效
- * @return string
- */
-function pagelist($param="")
-{
-	if(!empty($param['row'])){$limit="0,".$param['row'];}else{if(!empty($param['limit'])){$limit=$param['limit'];}else{$limit='0,8';}}
-	if(!empty($param['orderby'])){$orderby=$param['orderby'];}else{$orderby='id desc';}
-	
-    return db("page")->field('body',true)->order($orderby)->limit($limit)->select();
 }
 
 /**
@@ -432,12 +369,11 @@ function cut_str($string, $sublen=250, $omitted = '', $start=0, $code='UTF-8')
 //PhpAnalysis获取中文分词
 function get_keywords($keyword)
 {
-	//Vendor('phpAnalysis.phpAnalysis');
-	include(EXTEND_PATH.'phpAnalysis/phpAnalysis.php'); //引入phpAnalysis类
+	Vendor('phpAnalysis.phpAnalysis');
 	//import("Vendor.phpAnalysis.phpAnalysis");
 	//初始化类
-	\PhpAnalysis::$loadInit = false;
-    $pa = new \PhpAnalysis('utf-8', 'utf-8', false);
+	PhpAnalysis::$loadInit = false;
+    $pa = new PhpAnalysis('utf-8', 'utf-8', false);
 	//载入词典
 	$pa->LoadDict();
 	//执行分词
@@ -451,30 +387,9 @@ function get_keywords($keyword)
 //获取二维码
 function get_erweima($url,$size=6)
 {
-	//Vendor('phpqrcode.qrlib');
-	include(EXTEND_PATH.'phpqrcode/qrlib.php'); //引入phpqrcode类
+	Vendor('phpqrcode.qrlib');
 	ob_end_clean();
 	return 'data:image/png;base64,'.base64_encode(\QRcode::png($url, false, "H", $size));
-}
-
-//根据栏目id获取栏目信息
-function typeinfo($typeid)
-{
-    return db("arctype")->where("id=$typeid")->find();
-}
-
-//根据栏目id获取该栏目下文章/商品的数量
-function catarcnum($typeid,$modelname='article')
-{
-    $map['typeid']=$typeid;
-    return db($modelname)->where($map)->count('id');
-}
-
-//根据Tag id获取该Tag标签下文章的数量
-function tagarcnum($tagid)
-{
-    if(!empty($tagid)){$map['tid']=$tagid;}
-    return db("taglist")->where($map)->count();
 }
 
 //判断是否是图片格式，是返回true
@@ -524,7 +439,7 @@ function tree($list,$parent_id=0)
     {
         foreach($list as $v)
         {
-            $temp[] = array("id"=>$v['id'],"deep"=>$v['deep'],"name"=>$v['name'],"parent_id"=>$v['parent_id'],"typedir"=>$v['typedir'],"addtime"=>$v['addtime']);
+            $temp[] = array("id"=>$v['id'],"deep"=>$v['deep'],"name"=>$v['name'],"parent_id"=>$v['parent_id'],"typedir"=>$v['typedir'],"add_time"=>$v['add_time']);
             //echo $v['id'];
             if(array_key_exists("child",$v))
             {
@@ -543,7 +458,7 @@ function get_cat_path($cat)
     
     $row = db("arctype")->field('name,parent_id,id')->where("id=$cat")->find();
     
-    $temp = '<a href="'.get_front_url(array("type"=>"list","catid"=>$row["id"])).'">'.$row["name"]."</a> > ".$temp;
+    $temp = '<a href="/articlelist/f'.$row["id"].'">'.$row["name"]."</a> > ".$temp;
     
     if($row["parent_id"]<>0)
     {
@@ -551,60 +466,6 @@ function get_cat_path($cat)
     }
     
     return $temp;
-}
-
-//根据文章id获得tag，$id表示文章id，$tagid表示要排除的标签id
-function taglist($id,$tagid=0)
-{
-    $tags="";
-    if($tagid!=0)
-    {
-        $Taglist = db("taglist")->where("aid=$id and tid<>$tagid")->select();
-    }
-    else
-    {
-        $Taglist = db("taglist")->where("aid=$id")->select();
-    }
-    
-    foreach($Taglist as $row)
-    {
-        if($tags==""){$tags='id='.$row['tid'];}else{$tags=$tags.' or id='.$row['tid'];}
-    }
-	
-    if($tags!=""){return db("tagindex")->where($tags)->select();}
-}
-
-//获取https的get请求结果
-function get_curl_data($c_url,$data='')
-{
-	$curl = curl_init(); // 启动一个CURL会话
-	curl_setopt($curl, CURLOPT_URL, $c_url); // 要访问的地址
-	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); // 对认证证书来源的检查
-	curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 1); // 从证书中检查SSL加密算法是否存在
-	curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // 模拟用户使用的浏览器
-	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
-	curl_setopt($curl, CURLOPT_AUTOREFERER, 1); // 自动设置Referer
-	
-	if($data)
-	{
-		curl_setopt($curl, CURLOPT_POST, 1); // 发送一个常规的Post请求
-		curl_setopt($curl, CURLOPT_POSTFIELDS, $data); // Post提交的数据包
-	}
-	
-	curl_setopt($curl, CURLOPT_TIMEOUT, 30); // 设置超时限制防止死循环
-	curl_setopt($curl, CURLOPT_HEADER, 0); // 显示返回的Header区域内容
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); // 获取的信息以文件流的形式返回
-	
-	$tmpInfo = curl_exec($curl); // 执行操作
-	
-	if (curl_errno($curl))
-	{
-		echo 'Errno'.curl_error($curl);//捕抓异常
-	}
-	
-	curl_close($curl); // 关闭CURL会话
-	
-	return $tmpInfo; // 返回数据
 }
 
 //通过file_get_content获取远程数据
@@ -664,7 +525,7 @@ function ReplaceKeyword($body)
 	//暂时屏蔽超链接
 	$body = preg_replace("#(<a(.*))(>)(.*)(<)(\/a>)#isU", '\\1-]-\\4-[-\\6', $body);
 	
-	if(cache("keywordlist")){$posts=cache("keywordlist");}else{$posts = db("Keyword")->select();cache("keywordlist",$posts,2592000);}
+	if(cache("keywordlist")){$posts=cache("keywordlist");}else{$posts = db("keyword")->select();cache("keywordlist",$posts,2592000);}
     
 	foreach($posts as $row)
 	{
@@ -954,4 +815,62 @@ function checkIsNumber($data)
     
 	return false;
 }
+
+/**
+ * 调用服务接口
+ * @param $name 服务类名称
+ * @param array $config 配置
+ * @return object
+ */
+function service($name = '', $config = [])
+{
+    static $instance = [];
+    $guid = $name . 'Service';
+    if (!isset($instance[$guid]))
+    {
+        $class = 'App\\Http\\Service\\' . ucfirst($name);
+        if (class_exists($class))
+        {
+            $service = new $class($config);
+            $instance[$guid] = $service;
+        }
+        else
+        {
+            throw new Exception('class not exists:' . $class);
+        }
+    }
+    
+    return $instance[$guid];
+}
+
+/**
+ * 调用逻辑接口
+ * @param $name 逻辑类名称
+ * @param array $config 配置
+ * @return object
+ */
+function logic($name = '', $config = [])
+{
+    static $instance = [];
+    $guid = $name . 'Logic';
+    if (!isset($instance[$guid]))
+    {
+        $class = '\\app\\common\\logic\\' . ucfirst($name) . 'Logic';
+        
+        if (class_exists($class))
+        {
+            $logic = new $class($config);
+            $instance[$guid] = $logic;
+        }
+        else
+        {
+            throw new Exception('class not exists:' . $class);
+        }
+    }
+    
+    return $instance[$guid];
+}
+
+
+
 

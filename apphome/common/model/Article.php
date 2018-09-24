@@ -206,7 +206,7 @@ class Article extends Base
     public function getIscheckAttr($data)
     {
         $arr = array(0 => '已审核', 1 => '未审核');
-        return $arr[$data['ischeck']];
+        return $arr[$data['is_check']];
     }
     
     //是否栏目名称

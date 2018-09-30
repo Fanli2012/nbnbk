@@ -2,6 +2,6 @@
 <title><?php if(empty($post["seotitle"])){echo $post["title"];}else{echo $post["seotitle"];} ?>_<?php echo sysconfig('CMS_WEBNAME'); ?></title><meta name="keywords" content="<?php echo $post["keywords"]; ?>" /><meta name="description" content="<?php echo $post["description"]; ?>" /><link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/style.css" media="all"><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/ad.js"></script></head><body><script>site();</script>
 {include file="common/header"/}<div id="tad"><script>tjs();</script></div>
 
-<div class="box mt10"><h1 class="arct" style="text-align:center"><?php echo $post["title"]; ?></h1><div class="dad1"><script>djs1();</script></div>
+<div class="box mt10" style="background-color:#fff;padding:20px 0;"><h1 class="arct" style="text-align:center"><?php echo $post["title"]; ?></h1><div class="dad1"><script>djs1();</script></div>
 <div class="content"><?php echo $post["body"]; ?><div class="dad2"><script>djs2();</script></div></div>
 <!-- fr_300 end --></div><!-- box end -->{include file="common/footer"/}</body></html>

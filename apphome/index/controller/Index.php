@@ -12,7 +12,7 @@ class Index extends Base
 {
     //首页
     public function index()
-	{
+	{$time = date('Y-m-d H:i:s');$data['store_id']=1;echo date('Y-m-d H:i:s',strtotime("$time+{$data['store_id']}month"));exit;
         $pagesize = 10;
         $offset = 0;
         if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
@@ -273,6 +273,11 @@ class Index extends Base
     
     public function sitemap()
     {
+        //最新文章
+        $where['delete_time'] = 0;
+        $list = logic('Article')->getAll($where, 'id desc', ['body'], 100);
+        $this->assign('list',$list);
+        
 		return $this->fetch();
     }
     

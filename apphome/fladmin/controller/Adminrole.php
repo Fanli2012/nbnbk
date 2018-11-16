@@ -1,5 +1,8 @@
 <?php
 namespace app\fladmin\controller;
+use app\common\lib\ReturnData;
+use app\common\lib\Helper;
+use app\common\logic\AdminRoleLogic;
 
 class AdminRole extends Base
 {
@@ -8,16 +11,27 @@ class AdminRole extends Base
 		parent::_initialize();
     }
     
+    public function getLogic()
+    {
+        return new AdminRoleLogic();
+    }
+    
+    //列表
     public function index()
     {
-		$posts = parent::pageList('admin_role', '', 'listorder desc');
+        $where = array();
+        if(!empty($_REQUEST["keyword"]))
+        {
+            $where['name'] = array('like','%'.$_REQUEST['keyword'].'%');
+        }
+        $list = $this->getLogic()->getPaginate($where,['listorder'=>'asc']);
 		
-        $this->assign('page',$posts->render());
-        $this->assign('posts',$posts);
-        
+		$this->assign('page',$list->render());
+        $this->assign('list',$list);
+		//echo '<pre>';print_r($list);exit;
 		return $this->fetch();
     }
-	
+    
 	public function add()
     {
 		return $this->fetch();

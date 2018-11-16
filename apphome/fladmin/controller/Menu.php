@@ -1,5 +1,8 @@
 <?php
 namespace app\fladmin\controller;
+use app\common\lib\ReturnData;
+use app\common\lib\Helper;
+use app\common\logic\MenuLogic;
 
 class Menu extends Base
 {
@@ -8,12 +11,24 @@ class Menu extends Base
 		parent::_initialize();
     }
     
+    public function getLogic()
+    {
+        return new MenuLogic();
+    }
+    
     public function index()
     {
-        $posts = parent::pageList('menu');
+        $where = array();
+        if(!empty($_REQUEST["keyword"]))
+        {
+            $where['name'] = array('like','%'.$_REQUEST['keyword'].'%');
+        }
+        
+        $list = $this->getLogic()->getPaginate($where,['id'=>'desc']);
 		
-        $this->assign('page',$posts->render());
-		$this->assign('posts',$posts);
+		$this->assign('page',$list->render());
+        $this->assign('list',$list);
+		//echo '<pre>';var_dump($list->total());exit;
 		return $this->fetch();
     }
 	

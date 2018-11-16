@@ -1,9 +1,8 @@
 <?php
 namespace app\common\validate;
-
 use think\Validate;
 
-class Tagindex extends Validate
+class Tag extends Validate
 {
     // 验证规则
     protected $rule = [

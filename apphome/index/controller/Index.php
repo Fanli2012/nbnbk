@@ -12,7 +12,7 @@ class Index extends Base
 {
     //首页
     public function index()
-	{$time = date('Y-m-d H:i:s');$data['store_id']=1;echo date('Y-m-d H:i:s',strtotime("$time+{$data['store_id']}month"));exit;
+	{
         $pagesize = 10;
         $offset = 0;
         if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
@@ -39,6 +39,7 @@ class Index extends Base
                     $html .= '<div class="list">';
                     if(!empty($v['litpic'])){$html .= '<a class="limg" href="/p/'.$v['id'].'"><img alt="'.$v['title'].'" src="'.$v['litpic'].'"></a>';}
                     $html .= '<strong class="tit"><a href="/p/'.$v['id'].'" target="_blank">'.$v['title'].'</a></strong><p>'.mb_strcut($v['description'],0,150,'UTF-8').'..</p>';
+                    $html .= '<div class="info"><span class="fl"><em>'.date("m-d H:i",$v['update_time']).'</em></span><span class="fr"><em>'.$v['click'].'</em>人阅读</span></div>';
                     $html .= '<div class="cl"></div></div>';
                 }
             }
@@ -59,7 +60,7 @@ class Index extends Base
         
         //标签
         $where4['ischeck'] = 0;
-        $tag_list = logic('Tagindex')->getAll($where4, 'id desc', ['content'], 5);
+        $tag_list = logic('Tag')->getAll($where4, 'id desc', ['content'], 5);
         $this->assign('tag_list',$tag_list);
         
         //友情链接

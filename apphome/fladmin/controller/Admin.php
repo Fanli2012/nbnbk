@@ -1,5 +1,8 @@
 <?php
 namespace app\fladmin\controller;
+use app\common\lib\ReturnData;
+use app\common\lib\Helper;
+use app\common\logic\AdminLogic;
 
 class Admin extends Base
 {
@@ -8,74 +11,88 @@ class Admin extends Base
 		parent::_initialize();
     }
     
+    public function getLogic()
+    {
+        return new AdminLogic();
+    }
+    
+    //列表
     public function index()
     {
-        $posts = parent::pageList('admin');
-        
-        $this->assign('page',$posts->render());
-		$this->assign('posts',$posts);
+        $where = array();
+        if(!empty($_REQUEST["keyword"]))
+        {
+            $where['name'] = array('like','%'.$_REQUEST['keyword'].'%');
+        }
+        $where['delete_time'] = 0; //未删除
+        $list = $this->getLogic()->getPaginate($where,['id'=>'desc']);
+		
+		$this->assign('page',$list->render());
+        $this->assign('list',$list);
+		//echo '<pre>';print_r($list);exit;
 		return $this->fetch();
     }
 	
+    //添加
 	public function add()
     {
-		$this->assign('rolelist',db('admin_role')->order('listorder desc')->select());
+        if(Helper::isPostRequest())
+        {
+            $_POST['pwd'] = md5($_POST['pwd']);
+            $res = $this->getLogic()->add($_POST);
+            if($res['code'] == ReturnData::SUCCESS)
+            {
+                $this->success($res['msg'], url('index'), '', 1);
+            }
+            
+            $this->error($res['msg']);
+        }
         
+        $this->assign('rolelist', model('AdminRole')->getAll([],'listorder asc'));
         return $this->fetch();
     }
     
-    public function doadd()
-    {
-		$_POST['pwd'] = md5($_POST['pwd']);
-		if(db('admin')->insert($_POST))
-        {
-			$this->success('添加成功', CMS_ADMIN.'admin' , 1);
-        }
-		else
-		{
-			$this->error('添加失败！请修改后重新添加', CMS_ADMIN.'admin/add' , 3);
-		}
-    }
-    
+    //修改
     public function edit()
     {
-		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$id="";}
-        if(preg_match('/[0-9]*/',$id)){}else{exit;}
+        if(Helper::isPostRequest())
+        {
+            $where['id'] = $_POST['id'];
+            unset($_POST['id']);
+            
+            $_POST['pwd'] = md5($_POST['pwd']);
+            $res = $this->getLogic()->edit($_POST,$where);
+            if($res['code'] == ReturnData::SUCCESS)
+            {
+                $this->success($res['msg'], url('index'), '', 1);
+            }
+            
+            $this->error($res['msg']);
+        }
         
-        $this->assign('id',$id);
-        $this->assign('post',db('admin')->where('id='.$id)->find());
-        $this->assign('rolelist',db('admin_role')->order('listorder desc')->select());
+        if(!checkIsNumber(input('id',null))){$this->error('参数错误');}
+        $where['id'] = input('id');
+        $this->assign('id', $where['id']);
+        
+        $post = $this->getLogic()->getOne($where);
+        $this->assign('post', $post);
+        $this->assign('rolelist',model('AdminRole')->getAll([], 'listorder asc'));
         
         return $this->fetch();
     }
 	
-	public function doedit()
+    //删除
+    public function del()
     {
-        if(!empty($_POST["id"])){$id = $_POST["id"];unset($_POST["id"]);}else {$id="";exit;}
+        if(!checkIsNumber(input('id',null))){$this->error('删除失败！请重新提交');}
+        $where['id'] = input('id');
         
-		unset($_POST["_token"]);
-		$_POST['pwd'] = md5($_POST['pwd']);
-		if(db('admin')->where('id='.$id)->update($_POST))
+        $res = $this->getLogic()->del($where);
+		if($res['code'] == ReturnData::SUCCESS)
         {
-            $this->success('修改成功', CMS_ADMIN.'admin' , 1);
+            $this->success("删除成功");
         }
-		else
-		{
-			$this->error('修改失败', CMS_ADMIN.'admin' , 3);
-		}
-    }
-	
-	public function del()
-    {
-		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('删除失败！请重新提交');}
 		
-		if(db("admin")->where("id in ($id)")->delete())
-        {
-            $this->success('删除成功');
-        }
-		else
-		{
-			$this->error('删除失败！请重新提交');
-		}
+        $this->error($res['msg']);
     }
 }

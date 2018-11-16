@@ -49,7 +49,6 @@ class Sysconfig extends Base
 		
 		if($_POST['varname']!="" && db('sysconfig')->insert($_POST))
         {
-            updateconfig();
             $this->success('添加成功', CMS_ADMIN.'Sysconfig' , 1);
         }
 		else
@@ -77,7 +76,6 @@ class Sysconfig extends Base
 		
 		if(db('sysconfig')->where("id=$id")->update($_POST))
         {
-            updateconfig();
             $this->success('更新成功', CMS_ADMIN.'Sysconfig');
         }
 		else

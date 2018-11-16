@@ -15,17 +15,17 @@ class Article extends Validate
         ['writer', 'max:20','作者不能超过20个字符'],
         ['source', 'max:30','来源不能超过30个字符'],
         ['litpic', 'max:100','缩略图不能超过100个字符'],
-        ['pubdate', 'number', '更新时间格式不正确'],
-        ['addtime', 'require|number', '添加时间必填|添加时间必须是数字'],
+        ['update_time', 'number', '更新时间格式不正确'],
+        ['add_time', 'require|number', '添加时间必填|添加时间必须是数字'],
         ['keywords', 'max:60','关键词不能超过60个字符'],
         ['seotitle', 'max:150','seo标题不能超过150个字符'],
         ['description', 'max:250','描述不能超过250个字符'],
-        ['ischeck', 'in:0,1','审核状态：0审核，1未审核'],
+        ['is_check', 'in:0,1','审核状态：0审核，1未审核'],
         ['user_id', 'number', '发布者ID必须是数字'],
     ];
     
     protected $scene = [
-        'add' => ['typeid', 'title', 'tuijian', 'click', 'writer', 'source', 'litpic', 'pubdate', 'addtime', 'keywords', 'seotitle', 'description', 'ischeck', 'user_id'],
+        'add' => ['typeid', 'title', 'tuijian', 'click', 'writer', 'source', 'litpic', 'update_time', 'add_time', 'keywords', 'seotitle', 'description', 'is_check', 'user_id'],
         'del' => ['id'],
     ];
 }

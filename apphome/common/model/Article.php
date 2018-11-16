@@ -12,6 +12,11 @@ class Article extends Base
     // 默认主键为自动识别，如果需要指定，可以设置属性
     protected $pk = 'id';
     
+    //可以分别在写入、新增和更新的时候进行字段的自动完成机制，auto属性自动完成包含新增和更新操作
+    protected $auto = [];
+    protected $insert = ['add_time','update_time','delete_time' => 0];  
+    protected $update = ['update_time'];
+    
     // 设置当前模型的数据库连接
     /* protected $connection = [
         // 数据库类型
@@ -202,8 +207,85 @@ class Article extends Base
         return $this->getDb()->where($where)->delete();
     }
     
+    /**
+     * 统计数量
+     * @param array $where 条件
+     * @param string $field 字段
+     * @return int
+     */
+    public function getCount($where, $field = '*')
+    {
+        return $this->getDb()->where($where)->count($field);
+    }
+    
+    /**
+     * 获取最大值
+     * @param array $where 条件
+     * @param string $field 要统计的字段名（必须）
+     * @return null
+     */
+    public function getMax($where, $field)
+    {
+        return $this->getDb()->where($where)->max($field);
+    }
+    
+    /**
+     * 获取最小值
+     * @param array $where 条件
+     * @param string $field 要统计的字段名（必须）
+     * @return null
+     */
+    public function getMin($where, $field)
+    {
+        return $this->getDb()->where($where)->min($field);
+    }
+    
+    /**
+     * 获取平均值
+     * @param array $where 条件
+     * @param string $field 要统计的字段名（必须）
+     * @return null
+     */
+    public function getAvg($where, $field)
+    {
+        return $this->getDb()->where($where)->avg($field);
+    }
+    
+    /**
+     * 统计总和
+     * @param array $where 条件
+     * @param string $field 要统计的字段名（必须）
+     * @return null
+     */
+    public function getSum($where, $field)
+    {
+        return $this->getDb()->where($where)->sum($field);
+    }
+    
+    /**
+     * 查询某一字段的值
+     * @param array $where 条件
+     * @param string $field 字段
+     * @return null
+     */
+    public function getValue($where, $field)
+    {
+        return $this->getDb()->where($where)->value($field);
+    }
+    
+    /**
+     * 查询某一列的值
+     * @param array $where 条件
+     * @param string $field 字段
+     * @return array
+     */
+    public function getColumn($where, $field)
+    {
+        return $this->getDb()->where($where)->column($field);
+    }
+    
     //是否审核
-    public function getIscheckAttr($data)
+    public function getIsCheckAttr($data)
     {
         $arr = array(0 => '已审核', 1 => '未审核');
         return $arr[$data['is_check']];
@@ -213,5 +295,64 @@ class Article extends Base
     public function getTypenameAttr($data)
     {
         return db('arctype')->where(array('id'=>$data['typeid']))->value('name');
+    }
+    
+    /**
+     * 获取器——审核状态文字
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getIsCheckTextAttr($value, $data)
+    {
+        $arr = array(0 => '已审核', 1 => '未审核');
+        return $arr[$data['is_check']];
+    }
+    
+    /**
+     * 修改器——添加时间
+     * @return int
+     */
+    public function setAddTimeAttr()
+    {
+        return time();
+    }
+    
+    /**
+     * 修改器——更新时间
+     * @return int
+     */
+    public function setUpdateTimeAttr()
+    {
+        return time();
+    }
+    
+    /**
+     * 读取文章缓存
+     * @param int $article_id
+     * @param string $fields
+     * @return array
+     */
+    public function _rGoodsCache($article_id, $fields) {
+        return rcache($article_id, 'article', $fields);
+    }
+
+    /**
+     * 写入文章缓存
+     * @param int $article_id
+     * @param array $article_info
+     * @return boolean
+     */
+    public function _wGoodsCache($article_id, $article_info) {
+        return wcache($article_id, $article_info, 'article');
+    }
+
+    /**
+     * 删除文章缓存
+     * @param int $article_id
+     * @return boolean
+     */
+    public function _dGoodsCache($article_id) {
+        return dcache($article_id, 'article');
     }
 }

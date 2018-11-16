@@ -182,6 +182,83 @@ class Payment extends Base
         return $this->getDb()->where($where)->delete();
     }
     
+    /**
+     * 统计数量
+     * @param array $where 条件
+     * @param string $field 字段
+     * @return int
+     */
+    public function getCount($where, $field = '*')
+    {
+        return $this->getDb()->where($where)->count($field);
+    }
+    
+    /**
+     * 获取最大值
+     * @param array $where 条件
+     * @param string $field 要统计的字段名（必须）
+     * @return null
+     */
+    public function getMax($where, $field)
+    {
+        return $this->getDb()->where($where)->max($field);
+    }
+    
+    /**
+     * 获取最小值
+     * @param array $where 条件
+     * @param string $field 要统计的字段名（必须）
+     * @return null
+     */
+    public function getMin($where, $field)
+    {
+        return $this->getDb()->where($where)->min($field);
+    }
+    
+    /**
+     * 获取平均值
+     * @param array $where 条件
+     * @param string $field 要统计的字段名（必须）
+     * @return null
+     */
+    public function getAvg($where, $field)
+    {
+        return $this->getDb()->where($where)->avg($field);
+    }
+    
+    /**
+     * 统计总和
+     * @param array $where 条件
+     * @param string $field 要统计的字段名（必须）
+     * @return null
+     */
+    public function getSum($where, $field)
+    {
+        return $this->getDb()->where($where)->sum($field);
+    }
+    
+    /**
+     * 查询某一字段的值
+     * @param array $where 条件
+     * @param string $field 字段
+     * @return null
+     */
+    public function getValue($where, $field)
+    {
+        return $this->getDb()->where($where)->value($field);
+    }
+    
+    /**
+     * 查询某一列的值
+     * @param array $where 条件
+     * @param string $field 字段
+     * @return array
+     */
+    public function getColumn($where, $field)
+    {
+        return $this->getDb()->where($where)->column($field);
+    }
+    
     //是否显示，默认0显示
     public function getIsShowAttr($data)
     {

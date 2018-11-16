@@ -1,12 +1,16 @@
 <?php
 // 公共函数文件
-
-//定义常量
-define('CMS_ADMIN', '/fladmin/');  // 后台模块，首字母最好大写
-
+/**
+ * CURL
+ * @param string $url     链接
+ * @param array  $params  参数
+ * @param string $method  请求方式
+ * @param array  $headers 头部信息
+ * @return array
+ */
 if (! function_exists('curl_request'))
 {
-    function curl_request($api, $params = array(), $method = 'GET', $headers = array())
+    function curl_request($url, $params = array(), $method = 'GET', $headers = array())
     {
         $curl = curl_init();
 
@@ -15,12 +19,12 @@ if (! function_exists('curl_request'))
             case 'GET' :
                 if (!empty($params))
 				{
-                    $api .= (strpos($api, '?') ? '&' : '?') . http_build_query($params);
+                    $url .= (strpos($url, '?') ? '&' : '?') . http_build_query($params);
                 }
-                curl_setopt($curl, CURLOPT_HTTPGET, TRUE);
+                curl_setopt($curl, CURLOPT_HTTPGET, true);
                 break;
             case 'POST' :
-                curl_setopt($curl, CURLOPT_POST, TRUE);
+                curl_setopt($curl, CURLOPT_POST, true);
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
                 break;
             case 'PUT' :
@@ -33,20 +37,20 @@ if (! function_exists('curl_request'))
                 break;
         }
         
-        curl_setopt($curl, CURLOPT_URL, $api);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_HEADER, 0);
         
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         
         $response = curl_exec($curl);
         
-        if ($response === FALSE)
+        if ($response === false)
 		{
             $error = curl_error($curl);
             curl_close($curl);
-            return FALSE;
+            return false;
         }
 		else
 		{
@@ -59,11 +63,6 @@ if (! function_exists('curl_request'))
         
         return $response;
     }
-}
-
-function dataList($modelname, $map = '', $orderby = '', $field = '*', $listRows = 15)
-{
-	return db($modelname)->where($map)->field($field)->order($orderby)->limit($listRows)->select();
 }
 
 //pc前台栏目、标签、内容页面地址生成
@@ -286,6 +285,7 @@ function get_prenext(array $param)
 	
 	return $plist;
 }
+
 /**
  * 获取分页列表
  * @access    public
@@ -369,7 +369,9 @@ function cut_str($string, $sublen=250, $omitted = '', $start=0, $code='UTF-8')
 //PhpAnalysis获取中文分词
 function get_keywords($keyword)
 {
-	Vendor('phpAnalysis.phpAnalysis');
+    require_once EXTEND_PATH.'phpAnalysis/phpAnalysis.php';
+    
+	//Vendor('phpAnalysis.phpAnalysis');
 	//import("Vendor.phpAnalysis.phpAnalysis");
 	//初始化类
 	PhpAnalysis::$loadInit = false;
@@ -387,7 +389,8 @@ function get_keywords($keyword)
 //获取二维码
 function get_erweima($url,$size=6)
 {
-	Vendor('phpqrcode.qrlib');
+	//Vendor('phpqrcode.qrlib');
+    require_once EXTEND_PATH.'phpqrcode/qrlib.php';
 	ob_end_clean();
 	return 'data:image/png;base64,'.base64_encode(\QRcode::png($url, false, "H", $size));
 }
@@ -613,30 +616,6 @@ function getfirstpic($content)
 	{
 		return false;
 	}
-}
-
-/**
- * 更新配置文件 / 更新系统缓存
- */
-function updateconfig()
-{
-	$str_tmp="<?php\r\n"; //得到php的起始符。$str_tmp将累加
-    $str_end="?>"; //php结束符
-    $str_tmp.="//全站配置文件\r\n";
-    
-	$param = db("sysconfig")->select();
-    foreach($param as $row)
-    {
-        $str_tmp .= 'define("'.$row['varname'].'","'.$row['value'].'"); // '.$row['info']."\r\n";
-    }
-	
-    $str_tmp .= $str_end; //加入结束符
-    //保存文件
-    $sf = APP_PATH."common.inc.php"; //文件名
-    $fp = fopen($sf,"w"); //写方式打开文件
-    fwrite($fp,$str_tmp); //存入内容
-    fclose($fp); //关闭文件
-    return $sf;
 }
 
 //清空文件夹
@@ -870,7 +849,6 @@ function logic($name = '', $config = [])
     
     return $instance[$guid];
 }
-
 
 
 

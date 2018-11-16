@@ -9,7 +9,7 @@
 
 2、PHP+Mysql
 
-3、后台登录：http://www.nbnbk3.com/fladmin/Login，账号：admin888，密码：admin
+3、后台登录：http://www.nbnbk3.com/fladmin/Login，账号：admin888，密码：123456
 
 4、恢复后台默认账号密码：http://www.nbnbk3.com/fladmin/Login/recoverpwd
 
@@ -27,7 +27,7 @@
 
 打开/apphome/database.php文件,修改相关配置
 
-3、 登录后台->系统设置->系统配置参数，更新配置：http://www.nbnbk3.com/fladmin/Index/upconfig
+3、 登录后台->系统设置->系统配置参数，更新配置：http://www.nbnbk3.com/fladmin/Index/upcache
 
 
 # 注意

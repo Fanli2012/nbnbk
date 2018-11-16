@@ -2,9 +2,9 @@
 namespace app\common\logic;
 use think\Loader;
 use app\common\lib\ReturnData;
-use app\common\model\Tagindex;
+use app\common\model\Keyword;
 
-class TagindexLogic extends BaseLogic
+class KeywordLogic extends BaseLogic
 {
     protected function initialize()
     {
@@ -13,12 +13,12 @@ class TagindexLogic extends BaseLogic
     
     public function getModel()
     {
-        return new Tagindex();
+        return new Keyword();
     }
     
     public function getValidate()
     {
-        return Loader::validate('Tagindex');
+        return Loader::validate('Keyword');
     }
     
     //列表
@@ -55,13 +55,13 @@ class TagindexLogic extends BaseLogic
     {
         $res = $this->getModel()->getAll($where, $order, $field, $limit);
         
-        if($res)
+        /* if($res)
         {
             foreach($res as $k=>$v)
             {
                 $res[$k] = $this->getDataView($v);
             }
-        }
+        } */
         
         return $res;
     }

@@ -38,7 +38,6 @@ class Admin extends Base
     {
         if(Helper::isPostRequest())
         {
-            $_POST['pwd'] = md5($_POST['pwd']);
             $res = $this->getLogic()->add($_POST);
             if($res['code'] == ReturnData::SUCCESS)
             {
@@ -60,7 +59,6 @@ class Admin extends Base
             $where['id'] = $_POST['id'];
             unset($_POST['id']);
             
-            $_POST['pwd'] = md5($_POST['pwd']);
             $res = $this->getLogic()->edit($_POST,$where);
             if($res['code'] == ReturnData::SUCCESS)
             {

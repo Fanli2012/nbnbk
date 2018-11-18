@@ -59,7 +59,7 @@ class Index extends Base
         $this->assign('article_rand_list',$article_rand_list);
         
         //标签
-        $where4['ischeck'] = 0;
+        $where4['status'] = 0;
         $tag_list = logic('Tag')->getAll($where4, 'id desc', ['content'], 5);
         $this->assign('tag_list',$tag_list);
         

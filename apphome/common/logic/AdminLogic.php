@@ -88,10 +88,18 @@ class AdminLogic extends BaseLogic
         
         if(!isset($data['add_time'])){$data['add_time']=$data['update_time']=time();}
         
+        //判断用户名
+        if(isset($data['name']) && !empty($data['name']))
+        {
+            if($this->getModel()->getOne(['name'=>$data['name'],'delete_time'=>0])){
+                return ReturnData::create(ReturnData::PARAMS_ERROR,null,'用户名已经存在');
+            }
+        }
+        
         //判断手机号码
         if(isset($data['mobile']) && !empty($data['mobile']))
         {
-            if($this->getModel()->getOne(['mobile'=>$data['mobile']])){
+            if($this->getModel()->getOne(['mobile'=>$data['mobile'],'delete_time'=>0])){
                 return ReturnData::create(ReturnData::PARAMS_ERROR,null,'手机号码已经存在');
             }
         }
@@ -99,10 +107,12 @@ class AdminLogic extends BaseLogic
         //判断邮箱
         if(isset($data['email']) && !empty($data['email']))
         {
-            if($this->getModel()->getOne(['email'=>$data['email']])){
+            if($this->getModel()->getOne(['email'=>$data['email'],'delete_time'=>0])){
                 return ReturnData::create(ReturnData::PARAMS_ERROR,null,'邮箱已经存在');
             }
         }
+        
+        $data['pwd'] = md5($data['pwd']);
         
         $res = $this->getModel()->add($data,$type);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
@@ -115,17 +125,32 @@ class AdminLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
+        $check = $this->getValidate()->scene('edit')->check($data);
+        if($check === false){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        
         if(!isset($data['update_time'])){$data['update_time']=time();}
         
         $admin = $this->getModel()->getOne($where);
         if(!$admin){return ReturnData::create(ReturnData::FAIL,null,'记录不存在');}
         
+        //判断用户名
+        if(isset($data['name']) && !empty($data['name']))
+        {
+            $where2['delete_time'] = 0;
+            $where2['name'] = $data['name'];
+            $where2['id'] = ['<>',$admin['id']]; //排除自身
+            if($this->getModel()->getOne($where2)){
+                return ReturnData::create(ReturnData::PARAMS_ERROR,null,'用户名已经存在');
+            }
+        }
+        
         //判断手机号码
         if(isset($data['mobile']) && !empty($data['mobile']))
         {
-            $where2['mobile'] = $data['mobile'];
-            $where2['id'] = ['<>',$admin['id']]; //排除自身
-            if($this->getModel()->getOne($where2)){
+            $where3['delete_time'] = 0;
+            $where3['mobile'] = $data['mobile'];
+            $where3['id'] = ['<>',$admin['id']]; //排除自身
+            if($this->getModel()->getOne($where3)){
                 return ReturnData::create(ReturnData::PARAMS_ERROR,null,'手机号码已经存在');
             }
         }
@@ -133,12 +158,15 @@ class AdminLogic extends BaseLogic
         //判断邮箱
         if(isset($data['email']) && !empty($data['email']))
         {
-            $where3['email'] = $data['email'];
-            $where3['id'] = ['<>',$admin['id']]; //排除自身
-            if($this->getModel()->getOne($where3)){
+            $where4['delete_time'] = 0;
+            $where4['email'] = $data['email'];
+            $where4['id'] = ['<>',$admin['id']]; //排除自身
+            if($this->getModel()->getOne($where4)){
                 return ReturnData::create(ReturnData::PARAMS_ERROR,null,'邮箱已经存在');
             }
         }
+        
+        if(isset($data['pwd']) && !empty($data['pwd'])){$data['pwd'] = md5($data['pwd']);}else{unset($data['pwd']);}
         
         $res = $this->getModel()->edit($data,$where);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
@@ -181,7 +209,7 @@ class AdminLogic extends BaseLogic
         $pwd = md5($data['pwd']);
         
         //用户名/邮箱/手机登录
-        $admin = $this->getModel()->where(function($query) use ($name,$pwd){$query->where('name',$name)->where('pwd',$pwd);})->whereOr(function($query) use ($name,$pwd){$query->where('email',$name)->where('pwd',$pwd);})->whereOr(function($query) use ($name,$pwd){$query->where('mobile',$name)->where('pwd',$pwd);})->find();
+        $admin = $this->getModel()->where(function($query) use ($name,$pwd){$query->where('name',$name)->where('pwd',$pwd)->where('delete_time',0);})->whereOr(function($query) use ($name,$pwd){$query->where('email',$name)->where('pwd',$pwd)->where('delete_time',0);})->whereOr(function($query) use ($name,$pwd){$query->where('mobile',$name)->where('pwd',$pwd)->where('delete_time',0);})->find();
         if($admin)
         {
             $admin = $admin->append(['role_name','status_text'])->toArray();

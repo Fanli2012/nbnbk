@@ -2,6 +2,7 @@
 namespace app\common\validate;
 use think\Validate;
 use app\common\lib\Helper;
+use app\common\lib\Validator;
 
 class Admin extends Validate
 {
@@ -10,7 +11,7 @@ class Admin extends Validate
         ['id', 'require|number','ID必填|ID必须是数字'],
         ['role_id', 'require|number','角色ID必填|角色ID必须是数字'],
         ['name', 'require|max:30|alphaDash','名称必填|名称不能超过30个字符|名称只能包含字母和数字、下划线及破折号'],
-        ['pwd', 'require|max:32','密码必填|密码不能超过32个字符'],
+        ['pwd', 'require|max:32|checkPassword','密码必填|密码不能超过32个字符'],
         ['mobile', 'max:20|checkMobile|checkMobileUnique','手机号码不能超过20个字符'],
         ['email', 'email|checkEmailUnique','邮箱格式不正确'],
         ['avatar', 'max:150','头像不能超过150个字符'],
@@ -26,6 +27,20 @@ class Admin extends Validate
         'edit' => ['role_id', 'name', 'pwd', 'mobile', 'email', 'avatar', 'status', 'login_time', 'add_time', 'update_time', 'delete_time'],
         'del'  => ['id'],
     ];
+    
+    /**
+     * 密码验证
+     * 参数依次为验证数据，验证规则，全部数据(数组)，字段名
+     */
+    protected function checkPassword($value,$rule,$data,$field)
+    {
+        if(Validator::isPWD($value, 6, 16))
+        {
+            return true;
+        }
+        
+        return '密码格式不正确，6-16位';
+    }
     
     /**
      * 手机号码验证

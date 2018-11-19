@@ -30,7 +30,7 @@ class VerifyCodeLogic extends BaseLogic
         {
             foreach($res['list'] as $k=>$v)
             {
-                $res['list'][$k] = $this->getDataView($v);
+                //$res['list'][$k] = $this->getDataView($v);
             }
         }
         
@@ -43,9 +43,25 @@ class VerifyCodeLogic extends BaseLogic
         $res = $this->getModel()->getPaginate($where, $order, $field, $limit);
         
         $res = $res->each(function($item, $key){
-            $item = $this->getDataView($item);
+            //$item = $this->getDataView($item);
             return $item;
         });
+        
+        return $res;
+    }
+    
+    //全部列表
+    public function getAll($where = array(), $order = '', $field = '*', $limit = '')
+    {
+        $res = $this->getModel()->getAll($where, $order, $field, $limit);
+        
+        /* if($res)
+        {
+            foreach($res as $k=>$v)
+            {
+                //$res[$k] = $this->getDataView($v);
+            }
+        } */
         
         return $res;
     }
@@ -56,7 +72,7 @@ class VerifyCodeLogic extends BaseLogic
         $res = $this->getModel()->getOne($where, $field);
         if(!$res){return false;}
         
-        $res = $this->getDataView($res);
+        //$res = $this->getDataView($res);
         
         return $res;
     }

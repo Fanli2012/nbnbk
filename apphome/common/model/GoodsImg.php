@@ -27,12 +27,12 @@ class GoodsImg extends Base
      */
     public function getList($where = array(), $order = '', $field = '*', $offset = 0, $limit = 15)
     {
-        $res['count'] = $this->getDb()->where($where)->count();
+        $res['count'] = self::where($where)->count();
         $res['list'] = array();
         
         if($res['count'] > 0)
         {
-            $res['list'] = $this->getDb()->where($where);
+            $res['list'] = self::where($where);
             
             if(is_array($field))
             {
@@ -61,7 +61,7 @@ class GoodsImg extends Base
      */
     public function getPaginate($where = array(), $order = '', $field = '*', $limit = 15, $simple = false)
     {
-        $res = $this->getDb()->where($where);
+        $res = self::where($where);
         
         if(is_array($field))
         {
@@ -85,7 +85,7 @@ class GoodsImg extends Base
      */
     public function getAll($where = array(), $order = '', $field = '*', $limit = '')
     {
-        $res = $this->getDb()->where($where);
+        $res = self::where($where);
             
         if(is_array($field))
         {
@@ -109,7 +109,7 @@ class GoodsImg extends Base
      */
     public function getOne($where, $field = '*')
     {
-        $res = $this->getDb()->where($where);
+        $res = self::where($where);
         
         if(is_array($field))
         {
@@ -135,15 +135,11 @@ class GoodsImg extends Base
         // 过滤数组中的非数据表字段数据
         // return $this->allowField(true)->isUpdate(false)->save($data);
         
-        if($type==0)
-        {
-            // 新增单条数据并返回主键值
-            return $this->getDb()->strict(false)->insertGetId($data);
-        }
-        elseif($type==1)
+        if($type==1)
         {
             // 添加单条数据
-            return $this->getDb()->strict(false)->insert($data);
+            //return $this->allowField(true)->data($data, true)->save();
+            return self::strict(false)->insert($data);
         }
         elseif($type==2)
         {
@@ -156,8 +152,12 @@ class GoodsImg extends Base
              * ];
              */
             
-            return $this->getDb()->strict(false)->insertAll($data);
+            //return $this->allowField(true)->saveAll($data);
+            return self::strict(false)->insertAll($data);
         }
+        
+        // 新增单条数据并返回主键值
+        return self::strict(false)->insertGetId($data);
     }
     
     /**
@@ -168,7 +168,8 @@ class GoodsImg extends Base
      */
     public function edit($data, $where = array())
     {
-        return $this->getDb()->strict(false)->where($where)->update($data);
+        //return $this->allowField(true)->save($data, $where);
+        return self::strict(false)->where($where)->update($data);
     }
     
     /**
@@ -178,7 +179,7 @@ class GoodsImg extends Base
      */
     public function del($where)
     {
-        return $this->getDb()->where($where)->delete();
+        return self::where($where)->delete();
     }
     
     /**
@@ -189,7 +190,7 @@ class GoodsImg extends Base
      */
     public function getCount($where, $field = '*')
     {
-        return $this->getDb()->where($where)->count($field);
+        return self::where($where)->count($field);
     }
     
     /**
@@ -200,7 +201,7 @@ class GoodsImg extends Base
      */
     public function getMax($where, $field)
     {
-        return $this->getDb()->where($where)->max($field);
+        return self::where($where)->max($field);
     }
     
     /**
@@ -211,7 +212,7 @@ class GoodsImg extends Base
      */
     public function getMin($where, $field)
     {
-        return $this->getDb()->where($where)->min($field);
+        return self::where($where)->min($field);
     }
     
     /**
@@ -222,7 +223,7 @@ class GoodsImg extends Base
      */
     public function getAvg($where, $field)
     {
-        return $this->getDb()->where($where)->avg($field);
+        return self::where($where)->avg($field);
     }
     
     /**
@@ -233,7 +234,7 @@ class GoodsImg extends Base
      */
     public function getSum($where, $field)
     {
-        return $this->getDb()->where($where)->sum($field);
+        return self::where($where)->sum($field);
     }
     
     /**
@@ -244,7 +245,7 @@ class GoodsImg extends Base
      */
     public function getValue($where, $field)
     {
-        return $this->getDb()->where($where)->value($field);
+        return self::where($where)->value($field);
     }
     
     /**
@@ -255,6 +256,7 @@ class GoodsImg extends Base
      */
     public function getColumn($where, $field)
     {
-        return $this->getDb()->where($where)->column($field);
+        return self::where($where)->column($field);
     }
+    
 }

@@ -1,5 +1,8 @@
 <?php
 namespace app\fladmin\controller;
+use app\common\lib\ReturnData;
+use app\common\lib\Helper;
+use app\common\logic\TagLogic;
 
 class Tag extends Base
 {
@@ -8,14 +11,96 @@ class Tag extends Base
 		parent::_initialize();
     }
     
+    public function getLogic()
+    {
+        return new TagLogic();
+    }
+    
+    //列表
     public function index()
     {
-        $list = parent::pageList('tagindex');
+        $where = array();
+        if(!empty($_REQUEST["keyword"]))
+        {
+            $where['name'] = array('like','%'.$_REQUEST['keyword'].'%');
+        }
+        $list = $this->getLogic()->getPaginate($where,['id'=>'desc']);
 		
 		$this->assign('page',$list->render());
-        $this->assign('posts',$list);
-		
+        $this->assign('list',$list);
+		//echo '<pre>';print_r($list);exit;
 		return $this->fetch();
+    }
+	
+    //添加
+	public function add()
+    {
+        if(Helper::isPostRequest())
+        {
+            $res = $this->getLogic()->add($_POST);
+            if($res['code'] == ReturnData::SUCCESS)
+            {
+                $this->success($res['msg'], url('index'), '', 1);
+            }
+            
+            $this->error($res['msg']);
+        }
+        
+        return $this->fetch();
+    }
+    
+    //修改
+    public function edit()
+    {
+        if(Helper::isPostRequest())
+        {
+            $where['id'] = $_POST['id'];
+            unset($_POST['id']);
+            
+            $res = $this->getLogic()->edit($_POST,$where);
+            if($res['code'] == ReturnData::SUCCESS)
+            {
+                $this->success($res['msg'], url('index'), '', 1);
+            }
+            
+            $this->error($res['msg']);
+        }
+        
+        if(!checkIsNumber(input('id',null))){$this->error('参数错误');}
+        $where['id'] = input('id');
+        $this->assign('id', $where['id']);
+        
+        $post = $this->getLogic()->getOne($where);
+        $this->assign('post', $post);
+        
+        //获取该标签下的文章id
+        $posts = db('taglist')->field('article_id')->where("tag_id=".$where['id'])->select();
+        $aidlist = "";
+        if(!empty($posts))
+        {
+            foreach($posts as $row)
+            {
+                $aidlist=$aidlist.','.$row['article_id'];
+            }
+        }
+        $this->assign('aidlist',ltrim($aidlist, ","));
+        
+        return $this->fetch();
+    }
+	
+    //删除
+    public function del()
+    {
+        if(!checkIsNumber(input('id',null))){$this->error('删除失败！请重新提交');}
+        $where['id'] = input('id');
+        
+        $res = $this->getLogic()->del($where);
+		if($res['code'] == ReturnData::SUCCESS)
+        {
+            $this->success("删除成功");
+        }
+		
+        $this->error($res['msg']);
     }
     
     public function doadd()
@@ -46,34 +131,6 @@ class Tag extends Base
 		{
 			$this->error('添加失败！请修改后重新添加', CMS_ADMIN.'Tag/add' , 3);
 		}
-    }
-    
-    public function add()
-    {
-        return $this->fetch();
-    }
-    
-    public function edit()
-    {
-        if(!empty($_GET["id"])){$id = $_GET["id"];}else{$id="";}
-        if(preg_match('/[0-9]*/',$id)){}else{exit;}
-        
-        $this->assign('id',$id);
-		$this->assign('row',db('tagindex')->where("id=$id")->find());
-        
-        //获取该标签下的文章id
-        $posts = db('taglist')->field('aid')->where("tid=$id")->select();
-        $aidlist = "";
-        if(!empty($posts))
-        {
-            foreach($posts as $row)
-            {
-                $aidlist=$aidlist.','.$row['aid'];
-            }
-        }
-        $this->assign('aidlist',ltrim($aidlist, ","));
-		
-        return $this->fetch();
     }
     
     public function doedit()
@@ -122,20 +179,6 @@ class Tag extends Base
 		else
 		{
 			$this->error('修改失败', CMS_ADMIN.'Tag/edit?id='.$_POST["id"] , 3);
-		}
-    }
-    
-	public function del()
-    {
-		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('删除失败！请重新提交',CMS_ADMIN.'Tag' , 3);} //if(preg_match('/[0-9]*/',$id)){}else{exit;}
-		
-		if(db("tagindex")->where("id in ($id)")->delete())
-        {
-            $this->success('删除成功', CMS_ADMIN.'Tag' , 1);
-        }
-		else
-		{
-			$this->error('删除失败！请重新提交', CMS_ADMIN.'Tag', 3);
 		}
     }
 }

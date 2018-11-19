@@ -2,44 +2,37 @@
 {block name="title"}修改Tag{/block}
 
 {block name="content"}
-<h5 class="sub-header"><a href="/fladmin/Tag">Tag列表</a> > 修改Tag</h5>
+<h5 class="sub-header"><a href="{:url('index')}">Tag列表</a> > 修改Tag</h5>
 
-<form id="addarc" method="post" action="/fladmin/Tag/doedit" role="form" enctype="multipart/form-data" class="table-responsive">
+<form id="addarc" method="post" action="{:url('edit')}" role="form" enctype="multipart/form-data" class="table-responsive">
 <table class="table table-striped table-bordered">
 <tbody>
     <tr>
         <td align="right">Tag名称：</td>
-        <td><input name="tag" type="text" id="tag" value="<?php echo $row["tag"]; ?>" class="required" style="width:30%" placeholder="在此输入名称"> <input style="display:none;" type="text" name="id" id="id" value="<?php echo $id; ?>"></td>
-    </tr>
-	<tr>
-        <td align="right">显示方式：</td>
-        <td>
-			<input type="radio" value='0' name="showmode" {if condition="$row['showmode']==0"}checked{/if} />&nbsp;列表&nbsp;&nbsp;
-			<input type="radio" value='1' name="showmode" {if condition="$row['showmode']==1"}checked{/if} />&nbsp;文章
-		</td>
+        <td><input name="name" type="text" id="name" value="<?php echo $post["name"]; ?>" class="required" style="width:30%" placeholder="在此输入名称"> <input style="display:none;" type="text" name="id" id="id" value="<?php echo $id; ?>"></td>
     </tr>
 	<tr>
         <td align="right">是否审核：</td>
         <td>
-			<input type="radio" value='1' name="ischeck" {if condition="$row['ischeck']==1"}checked{/if} />&nbsp;是&nbsp;&nbsp;
-			<input type="radio" value='0' name="ischeck" {if condition="$row['ischeck']==0"}checked{/if} />&nbsp;否
+			<input type="radio" value='1' name="status" {if condition="$post['status']==1"}checked{/if} />&nbsp;是&nbsp;&nbsp;
+			<input type="radio" value='0' name="status" {if condition="$post['status']==0"}checked{/if} />&nbsp;否
 		</td>
     </tr>
     <tr>
         <td align="right">别名：</td>
-        <td><input name="filename" type="text" id="filename" class="required" value="<?php echo $row["filename"]; ?>" size="20"> </td>
+        <td><input name="filename" type="text" id="filename" class="required" value="<?php echo $post["filename"]; ?>" size="20"> </td>
     </tr>
     <tr>
         <td align="right">Tag标题：</td>
-        <td><input name="title" type="text" id="title" value="<?php echo $row["title"]; ?>" style="width:60%"></td>
+        <td><input name="title" type="text" id="title" value="<?php echo $post["title"]; ?>" style="width:60%"></td>
     </tr>
     <tr>
         <td align="right">模板名称：</td>
-        <td><input name="template" type="text" id="template" value="<?php echo $row["template"]; ?>" size="20"></td>
+        <td><input name="template" type="text" id="template" value="<?php echo $post["template"]; ?>" size="20"></td>
     </tr>
     <tr>
         <td align="right" style="vertical-align:middle;">缩略图：</td>
-        <td style="vertical-align:middle;"><button type="button" onclick="upImage();">选择图片</button> <input name="litpic" type="text" id="litpic" value="{$row["litpic"]}" style="width:40%"> <img style="margin-left:20px;<?php if(empty($row["litpic"]) || !imgmatch($row["litpic"])){ echo "display:none;"; } ?>" src="<?php if(imgmatch($row["litpic"])){echo $row["litpic"];} ?>" width="120" height="80" id="picview" name="picview"></td>
+        <td style="vertical-align:middle;"><button type="button" onclick="upImage();">选择图片</button> <input name="litpic" type="text" id="litpic" value="{$post["litpic"]}" style="width:40%"> <img style="margin-left:20px;<?php if(empty($post["litpic"]) || !imgmatch($post["litpic"])){ echo "display:none;"; } ?>" src="<?php if(imgmatch($post["litpic"])){echo $post["litpic"];} ?>" width="120" height="80" id="picview" name="picview"></td>
     </tr>
 <script type="text/javascript">
 var _editor;
@@ -71,11 +64,11 @@ function upImage()
 <script type="text/plain" id="ueditorimg"></script>
     <tr>
         <td align="right">Tag关键字：</td>
-        <td><input type="text" name="keywords" id="keywords" style="width:50%" value="<?php echo $row["keywords"]; ?>"> (用,分开)</td>
+        <td><input type="text" name="keywords" id="keywords" style="width:50%" value="<?php echo $post["keywords"]; ?>"> (用,分开)</td>
     </tr>
     <tr>
         <td align="right" style="vertical-align:middle;">Tag摘要信息：</td>
-        <td><textarea name="description" rows="5" id="description" style="width:80%;height:70px;vertical-align:middle;"><?php echo $row["description"]; ?></textarea></td>
+        <td><textarea name="description" rows="5" id="description" style="width:80%;height:70px;vertical-align:middle;"><?php echo $post["description"]; ?></textarea></td>
     </tr>
     <tr>
         <td align="right" style="vertical-align:middle;">Tag文章列表：</td>
@@ -86,7 +79,7 @@ function upImage()
     </tr>
     <tr>
         <td colspan="2">
-<!-- 加载编辑器的容器 --><script id="container" name="content" type="text/plain"><?php echo $row["content"]; ?></script>
+<!-- 加载编辑器的容器 --><script id="container" name="content" type="text/plain"><?php echo $post["content"]; ?></script>
 <!-- 配置文件 --><script type="text/javascript" src="/other/flueditor/ueditor.config.js"></script>
 <!-- 编辑器源码文件 --><script type="text/javascript" src="/other/flueditor/ueditor.all.js"></script>
 <!-- 实例化编辑器 --><script type="text/javascript">var ue = UE.getEditor('container',{maximumWords:100000,initialFrameHeight:320,enableAutoSave:false});</script></td>

@@ -1,11 +1,19 @@
 <?php
 namespace app\fladmin\controller;
+use app\common\lib\ReturnData;
+use app\common\lib\Helper;
+use app\common\logic\PageLogic;
 
 class Page extends Base
 {
 	public function _initialize()
 	{
 		parent::_initialize();
+    }
+    
+    public function getLogic()
+    {
+        return new PageLogic();
     }
     
     public function index()

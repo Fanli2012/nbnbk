@@ -30,7 +30,7 @@ class CategoryLogic extends BaseLogic
         {
             foreach($res['list'] as $k=>$v)
             {
-                $res['list'][$k] = $this->getDataView($v);
+                //$res['list'][$k] = $this->getDataView($v);
             }
         }
         
@@ -43,7 +43,7 @@ class CategoryLogic extends BaseLogic
         $res = $this->getModel()->getPaginate($where, $order, $field, $limit);
         
         $res = $res->each(function($item, $key){
-            $item = $this->getDataView($item);
+            //$item = $this->getDataView($item);
             return $item;
         });
         
@@ -59,7 +59,7 @@ class CategoryLogic extends BaseLogic
         {
             foreach($res as $k=>$v)
             {
-                $res[$k] = $this->getDataView($v);
+                //$res[$k] = $this->getDataView($v);
             }
         } */
         
@@ -72,7 +72,7 @@ class CategoryLogic extends BaseLogic
         $res = $this->getModel()->getOne($where, $field);
         if(!$res){return false;}
         
-        $res = $this->getDataView($res);
+        //$res = $this->getDataView($res);
         
         return $res;
     }

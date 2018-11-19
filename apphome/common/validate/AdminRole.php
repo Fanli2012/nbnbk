@@ -7,18 +7,16 @@ class AdminRole extends Validate
     // 验证规则
     protected $rule = [
         ['id', 'require|number','ID必填|ID必须是数字'],
-        ['click', 'number', '点击量必须是数字'],
-        ['title', 'require|max:150','标题必填|标题不能超过150个字符'],
-        ['keywords', 'max:60','关键词不能超过60个字符'],
-        ['seotitle', 'max:150','seo标题不能超过150个字符'],
-        ['description', 'max:250','描述不能超过60个字符'],
-        ['add_time', 'require|number', '添加时间必填|添加时间格式不正确'],
-        ['update_time', 'require|number', '更新时间必填|更新时间格式不正确'],
+        ['parent_id', 'number','父级ID必填|父级ID必须是数字'],
+        ['name', 'require|max:30','名称必填|名称不能超过30个字符'],
+        ['des', 'max:150','描述不能超过150个字符'],
+        ['listorder', 'number','排序必须是数字'],
+        ['status', 'in:0,1,2','状态，0正常，1禁用'],
     ];
     
     protected $scene = [
-        'add'  => ['title', 'click', 'add_time', 'update_time', 'keywords', 'seotitle', 'description'],
-        'edit' => ['title', 'click', 'update_time', 'keywords', 'seotitle', 'description'],
+        'add'  => ['parent_id', 'name', 'des', 'listorder', 'status'],
+        'edit'  => ['parent_id', 'name', 'des', 'listorder', 'status'],
         'del'  => ['id'],
     ];
 }

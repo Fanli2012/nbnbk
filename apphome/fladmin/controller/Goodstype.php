@@ -1,6 +1,7 @@
 <?php
 namespace app\fladmin\controller;
 use app\common\lib\ReturnData;
+use app\common\lib\Helper;
 use app\common\logic\GoodsTypeLogic;
 
 class Goodstype extends Base

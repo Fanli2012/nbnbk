@@ -412,48 +412,6 @@ function imgmatch($url)
     }
 }
 
-//将栏目列表生成数组
-function get_category($modelname,$parent_id=0,$pad=0)
-{
-    $arr=array();
-    
-    $cats = db($modelname)->where("parent_id=$parent_id")->order('id asc')->select();
-    
-    if($cats)
-    {
-        foreach($cats as $row)//循环数组
-        {
-            $row['deep'] = $pad;
-            if($child = get_category($modelname,$row["id"],$pad+1))//如果子级不为空
-            {
-                $row['child'] = $child;
-            }
-            $arr[] = $row;
-        }
-        
-        return $arr;
-    }
-}
-
-function tree($list,$parent_id=0)
-{
-    global $temp;
-    if(!empty($list))
-    {
-        foreach($list as $v)
-        {
-            $temp[] = array("id"=>$v['id'],"deep"=>$v['deep'],"name"=>$v['name'],"parent_id"=>$v['parent_id'],"typedir"=>$v['typedir'],"add_time"=>$v['add_time']);
-            //echo $v['id'];
-            if(array_key_exists("child",$v))
-            {
-                tree($v['child'],$v['parent_id']);
-            }
-        }
-    }
-    
-    return $temp;
-}
-
 //递归获取面包屑导航
 function get_cat_path($cat)
 {
@@ -670,22 +628,9 @@ function sysconfig($varname='')
 }
 
 if (! function_exists('dd')) {
-    /**
-     * Dump the passed variables and end the script.
-     *
-     * @param  mixed
-     * @return void
-     */
-    function dd($args)
+    function dd($data)
     {
-        echo '<pre>';
-        foreach ($args as $x)
-        {
-            //var_dump($x);
-            print_r($x);
-        }
-        
-        die(1);
+        echo '<pre>';print_r($data);exit;
     }
 }
 

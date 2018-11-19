@@ -30,7 +30,7 @@ class TokenLogic extends BaseLogic
         {
             foreach($res['list'] as $k=>$v)
             {
-                $res['list'][$k] = $this->getDataView($v);
+                //$res['list'][$k] = $this->getDataView($v);
             }
         }
         
@@ -43,9 +43,25 @@ class TokenLogic extends BaseLogic
         $res = $this->getModel()->getPaginate($where, $order, $field, $limit);
         
         $res = $res->each(function($item, $key){
-            $item = $this->getDataView($item);
+            //$item = $this->getDataView($item);
             return $item;
         });
+        
+        return $res;
+    }
+    
+    //全部列表
+    public function getAll($where = array(), $order = '', $field = '*', $limit = '')
+    {
+        $res = $this->getModel()->getAll($where, $order, $field, $limit);
+        
+        if($res)
+        {
+            foreach($res as $k=>$v)
+            {
+                //$res[$k] = $this->getDataView($v);
+            }
+        }
         
         return $res;
     }
@@ -56,7 +72,7 @@ class TokenLogic extends BaseLogic
         $res = $this->getModel()->getOne($where, $field);
         if(!$res){return false;}
         
-        $res = $this->getDataView($res);
+        //$res = $this->getDataView($res);
         
         return $res;
     }
@@ -67,12 +83,12 @@ class TokenLogic extends BaseLogic
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
         $check = $this->getValidate()->scene('add')->check($data);
-        if($check === false){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->add($data,$type);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
-        return ReturnData::create(ReturnData::SYSTEM_FAIL);
+        return ReturnData::create(ReturnData::FAIL);
     }
     
     //修改
@@ -83,7 +99,7 @@ class TokenLogic extends BaseLogic
         $res = $this->getModel()->edit($data,$where);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
-        return ReturnData::create(ReturnData::SYSTEM_FAIL);
+        return ReturnData::create(ReturnData::FAIL);
     }
     
     //删除
@@ -92,12 +108,12 @@ class TokenLogic extends BaseLogic
         if(empty($where)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
         $check = $this->getValidate()->scene('del')->check($where);
-        if($check === false){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->del($where);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
-        return ReturnData::create(ReturnData::SYSTEM_FAIL);
+        return ReturnData::create(ReturnData::FAIL);
     }
     
     /**

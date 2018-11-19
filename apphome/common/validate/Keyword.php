@@ -6,19 +6,14 @@ class Keyword extends Validate
 {
     // 验证规则
     protected $rule = [
-        ['id', 'require|number','ID必填|ID必须是数字'],
-        ['click', 'number', '点击量必须是数字'],
-        ['title', 'require|max:150','标题必填|标题不能超过150个字符'],
-        ['keywords', 'max:60','关键词不能超过60个字符'],
-        ['seotitle', 'max:150','seo标题不能超过150个字符'],
-        ['description', 'max:250','描述不能超过60个字符'],
-        ['add_time', 'require|number', '添加时间必填|添加时间格式不正确'],
-        ['update_time', 'require|number', '更新时间必填|更新时间格式不正确'],
+        ['id', 'require|number|gt:0','ID必填|ID必须是数字|ID格式不正确'],
+        ['name', 'require|max:30','内链关键词必填|内链关键词不能超过30个字符'],
+        ['url', 'require|max:150','跳转链接必填|跳转链接不能超过150个字符'],
     ];
     
     protected $scene = [
-        'add'  => ['title', 'click', 'add_time', 'update_time', 'keywords', 'seotitle', 'description'],
-        'edit' => ['title', 'click', 'update_time', 'keywords', 'seotitle', 'description'],
+        'add'  => ['name', 'url'],
+        'edit' => ['name', 'url'],
         'del'  => ['id'],
     ];
 }

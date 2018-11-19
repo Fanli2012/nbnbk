@@ -1,5 +1,8 @@
 <?php
 namespace app\fladmin\controller;
+use app\common\lib\ReturnData;
+use app\common\lib\Helper;
+use app\common\logic\SysconfigLogic;
 
 class Sysconfig extends Base
 {
@@ -8,93 +11,83 @@ class Sysconfig extends Base
 		parent::_initialize();
     }
     
+    public function getLogic()
+    {
+        return new SysconfigLogic();
+    }
+    
+    //列表
     public function index()
     {
-		$this->assign('posts',db("sysconfig")->order('id desc')->select());
-        return $this->fetch();
+        $where = array();
+        if(!empty($_REQUEST["keyword"]))
+        {
+            $where['info'] = array('like','%'.$_REQUEST['keyword'].'%');
+        }
+        $list = $this->getLogic()->getPaginate($where,['id'=>'desc']);
+		
+		$this->assign('page',$list->render());
+        $this->assign('list',$list);
+		//echo '<pre>';print_r($list);exit;
+		return $this->fetch();
     }
-    
-	//添加参数，视图
-    public function add()
+	
+    //添加
+	public function add()
     {
+        if(Helper::isPostRequest())
+        {
+            $res = $this->getLogic()->add($_POST);
+            if($res['code'] == ReturnData::SUCCESS)
+            {
+                $this->success($res['msg'], url('index'), '', 1);
+            }
+            
+            $this->error($res['msg']);
+        }
+        
         return $this->fetch();
     }
     
-	//修改参数，视图
+    //修改
     public function edit()
     {
-        if(!empty($_REQUEST["id"])){$id = $_REQUEST["id"];}else{$id="";}
-        if(preg_match('/[0-9]*/',$id)){}else{exit;}
+        if(Helper::isPostRequest())
+        {
+            $where['id'] = $_POST['id'];
+            unset($_POST['id']);
+            
+            $res = $this->getLogic()->edit($_POST,$where);
+            if($res['code'] == ReturnData::SUCCESS)
+            {
+                $this->success($res['msg'], url('index'), '', 1);
+            }
+            
+            $this->error($res['msg']);
+        }
         
-		$this->assign('id',$id);
-		$this->assign('row',db('sysconfig')->where("id=$id")->find());
-		
+        if(!checkIsNumber(input('id',null))){$this->error('参数错误');}
+        $where['id'] = input('id');
+        $this->assign('id', $where['id']);
+        
+        $post = $this->getLogic()->getOne($where);
+        $this->assign('post', $post);
+        
         return $this->fetch();
     }
-    
-    public function doadd()
-    {
-        //参数名称
-        if(!empty($_POST["varname"]))
-        {
-			if(!preg_match("/^CMS_[A-Z_]+$/i", $_POST["varname"]))
-			{
-				$this->error('添加失败！参数名称不正确', CMS_ADMIN.'Sysconfig/add');exit;
-			}
-        }
-        else
-        {
-            $this->error('添加失败！参数名称不能为空', CMS_ADMIN.'Sysconfig/add');exit;
-        }
-		
-		if($_POST['varname']!="" && db('sysconfig')->insert($_POST))
-        {
-            $this->success('添加成功', CMS_ADMIN.'Sysconfig' , 1);
-        }
-		else
-		{
-			$this->error('添加失败！请修改后重新添加', CMS_ADMIN.'Sysconfig/add');
-		}
-    }
-    
-    public function doedit()
-    {
-        if(isset($_POST["id"]) && !empty($_POST["id"])){$id = $_POST["id"];unset($_POST["id"]);}else{$id="";exit;}
-        
-        //参数名称
-        if(!empty($_POST["varname"]))
-        {
-            if(!preg_match("/^CMS_[A-Z_]+$/i", $_POST["varname"]))
-			{
-				$this->error('更新失败！参数名称不正确', CMS_ADMIN.'Sysconfig/edit?id='.$id);exit;
-			}
-        }
-        else
-        {
-            $this->error('更新失败！参数名称不能为空', CMS_ADMIN.'Sysconfig/edit?id='.$id);exit;
-        }
-		
-		if(db('sysconfig')->where("id=$id")->update($_POST))
-        {
-            $this->success('更新成功', CMS_ADMIN.'Sysconfig');
-        }
-		else
-		{
-			$this->error('更新失败！请修改后重新提交', CMS_ADMIN.'Sysconfig/edit?id='.$id);
-		}
-    }
-    
+	
+    //删除
     public function del()
     {
-		if(!empty($_REQUEST["id"])){$id = $_REQUEST["id"];}else{$this->error('删除失败！请重新提交',CMS_ADMIN.'Sysconfig');}
-		
-		if(db("sysconfig")->where("id in ($id)")->delete())
+        if(!checkIsNumber(input('id',null))){$this->error('删除失败！请重新提交');}
+        $where['id'] = input('id');
+        
+        $res = $this->getLogic()->del($where);
+		if($res['code'] == ReturnData::SUCCESS)
         {
-            $this->success('删除成功', CMS_ADMIN.'Sysconfig');
+            $this->success("删除成功");
         }
-		else
-		{
-			$this->error('删除失败！请重新提交', CMS_ADMIN.'Sysconfig');
-		}
+		
+        $this->error($res['msg']);
     }
 }

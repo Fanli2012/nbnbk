@@ -24,7 +24,7 @@ class Job extends Base
             $where['title'] = array('like','%'.$_REQUEST['keyword'].'%');
         }
         $where['delete_time'] = 0; //未删除
-        $list = $this->getLogic()->getPaginate($where,['update_time'=>'desc'],['content'],15);
+        $list = $this->getLogic()->getPaginate($where,['update_time'=>'desc'],['content']);
 		
 		$this->assign('page',$list->render());
         $this->assign('list',$list);

@@ -1,5 +1,8 @@
 <?php
 namespace app\fladmin\controller;
+use app\common\lib\ReturnData;
+use app\common\lib\Helper;
+use app\common\logic\GuestbookLogic;
 
 class Guestbook extends Base
 {
@@ -8,6 +11,12 @@ class Guestbook extends Base
 		parent::_initialize();
     }
     
+    public function getLogic()
+    {
+        return new GuestbookLogic();
+    }
+    
+    //列表
     public function index()
     {
         $where = array();
@@ -15,52 +24,70 @@ class Guestbook extends Base
         {
             $where['title'] = array('like','%'.$_REQUEST['keyword'].'%');
         }
-        
-        $list = parent::pageList('guestbook',$where);
-        
-		$this->assign('page',$list->render());
-        $this->assign('posts',$list);
+        $list = $this->getLogic()->getPaginate($where,['id'=>'desc']);
 		
+		$this->assign('page',$list->render());
+        $this->assign('list',$list);
+		//echo '<pre>';print_r($list);exit;
 		return $this->fetch();
     }
-    
-    public function edit()
+	
+    //添加
+	public function add()
     {
-		$this->assign('row',db('guestbook')->where("id=1")->find());
+        if(Helper::isPostRequest())
+        {
+            $res = $this->getLogic()->add($_POST);
+            if($res['code'] == ReturnData::SUCCESS)
+            {
+                $this->success($res['msg'], url('index'), '', 1);
+            }
+            
+            $this->error($res['msg']);
+        }
         
         return $this->fetch();
     }
     
-    public function doedit()
+    //修改
+    public function edit()
     {
-        if(!empty($_POST["username"])){$data['username'] = $map['username'] = $_POST["username"];}else{$this->success('用户名不能为空', CMS_ADMIN.'User/edit' , 3);exit;}//用户名
-        if(!empty($_POST["oldpwd"])){$map['pwd'] = md5($_POST["oldpwd"]);}else{$this->success('旧密码错误', CMS_ADMIN.'User/edit' , 3);exit;}
-        if($_POST["newpwd"]==$_POST["newpwd2"]){$data['pwd'] = md5($_POST["newpwd"]);}else{$this->success('密码错误', CMS_ADMIN.'User/edit' , 3);exit;}
-        if($_POST["oldpwd"]==$_POST["newpwd"]){$this->error('新旧密码不能一致', CMS_ADMIN.'User/edit' ,1);exit;}
-        
-        $User = db("guestbook")->where($map)->find();
-        
-        if($User)
+        if(Helper::isPostRequest())
         {
-            if(db('guestbook')->where("id=1")->update($data)){session(null);$this->success('修改成功，请重新登录', CMS_ADMIN.'Login' , 3);}
+            $where['id'] = $_POST['id'];
+            unset($_POST['id']);
+            
+            $res = $this->getLogic()->edit($_POST,$where);
+            if($res['code'] == ReturnData::SUCCESS)
+            {
+                $this->success($res['msg'], url('index'), '', 1);
+            }
+            
+            $this->error($res['msg']);
         }
-        else
-        {
-            $this->error('修改失败！旧用户名或密码错误', CMS_ADMIN.'User/edit' ,1);
-        }
+        
+        if(!checkIsNumber(input('id',null))){$this->error('参数错误');}
+        $where['id'] = input('id');
+        $this->assign('id', $where['id']);
+        
+        $post = $this->getLogic()->getOne($where);
+        $this->assign('post', $post);
+        
+        return $this->fetch();
     }
-    
+	
+    //删除
     public function del()
     {
-		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('删除失败！请重新提交',CMS_ADMIN.'Guestbook' , 3);}
-		
-		if(db("guestbook")->where("id in ($id)")->delete())
+        if(!checkIsNumber(input('id',null))){$this->error('删除失败！请重新提交');}
+        $where['id'] = input('id');
+        
+        $res = $this->getLogic()->del($where);
+		if($res['code'] == ReturnData::SUCCESS)
         {
-            $this->success("$id ,删除成功", CMS_ADMIN.'Guestbook' , 1);
+            $this->success("删除成功");
         }
-		else
-		{
-			$this->error("$id ,删除失败！请重新提交", CMS_ADMIN.'Guestbook', 3);
-		}
+		
+        $this->error($res['msg']);
     }
 }

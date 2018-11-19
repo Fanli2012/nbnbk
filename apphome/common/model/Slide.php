@@ -17,6 +17,15 @@ class Slide extends Base
         return db('slide');
     }
     
+    //状态，0：正常，1：禁用
+    const SLIDE_STATUS_NORMAL = 0;
+    const SLIDE_STATUS_DISABLE = 1;
+    //状态描述
+    public static $slide_status_desc = [
+        self::SLIDE_STATUS_NORMAL => '正常',
+        self::SLIDE_STATUS_DISABLE => '禁用'
+    ];
+    
     /**
      * 列表
      * @param array $where 查询条件
@@ -28,12 +37,12 @@ class Slide extends Base
      */
     public function getList($where = array(), $order = '', $field = '*', $offset = 0, $limit = 15)
     {
-        $res['count'] = $this->getDb()->where($where)->count();
+        $res['count'] = self::where($where)->count();
         $res['list'] = array();
         
         if($res['count'] > 0)
         {
-            $res['list'] = $this->getDb()->where($where);
+            $res['list'] = self::where($where);
             
             if(is_array($field))
             {
@@ -62,7 +71,7 @@ class Slide extends Base
      */
     public function getPaginate($where = array(), $order = '', $field = '*', $limit = 15, $simple = false)
     {
-        $res = $this->getDb()->where($where);
+        $res = self::where($where);
         
         if(is_array($field))
         {
@@ -86,7 +95,7 @@ class Slide extends Base
      */
     public function getAll($where = array(), $order = '', $field = '*', $limit = '')
     {
-        $res = $this->getDb()->where($where);
+        $res = self::where($where);
             
         if(is_array($field))
         {
@@ -110,7 +119,7 @@ class Slide extends Base
      */
     public function getOne($where, $field = '*')
     {
-        $res = $this->getDb()->where($where);
+        $res = self::where($where);
         
         if(is_array($field))
         {
@@ -136,15 +145,11 @@ class Slide extends Base
         // 过滤数组中的非数据表字段数据
         // return $this->allowField(true)->isUpdate(false)->save($data);
         
-        if($type==0)
-        {
-            // 新增单条数据并返回主键值
-            return $this->getDb()->strict(false)->insertGetId($data);
-        }
-        elseif($type==1)
+        if($type==1)
         {
             // 添加单条数据
-            return $this->getDb()->strict(false)->insert($data);
+            //return $this->allowField(true)->data($data, true)->save();
+            return self::strict(false)->insert($data);
         }
         elseif($type==2)
         {
@@ -157,8 +162,12 @@ class Slide extends Base
              * ];
              */
             
-            return $this->getDb()->strict(false)->insertAll($data);
+            //return $this->allowField(true)->saveAll($data);
+            return self::strict(false)->insertAll($data);
         }
+        
+        // 新增单条数据并返回主键值
+        return self::strict(false)->insertGetId($data);
     }
     
     /**
@@ -169,7 +178,8 @@ class Slide extends Base
      */
     public function edit($data, $where = array())
     {
-        return $this->getDb()->strict(false)->where($where)->update($data);
+        //return $this->allowField(true)->save($data, $where);
+        return self::strict(false)->where($where)->update($data);
     }
     
     /**
@@ -179,7 +189,7 @@ class Slide extends Base
      */
     public function del($where)
     {
-        return $this->getDb()->where($where)->delete();
+        return self::where($where)->delete();
     }
     
     /**
@@ -190,7 +200,7 @@ class Slide extends Base
      */
     public function getCount($where, $field = '*')
     {
-        return $this->getDb()->where($where)->count($field);
+        return self::where($where)->count($field);
     }
     
     /**
@@ -201,7 +211,7 @@ class Slide extends Base
      */
     public function getMax($where, $field)
     {
-        return $this->getDb()->where($where)->max($field);
+        return self::where($where)->max($field);
     }
     
     /**
@@ -212,7 +222,7 @@ class Slide extends Base
      */
     public function getMin($where, $field)
     {
-        return $this->getDb()->where($where)->min($field);
+        return self::where($where)->min($field);
     }
     
     /**
@@ -223,7 +233,7 @@ class Slide extends Base
      */
     public function getAvg($where, $field)
     {
-        return $this->getDb()->where($where)->avg($field);
+        return self::where($where)->avg($field);
     }
     
     /**
@@ -234,7 +244,7 @@ class Slide extends Base
      */
     public function getSum($where, $field)
     {
-        return $this->getDb()->where($where)->sum($field);
+        return self::where($where)->sum($field);
     }
     
     /**
@@ -245,7 +255,7 @@ class Slide extends Base
      */
     public function getValue($where, $field)
     {
-        return $this->getDb()->where($where)->value($field);
+        return self::where($where)->value($field);
     }
     
     /**
@@ -256,18 +266,21 @@ class Slide extends Base
      */
     public function getColumn($where, $field)
     {
-        return $this->getDb()->where($where)->column($field);
+        return self::where($where)->column($field);
     }
     
-    //是否显示，默认0显示
-    public function getIsShowAttr($data)
+    /**
+     * 获取器——状态，0正常，1禁用
+     * @param int $value
+     * @return string
+     */
+    public function getStatusTextAttr($value, $data)
     {
-        $arr = array(0 => '显示', 1 => '不显示');
-        return $arr[$data['is_show']];
+        return self::$slide_status_desc[$data['status']];
     }
     
     //跳转方式，0_blank，1_self，2_parent，3_top，4framename
-    public function getTargetAttr($data)
+    public function getTargetTextAttr($value, $data)
     {
         $arr = array(0 => '_blank', 1 => '_self', 2 => '_parent', 3 => '_top', 4 => 'framename');
         return $arr[$data['target']];

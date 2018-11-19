@@ -4,7 +4,7 @@ namespace app\common\model;
 class Menu extends Base
 {
 	// 设置当前模型对应的完整数据表名称
-    protected $table = 'menu';
+    //protected $table = 'fl_menu';
     // 默认主键为自动识别，如果需要指定，可以设置属性
     protected $pk = 'id';
     
@@ -12,6 +12,15 @@ class Menu extends Base
     {
         return db('menu');
     }
+    
+    //状态，0正常，1隐藏
+    const MENU_STATUS_NORMAL  = 0;
+    const MENU_STATUS_DISABLE = 1;
+    //状态描述
+    public static $menu_status_desc = [
+        self::MENU_STATUS_NORMAL  => '正常',
+        self::MENU_STATUS_DISABLE => '隐藏'
+    ];
     
     /**
      * 列表
@@ -24,12 +33,12 @@ class Menu extends Base
      */
     public function getList($where = array(), $order = '', $field = '*', $offset = 0, $limit = 15)
     {
-        $res['count'] = $this->getDb()->where($where)->count();
+        $res['count'] = self::where($where)->count();
         $res['list'] = array();
         
         if($res['count'] > 0)
         {
-            $res['list'] = $this->getDb()->where($where);
+            $res['list'] = self::where($where);
             
             if(is_array($field))
             {
@@ -58,7 +67,7 @@ class Menu extends Base
      */
     public function getPaginate($where = array(), $order = '', $field = '*', $limit = 15, $simple = false)
     {
-        $res = $this->getDb()->where($where);
+        $res = self::where($where);
         
         if(is_array($field))
         {
@@ -82,7 +91,7 @@ class Menu extends Base
      */
     public function getAll($where = array(), $order = '', $field = '*', $limit = '')
     {
-        $res = $this->getDb()->where($where);
+        $res = self::where($where);
             
         if(is_array($field))
         {
@@ -106,7 +115,7 @@ class Menu extends Base
      */
     public function getOne($where, $field = '*')
     {
-        $res = $this->getDb()->where($where);
+        $res = self::where($where);
         
         if(is_array($field))
         {
@@ -132,15 +141,11 @@ class Menu extends Base
         // 过滤数组中的非数据表字段数据
         // return $this->allowField(true)->isUpdate(false)->save($data);
         
-        if($type==0)
-        {
-            // 新增单条数据并返回主键值
-            return $this->getDb()->strict(false)->insertGetId($data);
-        }
-        elseif($type==1)
+        if($type==1)
         {
             // 添加单条数据
-            return $this->getDb()->strict(false)->insert($data);
+            //return $this->allowField(true)->data($data, true)->save();
+            return self::strict(false)->insert($data);
         }
         elseif($type==2)
         {
@@ -153,8 +158,12 @@ class Menu extends Base
              * ];
              */
             
-            return $this->getDb()->strict(false)->insertAll($data);
+            //return $this->allowField(true)->saveAll($data);
+            return self::strict(false)->insertAll($data);
         }
+        
+        // 新增单条数据并返回主键值
+        return self::strict(false)->insertGetId($data);
     }
     
     /**
@@ -165,7 +174,8 @@ class Menu extends Base
      */
     public function edit($data, $where = array())
     {
-        return $this->getDb()->strict(false)->where($where)->update($data);
+        //return $this->allowField(true)->save($data, $where);
+        return self::strict(false)->where($where)->update($data);
     }
     
     /**
@@ -175,7 +185,7 @@ class Menu extends Base
      */
     public function del($where)
     {
-        return $this->getDb()->where($where)->delete();
+        return self::where($where)->delete();
     }
     
     /**
@@ -186,7 +196,7 @@ class Menu extends Base
      */
     public function getCount($where, $field = '*')
     {
-        return $this->getDb()->where($where)->count($field);
+        return self::where($where)->count($field);
     }
     
     /**
@@ -197,7 +207,7 @@ class Menu extends Base
      */
     public function getMax($where, $field)
     {
-        return $this->getDb()->where($where)->max($field);
+        return self::where($where)->max($field);
     }
     
     /**
@@ -208,7 +218,7 @@ class Menu extends Base
      */
     public function getMin($where, $field)
     {
-        return $this->getDb()->where($where)->min($field);
+        return self::where($where)->min($field);
     }
     
     /**
@@ -219,7 +229,7 @@ class Menu extends Base
      */
     public function getAvg($where, $field)
     {
-        return $this->getDb()->where($where)->avg($field);
+        return self::where($where)->avg($field);
     }
     
     /**
@@ -230,7 +240,7 @@ class Menu extends Base
      */
     public function getSum($where, $field)
     {
-        return $this->getDb()->where($where)->sum($field);
+        return self::where($where)->sum($field);
     }
     
     /**
@@ -241,7 +251,7 @@ class Menu extends Base
      */
     public function getValue($where, $field)
     {
-        return $this->getDb()->where($where)->value($field);
+        return self::where($where)->value($field);
     }
     
     /**
@@ -252,31 +262,64 @@ class Menu extends Base
      */
     public function getColumn($where, $field)
     {
-        return $this->getDb()->where($where)->column($field);
+        return self::where($where)->column($field);
     }
     
-	//将栏目列表生成数组
-	public function get_category($modelname,$parent_id=0,$pad=0)
+    /**
+     * 获取器——状态
+     * @param int $value
+     * @return string
+     */
+    public function getStatusTextAttr($value, $data)
+    {
+        return self::$menu_status_desc[$data['status']];
+    }
+    
+    /**
+     * 获取器——菜单类型  1：权限认证+菜单；0：只作为菜单
+     * @param int $value
+     * @return string
+     */
+    public function getTypeTextAttr($value, $data)
+    {
+        $arr = array(0 => '只作为菜单', 1 => '权限认证+菜单');
+        return $arr[$data['type']];
+    }
+    
+	/**
+     * 将列表生成树形结构
+     * @param int $parent_id 父级ID
+     * @param int $deep 层级
+     * @return array
+     */
+	public function get_category($parent_id=0,$deep=0)
 	{
 		$arr=array();
 		
-		$cats = db($modelname)->where("parent_id=$parent_id")->order('id asc')->select();
-		
+		$cats = model('Menu')->getAll(['parent_id'=>$parent_id], 'listorder asc');
 		if($cats)
 		{
 			foreach($cats as $row)//循环数组
 			{
-				$row['deep'] = $pad;
-				if($child = $this->get_category($modelname,$row["id"],$pad+1))//如果子级不为空
+				$row['deep'] = $deep;
+                //如果子级不为空
+				if($child = $this->get_category($row["id"],$deep+1))
 				{
 					$row['child'] = $child;
 				}
 				$arr[] = $row;
 			}
-			return $arr;
 		}
+        
+        return $arr;
 	}
-
+    
+    /**
+     * 树形结构转成列表
+     * @param array $list 数据
+     * @param int $parent_id 父级ID
+     * @return array
+     */
 	public function category_tree($list,$parent_id=0)
 	{
 		global $temp;
@@ -286,7 +329,7 @@ class Menu extends Base
 			{
 				$temp[] = array("id"=>$v['id'],"deep"=>$v['deep'],"name"=>$v['name'],"parent_id"=>$v['parent_id']);
 				//echo $v['id'];
-				if(array_key_exists("child",$v))
+				if(isset($v['child']))
 				{
 					$this->category_tree($v['child'],$v['parent_id']);
 				}
@@ -295,7 +338,6 @@ class Menu extends Base
 		
 		return $temp;
 	}
-	
 	//获取后台管理员所具有权限的菜单列表
 	public function getPermissionsMenu($role_id, $parent_id=0, $pad=0)
 	{

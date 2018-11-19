@@ -22,5 +22,9 @@
 </tr><?php }} ?>
 </tbody></table></div><!-- 表格结束 --></form><!-- 表单结束 -->
 
+<form id="searcharc" class="navbar-form" action="{:url('index')}" method="get">
+<div class="form-group"><input type="text" name="keyword" id="keyword" class="form-control required" placeholder="搜索关键词..."></div>
+<button type="submit" class="btn btn-info" value="Submit">搜索一下</button></form>
+
 <div class="backpages">{$page}</div>
 {/block}

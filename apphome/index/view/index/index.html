@@ -5,8 +5,8 @@
 <div class="box mt10">
 <div class="fl_640">
 <div id="arclist">
-<?php if($list){foreach($list as $row){ ?><div class="list"><?php if(!empty($row['litpic'])){ ?><a class="limg" href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['typeid'],"type"=>'content')); ?>"><img alt="<?php echo $row['title']; ?>" src="<?php echo $row['litpic']; ?>"></a><?php } ?>
-<strong class="tit"><a href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['typeid'],"type"=>'content')); ?>" target="_blank"><?php echo $row['title']; ?></a></strong><p><?php echo mb_strcut($row['description'],0,150,'UTF-8'); ?>..</p>
+<?php if($list){foreach($list as $row){ ?><div class="list"><?php if(!empty($row['litpic'])){ ?><a class="limg" href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['type_id'],"type"=>'content')); ?>"><img alt="<?php echo $row['title']; ?>" src="<?php echo $row['litpic']; ?>"></a><?php } ?>
+<strong class="tit"><a href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['type_id'],"type"=>'content')); ?>" target="_blank"><?php echo $row['title']; ?></a></strong><p><?php echo mb_strcut($row['description'],0,150,'UTF-8'); ?>..</p>
 <div class="info"><span class="fl"><?php if(!empty($row['writer'])){ echo '<i>'.$row['writer'].'</i>'; }elseif(!empty($row['source'])){ echo '<i>'.$row['source'].'</i>'; } ?><em><?php echo date("m-d H:i",$row['update_time']); ?></em></span><span class="fr"><em><?php echo $row['click']; ?></em>人阅读</span></div><div class="cl"></div></div><?php }} ?></div>
 
 </div><!-- fl_640 end -->
@@ -16,10 +16,10 @@
 <div class="ws-tag"><?php if($tag_list){foreach($tag_list as $row){ ?><a href="<?php echo get_front_url(array("id"=>$row['id'],"tagid"=>$row['id'],"type"=>'tags')); ?>"><?php echo $row['name']; ?></a><?php }} ?></div></div>
 
 <div class="side"><div class="stit"><h2><?php echo sysconfig('CMS_WEBSITE_MAIN_KEYWORD'); ?>推荐</h2><a href="javascript:getmore({limit:5,tuijian:1,mode:1,orderby:'rand()'});" class="more">换一换</a><div class="cl"></div></div>	
-<ul class="uli chs" id="xglist"><?php if($article_tj_list){foreach($article_tj_list as $row){ ?><li><a target="_blank" href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['typeid'],"type"=>'content')); ?>"><?php echo $row['title']; ?></a></li><?php }} ?></ul><div class="cl"></div></div>
+<ul class="uli chs" id="xglist"><?php if($article_tj_list){foreach($article_tj_list as $row){ ?><li><a target="_blank" href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['type_id'],"type"=>'content')); ?>"><?php echo $row['title']; ?></a></li><?php }} ?></ul><div class="cl"></div></div>
 
 <div class="side"><div class="stit"><h2>猜你喜欢</h2><a href="javascript:getmore({limit:5,mode:2,orderby:'rand()'});" class="more">换一换</a><div class="cl"></div></div>
-<div class="uli2" id="xglike"><?php if($article_rand_list){foreach($article_rand_list as $row){ ?><div class="suli"><?php if(!empty($row['litpic'])){ ?><a class="limg" href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['typeid'],"type"=>'content')); ?>"><img alt="<?php echo $row['title']; ?>" src="<?php echo $row['litpic']; ?>"></a><?php } ?><a target="_blank" href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['typeid'],"type"=>'content')); ?>"><?php echo $row['title']; ?></a><div class="sulii"><?php if(!empty($row['writer'])){echo '<span class="time">'.$row['writer'].'</span>';}elseif(!empty($row['source'])){echo '<span class="time">'.$row['source'].'</span>';} ?> 阅读(<?php echo $row['click']; ?>)</div><div class="cl"></div></div><?php }} ?></div></div>
+<div class="uli2" id="xglike"><?php if($article_rand_list){foreach($article_rand_list as $row){ ?><div class="suli"><?php if(!empty($row['litpic'])){ ?><a class="limg" href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['type_id'],"type"=>'content')); ?>"><img alt="<?php echo $row['title']; ?>" src="<?php echo $row['litpic']; ?>"></a><?php } ?><a target="_blank" href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['type_id'],"type"=>'content')); ?>"><?php echo $row['title']; ?></a><div class="sulii"><?php if(!empty($row['writer'])){echo '<span class="time">'.$row['writer'].'</span>';}elseif(!empty($row['source'])){echo '<span class="time">'.$row['source'].'</span>';} ?> 阅读(<?php echo $row['click']; ?>)</div><div class="cl"></div></div><?php }} ?></div></div>
 
 <div class="side"><div class="stit"><div class="stith"><strong>友情链接</strong></div><div class="cl"></div></div>
 <div class="rtags mt10"><?php if($friendlink_list){foreach($friendlink_list as $row){ ?><a href="<?php echo $row['url']; ?>"><?php echo $row['name']; ?></a><?php }} ?></div></div>

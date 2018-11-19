@@ -2,9 +2,9 @@
 namespace app\common\logic;
 use think\Loader;
 use app\common\lib\ReturnData;
-use app\common\model\Arctype;
+use app\common\model\ArticleType;
 
-class ArctypeLogic extends BaseLogic
+class ArticleTypeLogic extends BaseLogic
 {
     protected function initialize()
     {
@@ -13,12 +13,12 @@ class ArctypeLogic extends BaseLogic
     
     public function getModel()
     {
-        return new Arctype();
+        return new ArticleType();
     }
     
     public function getValidate()
     {
-        return Loader::validate('Arctype');
+        return Loader::validate('ArticleType');
     }
     
     //列表

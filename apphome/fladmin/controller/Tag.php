@@ -37,9 +37,26 @@ class Tag extends Base
     {
         if(Helper::isPostRequest())
         {
+            $_POST['add_time'] = $_POST['update_time'] = time(); //添加时间、更新时间
+            $_POST['click'] = rand(200,500); //点击量
+            
             $res = $this->getLogic()->add($_POST);
             if($res['code'] == ReturnData::SUCCESS)
             {
+                //添加Tag下的文章
+                $tagarc="";
+                if(!empty($_POST["tagarc"])){$tagarc = str_replace("，",",",$_POST["tagarc"]);if(!preg_match("/^\d*$/",str_replace(",","",$tagarc))){$tagarc="";}} //Tag文章列表
+                if($tagarc!="")
+                {
+                    $arr=explode(",",$tagarc);
+                    foreach($arr as $row)
+                    {
+                        $data2['tag_id'] = $res['data'];
+                        $data2['article_id'] = $row;
+                        logic('Taglist')->add($data2);
+                    }
+                }
+                
                 $this->success($res['msg'], url('index'), '', 1);
             }
             
@@ -54,12 +71,47 @@ class Tag extends Base
     {
         if(Helper::isPostRequest())
         {
-            $where['id'] = $_POST['id'];
+            $where['id'] = $where2['tag_id'] = $_POST['id'];
             unset($_POST['id']);
+            
+            $_POST['update_time'] = time(); //更新时间
+            
+            $tagarc="";
+            if(!empty($_POST["tagarc"])){$tagarc = str_replace("，",",",$_POST["tagarc"]);if(!preg_match("/^\d*$/",str_replace(",","",$tagarc))){$tagarc="";}} //Tag文章列表
+            unset($_POST["tagarc"]);
             
             $res = $this->getLogic()->edit($_POST,$where);
             if($res['code'] == ReturnData::SUCCESS)
             {
+                //获取该标签下的文章id
+                $posts = model('Taglist')->getAll($where2);
+                $article_id_list = "";
+                if(!empty($posts))
+                {
+                    foreach($posts as $row)
+                    {
+                        $article_id_list = $article_id_list.','.$row['article_id'];
+                    }
+                }
+                $article_id_list = ltrim($article_id_list, ",");
+                
+                if($tagarc!="" && $tagarc!=$article_id_list)
+                {
+                    model('Taglist')->del($where2);
+                    
+                    $arr=explode(",",$tagarc);
+                    foreach($arr as $row)
+                    {
+                        $data2['tag_id'] = $where2['tag_id'];
+                        $data2['article_id'] = $row;
+                        logic('Taglist')->add($data2);
+                    }
+                }
+                elseif($tagarc=="")
+                {
+                    model('Taglist')->del($where2);
+                }
+                
                 $this->success($res['msg'], url('index'), '', 1);
             }
             
@@ -74,16 +126,16 @@ class Tag extends Base
         $this->assign('post', $post);
         
         //获取该标签下的文章id
-        $posts = db('taglist')->field('article_id')->where("tag_id=".$where['id'])->select();
-        $aidlist = "";
+        $posts = model('Taglist')->getAll("tag_id=".$where['id']);
+        $article_id_list = "";
         if(!empty($posts))
         {
             foreach($posts as $row)
             {
-                $aidlist=$aidlist.','.$row['article_id'];
+                $article_id_list=$article_id_list.','.$row['article_id'];
             }
         }
-        $this->assign('aidlist',ltrim($aidlist, ","));
+        $this->assign('article_id_list', ltrim($article_id_list, ","));
         
         return $this->fetch();
     }
@@ -101,84 +153,5 @@ class Tag extends Base
         }
 		
         $this->error($res['msg']);
-    }
-    
-    public function doadd()
-    {
-		$tagarc="";
-		if(!empty($_POST["tagarc"])){$tagarc = str_replace("，",",",$_POST["tagarc"]);if(!preg_match("/^\d*$/",str_replace(",","",$tagarc))){$tagarc="";}} //Tag文章列表
-        
-        $_POST['pubdate'] = time();//更新时间
-        $_POST['click'] = rand(200,500);//点击
-        unset($_POST["tagarc"]);
-        
-		if($insertId = db('tagindex')->insert($_POST))
-        {
-            if($tagarc!="")
-            {
-                $arr=explode(",",$tagarc);
-                
-                foreach($arr as $row)
-                {
-                    $data2['tid'] = $insertId;
-                    $data2['aid'] = $row;
-                    db("taglist")->insert($data2);
-                }
-            }
-            $this->success('添加成功', CMS_ADMIN.'Tag' , 1);
-        }
-		else
-		{
-			$this->error('添加失败！请修改后重新添加', CMS_ADMIN.'Tag/add' , 3);
-		}
-    }
-    
-    public function doedit()
-    {
-        if(!empty($_POST["id"])){$id = $_POST["id"];unset($_POST["id"]);}else{$id="";exit;}
-        if(!empty($_POST["keywords"])){$_POST['keywords']=str_replace("，",",",$_POST["keywords"]);}else{$_POST['keywords']="";}//关键词
-        $_POST['pubdate'] = time();//更新时间
-        $tagarc="";
-		if(!empty($_POST["tagarc"])){$tagarc = str_replace("，",",",$_POST["tagarc"]);if(!preg_match("/^\d*$/",str_replace(",","",$tagarc))){$tagarc="";}} //Tag文章列表
-        unset($_POST["tagarc"]);
-        
-		if(db('tagindex')->where("id=$id")->update($_POST))
-        {
-            //获取该标签下的文章id
-            $posts = db("taglist")->field('aid')->where("tid=$id")->select();
-            $aidlist = "";
-            if(!empty($posts))
-            {
-                foreach($posts as $row)
-                {
-                    $aidlist = $aidlist.','.$row['aid'];
-                }
-            }
-            $aidlist = ltrim($aidlist, ",");
-            
-            if($tagarc!="" && $tagarc!=$aidlist)
-            {
-                db("taglist")->where("tid=$id")->delete();
-                
-                $arr=explode(",",$tagarc);
-                    
-                foreach($arr as $row)
-                {
-                    $data2['tid'] = $id;
-                    $data2['aid'] = $row;
-                    db("taglist")->insert($data2);
-                }
-            }
-            elseif($tagarc=="")
-            {
-                db("taglist")->where("tid=$id")->delete();
-            }
-            
-            $this->success('修改成功', CMS_ADMIN.'Tag' , 1);
-        }
-		else
-		{
-			$this->error('修改失败', CMS_ADMIN.'Tag/edit?id='.$_POST["id"] , 3);
-		}
     }
 }

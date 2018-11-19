@@ -14,8 +14,8 @@
 	<tr>
         <td align="right">是否审核：</td>
         <td>
-			<input type="radio" value='1' name="status" {if condition="$post['status']==1"}checked{/if} />&nbsp;是&nbsp;&nbsp;
-			<input type="radio" value='0' name="status" {if condition="$post['status']==0"}checked{/if} />&nbsp;否
+			<input type="radio" value='1' name="status" {if condition="$post['status']==1"}checked{/if} />&nbsp;隐藏&nbsp;&nbsp;
+			<input type="radio" value='0' name="status" {if condition="$post['status']==0"}checked{/if} />&nbsp;正常
 		</td>
     </tr>
     <tr>
@@ -63,19 +63,19 @@ function upImage()
 </script>
 <script type="text/plain" id="ueditorimg"></script>
     <tr>
-        <td align="right">Tag关键字：</td>
+        <td align="right">关键字：</td>
         <td><input type="text" name="keywords" id="keywords" style="width:50%" value="<?php echo $post["keywords"]; ?>"> (用,分开)</td>
     </tr>
     <tr>
-        <td align="right" style="vertical-align:middle;">Tag摘要信息：</td>
+        <td align="right" style="vertical-align:middle;">描述：</td>
         <td><textarea name="description" rows="5" id="description" style="width:80%;height:70px;vertical-align:middle;"><?php echo $post["description"]; ?></textarea></td>
     </tr>
     <tr>
         <td align="right" style="vertical-align:middle;">Tag文章列表：</td>
-        <td><textarea name="tagarc" rows="5" id="tagarc" style="width:80%;height:70px;vertical-align:middle;"><?php echo $aidlist; ?></textarea> (用,分开)</td>
+        <td><textarea name="tagarc" rows="5" id="tagarc" style="width:80%;height:70px;vertical-align:middle;"><?php echo $article_id_list; ?></textarea> (用,分开)</td>
     </tr>
     <tr>
-        <td colspan="2"><strong>Tag内容：</strong></td>
+        <td colspan="2"><strong>内容：</strong></td>
     </tr>
     <tr>
         <td colspan="2">

@@ -101,6 +101,8 @@ class TagLogic extends BaseLogic
             }
         }
         
+        if(isset($data["keywords"])){$data['keywords']=str_replace("，",",",$data["keywords"]);}else{unset($data['keywords']);} //关键词
+        
         $res = $this->getModel()->add($data,$type);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
@@ -137,6 +139,8 @@ class TagLogic extends BaseLogic
                 return ReturnData::create(ReturnData::PARAMS_ERROR,null,'别名已经存在');
             }
         }
+        
+        if(isset($data["keywords"])){$data['keywords']=str_replace("，",",",$data["keywords"]);}else{unset($data['keywords']);} //关键词
         
         $res = $this->getModel()->edit($data,$where);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}

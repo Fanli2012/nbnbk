@@ -14,7 +14,7 @@ class Searchword extends Validate
         ['click', 'number|egt:0', '点击量必须是数字|点击量格式不正确'],
         ['litpic', 'max:150','缩略图不能超过150个字符'],
         ['template', 'max:30','模板名称不能超过30个字符'],
-        ['filename', 'max:60|alphaNum','别名不能超过60个字符|别名格式不正确'],
+        ['filename', 'require|max:60|alphaNum','别名必填|别名不能超过60个字符|别名格式不正确'],
         ['status', 'in:0,1,2','状态，0正常，1禁用'],
         ['update_time', 'require|number|egt:0', '更新时间必填|更新时间格式不正确|更新时间格式不正确'],
     ];

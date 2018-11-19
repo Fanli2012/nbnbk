@@ -85,6 +85,10 @@ class TaglistLogic extends BaseLogic
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
+        if($this->getModel()->getOne($data)){
+            return ReturnData::create(ReturnData::PARAMS_ERROR,null,'记录已经存在');
+        }
+        
         $res = $this->getModel()->add($data,$type);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
@@ -95,6 +99,13 @@ class TaglistLogic extends BaseLogic
     public function edit($data, $where = array())
     {
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
+        
+        $check = $this->getValidate()->scene('edit')->check($data);
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        
+        if($this->getModel()->getOne($data)){
+            return ReturnData::create(ReturnData::PARAMS_ERROR,null,'记录已经存在');
+        }
         
         $res = $this->getModel()->edit($data,$where);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}

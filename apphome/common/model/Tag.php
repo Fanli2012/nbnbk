@@ -259,17 +259,14 @@ class Tag extends Base
         return self::where($where)->column($field);
     }
     
-    //类型，0通用，注册，1:手机绑定业务验证码，2:密码修改业务验证码
-    public function getTypeAttr($data)
+    /**
+     * 获取器——状态，0正常，1禁用
+     * @param int $value
+     * @return string
+     */
+    public function getStatusTextAttr($value, $data)
     {
-        $arr = array(0 => '通用', 1 => '手机绑定业务验证码', 2 => '密码修改业务验证码');
-        return $arr[$data['type']];
-    }
-    
-    //状态
-    public function getStatusAttr($data)
-    {
-        $arr = array(0 => '未使用', 1 => '已使用');
+        $arr = array(0 => '正常', 1 => '禁用');
         return $arr[$data['status']];
     }
 }

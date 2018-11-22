@@ -136,4 +136,29 @@ class TaglistLogic extends BaseLogic
     {
         return getDataAttr($this->getModel(),$data);
     }
+    
+    //tag文章列表
+    public function getJoinList($where = array(), $order = '', $field = '*', $offset = '', $limit = '')
+    {
+        //$model = $this->getModel()->getDb()->where($where)->join('fl_article','fl_taglist.article_id = fl_article.id');
+        $res['count'] = $this->getModel()->getDb()->where($where)->join('fl_article','fl_taglist.article_id = fl_article.id')->count();
+        $res['list'] = array();
+        
+        if($res['count'] > 0)
+        {
+            $res['list'] = $this->getModel()->getDb()->where($where)->join('fl_article','fl_taglist.article_id = fl_article.id');
+            if(is_array($field))
+            {
+                $res['list'] = $res['list']->field($field[0],true);
+            }
+            else
+            {
+                $res['list'] = $res['list']->field($field);
+            }
+            
+            $res['list'] = $res['list']->order($order)->limit($offset.','.$limit)->select();
+        }
+        
+        return $res;
+    }
 }

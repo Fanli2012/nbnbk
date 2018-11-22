@@ -8,24 +8,37 @@
 <table class="table table-striped table-bordered">
   <tbody>
     <tr>
-      <td align="right">栏目名称：</td>
-      <td><input name="name" type="text" id="name" size="30" class="required"></td>
+      <td align="right"><font color="red">*</font>栏目名称：</td>
+      <td><input name="name" type="text" id="name" style="width:30%" class="required"></td>
     </tr>
     <tr>
       <td align="right">上级目录：</td>
-      <td><?php if($parent_id==0){echo "顶级栏目";}else{echo $parent_article["name"];} ?><input style="display:none;" type="text" name="prid" id="prid" value="<?php if($id==0){echo "top";}else{echo $id;} ?>"></td>
+      <td><?php if($parent_id==0){echo "顶级栏目";}else{echo $parent_article_type["name"];} ?><input style="display:none;" type="text" name="parent_id" id="parent_id" value="<?php echo $parent_id; ?>"></td>
     </tr>
     <tr>
-    <td align="right">别名：</td>
-    <td><input name="filename" type="text" id="filename" class="required" style="width:30%"> <small>(包含字母或数字，字母开头)</small></td>
+        <td align="right">栏目属性：</td>
+        <td>
+			<input type="radio" value='0' name="is_part" checked />&nbsp;列表栏目（允许发布文档）&nbsp;&nbsp;
+			<input type="radio" value='1' name="is_part" />&nbsp;频道封面（不允许发布文档）
+		</td>
+    </tr>
+    <tr>
+    <td align="right"><font color="red">*</font>别名：</td>
+    <td><input name="filename" type="text" id="filename" class="required" size="30"> <small>(包含字母或数字，字母开头)</small></td>
+    </tr>
+    <tr>
+        <td align="right">排序：</td>
+        <td>
+			<input name="listorder" type="text" id="listorder" value="0" size="3" />
+		</td>
     </tr>
     <tr>
       <td align="right">列表模板：</td>
-      <td><input name="templist" id="templist" type="text" value="category" class="required" style="width:300px"></td>
+      <td><input name="templist" id="templist" type="text" value="category" class="required" size="20"></td>
     </tr>
     <tr>
       <td align="right">文章模板：</td>
-      <td><input name="temparticle" id="temparticle" type="text" value="detail" class="required" style="width:300px"></td>
+      <td><input name="temparticle" id="temparticle" type="text" value="detail" class="required" size="20"></td>
     </tr>
     <tr>
         <td align="right" style="vertical-align:middle;">缩略图：</td>
@@ -61,7 +74,7 @@ function upImage()
 <script type="text/plain" id="ueditorimg"></script>
     <tr>
       <td align="right">SEO标题：</td>
-      <td><input name="seotitle" type="text" style="width:70%" id="seotitle" class="alltxt" value=""></td>
+      <td><input name="seotitle" type="text" style="width:60%" id="seotitle" class="alltxt" value=""></td>
     </tr>
     <tr>
       <td align="right">关键字：</td>
@@ -69,7 +82,7 @@ function upImage()
     </tr>
     <tr>
       <td align="right" style="vertical-align:middle;">描述：</td>
-      <td><textarea name="description" cols="70" style="height:70px;vertical-align:middle;width:70%" rows="3" id="description" class="alltxt"></textarea></td>
+      <td><textarea name="description" cols="60" style="height:70px;vertical-align:middle;width:60%" rows="3" id="description" class="alltxt"></textarea></td>
     </tr>
     <tr>
       <td colspan="2"><strong>内容：</strong></td>

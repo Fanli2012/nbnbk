@@ -259,4 +259,56 @@ class ArticleType extends Base
         return self::where($where)->column($field);
     }
     
+	/**
+     * 将列表生成树形结构
+     * @param int $parent_id 父级ID
+     * @param int $deep 层级
+     * @return array
+     */
+	public function list_to_tree($parent_id=0,$deep=0)
+	{
+		$arr=array();
+		
+		$cats = $this->getAll(['parent_id'=>$parent_id], 'listorder asc');
+		if($cats)
+		{
+			foreach($cats as $row)//循环数组
+			{
+				$row['deep'] = $deep;
+                //如果子级不为空
+				if($child = $this->list_to_tree($row["id"],$deep+1))
+				{
+					$row['child'] = $child;
+				}
+				$arr[] = $row;
+			}
+		}
+        
+        return $arr;
+	}
+    
+    /**
+     * 树形结构转成列表
+     * @param array $list 数据
+     * @param int $parent_id 父级ID
+     * @return array
+     */
+	public function tree_to_list($list,$parent_id=0)
+	{
+		global $temp;
+		if(!empty($list))
+		{
+			foreach($list as $v)
+			{
+				$temp[] = array("id"=>$v['id'],"deep"=>$v['deep'],"name"=>$v['name'],"filename"=>$v['filename'],"parent_id"=>$v['parent_id'],"add_time"=>$v['add_time']);
+				//echo $v['id'];
+				if(isset($v['child']))
+				{
+					$this->tree_to_list($v['child'],$v['parent_id']);
+				}
+			}
+		}
+		
+		return $temp;
+	}
 }

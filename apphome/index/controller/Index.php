@@ -13,12 +13,13 @@ class Index extends Base
     //首页
     public function index()
 	{
-        $pagesize = 10;
+        $pagesize = 11;
         $offset = 0;
         if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
+        $where['status'] = 0;
         $where['delete_time'] = 0;
         $where['add_time'] = ['<',time()];
-		$res = logic('Article')->getList($where, 'id desc', ['body'], $offset, $pagesize);
+		$res = logic('Article')->getList($where, 'id desc', ['content'], $offset, $pagesize);
         if($res['list'])
         {
             foreach($res['list'] as $k => $v)
@@ -48,14 +49,16 @@ class Index extends Base
     	}
         
         //推荐文章
+        $where2['status'] = 0;
         $where2['delete_time'] = 0;
         //$where2['add_time'] = ['>',(time()-30*3600*24)];
-        $article_tj_list = logic('Article')->getAll($where2, 'click desc', ['body'], 5);
+        $article_tj_list = logic('Article')->getAll($where2, 'click desc', ['content'], 5);
         $this->assign('article_tj_list',$article_tj_list);
         
         //随机文章
+        $where3['status'] = 0;
         $where3['delete_time'] = 0;
-        $article_rand_list = logic('Article')->getAll($where3, 'rand()', ['body'], 5);
+        $article_rand_list = logic('Article')->getAll($where3, 'rand()', ['content'], 5);
         $this->assign('article_rand_list',$article_rand_list);
         
         //标签
@@ -64,8 +67,13 @@ class Index extends Base
         $this->assign('tag_list',$tag_list);
         
         //友情链接
-        $tag_list = logic('Friendlink')->getAll('', 'id desc', '*', 5);
-        $this->assign('friendlink_list',$tag_list);
+        $friendlink_list = logic('Friendlink')->getAll('', 'id desc', '*', 5);
+        $this->assign('friendlink_list',$friendlink_list);
+        
+        //轮播图
+        $where_slide['status'] = 0;
+        $slide_list = logic('Slide')->getAll($where_slide, 'id desc', '*', 5);
+        $this->assign('slide_list',$slide_list);
         
         return $this->fetch();
     }
@@ -89,7 +97,7 @@ class Index extends Base
 		$this->assign('sql',$sql);
 		
 		$counts=db("article")->where($sql)->count('id');
-		if($counts>sysconfig('CMS_MAXARC')){$counts=sysconfig('CMS_MAXARC');}
+		if($counts>sysconfig('CMS_LIST_MAX_TOTAL')){$counts=sysconfig('CMS_LIST_MAX_TOTAL');}
 		$pagesize=sysconfig('CMS_PAGESIZE');$page=0;
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果
@@ -153,7 +161,7 @@ class Index extends Base
         $this->assign('post',$post);
 		
 		$counts=db("taglist")->where("tid=$tag")->count('aid');
-		if($counts>sysconfig('CMS_MAXARC')){$counts=sysconfig('CMS_BASEHOST');}
+		if($counts>sysconfig('CMS_LIST_MAX_TOTAL')){$counts=sysconfig('CMS_BASEHOST');}
 		$pagesize=sysconfig('CMS_PAGESIZE');$page=0;
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果
@@ -205,7 +213,7 @@ class Index extends Base
         $where['tuijian'] = 1;
         
 		$counts=db("article")->where($where)->count();
-		if($counts>sysconfig('CMS_MAXARC')){$counts=sysconfig('CMS_BASEHOST');}
+		if($counts>sysconfig('CMS_LIST_MAX_TOTAL')){$counts=sysconfig('CMS_BASEHOST');}
 		$pagesize=sysconfig('CMS_PAGESIZE');$page=0;
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果
@@ -243,33 +251,6 @@ class Index extends Base
 		}
 		
 		return $this->fetch();
-    }
-    
-    //单页面
-    public function page()
-	{
-        $id=input('id');
-        
-        if(!empty($id) && preg_match('/[a-z0-9]+/',$id))
-        {
-            $map['filename']=$id;
-            if(cache("pageid$id")){$post=cache("pageid$id");}else{$post = db('page')->where($map)->find();cache("pageid$id",$post,2592000);}
-            
-            if($post)
-            {
-                $this->assign('post',$post);
-            }
-            else
-            {
-                $this->error('您访问的页面不存在或已被删除', '/' , 3);exit;
-            }
-            
-            return $this->fetch($post['template']);
-        }
-        else
-        {
-            $this->error('您访问的页面不存在或已被删除', '/' , 3);exit;
-        }
     }
     
     public function sitemap()

@@ -7,9 +7,17 @@ use app\common\logic\GoodsBrandLogic;
 
 class Goods extends Base
 {
+    public $goods_type_list; //商品分类
+    public $goods_brand_list; //商品品牌
+    
 	public function _initialize()
 	{
 		parent::_initialize();
+        
+        //商品分类
+        $this->goods_type_list = model('GoodsType')->tree_to_list(model('GoodsType')->list_to_tree());
+        //商品品牌
+        $this->goods_brand_list = model('GoodsBrand')->getAll([], 'listorder asc', 'id,name');
     }
     
     public function getLogic()
@@ -17,6 +25,7 @@ class Goods extends Base
         return new GoodsLogic();
     }
     
+    //列表
     public function index()
     {
         $where = array();
@@ -24,209 +33,195 @@ class Goods extends Base
         {
             $where['title'] = array('like','%'.$_REQUEST['keyword'].'%');
         }
-        if(isset($_REQUEST["typeid"]) && $_REQUEST["typeid"]!=0)
+        if(isset($_REQUEST["type_id"]) && $_REQUEST["type_id"]>0)
         {
-            $where['typeid'] = $_REQUEST["typeid"];
+            $where['type_id'] = $_REQUEST["type_id"];
         }
-        if(isset($_REQUEST["id"]))
-        {
-            $where['typeid'] = $_REQUEST["id"];
-        }
+        $list = $this->getLogic()->getPaginate($where,['update_time'=>'desc'], ['content']);
+		
+		$this->assign('page',$list->render());
+        $this->assign('list',$list);
+		//echo '<pre>';print_r($list);exit;
         
-        $prolist = $this->getLogic()->getPaginate($where, 'id desc', ['body']);
-		$posts = array();
-		foreach($prolist as $key=>$value)
-        {
-            $value['name'] = db('goods_type')->field('content',true)->where("id=".$value['typeid'])->value('name');
-			$posts[] = $value;
-        }
-		
-		$this->assign('page',$prolist->render());
-        $this->assign('posts',$posts);
-		
+        //分类列表
+        $this->assign('goods_type_list',$this->goods_type_list);
+        
 		return $this->fetch();
     }
-    
+	
     public function add()
     {
-		if(!empty($_GET["catid"])){$this->assign('catid',$_GET["catid"]);}else{$this->assign('catid',0);}
-		
-        $goods_brand_logic = new GoodsBrandLogic();
-        $this->assign('goodsbrand_list', $goods_brand_logic->getAll('', 'listorder asc', 'id,title'));
-        
-        return $this->fetch();
-    }
-    
-    public function doadd()
-    {
-        $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
-        if(empty($_POST["description"])){if(!empty($_POST["body"])){$_POST['description']=cut_str($_POST["body"]);}} //description
-        $_POST['add_time'] = $_POST['pubdate'] = time(); //添加&更新时间
-		$_POST['user_id'] = session('admin_user_info')['id']; // 发布者id
-		
-		//关键词
-        if(!empty($_POST["keywords"]))
-		{
-			$_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
-		}
-		else
-		{
-			if(!empty($_POST["title"]))
-			{
-				$title=$_POST["title"];
-				$title=str_replace("，","",$title);
-				$title=str_replace(",","",$title);
-				$_POST['keywords']=get_keywords($title);//标题分词
-			}
-		}
-		
-        if(isset($_POST['promote_start_date'])){$_POST['promote_start_date'] = strtotime($_POST['promote_start_date']);}
-        if(isset($_POST['promote_end_date'])){$_POST['promote_end_date'] = strtotime($_POST['promote_end_date']);}
-        if(empty($_POST['promote_price'])){unset($_POST['promote_price']);}
-        if(!empty($_POST['goods_img']))
+        if(Helper::isPostRequest())
         {
-            $goods_img = $_POST['goods_img'];
-            $_POST['goods_img'] = $_POST['goods_img'][0];
-        }
-        
-        $res = $this->getLogic()->add($_POST);
-		if($res['code']==ReturnData::SUCCESS)
-        {
-            if(isset($goods_img))
+            $_POST['add_time'] = $_POST['update_time'] = time(); //添加&更新时间
+            $_POST['user_id'] = session('admin_user_info')['id']; // 发布者id
+            
+            if(empty($_POST["description"])){if(!empty($_POST["content"])){$_POST['description']=cut_str($_POST["content"]);}} //description
+            //关键词
+            if(!empty($_POST["keywords"]))
             {
-                $tmp = [];
-                foreach($goods_img as $k=>$v)
+                $_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
+            }
+            else
+            {
+                if(!empty($_POST["title"]))
                 {
-                    $tmp[] = ['url'=>$v,'goods_id'=>$goods_id,'add_time'=>time()];
+                    $title=$_POST["title"];
+                    $title=str_replace("，","",$title);
+                    $title=str_replace(",","",$title);
+                    $_POST['keywords']=get_participle($title);//标题分词
                 }
-                
-                db('goods_img')->insertAll($tmp);
             }
             
-            $this->success($res['msg'], url('index'), '', 1);
+            if(isset($_POST['promote_start_date']) && $_POST['promote_start_date']!=''){$_POST['promote_start_date'] = strtotime($_POST['promote_start_date']);}
+            if(isset($_POST['promote_end_date']) && $_POST['promote_end_date']!=''){$_POST['promote_end_date'] = strtotime($_POST['promote_end_date']);}
+            if(empty($_POST['promote_price'])){unset($_POST['promote_price']);}
+            //商品图片
+            if(!empty($_POST['goods_img']))
+            {
+                $goods_img = $_POST['goods_img'];
+                $_POST['goods_img'] = $_POST['goods_img'][0];
+            }
+            
+            $res = $this->getLogic()->add($_POST);
+            if($res['code'] == ReturnData::SUCCESS)
+            {
+                //添加商品图片
+                if(isset($goods_img))
+                {
+                    foreach($goods_img as $k=>$v)
+                    {
+                        logic('GoodsImg')->add(['url'=>$v,'goods_id'=>$res['data'],'add_time'=>$_POST['add_time']]);
+                    }
+                }
+                
+                $this->success($res['msg'], url('index'), '', 1);
+            }
+            
+            $this->error($res['msg']);
         }
-		else
-		{
-			$this->error($res['msg']);
-		}
+        
+        //商品添加到哪个栏目下
+        $this->assign('type_id',input('type_id/d', 0));
+        //分类列表
+        $this->assign('goods_type_list', $this->goods_type_list);
+        //品牌列表
+        $this->assign('goods_brand_list', $this->goods_brand_list);
+        return $this->fetch();
     }
     
     public function edit()
     {
-        if(!empty($_GET["id"])){$id = $_GET["id"];}else {$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit;}
+        if(Helper::isPostRequest())
+        {
+            $where['id'] = $_POST['id'];
+            unset($_POST['id']);
+            
+            $_POST['update_time'] = time();//更新时间
+            $_POST['user_id'] = session('admin_user_info')['id']; // 修改者ID
+            
+            if(empty($_POST["description"])){if(!empty($_POST["content"])){$_POST['description']=cut_str($_POST["content"]);}} //description
+            //关键词
+            if(!empty($_POST["keywords"]))
+            {
+                $_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
+            }
+            else
+            {
+                if(!empty($_POST["title"]))
+                {
+                    $title=$_POST["title"];
+                    $title=str_replace("，","",$title);
+                    $title=str_replace(",","",$title);
+                    $_POST['keywords']=get_participle($title); //标题分词
+                }
+            }
+            
+            if(isset($_POST['promote_start_date']) && $_POST['promote_start_date']!=''){$_POST['promote_start_date'] = strtotime($_POST['promote_start_date']);}
+            if(isset($_POST['promote_end_date']) && $_POST['promote_end_date']!=''){$_POST['promote_end_date'] = strtotime($_POST['promote_end_date']);}
+            if(empty($_POST['promote_price'])){unset($_POST['promote_price']);}
+            //商品图片
+            if(!empty($_POST['goods_img']))
+            {
+                $goods_img = $_POST['goods_img'];
+                $_POST['goods_img'] = $_POST['goods_img'][0];
+            }
+            
+            $res = $this->getLogic()->edit($_POST,$where);
+            if($res['code'] == ReturnData::SUCCESS)
+            {
+                if(isset($goods_img))
+                {
+                    model('GoodsImg')->del(array('goods_id'=>$where['id']));
+                    foreach($goods_img as $k=>$v)
+                    {
+                        logic('GoodsImg')->add(['url'=>$v,'goods_id'=>$where['id'],'add_time'=>$_POST['update_time']]);
+                    }
+                }
+                
+                $this->success($res['msg'], url('index'), '', 1);
+            }
+            
+            $this->error($res['msg']);
+        }
         
-        $post = $this->getLogic()->getOne(array('id'=>$id));
-        if($post['promote_start_date'] != 0){$post['promote_start_date'] = date('Y-m-d H:i:s',$post['promote_start_date']);}
-        if($post['promote_end_date'] != 0){$post['promote_end_date'] = date('Y-m-d H:i:s',$post['promote_end_date']);}
+        if(!checkIsNumber(input('id',null))){$this->error('参数错误');}
+        $where['id'] = input('id');
+        $this->assign('id', $where['id']);
         
-        $this->assign('id',$id);
-		$this->assign('post', $post);
+        $post = $this->getLogic()->getOne($where);
+        $this->assign('post', $post);
         
-        $goods_brand_logic = new GoodsBrandLogic();
-        $this->assign('goodsbrand_list', $goods_brand_logic->getAll('', 'listorder asc', 'id,title'));
-        $this->assign('goods_img_list', db('goods_img')->where(array('goods_id'=>$id))->order('listorder asc')->select());
+        //时间戳转日期格式
+        if($post['promote_start_date'] == 0){$post['promote_start_date'] = '';}else{$post['promote_start_date'] = date('Y-m-d H:i:s',$post['promote_start_date']);}
+        if($post['promote_end_date'] == 0){$post['promote_end_date'] = '';}else{$post['promote_end_date'] = date('Y-m-d H:i:s',$post['promote_end_date']);}
+        
+        //分类列表
+        $this->assign('goods_type_list', $this->goods_type_list);
+        //品牌列表
+        $this->assign('goods_brand_list', $this->goods_brand_list);
+        //商品图片列表
+        $this->assign('goods_img_list', model('GoodsImg')->getAll(array('goods_id'=>$where['id']),'listorder asc'));
         
         return $this->fetch();
     }
     
-    public function doedit()
-    {
-        if(!empty($_POST["id"])){$id = $_POST["id"];}else {$id="";exit;}
-        
-        $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
-        if(empty($_POST["description"])){if(!empty($_POST["body"])){$_POST['description']=cut_str($_POST["body"]);}}//description
-        $_POST['pubdate'] = time();//更新时间
-        $_POST['user_id'] = session('admin_user_info')['id']; // 修改者id
-		
-		//关键词
-        if(!empty($_POST["keywords"]))
-		{
-			$_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
-		}
-		else
-		{
-			if(!empty($_POST["title"]))
-			{
-				$title=$_POST["title"];
-				$title=str_replace("，","",$title);
-				$title=str_replace(",","",$title);
-				$_POST['keywords']=get_keywords($title);//标题分词
-			}
-		}
-		
-        if(isset($_POST['promote_start_date'])){$_POST['promote_start_date'] = strtotime($_POST['promote_start_date']);}
-        if(isset($_POST['promote_end_date'])){$_POST['promote_end_date'] = strtotime($_POST['promote_end_date']);}
-        if(empty($_POST['promote_price'])){unset($_POST['promote_price']);}
-        if(!empty($_POST['goods_img']))
-        {
-            $goods_img = $_POST['goods_img'];
-            $_POST['goods_img'] = $_POST['goods_img'][0];
-        }
-        
-        $res = $this->getLogic()->edit($_POST,array('id'=>$id));
-		if ($res['code'] == ReturnData::SUCCESS)
-        {
-            if(isset($goods_img))
-            {
-                $tmp = [];
-                foreach($goods_img as $k=>$v)
-                {
-                    $tmp[] = ['url'=>$v,'goods_id'=>$id,'add_time'=>time()];
-                }
-                
-                db('goods_img')->where(array('goods_id'=>$id))->delete();
-                db('goods_img')->insertAll($tmp);
-            }
-            
-            $this->success($res['msg'], url('index'), '', 1);
-        }
-		else
-		{
-			$this->error($res['msg']);
-		}
-    }
-    
+    //删除
     public function del()
     {
-		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('删除失败！请重新提交');}if(preg_match('/[0-9]*/',$id)){}else{exit;}
+		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('参数错误', url('index'), '', 3);}
 		
-		if(db('goods')->where("id in ($id)")->delete())
+        $res = model('Goods')->del("id in ($id)");
+		if($res)
         {
             $this->success("$id ,删除成功", url('index'), '', 1);
         }
-		else
-		{
-			$this->error("$id ,删除失败！请重新提交");
-		}
+        
+		$this->error('删除失败');
     }
     
-	//商品推荐
+    //商品推荐
 	public function recommendarc()
     {
-		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('删除失败！请重新提交');} //if(preg_match('/[0-9]*/',$id)){}else{exit;}
+		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('参数错误', url('index'), '', 3);} //if(preg_match('/[0-9]*/',$id)){}else{exit;}
 		
 		$data['tuijian'] = 1;
-
-        if(db('goods')->where("id in ($id)")->update($data))
+        $res = model('Goods')->edit($data, "id in ($id)");
+		if($res)
         {
-            $this->success("$id ,推荐成功", url('index'), '', 1);
+            $this->success("$id ,推荐成功");
         }
-		else
-		{
-			$this->error("$id ,推荐失败！请重新提交");
-		}
+        
+		$this->error("$id ,推荐失败！请重新提交");
     }
     
-	//商品是否存在
+    //商品是否存在
     public function goodsexists()
     {
+        $map=[];
         if(!empty($_GET["title"]))
         {
             $map['title'] = $_GET["title"];
-        }
-        else
-        {
-            $map['title']="";
         }
         
         if(!empty($_GET["id"]))
@@ -234,6 +229,6 @@ class Goods extends Base
             $map['id'] = array('NEQ',$_GET["id"]);
         }
         
-        return db('goods')->where($map)->count();
+        echo model('Goods')->getCount($map);
     }
 }

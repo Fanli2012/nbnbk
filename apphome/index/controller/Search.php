@@ -4,18 +4,12 @@ use think\Db;
 use think\Request;
 use app\common\lib\ReturnData;
 use app\common\lib\Helper;
-use app\common\logic\ArticleLogic;
 
-class Article extends Base
+class Search extends Base
 {
     public function _initialize()
 	{
 		parent::_initialize();
-    }
-    
-    public function getLogic()
-    {
-        return new ArticleLogic();
     }
     
     //列表
@@ -78,57 +72,38 @@ class Article extends Base
     //详情
     public function detail()
 	{
-        if(!checkIsNumber(input('id',null))){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
-        $id = input('id');
+        $keyword = input('keyword', null);
+        if(!$keyword){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
         
-        $where['id'] = $id;
-        $post = $this->getLogic()->getOne($where);
-        if(!$post){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+        $where['title'] = array('like','%'.$keyword.'%');
         
-        $post['content']=$this->getLogic()->replaceKeyword($post['content']);
+        $where['delete_time'] = 0;
+        $where['status'] = 0;
+        $list = logic('Article')->getPaginate($where, 'update_time desc', ['content']);
+        if(!$list){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
         
-        $this->assign('post',$post);
+        $page = $list->render();
+        $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
+        $page = preg_replace('/&amp;key=[a-z0-9]+/', '', $page);
+        $page = preg_replace('/\?page=1"/', '"', $page);
+        $this->assign('page', $page);
+        $this->assign('list', $list);
         
-        //随机文章
+        //最新
         $where2['delete_time'] = 0;
         $where2['status'] = 0;
-        $rand_posts = logic('Article')->getAll($where2, 'rand()', ['content'], 5);
-        $this->assign('rand_posts',$rand_posts);
+        $zuixin_list = logic('Article')->getAll($where2, 'id desc', ['content'], 5);
+        $this->assign('zuixin_list',$zuixin_list);
         
-        //最新文章
+        //推荐
         $where3['delete_time'] = 0;
         $where3['status'] = 0;
-        $where3['type_id'] = $post['type_id'];
-        $zuixin_posts = logic('Article')->getAll($where3, 'id desc', ['content'], 5);
-        $this->assign('zuixin_posts',$zuixin_posts);
-        
-        //面包屑导航
-        $this->assign('bread', logic('Article')->get_article_type_path($post['type_id']));
-        
-        //上一篇、下一篇
-        $this->assign($this->getPreviousNextArticle(['article_id'=>$id]));
-        
+        $where3['tuijian'] = 1;
+        $where3['litpic'] = ['<>',''];
+        $tuijian_list = logic('Article')->getAll($where3, 'id desc', ['content'], 5);
+        $this->assign('tuijian_list',$tuijian_list);
+        //搜索词
+        $this->assign('keyword', $keyword);
         return $this->fetch();
-    }
-    
-    /**
-     * 获取文章上一篇，下一篇
-     * @param int $param['article_id'] 当前文章id
-     * @return array
-     */
-    public function getPreviousNextArticle(array $param)
-    {
-        $res['previous_article'] = [];
-        $res['next_article'] = [];
-        
-        $where['id'] = $param['article_id'];
-        $post = model('Article')->getOne($where,['content']);
-        if(!$post)
-        {
-            return $res;
-        }
-        $res['previous_article'] = model('Article')->getOne(['id'=>['<',$param['article_id']],'type_id'=>$post['type_id']],['content']);
-        $res['next_article'] = model('Article')->getOne(['id'=>['>',$param['article_id']],'type_id'=>$post['type_id']],['content']);
-        return $res;
     }
 }

@@ -25,13 +25,13 @@ class Article extends Base
         //参数
         $limit = input('param.limit',10);
         $offset = input('param.offset', 0);
-        if(input('param.typeid', null) !== null){$where['typeid'] = input('param.typeid');}
+        if(input('param.type_id', null) !== null){$where['type_id'] = input('param.type_id');}
         if(input('param.keyword', null) !== null){$where['title'] = ['like','%'.input('param.keyword').'%'];}
         if(input('tuijian', null) !== null){$where['tuijian'] = input('tuijian');}
-        $where['is_check'] = 0;
+        $where['status'] = 0;
         $orderby = input('orderby','id desc');
         
-        $res = $this->getLogic()->getList($where,$orderby,['body'],$offset,$limit);
+        $res = $this->getLogic()->getList($where,$orderby,['content'],$offset,$limit);
 		
         if($res['list'])
         {

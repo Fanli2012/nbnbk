@@ -27,7 +27,7 @@ class Arctype extends Base
         $limit = input('limit',10);
         $offset = input('offset', 0);
         $orderby = input('orderby','listorder asc');
-        if(input('reid', null) !== null){$where['reid'] = input('reid');}
+        if(input('parent_id', null) !== null){$where['parent_id'] = input('parent_id');}
         
         $res = $this->getLogic()->getList($where,$orderby,['content'],$offset,$limit);
 		

@@ -2,7 +2,7 @@
 {block name="title"}文章列表{/block}
 
 {block name="content"}
-<h5 class="sub-header"><a href="/fladmin/Category">栏目管理</a> > <a href="/fladmin/Article">文章列表</a> [ <a href="/fladmin/Article/add<?php if(!empty($_GET["id"])){echo '?catid='.$_GET["id"];}?>">发布文章</a> ]</h5>
+<h5 class="sub-header"><a href="{:url('fladmin/ArticleType/index')}">栏目管理</a> > <a href="{:url('index')}">文章列表</a> [ <a href="{:url('add')}<?php if(!empty($_GET["id"])){echo '?type_id='.$_GET["id"];}?>">发布文章</a> ]</h5>
 
 <div class="table-responsive">
 <table class="table table-striped table-hover">
@@ -12,19 +12,19 @@
 	  <th>选择</th>
 	  <th>文章标题</th>
 	  <th>更新时间</th>
-	  <th>类目</th><th>点击</th><th>操作</th>
+	  <th>栏目</th><th>点击</th><th>操作</th>
 	</tr>
   </thead>
   <tbody>
-  <?php foreach($posts as $row){ ?>
+  <?php if($list){foreach($list as $row){ ?>
 	<tr>
 	  <td><?php echo $row["id"]; ?></td>
 	  <td><input name="arcID" type="checkbox" value="<?php echo $row["id"]; ?>" class="np"></td>
-	  <td><a href="/fladmin/Article/edit?id=<?php echo $row["id"]; ?>"><?php echo $row["title"]; ?></a> <?php if(!empty($row["litpic"])){echo "<small style='color:red'>[图]</small>";}if($row["tuijian"]==1){echo "<small style='color:#22ac38'>[荐]</small>";} ?> </td>
+	  <td><a href="{:url('edit')}?id=<?php echo $row["id"]; ?>"><?php echo $row["title"]; ?></a> <?php if(!empty($row["litpic"])){echo "<small style='color:red'>[图]</small>";}if($row["tuijian"]==1){echo "<small style='color:#22ac38'>[荐]</small>";} ?> </td>
 	  <td><?php echo date('Y-m-d',$row["update_time"]); ?></td>
-	  <td><a href="/fladmin/Article?id=<?php echo $row["typeid"]; ?>"><?php echo $row["typename"]; ?></a></td><td><?php echo $row["click"]; ?></td><td><a target="_blank" href="<?php echo get_front_url(array("type"=>"content","catid"=>$row["typeid"],"id"=>$row["id"])); ?>">预览</a>&nbsp;<a href="/fladmin/Article/edit?id=<?php echo $row["id"]; ?>">修改</a>&nbsp;<a onclick="delconfirm('/fladmin/Article/del?id=<?php echo $row["id"]; ?>')" href="javascript:;">删除</a></td>
+	  <td><a href="{:url('index')}?id=<?php echo $row["type_id"]; ?>"><?php echo $row["type_name_text"]; ?></a></td><td><?php echo $row["click"]; ?></td><td><a target="_blank" href="/p/<?php echo $row["id"]; ?>">预览</a>&nbsp;<a href="{:url('edit')}?id=<?php echo $row["id"]; ?>">修改</a>&nbsp;<a onclick="delconfirm('{:url('del')}?id=<?php echo $row["id"]; ?>')" href="javascript:;">删除</a></td>
 	</tr>
-	<?php } ?>
+	<?php }} ?>
 	<tr>
 		<td colspan="8">
 		<a href="javascript:selAll('arcID')" class="coolbg">反选</a>&nbsp;
@@ -36,11 +36,11 @@
 </table>
 </div><!-- 表格结束 -->
 
-<form id="searcharc" class="navbar-form" action="/fladmin/Article/index" method="get">
-<select name="typeid" id="typeid" style="padding:6px 5px;vertical-align:middle;border:1px solid #DBDBDB;border-radius:4px;">
+<form id="searcharc" class="navbar-form" action="{:url('index')}" method="get">
+<div class="form-group"><select class="form-control" name="type_id" id="type_id">
 <option value="0">选择栏目...</option>
-<?php $catlist = tree(get_category('arctype',0));foreach($catlist as $row){ ?><option value="<?php echo $row["id"]; ?>"><?php for($i=0;$i<$row["deep"];$i++){echo "—";}echo $row["name"]; ?></option><?php } ?>
-</select>
+<?php if($article_type_list){foreach($article_type_list as $row){ ?><option value="<?php echo $row["id"]; ?>"><?php for($i=0;$i<$row["deep"];$i++){echo "—";}echo $row["name"]; ?></option><?php }} ?>
+</select></div>
 <div class="form-group"><input type="text" name="keyword" id="keyword" class="form-control required" placeholder="搜索关键词..."></div>
 <button type="submit" class="btn btn-info" value="Submit">搜索一下</button></form>
 
@@ -60,7 +60,7 @@ function tjArc(aid)
 	
 	if(confirm("确定要推荐吗"))
 	{
-		location="/fladmin/Article/recommendarc?id="+checkvalue;
+		location="{:url('recommendarc')}?id="+checkvalue;
 	}
 	else
 	{
@@ -81,7 +81,7 @@ function delArc(aid)
 	
 	if(confirm("确定删除吗"))
 	{
-		location="/fladmin/Article/del?id="+checkvalue;
+		location="{:url('del')}?id="+checkvalue;
 	}
 	else
 	{

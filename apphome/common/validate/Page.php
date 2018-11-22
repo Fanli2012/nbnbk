@@ -13,7 +13,7 @@ class Page extends Validate
         ['keywords', 'max:60','关键词不能超过60个字符'],
         ['description', 'max:250','描述不能超过60个字符'],
         ['template', 'max:30','模板名称不能超过30个字符'],
-        ['filename', 'require|max:60|alphaNum','别名必填|别名不能超过60个字符|别名格式不正确'],
+        ['filename', 'require|max:60|regex:/^[a-z]{1,}[a-z0-9]*$/','别名必填|别名不能超过60个字符|别名格式不正确'],
         ['litpic', 'max:150','缩略图不能超过150个字符'],
         ['click', 'number|egt:0', '点击量必须是数字|点击量格式不正确'],
         ['group_id', 'number|egt:0', '分组ID必须是数字|分组ID格式不正确'],

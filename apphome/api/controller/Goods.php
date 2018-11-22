@@ -31,7 +31,7 @@ class Goods extends Base
         $where['status'] = 0;
         $orderby = input('orderby','id desc');
         
-        $res = $this->getLogic()->getList($where, $orderby, ['body'], $offset, $limit);
+        $res = $this->getLogic()->getList($where, $orderby, ['content'], $offset, $limit);
 		
         if($res['list'])
         {

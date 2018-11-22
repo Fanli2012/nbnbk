@@ -85,6 +85,14 @@ class GoodsBrandLogic extends BaseLogic
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
+        //判断名称
+        if(isset($data['name']) && !empty($data['name']))
+        {
+            if($this->getModel()->getOne(['name'=>$data['name']])){
+                return ReturnData::create(ReturnData::PARAMS_ERROR,null,'名称已经存在');
+            }
+        }
+        
         $res = $this->getModel()->add($data,$type);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
@@ -95,6 +103,22 @@ class GoodsBrandLogic extends BaseLogic
     public function edit($data, $where = array())
     {
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
+        
+        $check = $this->getValidate()->scene('edit')->check($data);
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        
+        $record = $this->getModel()->getOne($where);
+        if(!$record){return ReturnData::create(ReturnData::RECORD_NOT_EXIST);}
+        
+        //判断名称
+        if(isset($data['name']) && !empty($data['name']))
+        {
+            $where2['name'] = $data['name'];
+            $where2['id'] = ['<>',$record['id']]; //排除自身
+            if($this->getModel()->getOne($where2)){
+                return ReturnData::create(ReturnData::PARAMS_ERROR,null,'名称已经存在');
+            }
+        }
         
         $res = $this->getModel()->edit($data,$where);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}

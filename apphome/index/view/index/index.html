@@ -13,7 +13,7 @@
 
 <div class="fr_300"><div id="rad1"><script>rjs1();</script></div>
 <div class="side"><div class="stit"><div class="stith"><strong>热门话题</strong></div><div class="cl"></div></div>
-<div class="ws-tag"><?php if($tag_list){foreach($tag_list as $row){ ?><a href="<?php echo get_front_url(array("id"=>$row['id'],"tagid"=>$row['id'],"type"=>'tags')); ?>"><?php echo $row['name']; ?></a><?php }} ?></div></div>
+<div class="ws-tag"><?php if($tag_list){foreach($tag_list as $row){ ?><a href="/tag/<?php echo $row['id']; ?>"><?php echo $row['name']; ?></a><?php }} ?></div></div>
 
 <div class="side"><div class="stit"><h2><?php echo sysconfig('CMS_WEBSITE_MAIN_KEYWORD'); ?>推荐</h2><a href="javascript:getmore({limit:5,tuijian:1,mode:1,orderby:'rand()'});" class="more">换一换</a><div class="cl"></div></div>	
 <ul class="uli chs" id="xglist"><?php if($article_tj_list){foreach($article_tj_list as $row){ ?><li><a target="_blank" href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['type_id'],"type"=>'content')); ?>"><?php echo $row['title']; ?></a></li><?php }} ?></ul><div class="cl"></div></div>

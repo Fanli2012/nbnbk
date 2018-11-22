@@ -1,6 +1,5 @@
 <?php
 namespace app\common\model;
-
 use think\Db;
 
 class GoodsBrand extends Base
@@ -16,6 +15,15 @@ class GoodsBrand extends Base
     {
         return db('goods_brand');
     }
+    
+    //状态，0：正常，1：禁用
+    const GOODS_BRAND_STATUS_NORMAL = 0;
+    const GOODS_BRAND_STATUS_DISABLE = 1;
+    //状态描述
+    public static $goods_brand_status_desc = [
+        self::GOODS_BRAND_STATUS_NORMAL => '正常',
+        self::GOODS_BRAND_STATUS_DISABLE => '禁用'
+    ];
     
     /**
      * 列表
@@ -258,6 +266,16 @@ class GoodsBrand extends Base
     public function getColumn($where, $field)
     {
         return self::where($where)->column($field);
+    }
+    
+    /**
+     * 获取器——状态，0正常，1禁用
+     * @param int $value
+     * @return string
+     */
+    public function getStatusTextAttr($value, $data)
+    {
+        return self::$goods_brand_status_desc[$data['status']];
     }
     
 }

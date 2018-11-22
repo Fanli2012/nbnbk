@@ -275,7 +275,7 @@ return [
         'auto_timestamp'  => false,
         // 时间字段取出后的默认时间格式
         // 'datetime_format' => 'Y-m-d H:i:s',
-        'datetime_format' => false, //关闭时间戳转日期
+        'datetime_format' => false, //关闭时间戳转日期 by FLi
         // 是否需要进行SQL性能分析
         'sql_explain'     => false,
     ],

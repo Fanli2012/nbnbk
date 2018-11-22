@@ -280,16 +280,27 @@ class Goods extends Base
         return self::where($where)->column($field);
     }
     
-    //商品状态 0正常 1已删除 2下架 3申请上架
-    public function getStatusAttr($data)
+    /**
+     * 获取器——分类名称
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getTypeNameTextAttr($value, $data)
+    {
+        return model('GoodsType')->getValue(array('id'=>$data['type_id']),'name');
+    }
+    
+    /**
+     * 获取器——审核状态文字
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getStatusTextAttr($value, $data)
     {
         $arr = array(0 => '正常', 1 => '已删除', 2 => '下架', 3 => '申请上架');
         return $arr[$data['status']];
     }
     
-    //是否栏目名称
-    public function getTypenameAttr($data)
-    {
-        return db('goods_type')->where(array('id'=>$data['typeid']))->value('name');
-    }
 }

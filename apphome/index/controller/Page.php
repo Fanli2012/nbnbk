@@ -4,9 +4,9 @@ use think\Db;
 use think\Request;
 use app\common\lib\ReturnData;
 use app\common\lib\Helper;
-use app\common\logic\ArticleLogic;
+use app\common\logic\PageLogic;
 
-class Article extends Base
+class Page extends Base
 {
     public function _initialize()
 	{
@@ -15,7 +15,7 @@ class Article extends Base
     
     public function getLogic()
     {
-        return new ArticleLogic();
+        return new PageLogic();
     }
     
     //列表
@@ -78,57 +78,19 @@ class Article extends Base
     //详情
     public function detail()
 	{
-        if(!checkIsNumber(input('id',null))){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
         $id = input('id');
         
-        $where['id'] = $id;
-        $post = $this->getLogic()->getOne($where);
-        if(!$post){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
-        
-        $post['content']=$this->getLogic()->replaceKeyword($post['content']);
-        
-        $this->assign('post',$post);
-        
-        //随机文章
-        $where2['delete_time'] = 0;
-        $where2['status'] = 0;
-        $rand_posts = logic('Article')->getAll($where2, 'rand()', ['content'], 5);
-        $this->assign('rand_posts',$rand_posts);
-        
-        //最新文章
-        $where3['delete_time'] = 0;
-        $where3['status'] = 0;
-        $where3['type_id'] = $post['type_id'];
-        $zuixin_posts = logic('Article')->getAll($where3, 'id desc', ['content'], 5);
-        $this->assign('zuixin_posts',$zuixin_posts);
-        
-        //面包屑导航
-        $this->assign('bread', logic('Article')->get_article_type_path($post['type_id']));
-        
-        //上一篇、下一篇
-        $this->assign($this->getPreviousNextArticle(['article_id'=>$id]));
-        
-        return $this->fetch();
-    }
-    
-    /**
-     * 获取文章上一篇，下一篇
-     * @param int $param['article_id'] 当前文章id
-     * @return array
-     */
-    public function getPreviousNextArticle(array $param)
-    {
-        $res['previous_article'] = [];
-        $res['next_article'] = [];
-        
-        $where['id'] = $param['article_id'];
-        $post = model('Article')->getOne($where,['content']);
+        $where['filename'] = $id;
+        $post = cache("page_detail$id");
         if(!$post)
         {
-            return $res;
+            $where['delete_time'] = 0;
+            $post = $this->getLogic()->getOne($where);
+            if(!$post){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
+            cache("page_detail$id",$post,2592000);
         }
-        $res['previous_article'] = model('Article')->getOne(['id'=>['<',$param['article_id']],'type_id'=>$post['type_id']],['content']);
-        $res['next_article'] = model('Article')->getOne(['id'=>['>',$param['article_id']],'type_id'=>$post['type_id']],['content']);
-        return $res;
+        
+        $this->assign('post', $post);
+        return $this->fetch();
     }
 }

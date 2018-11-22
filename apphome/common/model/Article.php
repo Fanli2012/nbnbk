@@ -285,10 +285,15 @@ class Article extends Base
         return self::where($where)->column($field);
     }
     
-    //是否栏目名称
+    /**
+     * 获取器——分类名称
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
     public function getTypeNameTextAttr($value, $data)
     {
-        return db('arctype')->where(array('id'=>$data['typeid']))->value('name');
+        return model('ArticleType')->getValue(array('id'=>$data['type_id']),'name');
     }
     
     /**

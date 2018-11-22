@@ -32,7 +32,7 @@ class Index extends Controller
 		$this->assign('sql',$sql);
 		
 		$counts=db("article")->where($sql)->count('id');
-		if($counts>sysconfig('CMS_MAXARC')){$counts=sysconfig('CMS_MAXARC');}
+		if($counts>sysconfig('CMS_LIST_MAX_TOTAL')){$counts=sysconfig('CMS_LIST_MAX_TOTAL');}
 		$pagesize=sysconfig('CMS_PAGESIZE');$page=0;
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果
@@ -91,7 +91,7 @@ class Index extends Controller
         $this->assign('post',$post);
 		
 		$counts=db("taglist")->where("tid=$tag")->count('aid');
-		if($counts>sysconfig('CMS_MAXARC')){$counts=sysconfig('CMS_MAXARC');}
+		if($counts>sysconfig('CMS_LIST_MAX_TOTAL')){$counts=sysconfig('CMS_LIST_MAX_TOTAL');}
 		$pagesize=sysconfig('CMS_PAGESIZE');$page=0;
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果
@@ -131,7 +131,7 @@ class Index extends Controller
         $where['tuijian'] = 1;
         
 		$counts=db("article")->where($where)->count();
-		if($counts>sysconfig('CMS_MAXARC')){$counts=sysconfig('CMS_BASEHOST');}
+		if($counts>sysconfig('CMS_LIST_MAX_TOTAL')){$counts=sysconfig('CMS_LIST_MAX_TOTAL');}
 		$pagesize=sysconfig('CMS_PAGESIZE');$page=0;
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果

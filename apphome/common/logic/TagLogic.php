@@ -171,4 +171,5 @@ class TagLogic extends BaseLogic
     {
         return getDataAttr($this->getModel(),$data);
     }
+    
 }

@@ -130,4 +130,177 @@ class ArticleLogic extends BaseLogic
     {
         return getDataAttr($this->getModel(),$data);
     }
+    
+    // 获取文章内容的第一张图片，并缩略图保存
+    public function getBodyFirstPic($content)
+    {
+        $res = '';
+        $imagepath = $this->getfirstpic($content);
+        if($imagepath)
+        {
+            // 获取文章内容的第一张图片
+            $imagepath = '.'.$imagepath;
+            
+            // 获取后缀名
+            preg_match_all ("/\/(.+)\.(gif|jpg|jpeg|bmp|png)$/iU",$imagepath,$out, PREG_PATTERN_ORDER);
+            
+            $saveimage = './uploads/'.date('Y/m',time()).'/'.basename($imagepath,'.'.$out[2][0]).'-lp.'.$out[2][0];
+            
+            // 生成缩略图
+            $image = \think\Image::open($imagepath);
+            // 按照原图的比例生成一个最大为240*180的缩略图
+            $image->thumb(sysconfig('CMS_IMGWIDTH'), sysconfig('CMS_IMGHEIGHT'))->save($saveimage);
+            
+            // 缩略图路径
+            $res = '/uploads/'.date('Y/m',time()).'/'.basename($imagepath,'.'.$out[2][0]).'-lp.'.$out[2][0];
+        }
+        
+        return $res;
+    }
+    
+    /**
+     * 为文章内容添加内敛, 排除alt title <a></a>直接的字符替换
+     *
+     * @param string $body
+     * @return string
+     */
+    public function replaceKeyword($body)
+    {
+        $karr = $kaarr = array();
+        
+        //暂时屏蔽超链接
+        $body = preg_replace("#(<a(.*))(>)(.*)(<)(\/a>)#isU", '\\1-]-\\4-[-\\6', $body);
+        
+        if(cache("keyword_list")){$posts=cache("keyword_list");}else{$posts = db("keyword")->select();cache("keyword_list",$posts,2592000);}
+        
+        foreach($posts as $row)
+        {
+            $name = trim($row['name']);
+            $key_url=trim($row['url']);
+            $karr[] = $name;
+            $kaarr[] = "<a href='$key_url' target='_blank'><u>$name</u></a>";
+        }
+        
+        asort($karr);
+        
+        $body = str_replace('\"', '"', $body);
+        
+        foreach ($karr as $key => $word)
+        {
+            $body = preg_replace("#".preg_quote($word)."#isU", $kaarr[$key], $body, 1);
+        }
+        
+        //恢复超链接
+        return preg_replace("#(<a(.*))-\]-(.*)-\[-(\/a>)#isU", '\\1>\\3<\\4', $body);
+    }
+
+    /**
+     * 删除非站内链接
+     *
+     * @access public
+     * @param  string $body       内容
+     * @param  array  $allow_urls 允许的超链接
+     * @return string
+     */
+    public function replacelinks($body, $allow_urls=array())
+    {
+        $host_rule = join('|', $allow_urls);
+        $host_rule = preg_replace("#[\n\r]#", '', $host_rule);
+        $host_rule = str_replace('.', "\\.", $host_rule);
+        $host_rule = str_replace('/', "\\/", $host_rule);
+        $arr = '';
+        
+        preg_match_all("#<a([^>]*)>(.*)<\/a>#iU", $body, $arr);
+        
+        if( is_array($arr[0]) )
+        {
+            $rparr = array();
+            $tgarr = array();
+            
+            foreach($arr[0] as $i=>$v)
+            {
+                if( $host_rule != '' && preg_match('#'.$host_rule.'#i', $arr[1][$i]) )
+                {
+                    continue;
+                }
+                else
+                {
+                    $rparr[] = $v;
+                    $tgarr[] = $arr[2][$i];
+                }
+            }
+            
+            if( !empty($rparr) )
+            {
+                $body = str_replace($rparr, $tgarr, $body);
+            }
+        }
+        $arr = $rparr = $tgarr = '';
+        return $body;
+    }
+    
+    /**
+     * 获取文本中首张图片地址
+     * @param  [type] $content
+     * @return [type]
+     */
+    public function getfirstpic($content)
+    {
+        if(preg_match_all("/(src)=([\"|']?)([^ \"'>]+\.(gif|jpg|jpeg|bmp|png))\\2/i", $content, $matches))
+        {
+            $file=$_SERVER['DOCUMENT_ROOT'].$matches[3][0];
+            
+            if(file_exists($file))
+            {
+                return $matches[3][0];
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * 递归获取面包屑导航
+     * @param  [int] $type_id
+     * @return [string]
+     */
+    public function get_article_type_path($type_id)
+    {
+        global $temp;
+        
+        $row = model('ArticleType')->getOne(['id'=>$type_id], 'name,parent_id,id');
+        
+        $temp = '<a href="/articlelist/f'.$row["id"].'">'.$row["name"]."</a> > ".$temp;
+        
+        if($row['parent_id']>0)
+        {
+            $this->get_article_type_path($row['parent_id']);
+        }
+        
+        return $temp;
+    }
+    
+    /**
+     * 字符串转成数组
+     * @param  [string] $key
+     * @return [array]
+     */
+    public function getArrByString($key)
+	{
+        $res = array();
+        
+        if(!$key){return $res;}
+        
+        preg_match_all('/[a-z]+/u' , $key, $letter);
+        preg_match_all('/[0-9]+/u' , $key, $number);
+        if(count($letter[0]) != count($number[0])){return [];}
+        
+        foreach($letter[0] as $k=>$v)
+        {
+            $res[$v] = $number[0][$k];
+        }
+        
+        return $res;
+    }
+    
 }

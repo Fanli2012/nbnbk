@@ -8,8 +8,8 @@
 <table class="table table-striped table-bordered">
 <tbody>
     <tr>
-        <td align="right">名称：</td>
-        <td><input name="title" type="text" id="title" value="" class="required" style="width:60%" placeholder="在此输入标题"></td>
+        <td align="right"><font color="red">*</font>名称：</td>
+        <td><input name="name" type="text" id="name" value="" class="required" style="width:60%" placeholder="在此输入标题"></td>
     </tr>
     <tr>
         <td align="right">是否显示：</td>
@@ -88,6 +88,18 @@ function upImage2()
 }
 </script>
 <script type="text/plain" id="ueditorimg2"></script>
+    <tr>
+        <td align="right">SEO标题：</td>
+        <td><input name="seotitle" type="text" id="seotitle" value="" style="width:60%"></td>
+    </tr>
+    <tr>
+        <td align="right">关键字：</td>
+        <td><input type="text" name="keywords" id="keywords" style="width:50%" value=""> (用,分开)</td>
+    </tr>
+    <tr>
+        <td align="right" style="vertical-align:middle;">描述：</td>
+        <td><textarea name="description" rows="5" id="description" style="width:80%;height:70px;vertical-align:middle;"></textarea></td>
+    </tr>
     <tr>
         <td colspan="2"><strong>页面内容：</strong></td>
     </tr>

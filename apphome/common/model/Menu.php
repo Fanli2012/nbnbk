@@ -338,6 +338,7 @@ class Menu extends Base
 		
 		return $temp;
 	}
+    
 	//获取后台管理员所具有权限的菜单列表
 	public function getPermissionsMenu($role_id, $parent_id=0, $pad=0)
 	{

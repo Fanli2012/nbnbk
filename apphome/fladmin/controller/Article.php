@@ -2,6 +2,7 @@
 namespace app\fladmin\controller;
 use think\Db;
 use app\common\lib\ReturnData;
+use app\common\lib\Helper;
 use app\common\logic\ArticleLogic;
 
 class Article extends Base
@@ -23,27 +24,28 @@ class Article extends Base
         {
             $where['title'] = array('like','%'.$_REQUEST['keyword'].'%');
         }
-        if(!empty($_REQUEST["typeid"]) && $_REQUEST["typeid"]!=0)
+        if(!empty($_REQUEST["type_id"]) && $_REQUEST["type_id"]>0)
         {
-            $where['typeid'] = $_REQUEST["typeid"];
+            $where['type_id'] = $_REQUEST["type_id"];
         }
-        if(!empty($_REQUEST["id"]))
+        $where['status'] = 0; //审核过的文章
+        if(!empty($_REQUEST["status"]))
         {
-            $where['typeid'] = $_REQUEST["id"];
-        }
-        $where['is_check'] = 0; //审核过的文章
-        if(!empty($_REQUEST["is_check"]))
-        {
-            $where['is_check'] = $_REQUEST["is_check"]; //未审核过的文章
+            $where['status'] = $_REQUEST["status"]; //未审核过的文章
         }
         
-        $posts = $this->getLogic()->getPaginate($where,'id desc',['body'],15);
+        $list = $this->getLogic()->getPaginate($where,['update_time'=>'desc'], ['content']);
 		
-		$this->assign('page',$posts->render());
-        $this->assign('posts',$posts);
-		
+		$this->assign('page',$list->render());
+        $this->assign('list',$list);
+		//echo '<pre>';print_r($list);exit;
+        
+        //分类列表
+        $article_type_list = model('ArticleType')->tree_to_list(model('ArticleType')->list_to_tree());
+        $this->assign('article_type_list',$article_type_list);
+        
 		return $this->fetch();
-		
+        
         //if(!empty($_GET["id"])){$id = $_GET["id"];}else {$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit;}
         
         /* if(!empty($id)){$map['typeid']=$id;}
@@ -74,253 +76,220 @@ class Article extends Base
     
     public function add()
     {
-		if(!empty($_REQUEST["catid"])){$this->assign('catid',$_REQUEST["catid"]);}else{$this->assign('catid',0);}
-		
-        return $this->fetch();
-    }
-    
-    public function doadd()
-    {
-        $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
-        if(empty($_POST["description"])){if(!empty($_POST["body"])){$_POST['description']=cut_str($_POST["body"]);}} //description
-        $content="";if(!empty($_POST["body"])){$content = $_POST["body"];}
-        $_POST['update_time'] = time();//更新时间
-        $_POST['add_time'] = time();//添加时间
-		$_POST['user_id'] = session('admin_user_info')['id']; // 发布者id
-        
-		//关键词
-        if(!empty($_POST["keywords"]))
-		{
-			$_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
-		}
-		else
-		{
-			if(!empty($_POST["title"]))
-			{
-				$title=$_POST["title"];
-				$title=str_replace("，","",$title);
-				$title=str_replace(",","",$title);
-				$_POST['keywords']=get_keywords($title);//标题分词
-			}
-		}
-        
-		if(isset($_POST["dellink"]) && $_POST["dellink"]==1 && !empty($content)){$content=replacelinks($content,array(CMS_BASEHOST));} //删除非站内链接
-		$_POST['body']=$content;
-		
-		//提取第一个图片为缩略图
-		if(isset($_POST["autolitpic"]) && $_POST["autolitpic"] && empty($litpic))
-		{
-			if(getfirstpic($content))
-			{
-				//获取文章内容的第一张图片
-				$imagepath = '.'.getfirstpic($content);
-				
-				//获取后缀名
-				preg_match_all ("/\/(.+)\.(gif|jpg|jpeg|bmp|png)$/iU",$imagepath,$out, PREG_PATTERN_ORDER);
-				
-				$saveimage='./uploads/'.date('Y/m',time()).'/'.basename($imagepath,'.'.$out[2][0]).'-lp.'.$out[2][0];
-				
-				//生成缩略图
-				$image = \think\Image::open($imagepath);
-				// 按照原图的比例生成一个最大为240*180的缩略图
-				$image->thumb(CMS_IMGWIDTH, CMS_IMGHEIGHT)->save($saveimage);
-				
-				//缩略图路径
-				$_POST['litpic']='/uploads/'.date('Y/m',time()).'/'.basename($imagepath,'.'.$out[2][0]).'-lp.'.$out[2][0];
-			}
-		}
-		
-		unset($_POST["dellink"]);
-		unset($_POST["autolitpic"]);
-        if(isset($_POST['editorValue'])){unset($_POST['editorValue']);}
-        if(!empty($_POST["tags"])){$tags = $_POST["tags"];}else{$tags = '';}unset($_POST["tags"]);
-        
-        $res = $this->getLogic()->add($_POST);
-		if($res['code']==ReturnData::SUCCESS)
+        if(Helper::isPostRequest())
         {
-            //Tag
-            if(!empty($tags))
+            $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
+            if(empty($_POST["description"])){if(!empty($_POST["content"])){$_POST['description']=cut_str($_POST["content"]);}} //description
+            $content="";if(!empty($_POST["content"])){$content = $_POST["content"];}
+            
+            $_POST['add_time'] = $_POST['update_time'] = time(); // 更新时间
+            $_POST['user_id'] = session('admin_user_info')['id']; // 发布者id
+            
+            //关键词
+            if(!empty($_POST["keywords"]))
             {
-                $tags = explode(",",str_replace("，",",",$tags));
-                foreach($tags as $v)
+                $_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
+            }
+            else
+            {
+                if(!empty($_POST["title"]))
                 {
-                    if($tagindex = db('tagindex')->where(array('tag'=>$v))->find())
-                    {
-                        $where['tid'] = $tagindex['id'];
-                        $where['aid'] = $res['data'];
-                        if(!db('taglist')->where($where)->find()){db('taglist')->insert($where);}
-                    }
+                    $title=$_POST["title"];
+                    $title=str_replace("，","",$title);
+                    $title=str_replace(",","",$title);
+                    $_POST['keywords']=get_participle($title); // 标题分词
                 }
             }
             
-            $this->success('添加成功', url('index'), '', 1);
+            if(isset($_POST["dellink"]) && $_POST["dellink"]==1 && !empty($content)){$content=logic('Article')->replacelinks($content,array(sysconfig('CMS_BASEHOST')));} //删除非站内链接
+            $_POST['content']=$content;
+            
+            // 提取第一个图片为缩略图
+            if(isset($_POST["autolitpic"]) && $_POST["autolitpic"] && empty($litpic))
+            {
+                $litpic = logic('Article')->getBodyFirstPic($content);
+                if($litpic)
+                {
+                    $_POST['litpic'] = $litpic;
+                }
+            }
+            
+            $res = $this->getLogic()->add($_POST);
+            if($res['code']==ReturnData::SUCCESS)
+            {
+                //Tag添加
+                if(isset($_POST['tags']) && $_POST["tags"]!='')
+                {
+                    $tags = $_POST['tags'];
+                    $tags = explode(',',str_replace('，',',',$tags));
+                    foreach($tags as $row)
+                    {
+                        $tag_id = model('Tag')->getValue(array('name'=>$row),'id');
+                        if($tag_id)
+                        {
+                            $data2['tag_id'] = $tag_id;
+                            $data2['article_id'] = $id;
+                            logic('Taglist')->add($data2);
+                        }
+                    }
+                }
+                
+                $this->success($res['msg'], url('index'), '', 1);
+            }
+            
+            $this->error($res['msg']);
         }
-		else
-		{
-			$this->error($res['msg'], url('add'), '', 3);
-		}
+        
+        //文章添加到哪个栏目下
+        $this->assign('type_id',input('type_id/d', 0));
+		
+        //栏目列表
+        $article_type_list = model('ArticleType')->tree_to_list(model('ArticleType')->list_to_tree());
+        $this->assign('article_type_list',$article_type_list);
+        
+        return $this->fetch();
     }
     
     public function edit()
     {
-        if(!empty($_GET["id"])){$id = $_GET["id"];}else {$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit;}
+        if(Helper::isPostRequest())
+        {
+            $id=$where['id'] = $_POST['id'];
+            unset($_POST['id']);
+            
+            $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
+            if(empty($_POST["description"])){if(!empty($_POST["content"])){$_POST['description']=cut_str($_POST["content"]);}} //description
+            $content="";if(!empty($_POST["content"])){$content = $_POST["content"];}
+            $_POST['update_time'] = time();//更新时间
+            $_POST['user_id'] = session('admin_user_info')['id']; // 修改者id
+            
+            //关键词
+            if(!empty($_POST["keywords"]))
+            {
+                $_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
+            }
+            else
+            {
+                if(!empty($_POST["title"]))
+                {
+                    $title=$_POST["title"];
+                    $title=str_replace("，","",$title);
+                    $title=str_replace(",","",$title);
+                    $_POST['keywords']=get_participle($title); // 标题分词
+                }
+            }
+            
+            if(isset($_POST["dellink"]) && $_POST["dellink"]==1 && !empty($content)){$content=logic('Article')->replacelinks($content,array(sysconfig('CMS_BASEHOST')));} //删除非站内链接
+            $_POST['content']=$content;
+            
+            // 提取第一个图片为缩略图
+            if(isset($_POST["autolitpic"]) && $_POST["autolitpic"] && empty($litpic))
+            {
+                $litpic = logic('Article')->getBodyFirstPic($content);
+                if($litpic)
+                {
+                    $_POST['litpic'] = $litpic;
+                }
+            }
+            
+            $res = $this->getLogic()->edit($_POST,$where);
+            if($res['code'] == ReturnData::SUCCESS)
+            {
+                //Tag添加
+                if(isset($_POST['tags']) && $_POST["tags"]!='')
+                {
+                    $tags = $_POST['tags'];
+                    $tags = explode(',',str_replace('，',',',$tags));
+                    model('Taglist')->del(array('article_id'=>$id));
+                    foreach($tags as $row)
+                    {
+                        $tag_id = model('Tag')->getValue(array('name'=>$row),'id');
+                        if($tag_id)
+                        {
+                            $data2['tag_id'] = $tag_id;
+                            $data2['article_id'] = $id;
+                            logic('Taglist')->add($data2);
+                        }
+                    }
+                }
+                
+                $this->success($res['msg'], url('index'), '', 1);
+            }
+            
+            $this->error($res['msg']);
+        }
         
-        $this->assign('id',$id);
-		$this->assign('post',$this->getLogic()->getOne("id=$id"));
+        if(!checkIsNumber(input('id',null))){$this->error('参数错误');}
+        $where['id'] = input('id');
+        $this->assign('id', $where['id']);
         
+        $post = $this->getLogic()->getOne($where);
+        $this->assign('post', $post);
+        
+        //Tag标签
         $tags = '';
-        $taglist = db('taglist')->where("aid=$id")->select();
+        $taglist = model('Taglist')->getAll(['article_id'=>$where['id']]);
         if($taglist)
         {
             foreach($taglist as $k=>$v)
             {
-                $tmp[] = db('tagindex')->where('id='.$v['tid'])->value('tag');
+                $tmp[] = model('Tag')->getValue(['id'=>$v['tag_id']],'name');
             }
             $tags = implode(',',$tmp);
         }
         $this->assign('tags',$tags);
         
+        //栏目列表
+        $article_type_list = model('ArticleType')->tree_to_list(model('ArticleType')->list_to_tree());
+        $this->assign('article_type_list',$article_type_list);
+        
         return $this->fetch();
     }
     
-    public function doedit()
-    {
-        if(!empty($_POST["id"])){$id = $_POST["id"];unset($_POST["id"]);}else{$id="";exit;}
-        $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
-        if(empty($_POST["description"])){if(!empty($_POST["body"])){$_POST['description']=cut_str($_POST["body"]);}} //description
-        $content="";if(!empty($_POST["body"])){$content = $_POST["body"];}
-        $_POST['update_time'] = time();//更新时间
-        $_POST['user_id'] = session('admin_user_info')['id']; // 修改者id
-        
-		if(!empty($_POST["keywords"]))
-		{
-			$_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
-		}
-		else
-		{
-			if(!empty($_POST["title"]))
-			{
-				$title=$_POST["title"];
-				$title=str_replace("，","",$title);
-				$title=str_replace(",","",$title);
-				$_POST['keywords']=get_keywords($title);//标题分词
-			}
-		}
-		
-		if(isset($_POST["dellink"]) && $_POST["dellink"]==1 && !empty($content)){$content=replacelinks($content,array(CMS_BASEHOST));} //删除非站内链接
-		$_POST['body']=$content;
-		
-		//提取第一个图片为缩略图
-		if(isset($_POST["autolitpic"]) && $_POST["autolitpic"] && empty($litpic))
-		{
-			if(getfirstpic($content))
-			{
-				//获取文章内容的第一张图片
-				$imagepath = '.'.getfirstpic($content);
-				
-				//获取后缀名
-				preg_match_all ("/\/(.+)\.(gif|jpg|jpeg|bmp|png)$/iU",$imagepath,$out, PREG_PATTERN_ORDER);
-				
-				$saveimage='./uploads/'.date('Y/m',time()).'/'.basename($imagepath,'.'.$out[2][0]).'-lp.'.$out[2][0];
-				
-				//生成缩略图
-				$image = \think\Image::open($imagepath);
-				// 按照原图的比例生成一个最大为240*180的缩略图
-				$image->thumb(CMS_IMGWIDTH, CMS_IMGHEIGHT)->save($saveimage);
-				
-				//缩略图路径
-				$_POST['litpic']='/uploads/'.date('Y/m',time()).'/'.basename($imagepath,'.'.$out[2][0]).'-lp.'.$out[2][0];
-			}
-		}
-		
-		unset($_POST["dellink"]);
-		unset($_POST["autolitpic"]);
-        
-        //Tag
-        if(!empty($_POST["tags"]))
-        {
-            $tags = explode(",",str_replace("，",",",$_POST["tags"]));
-            db('taglist')->where(array('aid'=>$id))->delete();
-            
-            foreach($tags as $v)
-            {
-                if($tagindex = db('tagindex')->where(array('tag'=>$v))->find())
-                {
-                    $where['tid'] = $tagindex['id'];
-                    $where['aid'] = $id;
-                    if(!db('taglist')->where($where)->find()){db('taglist')->insert($where);}
-                }
-            }
-        }
-        unset($_POST["tags"]);
-        
-        if(isset($_POST['editorValue'])){unset($_POST['editorValue']);}
-        $res = $this->getLogic()->edit($_POST,array('id'=>$id));
-        if($res['code']==ReturnData::SUCCESS)
-        {
-            if(!empty($_POST['ischeck']))
-            {
-                $this->success('修改成功', url('index',array('ischeck'=>1)), '', 1);
-            }
-            else
-            {
-                $this->success('修改成功', url('index'), '', 1);
-            }
-        }
-		else
-		{
-			$this->error($res['msg'], url('edit',array('id'=>$id)), '', 3);
-		}
-    }
-    
+    //删除
     public function del()
     {
 		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('参数错误', url('index'), '', 3);}
 		
         $res = model('Article')->del("id in ($id)");
-		if($res['code']==ReturnData::SUCCESS)
+		if($res)
         {
             $this->success("$id ,删除成功", url('index'), '', 1);
         }
-		else
-		{
-			$this->error($res['msg'], url('index'), '', 3);
-		}
+        
+		$this->error('删除失败');
     }
     
+    //文章重复列表
     public function repetarc()
     {
-		$this->assign('posts',Db::query("select title,count(*) AS count from ".config('database.prefix')."article group by title HAVING count>1 order by count DESC"));
+		$this->assign('list',Db::query("select title,count(*) AS count from ".config('database.prefix')."article group by title HAVING count>1 order by count DESC"));
 		
         return $this->fetch();
     }
 	
+    //文章推荐
 	public function recommendarc()
     {
 		if(!empty($_GET["id"])){$id = $_GET["id"];}else{$this->error('参数错误', url('index'), '', 3);} //if(preg_match('/[0-9]*/',$id)){}else{exit;}
 		
 		$data['tuijian'] = 1;
-		
-        $res = $this->getLogic()->edit($data, "id in ($id)");
-		if($res['code']==ReturnData::SUCCESS)
+        $res = model('Article')->edit($data, "id in ($id)");
+		if($res)
         {
-            $this->success("$id ,推荐成功", url('index'), '', 1);
+            $this->success("$id ,推荐成功");
         }
-		else
-		{
-			$this->error("$id ,推荐失败！请重新提交", url('index'), '', 3);
-		}
+        
+		$this->error("$id ,推荐失败！请重新提交");
     }
     
+    //文章是否存在
     public function articleexists()
     {
+        $map=[];
         if(!empty($_GET["title"]))
         {
             $map['title'] = $_GET["title"];
-        }
-        else
-        {
-            $map['title']="";
         }
         
         if(!empty($_GET["id"]))
@@ -328,6 +297,6 @@ class Article extends Base
             $map['id'] = array('NEQ',$_GET["id"]);
         }
         
-        echo db("article")->where($map)->count();
+        echo model('Article')->getCount($map);
     }
 }

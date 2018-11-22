@@ -367,7 +367,7 @@ function cut_str($string, $sublen=250, $omitted = '', $start=0, $code='UTF-8')
 }
 
 //PhpAnalysis获取中文分词
-function get_keywords($keyword)
+function get_participle($keyword)
 {
     require_once EXTEND_PATH.'phpAnalysis/phpAnalysis.php';
     
@@ -412,23 +412,6 @@ function imgmatch($url)
     }
 }
 
-//递归获取面包屑导航
-function get_cat_path($cat)
-{
-    global $temp;
-    
-    $row = db("arctype")->field('name,parent_id,id')->where("id=$cat")->find();
-    
-    $temp = '<a href="/articlelist/f'.$row["id"].'">'.$row["name"]."</a> > ".$temp;
-    
-    if($row["parent_id"]<>0)
-    {
-        get_cat_path($row["parent_id"]);
-    }
-    
-    return $temp;
-}
-
 //通过file_get_content获取远程数据
 function http_request_post($url,$data,$type='POST')
 {
@@ -471,109 +454,6 @@ function imageResize($url, $width, $height)
 	imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
 	// Output the image
 	imagejpeg($image_p, null, 100);
-}
-
-/**
- * 为文章内容添加内敛, 排除alt title <a></a>直接的字符替换
- *
- * @param string $body
- * @return string
- */
-function ReplaceKeyword($body)
-{
-	$karr = $kaarr = array();
-    
-	//暂时屏蔽超链接
-	$body = preg_replace("#(<a(.*))(>)(.*)(<)(\/a>)#isU", '\\1-]-\\4-[-\\6', $body);
-	
-	if(cache("keywordlist")){$posts=cache("keywordlist");}else{$posts = db("keyword")->select();cache("keywordlist",$posts,2592000);}
-    
-	foreach($posts as $row)
-	{
-		$keyword = trim($row['keyword']);
-		$key_url=trim($row['rpurl']);
-		$karr[] = $keyword;
-		$kaarr[] = "<a href='$key_url' target='_blank'><u>$keyword</u></a>";
-	}
-	
-	asort($karr);
-    
-    $body = str_replace('\"', '"', $body);
-    
-	foreach ($karr as $key => $word)
-	{
-		$body = preg_replace("#".preg_quote($word)."#isU", $kaarr[$key], $body, 1);
-	}
-    
-	//恢复超链接
-	return preg_replace("#(<a(.*))-\]-(.*)-\[-(\/a>)#isU", '\\1>\\3<\\4', $body);
-}
-
-/**
- * 删除非站内链接
- *
- * @access    public
- * @param     string  $body  内容
- * @param     array  $allow_urls  允许的超链接
- * @return    string
- */
-function replacelinks($body, $allow_urls=array())
-{
-    $host_rule = join('|', $allow_urls);
-    $host_rule = preg_replace("#[\n\r]#", '', $host_rule);
-    $host_rule = str_replace('.', "\\.", $host_rule);
-    $host_rule = str_replace('/', "\\/", $host_rule);
-    $arr = '';
-	
-    preg_match_all("#<a([^>]*)>(.*)<\/a>#iU", $body, $arr);
-	
-    if( is_array($arr[0]) )
-    {
-        $rparr = array();
-        $tgarr = array();
-		
-        foreach($arr[0] as $i=>$v)
-        {
-            if( $host_rule != '' && preg_match('#'.$host_rule.'#i', $arr[1][$i]) )
-            {
-                continue;
-            }
-			else
-			{
-                $rparr[] = $v;
-                $tgarr[] = $arr[2][$i];
-            }
-        }
-		
-        if( !empty($rparr) )
-        {
-            $body = str_replace($rparr, $tgarr, $body);
-        }
-    }
-    $arr = $rparr = $tgarr = '';
-    return $body;
-}
-
-/**
- * 获取文本中首张图片地址
- * @param  [type] $content
- * @return [type]
- */
-function getfirstpic($content)
-{
-    if(preg_match_all("/(src)=([\"|']?)([^ \"'>]+\.(gif|jpg|jpeg|bmp|png))\\2/i", $content, $matches))
-	{
-        $file=$_SERVER['DOCUMENT_ROOT'].$matches[3][0];
-		
-		if(file_exists($file))
-		{
-			return $matches[3][0];
-		}
-    }
-	else
-	{
-		return false;
-	}
 }
 
 //清空文件夹

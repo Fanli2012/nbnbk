@@ -18,25 +18,24 @@ Route::pattern([
 Route::domain('m',	function(){
     // 批量路由规则设置
     Route::rule([
-        '/'              => array('wap/Index/index',array()),
-        'tags'              => array('wap/Index/tags',array('ext'=>'html')),
-        'search'            => 'wap/Index/search',
-        'sitemap'              => array('wap/Index/sitemap',array('ext'=>'xml')),
-        
-        'p/<id>'            => array('wap/Index/detail',array()), //详情页
-        'cat<cat>/<page>'   => array('wap/Index/category',array(),array('cat'=>'\d+','page'=>'\d+')), //分类页，分页
-        'cat<cat>'          => ['wap/Index/category',[],['cat'=>'\d+']], //分类页
-        
-        'tag<tag>/<page>'   => array('wap/Index/tag',array('tag'=>'\d+','page'=>'\d+')), //标签页，分页
-        'tag<tag>'          => array('wap/Index/tag',array('tag'=>'\d+')), //标签页
-        
-        'tuijian/<page>'   => array('wap/Index/tuijian',array('page'=>'\d+')), //推荐页，分页
-        'tuijian'          => 'wap/Index/tuijian', //推荐页
-        
-        'page/<id>'         => array('wap/Index/page',array('ext'=>'html'),array('id'=>'[a-zA-Z0-9]+')),
-        
-        //api路由
-        'api/listarc'       => array('index/Server/listarc',array('method'=>'post')),
+    //其它
+    'sitemap'           => array('wap/Index/sitemap',array('ext'=>'xml')), //XML地图
+    //文章
+    'articlelist/<key>' => array('wap/Article/index',array('key'=>'[a-z0-9]*')),
+    'articlelist'       => 'wap/Article/index',
+    'p/<id>'            => array('wap/Article/detail',array('id'=>'\d+')),
+    //标签
+    'taglist/<key>'     => array('wap/Tag/index',array('key'=>'[a-z0-9]*')),
+    'tag/<id>'          => array('wap/Tag/detail',array('id'=>'\d+')),
+    //店铺
+    'shoplist/<key>'    => array('wap/Shop/index',array('key'=>'[a-z0-9]*')),
+    'shop/<id>'         => array('wap/Shop/detail',array('id'=>'\d+')),
+    //商品
+    'goodslist/<key>'   => array('wap/Goods/index',array('key'=>'[a-z0-9]*')),
+    'goods/<id>'        => array('wap/Goods/detail',array('id'=>'\d+')),
+    //单页
+    'pagelist/<key>'    => array('wap/Page/index',array('key'=>'[a-z0-9]*')),
+    'page/<id>'         => array('wap/Page/detail',array('ext'=>'html'),array('id'=>'[a-z0-9]+')),
     ]);
 });
 
@@ -44,29 +43,25 @@ return [
     /* '__pattern__' => [
         'name' => '\w+',
     ], */
-    'tags'              => array('index/Index/tags',array('ext'=>'html')),
-    'search'            => 'index/Index/search',
-    'sitemap'              => array('index/Index/sitemap',array('ext'=>'xml')),
-    
-    'p/<id>'            => array('index/Article/detail',array()), //详情页
-    'cat<cat>/<page>'   => array('index/Index/category',array(),array('cat'=>'\d+','page'=>'\d+')), //分类页，分页
-    'cat<cat>'          => array('index/Index/category',array(),['cat'=>'\d+']), //分类页
-    
-    'tag<tag>/<page>'   => array('index/Index/tag',array('tag'=>'\d+','page'=>'\d+')), //标签页，分页
-    'tag<tag>'          => array('index/Index/tag',array('tag'=>'\d+')), //标签页
-    
-    'shoplist/<key>'    => array('index/Shop/index',array('key'=>'[a-z0-9]+')), //店铺列表，分页
-    'shoplist'          => 'index/Shop/index', //店铺列表
-    'goodslist/<key>'   => array('index/Goods/index',array('key'=>'[a-z0-9]+')), //商品列表，分页
-    'goodslist'         => 'index/Goods/index', //商品列表
-    'articlelist/<key>' => array('index/Article/index',array('key'=>'[a-z0-9]+')), //文章列表，分页
-    'articlelist'       => 'index/Article/index', //文章列表
-    
-    'tuijian/<page>'   => array('index/Index/tuijian',array('page'=>'\d+')), //推荐页，分页
-    'tuijian'          => 'index/Index/tuijian', //推荐页
-    
-    'page/<id>'         => array('index/Index/page',array('ext'=>'html'),array('id'=>'[a-zA-Z0-9]+')),
-    
+    //其它
+    'sitemap'           => array('index/Index/sitemap',array('ext'=>'xml')), //XML地图
+    //文章
+    'articlelist/<key>' => array('index/Article/index',array('key'=>'[a-z0-9]+')),
+    'articlelist'       => 'index/Article/index',
+    'p/<id>'            => array('index/Article/detail',array('id'=>'\d+')),
+    //标签
+    'taglist/<key>'     => array('index/Tag/index',array('key'=>'[a-z0-9]*')),
+    'tag/<id>'          => array('index/Tag/detail',array('id'=>'\d+')),
+    //店铺
+    'shoplist/<key>'    => array('index/Shop/index',array('key'=>'[a-z0-9]+')),
+    'shop/<id>'         => array('index/Shop/detail',array('id'=>'\d+')),
+    //商品
+    'goodslist/<key>'   => array('index/Goods/index',array('key'=>'[a-z0-9]*')),
+    'goods/<id>'        => array('index/Goods/detail',array('id'=>'\d+')),
+    //单页
+    'pagelist/<key>'    => array('index/Page/index',array('key'=>'[a-z0-9]*')),
+    'page/<id>'         => array('index/Page/detail',array('ext'=>'html'),array('id'=>'[a-z0-9]+')),
+     
     //api路由
     'api/listarc'    => array('index/Server/listarc',array('method'=>'post')),
 ];

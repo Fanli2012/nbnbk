@@ -33,7 +33,7 @@ class Article extends Base
             //分类id
             if(isset($arr_key['f']) && $arr_key['f']>0)
             {
-                $where['type_id'] = $arr_key['f'];
+                $type_id = $where['type_id'] = $arr_key['f'];
                 
                 $post = model('ArticleType')->getOne(['id'=>$arr_key['f']]);
                 $this->assign('post',$post);
@@ -55,19 +55,31 @@ class Article extends Base
         $this->assign('page', $page);
         $this->assign('list', $list);
         
-        //最新
-        $where2['delete_time'] = 0;
-        $where2['status'] = 0;
-        $zuixin_list = logic('Article')->getAll($where2, 'id desc', ['content'], 5);
-        $this->assign('zuixin_list',$zuixin_list);
+        //推荐文章
+        $relate_tuijian_list = cache("index_article_detail_relate_tuijian_list_$key");
+        if(!$relate_tuijian_list)
+        {
+            $where_tuijian['delete_time'] = 0;
+            $where_tuijian['status'] = 0;
+            $where_tuijian['tuijian'] = 1;
+            $where_tuijian['litpic'] = ['<>',''];
+            if(isset($type_id)){$where_tuijian['type_id'] = $type_id;}
+            $relate_tuijian_list = logic('Article')->getAll($where_tuijian, 'update_time desc', ['content'], 5);
+            cache("index_article_detail_relate_tuijian_list_$key",$relate_tuijian_list,2592000);
+        }
+        $this->assign('relate_tuijian_list',$relate_tuijian_list);
         
-        //推荐
-        $where3['delete_time'] = 0;
-        $where3['status'] = 0;
-        $where3['tuijian'] = 1;
-        $where3['litpic'] = ['<>',''];
-        $tuijian_list = logic('Article')->getAll($where3, 'id desc', ['content'], 5);
-        $this->assign('tuijian_list',$tuijian_list);
+        //随机文章
+        $relate_rand_list = cache("index_article_detail_relate_rand_list_$key");
+        if(!$relate_rand_list)
+        {
+            $where_rand['delete_time'] = 0;
+            $where_rand['status'] = 0;
+            if(isset($type_id)){$where_rand['type_id'] = $type_id;}
+            $relate_rand_list = logic('Article')->getAll($where_rand, 'rand()', ['content'], 5);
+            cache("index_article_detail_relate_rand_list_$key",$relate_rand_list,2592000);
+        }
+        $this->assign('relate_rand_list',$relate_rand_list);
         
         //seo标题设置
         $title = $title.'最新动态';
@@ -81,26 +93,43 @@ class Article extends Base
         if(!checkIsNumber(input('id',null))){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
         $id = input('id');
         
-        $where['id'] = $id;
-        $post = $this->getLogic()->getOne($where);
-        if(!$post){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
-        
-        $post['content']=$this->getLogic()->replaceKeyword($post['content']);
-        
+        $post = cache("index_article_detail_$id");
+        if(!$post)
+        {
+            $where['id'] = $id;
+            $post = $this->getLogic()->getOne($where);
+            if(!$post){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+            $post['content']=$this->getLogic()->replaceKeyword($post['content']);
+            cache("index_article_detail_$id",$post,2592000);
+            
+        }
         $this->assign('post',$post);
         
-        //随机文章
-        $where2['delete_time'] = 0;
-        $where2['status'] = 0;
-        $rand_posts = logic('Article')->getAll($where2, 'rand()', ['content'], 5);
-        $this->assign('rand_posts',$rand_posts);
-        
         //最新文章
-        $where3['delete_time'] = 0;
-        $where3['status'] = 0;
-        $where3['type_id'] = $post['type_id'];
-        $zuixin_posts = logic('Article')->getAll($where3, 'id desc', ['content'], 5);
-        $this->assign('zuixin_posts',$zuixin_posts);
+        $relate_zuixin_list = cache("index_article_detail_relate_zuixin_list_$id");
+        if(!$relate_zuixin_list)
+        {
+            $where_zuixin['delete_time'] = 0;
+            $where_zuixin['status'] = 0;
+            $where_zuixin['type_id'] = $post['type_id'];
+            $where_zuixin['id'] = ['<',$id];
+            $relate_zuixin_list = logic('Article')->getAll($where_zuixin, 'update_time desc', ['content'], 5);
+            if(!$relate_zuixin_list){unset($where_zuixin['id']);$relate_zuixin_list = logic('Article')->getAll($where_zuixin, 'update_time desc', ['content'], 5);}
+            cache("index_article_detail_relate_zuixin_list_$id",$relate_zuixin_list,2592000);
+        }
+        $this->assign('relate_zuixin_list',$relate_zuixin_list);
+        
+        //随机文章
+        $relate_rand_list = cache("index_article_detail_relate_rand_list_$id");
+        if(!$relate_rand_list)
+        {
+            $where_rand['delete_time'] = 0;
+            $where_rand['status'] = 0;
+            $where_rand['type_id'] = $post['type_id'];
+            $relate_rand_list = logic('Article')->getAll($where_rand, 'rand()', ['content'], 5);
+            cache("index_article_detail_relate_rand_list_$id",$relate_rand_list,2592000);
+        }
+        $this->assign('relate_rand_list',$relate_rand_list);
         
         //面包屑导航
         $this->assign('bread', logic('Article')->get_article_type_path($post['type_id']));

@@ -53,11 +53,9 @@ class Feedback extends Base
     {
         if(Helper::isPostRequest())
         {
-            $data['content'] = input('content',null);
-            if(input('title', null) !== null){$data['title'] = input('title');}
-            $data['user_id'] = Token::$uid;
+            $_POST['user_id'] = Token::$uid;
             
-            $res = $this->getLogic()->add($data);
+            $res = $this->getLogic()->add($_POST);
             
             exit(json_encode($res));
         }
@@ -82,13 +80,11 @@ class Feedback extends Base
     //删除
     public function del()
     {
-        if(input('id',null)!=null){$id = input('id');}else{$id='';}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id',null))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        $where['id'] = input('id');
         
         if(Helper::isPostRequest())
         {
-            unset($_POST['id']);
-            $where['id'] = $id;
-            
             $res = $this->getLogic()->del($where);
             
             exit(json_encode($res));

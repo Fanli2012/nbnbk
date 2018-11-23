@@ -2,6 +2,7 @@
 基于thinkphp5的cms
 
 ![alt text](/public/images/screenshots.jpg "网站截图")
+![alt text](/public/images/screenshots-2.jpg "产品中心")
 
 # 说明
 

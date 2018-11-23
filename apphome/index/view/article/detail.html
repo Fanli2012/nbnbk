@@ -11,18 +11,18 @@
 
 <div class="fr_300"><div id="rad1"><script>rjs1();</script></div>
 <div class="side"><div class="stit"><h2><?php echo sysconfig('CMS_WEBSITE_MAIN_KEYWORD'); ?>推荐<?php /* echo $post['name']; */ ?></h2><a href="javascript:getmore({limit:5,type_id:<?php echo $post['type_id']; ?>,mode:1,orderby:'rand()'});" class="more">换一换</a><div class="cl"></div></div>	
-<ul class="uli chs" id="xglist"><?php if($zuixin_posts){foreach($zuixin_posts as $row){ ?><li><a target="_blank" href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['type_id'],"type"=>'content')); ?>"><?php echo $row['title']; ?></a></li><?php }} ?></ul><div class="cl"></div></div>
+<ul class="uli chs" id="xglist"><?php if($relate_zuixin_list){foreach($relate_zuixin_list as $row){ ?><li><a target="_blank" href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>"><?php echo $row['title']; ?></a></li><?php }} ?></ul><div class="cl"></div></div>
 
 <div id="rad3"><script>rjs3();</script></div>
 <div class="side"><div class="stit"><h2>猜你喜欢</h2><a href="javascript:getmore({limit:5,type_id:<?php echo $post['type_id']; ?>,mode:2,orderby:'rand()'});" class="more">换一换</a><div class="cl"></div></div>
-<div class="uli2" id="xglike"><?php if($rand_posts){foreach($rand_posts as $row){ ?><div class="suli"><?php if(!empty($row['litpic'])){ ?><a class="limg" href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['type_id'],"type"=>'content')); ?>"><img alt="<?php echo $row['title']; ?>" src="<?php echo $row['litpic']; ?>"></a><?php } ?><a target="_blank" href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['type_id'],"type"=>'content')); ?>"><?php echo $row['title']; ?></a><div class="sulii"><?php if(!empty($row['writer'])){echo '<span class="time">'.$row['writer'].'</span>';}elseif(!empty($row['source'])){echo '<span class="time">'.$row['source'].'</span>';} ?> 阅读(<?php echo $row['click']; ?>)</div><div class="cl"></div></div><?php }} ?></div></div>
+<div class="uli2" id="xglike"><?php if($relate_rand_list){foreach($relate_rand_list as $row){ ?><div class="suli"><?php if(!empty($row['litpic'])){ ?><a class="limg" href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>"><img alt="<?php echo $row['title']; ?>" src="<?php echo $row['litpic']; ?>"></a><?php } ?><a target="_blank" href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>"><?php echo $row['title']; ?></a><div class="sulii"><?php if(!empty($row['writer'])){echo '<span class="time">'.$row['writer'].'</span>';}elseif(!empty($row['source'])){echo '<span class="time">'.$row['source'].'</span>';} ?> 阅读(<?php echo $row['click']; ?>)</div><div class="cl"></div></div><?php }} ?></div></div>
 
 <div id="rad2"><script>rjs2();</script></div></div><!-- fr_300 end --></div><!-- box end -->
 <script>
 function getmore(condition)
 {
     var url = "<?php echo sysconfig('CMS_BASEHOST'); ?>/api/article/index";
-    //var type_id = "";
+    //var typeid = "";
     $.post(url,condition,function(res){
         if(res.code==0)
         {
@@ -33,12 +33,12 @@ function getmore(condition)
                 //var title = json[index].title;
                 if(condition.mode==1)
                 {
-                    str = str + '<li><a target="_blank" href="'+json[index].url+'">'+json[index].title+'</a></li>';
+                    str = str + '<li><a target="_blank" href="<?php echo model('Article')->getArticleDetailUrl(); ?>'+json[index].id+'">'+json[index].title+'</a></li>';
                 }
                 else if(condition.mode==2)
                 {
-                    var litpic = '';if(json[index].litpic!==''){litpic = '<a class="limg" href="'+json[index].url+'"><img alt="'+json[index].title+'" src="'+json[index].litpic+'"></a>';}
-                    str = str + '<div class="suli">'+litpic+'<a target="_blank" href="'+json[index].url+'">'+json[index].title+'</a><div class="sulii">阅读('+json[index].click+')</div><div class="cl"></div></div>';
+                    var litpic = '';if(json[index].litpic!==''){litpic = '<a class="limg" href="<?php echo model('Article')->getArticleDetailUrl(); ?>'+json[index].id+'"><img alt="'+json[index].title+'" src="'+json[index].litpic+'"></a>';}
+                    str = str + '<div class="suli">'+litpic+'<a target="_blank" href="<?php echo model('Article')->getArticleDetailUrl(); ?>'+json[index].id+'">'+json[index].title+'</a><div class="sulii">阅读('+json[index].click+')</div><div class="cl"></div></div>';
                 }
             });
             

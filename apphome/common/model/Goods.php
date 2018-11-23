@@ -281,6 +281,17 @@ class Goods extends Base
     }
     
     /**
+     * 获取商品详情url
+     * @param int $param['id'] 商品ID
+     * @return string
+     */
+    public function getGoodsDetailUrl($param=[])
+    {
+        if(isset($param['id'])){return $url = '/goods/'.$param['id'];}
+        return $url = '/goods/';
+    }
+    
+    /**
      * 获取器——分类名称
      * @param int $value
      * @param array $data
@@ -301,6 +312,96 @@ class Goods extends Base
     {
         $arr = array(0 => '正常', 1 => '已删除', 2 => '下架', 3 => '申请上架');
         return $arr[$data['status']];
+    }
+    
+    /**
+     * 获取器——商品图片列表
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getGoodsImgListAttr($value, $data)
+    {
+        return model('GoodsImg')->getAll(['goods_id'=>$data['id']]);
+    }
+    
+    /**
+     * 获取器——商品价格
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getPriceAttr($value, $data)
+    {
+        return $this->getGoodsFinalPrice($data);
+    }
+    
+    /**
+     * 获取器——是否促销
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getIsPromoteAttr($value, $data)
+    {
+        return $this->bargain_price($data['price'], $data['promote_start_date'], $data['promote_end_date']);
+    }
+    
+    /**
+     * 取得商品最终使用价格
+     *
+     * @param   string  $goods_id      商品编号
+     * @param   string  $goods_num     购买数量
+     *
+     * @return  商品最终购买价格
+     */
+    public function getGoodsFinalPrice($goods)
+    {
+        $final_price   = '0'; //商品最终购买价格
+        $promote_price = '0'; //商品促销价格
+        $user_price    = '0'; //商品会员价格，预留
+        
+        //取得商品促销价格列表
+        $final_price = $goods['price'];
+        
+        // 计算商品的促销价格
+        if ($goods['promote_price'] > 0)
+        {
+            $promote_price = $this->bargain_price($goods['promote_price'], $goods['promote_start_date'], $goods['promote_end_date']);
+        }
+        
+        if ($promote_price > 0)
+        {
+            $final_price = $promote_price;
+        }
+        
+        //返回商品最终购买价格
+        return $final_price;
+    }
+    
+    /**
+     * 判断某个商品是否正在特价促销期
+     *
+     * @access  public
+     * @param   float   $price      促销价格
+     * @param   string  $start      促销开始日期
+     * @param   string  $end        促销结束日期
+     * @return  float   如果还在促销期则返回促销价，否则返回0
+     */
+    public function bargain_price($price, $start, $end)
+    {
+        if ($price <= 0)
+        {
+            return 0;
+        }
+        
+        $time = time();
+        if ($time >= $start && $time <= $end)
+        {
+            return $price;
+        }
+        
+        return 0;
     }
     
 }

@@ -8,7 +8,7 @@
 
 <?php if($list){foreach($list as $row){ ?><div class="list"><?php if(!empty($row['litpic'])){ ?><a class="limg" href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['type_id'],"type"=>'content')); ?>"><img alt="<?php echo $row['title']; ?>" src="<?php echo $row['litpic']; ?>"></a><?php } ?>
 <strong class="tit"><a href="<?php echo get_front_url(array("id"=>$row['id'],"catid"=>$row['type_id'],"type"=>'content')); ?>" target="_blank"><?php echo $row['title']; ?></a></strong><p><?php echo mb_strcut($row['description'],0,150,'UTF-8'); ?>..</p>
-<div class="info"><span class="fl"><em><?php echo date("m-d H:i",$row['update_time']); ?></em></span><span class="fr"><em><?php echo $row['click']; ?></em>人阅读</span></div><div class="cl"></div></div><?php }} ?><div id="lad2"><script>ljs2();</script></div>
+<div class="info"><span class="fl"><em><?php echo date("m-d H:i",$row['update_time']); ?></em></span><span class="fr"><em><?php echo $row['click']; ?></em>人阅读</span></div><div class="cl"></div></div><?php }}else{echo '<div style="text-align:center;padding:20px;">暂无记录</div>';} ?><div id="lad2"><script>ljs2();</script></div>
 
 <div class="bootstrap-front-pagination"><?php echo $page; ?></div><div id="lad3"><script>ljs3();</script></div></div><!-- fl_640 end -->
 
@@ -25,7 +25,7 @@
 function getmore(condition)
 {
     var url = "<?php echo sysconfig('CMS_BASEHOST'); ?>/api/article/index";
-    //var type_id = "";
+    //var typeid = "";
     $.post(url,condition,function(res){
         if(res.code==0)
         {
@@ -36,12 +36,12 @@ function getmore(condition)
                 //var title = json[index].title;
                 if(condition.mode==1)
                 {
-                    str = str + '<li><a target="_blank" href="'+json[index].url+'">'+json[index].title+'</a></li>';
+                    str = str + '<li><a target="_blank" href="<?php echo model('Article')->getArticleDetailUrl(); ?>'+json[index].id+'">'+json[index].title+'</a></li>';
                 }
                 else if(condition.mode==2)
                 {
-                    var litpic = '';if(json[index].litpic!==''){litpic = '<a class="limg" href="'+json[index].url+'"><img alt="'+json[index].title+'" src="'+json[index].litpic+'"></a>';}
-                    str = str + '<div class="suli">'+litpic+'<a target="_blank" href="'+json[index].url+'">'+json[index].title+'</a><div class="sulii">阅读('+json[index].click+')</div><div class="cl"></div></div>';
+                    var litpic = '';if(json[index].litpic!==''){litpic = '<a class="limg" href="<?php echo model('Article')->getArticleDetailUrl(); ?>'+json[index].id+'"><img alt="'+json[index].title+'" src="'+json[index].litpic+'"></a>';}
+                    str = str + '<div class="suli">'+litpic+'<a target="_blank" href="<?php echo model('Article')->getArticleDetailUrl(); ?>'+json[index].id+'">'+json[index].title+'</a><div class="sulii">阅读('+json[index].click+')</div><div class="cl"></div></div>';
                 }
             });
             

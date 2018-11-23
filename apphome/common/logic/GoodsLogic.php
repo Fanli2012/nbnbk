@@ -132,4 +132,26 @@ class GoodsLogic extends BaseLogic
     {
         return getDataAttr($this->getModel(),$data);
     }
+    
+    /**
+     * 递归获取面包屑导航
+     * @param  [int] $type_id
+     * @return [string]
+     */
+    public function get_goods_type_path($type_id)
+    {
+        global $temp;
+        
+        $row = model('GoodsType')->getOne(['id'=>$type_id], 'name,parent_id,id');
+        
+        $temp = '<a href="/goodslist/f'.$row["id"].'">'.$row["name"]."</a> > ".$temp;
+        
+        if($row['parent_id']>0)
+        {
+            $this->get_goods_type_path($row['parent_id']);
+        }
+        
+        return $temp;
+    }
+    
 }

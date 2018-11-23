@@ -27,7 +27,7 @@ class Friendlink extends Base
         $limit = input('limit',10);
         $offset = input('offset', 0);
         if(input('group_id', null) !== null){$where['group_id'] = input('group_id');}
-        $orderby = input('orderby','rank asc');
+        $orderby = input('orderby','listorder asc');
         
         $res = $this->getLogic()->getList($where,$orderby,'*',$offset,$limit);
 		

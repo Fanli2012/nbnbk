@@ -29,12 +29,12 @@ class Slide extends Base
         if(input('keyword', null) !== null){$where['title'] = ['like','%'.input('keyword').'%'];}
         if(input('target', null) !== null){$where['target'] = input('target');}
         if(input('group_id', null) !== null){$where['group_id'] = input('group_id');}
-        $where['is_show'] = input('is_show',0);
-        $orderby = input('orderby','rank asc');
+        $where['status'] = 0;
+        $orderby = input('orderby','listorder asc');
         
         $res = $this->getLogic()->getList($where,$orderby,'*',$offset,$limit);
 		
-        if($res['list'])
+        if($res['count']>0)
         {
             foreach($res['list'] as $k=>$v)
             {

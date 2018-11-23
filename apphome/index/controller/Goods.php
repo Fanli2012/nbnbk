@@ -27,6 +27,25 @@ class Goods extends Base
         $key = input('key', null);
         if($key != null)
         {
+            $arr_key = logic('Article')->getArrByString($key);
+            if(!$arr_key){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+            
+            //分类id
+            if(isset($arr_key['f']) && $arr_key['f']>0)
+            {
+                $type_id = $where['type_id'] = $arr_key['f'];
+                
+                $post = model('GoodsType')->getOne(['id'=>$arr_key['f']]);
+                $this->assign('post',$post);
+                
+                //面包屑导航
+                $this->assign('bread', logic('Goods')->get_goods_type_path($where['type_id']));
+            }
+        }
+        
+        /* $key = input('key', null);
+        if($key != null)
+        {
             $arr_key = $this->getArrByString($key);
             if(!$arr_key){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
             
@@ -75,12 +94,12 @@ class Goods extends Base
                 $where['fl_goods.category_id'] = $arr_key['f'];
                 $title = $title.model('Category')->getDb()->where(['id'=>$where['fl_goods.category_id']])->value('name');
             }
-        }
+        } */
         
-        $where['fl_goods.delete_time'] = 0;
-        $where['fl_goods.status'] = 0;
-        $list = $this->getLogic()->getJoinPaginate($where, 'fl_goods.id desc', 'fl_goods.*', 15);
-        if(!$list){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
+        $where['delete_time'] = 0;
+        $where['status'] = 0;
+        $list = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
+        if(!$list){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
         
         $page = $list->render();
         $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
@@ -89,86 +108,86 @@ class Goods extends Base
         $this->assign('page', $page);
         $this->assign('list', $list);
         
-        //seo标题设置
-        $keyword = $title;
-        if(isset($where['fl_goods.shop_id'])){$title = $title.'批发货源';$keyword = $title;}else{$keyword = $title.'批发市场';$title = $title.'批发市场_'.$title.'批发';}
-        $this->assign('keyword',$keyword);
-        $this->assign('title',$title);
-        
-        //相关推荐
-        if(isset($province_id))
+        //推荐商品
+        $relate_tuijian_list = cache("index_goods_detail_relate_tuijian_list_$key");
+        if(!$relate_tuijian_list)
         {
-            $region_list = logic('Region')->getAll(['parent_id'=>$province_id]);
-            if($region_list)
-            {
-                foreach($region_list as $k=>$v)
-                {
-                    $where9['fl_shop.city_id'] = $v['id'];
-                    if(isset($arr_key['f'])){$where9['fl_goods.category_id'] = $arr_key['f'];}
-                    
-                    $count = Db::table('fl_goods')->join('fl_shop','fl_goods.shop_id = fl_shop.id')->where($where9)->count();
-                    if($count < 5)
-                    {
-                        unset($region_list[$k]);
-                    }
-                }
-            }
-            
-            $this->assign('region_list',$region_list);
+            $where_tuijian['delete_time'] = 0;
+            $where_tuijian['status'] = 0;
+            $where_tuijian['tuijian'] = 1;
+            if(isset($type_id)){$where_tuijian['type_id'] = $type_id;}
+            $relate_tuijian_list = logic('Goods')->getAll($where_tuijian, 'update_time desc', ['content'], 5);
+            cache("index_goods_detail_relate_tuijian_list_$key",$relate_tuijian_list,2592000);
         }
+        $this->assign('relate_tuijian_list',$relate_tuijian_list);
         
+        //随机商品
+        $relate_rand_list = cache("index_goods_detail_relate_rand_list_$key");
+        if(!$relate_rand_list)
+        {
+            $where_rand['delete_time'] = 0;
+            $where_rand['status'] = 0;
+            if(isset($type_id)){$where_rand['type_id'] = $type_id;}
+            $relate_rand_list = logic('Goods')->getAll($where_rand, 'rand()', ['content'], 5);
+            cache("index_goods_detail_relate_rand_list_$key",$relate_rand_list,2592000);
+        }
+        $this->assign('relate_rand_list',$relate_rand_list);
+        
+        //seo标题设置
+        $title = $title.'最新动态';
+        $this->assign('title',$title);
         return $this->fetch();
     }
 	
-    //字符串转成数组
-    public function getArrByString($key)
-	{
-        $res = array();
-        
-        if(!$key){return [];}
-        
-        preg_match_all('/[a-z]+/u' , $key, $letter);
-        preg_match_all('/[0-9]+/u' , $key, $number);
-        if(count($letter[0]) != count($number[0])){return [];}
-        
-        foreach($letter[0] as $k=>$v)
-        {
-            $res[$v] = $number[0][$k];
-        }
-        
-        return $res;
-    }
-    
     //详情
     public function detail()
 	{
-        if(!checkIsNumber(input('id',null))){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
+        if(!checkIsNumber(input('id',null))){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
         $id = input('id');
         
-        $where['id'] = $id;
-        $post = $this->getLogic()->getOne($where);
-        if(!$post){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
-        
-        $post['body']=ReplaceKeyword($post['body']);
-        //var_dump($post);exit;
+        $post = cache("index_goods_detail_$id");
+        if(!$post)
+        {
+            $where['id'] = $id;
+            $post = $this->getLogic()->getOne($where);
+            if(!$post){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+            cache("index_goods_detail_$id",$post,2592000);
+            
+        }
         $this->assign('post',$post);
         
-        //店铺最新动态
-        $where2['delete_time'] = 0;
-        $where2['shop_id'] = $post['shop_id'];
-        $where2['status'] = 0;
-        $shop_posts = logic('goods')->getAll($where2, 'id desc', ['content'], 5);
-        $this->assign('shop_posts',$shop_posts);
+        //最新文章
+        $relate_zuixin_list = cache("index_goods_detail_relate_zuixin_list_$id");
+        if(!$relate_zuixin_list)
+        {
+            $where_zuixin['delete_time'] = 0;
+            $where_zuixin['status'] = 0;
+            $where_zuixin['type_id'] = $post['type_id'];
+            $where_zuixin['id'] = ['<',$id];
+            $relate_zuixin_list = logic('Goods')->getAll($where_zuixin, 'update_time desc', ['content'], 5);
+            if(!$relate_zuixin_list){unset($where_zuixin['id']);$relate_zuixin_list = logic('Goods')->getAll($where_zuixin, 'update_time desc', ['content'], 5);}
+            cache("index_goods_detail_relate_zuixin_list_$id",$relate_zuixin_list,2592000);
+        }
+        $this->assign('relate_zuixin_list',$relate_zuixin_list);
         
-        //平台最新动态
-        $where3['delete_time'] = 0;
-        $where3['status'] = 0;
-        $pingtai_posts = logic('goods')->getAll($where3, 'id desc', ['content'], 5);
-        $this->assign('pingtai_posts',$pingtai_posts);
+        //随机文章
+        $relate_rand_list = cache("index_goods_detail_relate_rand_list_$id");
+        if(!$relate_rand_list)
+        {
+            $where_rand['delete_time'] = 0;
+            $where_rand['status'] = 0;
+            $where_rand['type_id'] = $post['type_id'];
+            $relate_rand_list = logic('Goods')->getAll($where_rand, 'rand()', ['content'], 5);
+            cache("index_goods_detail_relate_rand_list_$id",$relate_rand_list,2592000);
+        }
+        $this->assign('relate_rand_list',$relate_rand_list);
+        
+        //面包屑导航
+        $this->assign('bread', logic('Goods')->get_goods_type_path($post['type_id']));
         
         return $this->fetch();
     }
-	
+    
 	public function test()
     {
         //echo '<pre>';print_r(request());exit;

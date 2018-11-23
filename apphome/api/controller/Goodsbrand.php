@@ -38,9 +38,7 @@ class Goodsbrand extends Base
     public function detail()
 	{
         //参数
-        if(input('id', null) !== null){$where['id'] = input('id');}
-        if(!isset($where)){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
-        
+        $where['id'] = input('id');
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         

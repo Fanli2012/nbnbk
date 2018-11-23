@@ -35,7 +35,6 @@ class Page extends Base
         {
             foreach($res['list'] as $k=>$v)
             {
-                $res['list'][$k]['url'] = http_host().get_front_url(array('pagename'=>$v['filename'],'type'=>'page'));
                 if(!empty($v['litpic'])){$res['list'][$k]['litpic'] = http_host().$v['litpic'];}
             }
         }
@@ -47,9 +46,10 @@ class Page extends Base
     public function detail()
 	{
         //参数
+        $where = [];
         if(input('id', null) !== null){$where['id'] = input('id');}
         if(input('filename', null) !== null){$where['filename'] = input('filename');}
-        if(!isset($where)){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if($where===[]){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}

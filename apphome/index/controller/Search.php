@@ -92,16 +92,16 @@ class Search extends Base
         //最新
         $where2['delete_time'] = 0;
         $where2['status'] = 0;
-        $zuixin_list = logic('Article')->getAll($where2, 'id desc', ['content'], 5);
-        $this->assign('zuixin_list',$zuixin_list);
+        $relate_zuixin_list = logic('Article')->getAll($where2, 'id desc', ['content'], 5);
+        $this->assign('relate_zuixin_list',$relate_zuixin_list);
         
         //推荐
         $where3['delete_time'] = 0;
         $where3['status'] = 0;
         $where3['tuijian'] = 1;
         $where3['litpic'] = ['<>',''];
-        $tuijian_list = logic('Article')->getAll($where3, 'id desc', ['content'], 5);
-        $this->assign('tuijian_list',$tuijian_list);
+        $relate_tuijian_list = logic('Article')->getAll($where3, 'id desc', ['content'], 5);
+        $this->assign('relate_tuijian_list',$relate_tuijian_list);
         //搜索词
         $this->assign('keyword', $keyword);
         return $this->fetch();

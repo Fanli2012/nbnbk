@@ -2,10 +2,10 @@
     <div class="box">
         <div class="sitebar_fl fl">
             <div class="login_before">
-            <a href="" rel="nofollow" title="关于博主">关于博主</a> | <a href="" rel="nofollow" title="使用指南">使用指南</a> | <span>收藏本网页请按Ctrl+D</span></div>
+            <a href="<?php echo model('Page')->getPageDetailUrl(array('id'=>'jianjie')); ?>" rel="nofollow">公司简介</a> | <span>收藏本网页请按Ctrl+D</span></div>
         </div>
         <div class="sitebar_fr fr">
-            <a rel="nofollow" class="u-login" title="登录" href="">登录</a> | <a href="http://wpa.qq.com/msgrd?v=3&amp;uin=24757577&amp;site=qq&amp;menu=yes" rel="nofollow" target="_blank" title="咨询博主">咨询博主</a> | <a href="https://jq.qq.com/?_wv=1027&amp;k=4AY6ABz" rel="nofollow" target="_blank" title="快速进群">快速进群</a>
+            <a href="http://wpa.qq.com/msgrd?v=3&amp;uin=277023115&amp;site=qq&amp;menu=yes" rel="nofollow">QQ咨询</a> | <a href="<?php echo model('Page')->getPageDetailUrl(array('id'=>'contact')); ?>" rel="nofollow">联系我们</a>
         </div>
         <div class="cl"></div>
     </div>
@@ -27,4 +27,4 @@
     </div>
 </div>
 
-<div id="header"><div id="navlink" class="box"><a class="webname" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/"><?php echo sysconfig('CMS_WEBNAME'); ?></a><span class="nav"><a href="/articlelist/f1">企业新闻</a><a href="/articlelist/f2">案例中心</a><a href="<?php echo get_front_url(array("pagename"=>"about","type"=>'page')); ?>">关于我们</a><script>navjs();</script></span><a href="/shop/login" class="user-login fr">登錄/註冊</a><div class="cl"></div></div></div>
+<div id="header"><div id="navlink" class="box"><a class="webname" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/"><?php echo sysconfig('CMS_WEBNAME'); ?></a><span class="nav"><a href="/articlelist/f1">企业新闻</a><a href="/goodslist/f1">产品中心</a><a href="/articlelist/f2">案例中心</a><a href="<?php echo model('Page')->getPageDetailUrl(array('id'=>'about')); ?>">关于我们</a><script>navjs();</script></span><a href="/shop/login" class="user-login fr">登錄/註冊</a><div class="cl"></div></div></div>

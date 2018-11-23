@@ -327,6 +327,17 @@ class Article extends Base
     }
     
     /**
+     * 获取文章详情url
+     * @param int $param['id'] 文章ID
+     * @return string
+     */
+    public function getArticleDetailUrl($param=[])
+    {
+        if(isset($param['id'])){return $url = '/p/'.$param['id'];}
+        return $url = '/p/';
+    }
+    
+    /**
      * 读取文章缓存
      * @param int $article_id
      * @param string $fields

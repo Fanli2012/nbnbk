@@ -260,4 +260,14 @@ class Page extends Base
         return self::where($where)->column($field);
     }
     
+    /**
+     * 获取单页详情url
+     * @param string $param['id'] 别名
+     * @return string
+     */
+    public function getPageDetailUrl($param='')
+    {
+        return $url = '/page/'.$param['id'].'.html';
+    }
+    
 }

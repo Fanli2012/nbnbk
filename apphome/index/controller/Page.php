@@ -81,13 +81,13 @@ class Page extends Base
         $id = input('id');
         
         $where['filename'] = $id;
-        $post = cache("page_detail$id");
+        $post = cache("index_page_detail_$id");
         if(!$post)
         {
             $where['delete_time'] = 0;
             $post = $this->getLogic()->getOne($where);
             if(!$post){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
-            cache("page_detail$id",$post,2592000);
+            cache("index_page_detail_$id",$post,2592000);
         }
         
         $this->assign('post', $post);

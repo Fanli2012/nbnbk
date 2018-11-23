@@ -269,4 +269,15 @@ class Tag extends Base
         $arr = array(0 => '正常', 1 => '禁用');
         return $arr[$data['status']];
     }
+    
+    /**
+     * 获取Tag详情url
+     * @param int $param['id'] Tag ID
+     * @return string
+     */
+    public function getTagDetailUrl($param='')
+    {
+        return $url = '/tag/'.$param['id'];
+    }
+    
 }

@@ -23,21 +23,21 @@ class Article extends Base
     public function index()
 	{
         //参数
-        $limit = input('param.limit',10);
-        $offset = input('param.offset', 0);
-        if(input('param.type_id', null) !== null){$where['type_id'] = input('param.type_id');}
-        if(input('param.keyword', null) !== null){$where['title'] = ['like','%'.input('param.keyword').'%'];}
-        if(input('tuijian', null) !== null){$where['tuijian'] = input('tuijian');}
+        $limit = input('limit/d',10);
+        $offset = input('offset/d', 0);
+        if(input('type_id/d', null) !== null){$where['type_id'] = input('type_id');}
+        if(input('keyword', null) !== null){$where['title'] = ['like','%'.input('keyword').'%'];}
+        if(input('tuijian/d', null) !== null){$where['tuijian'] = input('tuijian');}
+        $where['delete_time'] = 0;
         $where['status'] = 0;
-        $orderby = input('orderby','id desc');
+        $orderby = input('orderby','update_time desc');
         
         $res = $this->getLogic()->getList($where,$orderby,['content'],$offset,$limit);
 		
-        if($res['list'])
+        if($res['count']>0)
         {
             foreach($res['list'] as $k=>$v)
             {
-                $res['list'][$k]['url'] = http_host().get_front_url(array("id"=>$v['id'],"type"=>'content'));
                 if(!empty($v['litpic'])){$res['list'][$k]['litpic'] = http_host().$v['litpic'];}
             }
         }
@@ -49,9 +49,8 @@ class Article extends Base
     public function detail()
 	{
         //参数
-        $where['id'] = input('param.id',null);
-        
-        if($where['id'] == null){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        $where['id'] = input('id');
         
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}

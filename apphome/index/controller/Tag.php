@@ -25,79 +25,52 @@ class Tag extends Base
         $title = '';
         
         $key = input('key', null);
-        if($key != null)
+        
+        //标签
+        $where['status'] = 0;
+        $list = logic('Tag')->getAll($where, 'id desc', ['content'], 100);
+        $this->assign('list',$list);
+        
+        //推荐文章
+        $relate_tuijian_list = cache("index_tag_index_relate_tuijian_list_$key");
+        if(!$relate_tuijian_list)
         {
-            $arr_key = $this->getArrByString($key);
-            if(!$arr_key){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
-            
-            //分类id
-            if(isset($arr_key['f']) && !empty($arr_key['f']))
-            {
-                $where['typeid'] = $arr_key['f'];
-                
-                $post = db('arctype')->where(['id'=>$arr_key['f']])->find();
-                $this->assign('post',$post);
-            }
+            $where_tuijian['delete_time'] = 0;
+            $where_tuijian['status'] = 0;
+            $where_tuijian['tuijian'] = 1;
+            $relate_tuijian_list = logic('Article')->getAll($where_tuijian, 'update_time desc', ['content'], 5);
+            cache("index_tag_index_relate_tuijian_list_$key",$relate_tuijian_list,2592000);
         }
+        $this->assign('relate_tuijian_list',$relate_tuijian_list);
         
-        $where['delete_time'] = 0;
-        $where['is_check'] = 0;
-        $posts = $this->getLogic()->getPaginate($where, 'id desc', ['body']);
-        if(!$posts){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
-        
-        $page = $posts->render();
-        $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
-        $page = preg_replace('/&amp;key=[a-z0-9]+/', '', $page);
-        $page = preg_replace('/\?page=1"/', '"', $page);
-        $this->assign('page', $page);
-        $this->assign('posts', $posts);
-        
-        //最新
-        $where2['delete_time'] = 0;
-        $where2['is_check'] = 0;
-        $zuixin_list = logic('article')->getAll($where2, 'id desc', ['body'], 5);
-        $this->assign('zuixin_list',$zuixin_list);
-        
-        //推荐
-        $where3['delete_time'] = 0;
-        $where3['is_check'] = 0;
-        $where3['tuijian'] = 1;
-        $where3['litpic'] = ['<>',''];
-        $tuijian_list = logic('article')->getAll($where3, 'id desc', ['body'], 5);
-        $this->assign('tuijian_list',$tuijian_list);
+        //最新文章
+        $relate_zuixin_list = cache("index_tag_index_relate_zuixin_list_$key");
+        if(!$relate_zuixin_list)
+        {
+            $where_zuixin['delete_time'] = 0;
+            $where_zuixin['status'] = 0;
+            $where_zuixin['tuijian'] = 0;
+            $relate_zuixin_list = logic('Article')->getAll($where_zuixin, 'update_time desc', ['content'], 5);
+            cache("index_tag_index_relate_zuixin_list_$key",$relate_zuixin_list,2592000);
+        }
+        $this->assign('relate_zuixin_list',$relate_zuixin_list);
         
         //seo标题设置
-        $title = $title.'最新动态';
+        $title = $title.'标签';
         $this->assign('title',$title);
         return $this->fetch();
     }
 	
-    //字符串转成数组
-    public function getArrByString($key)
-	{
-        $res = array();
-        
-        if(!$key){return [];}
-        
-        preg_match_all('/[a-z]+/u' , $key, $letter);
-        preg_match_all('/[0-9]+/u' , $key, $number);
-        if(count($letter[0]) != count($number[0])){return [];}
-        
-        foreach($letter[0] as $k=>$v)
-        {
-            $res[$v] = $number[0][$k];
-        }
-        
-        return $res;
-    }
-    
-    //文章详情页
+    //详情页
     public function detail()
 	{
         if(!checkIsNumber(input('id',null))){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
         $id = input('id');
         
         $where['fl_taglist.tag_id'] = $id;
+        
+        $post = model('Tag')->getOne(['id'=>$id]);
+        $this->assign('post',$post);
         
         $pagesize = 11;
         $offset = 0;
@@ -133,18 +106,32 @@ class Tag extends Base
     		exit(json_encode($html));
     	}
         
-        //推荐文章
-        $where2['status'] = 0;
-        $where2['delete_time'] = 0;
-        //$where2['add_time'] = ['>',(time()-30*3600*24)];
-        $article_tj_list = logic('Article')->getAll($where2, 'click desc', ['content'], 5);
-        $this->assign('article_tj_list',$article_tj_list);
+        //最新文章
+        $relate_zuixin_list = cache("index_tag_detail_relate_zuixin_list_$id");
+        if(!$relate_zuixin_list)
+        {
+            $where_zuixin['delete_time'] = 0;
+            $where_zuixin['status'] = 0;
+            $relate_zuixin_list = logic('Article')->getAll($where_zuixin, 'update_time desc', ['content'], 5);
+            cache("index_tag_detail_relate_zuixin_list_$id",$relate_zuixin_list,2592000);
+        }
+        $this->assign('relate_zuixin_list',$relate_zuixin_list);
         
         //随机文章
-        $where3['status'] = 0;
-        $where3['delete_time'] = 0;
-        $article_rand_list = logic('Article')->getAll($where3, 'rand()', ['content'], 5);
-        $this->assign('article_rand_list',$article_rand_list);
+        $relate_rand_list = cache("index_tag_detail_relate_rand_list_$id");
+        if(!$relate_rand_list)
+        {
+            $where_rand['delete_time'] = 0;
+            $where_rand['status'] = 0;
+            $relate_rand_list = logic('Article')->getAll($where_rand, 'rand()', ['content'], 5);
+            cache("index_tag_detail_relate_rand_list_$id",$relate_rand_list,2592000);
+        }
+        $this->assign('relate_rand_list',$relate_rand_list);
+        
+        //标签
+        $where_tag['status'] = 0;
+        $tag_list = logic('Tag')->getAll($where_tag, 'id desc', ['content'], 10);
+        $this->assign('tag_list',$tag_list);
         
         return $this->fetch();
     }

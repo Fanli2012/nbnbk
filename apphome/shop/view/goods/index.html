@@ -61,6 +61,7 @@
                                 <td class="center" style="vertical-align: middle;"><?php echo $row["click"]; ?></td>
                                 <td class="center" style="vertical-align: middle;"><span class="label label-<?php if($row["status"]==0){echo 'success';}else{echo 'danger';} ?>"><?php echo $row["status_text"]; ?></span></td>
                                 <td class="center" style="vertical-align: middle;">
+                                    <a href="/goods/<?php echo $row["id"]; ?>" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> 预览</a>
                                     <a href="{:url('shop/Goods/edit')}?id=<?php echo $row["id"]; ?>"><i class="glyphicon glyphicon-pencil"></i> 修改</a>
                                     <a data-url="{:url('shop/Goods/del')}?id=<?php echo $row["id"]; ?>" data-toggle="modal" data-target="#delConfirmModal" href="javascript:;"><i class="glyphicon glyphicon-remove"></i> 删除</a>
                                 </td>

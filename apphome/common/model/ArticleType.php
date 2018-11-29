@@ -311,4 +311,16 @@ class ArticleType extends Base
 		
 		return $temp;
 	}
+    
+    /**
+     * 获取列表url
+     * @param string $param['key'] 示例：f1
+     * @return string
+     */
+    public function getArticleTypeUrl($param=[])
+    {
+        if(isset($param['key'])){return $url = '/articlelist/'.$param['key'];}
+        return $url = '/articlelist/';
+    }
+    
 }

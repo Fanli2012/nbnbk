@@ -6,7 +6,7 @@ use app\common\lib\ReturnData;
 use app\common\lib\Helper;
 use app\common\logic\ShopLogic;
 
-class Shop extends Base
+class Store extends Base
 {
     public function _initialize()
 	{

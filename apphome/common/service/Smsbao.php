@@ -1,10 +1,9 @@
 <?php
-namespace app\common\service;
-
-
 /**
  * 短信宝
  */
+namespace app\common\service;
+
 class Smsbao
 {
     private $user_name;
@@ -42,15 +41,15 @@ class Smsbao
         $content = $sms_content; //要发送的短信内容
         $phone   = $sms_phone; //要发送短信的手机号码
         $sendurl = $this->smsapi."sms?u=".$user."&p=".$pass."&m=".$phone."&c=".urlencode($content);
-        $result  = file_get_contents($sendurl) ;
+        $result  = file_get_contents($sendurl); //0短信发送成功
         
         //添加短信发送记录
         $data['mobile'] = $sms_phone;
-        $data['text'] = $content;
+        $data['content'] = $content;
         $data['status'] = 2;
         if($result==0){$data['status'] = 1;}
         $data['add_time'] = time();
-        model('SmsLog')->add($data);
+        logic('SmsLog')->add($data);
         
         return ['code'=>$result, 'msg'=>$this->status_str[$result], 'data'=>null];
     }
@@ -73,10 +72,11 @@ class Smsbao
         
         //添加短信发送记录
         $data['mobile'] = $sms_phone;
-        $data['text'] = $content;
+        $data['content'] = $content;
         $data['status'] = 2;
         if($result==0){$data['status'] = 1;}
-        model('SmsLog')->add($data);
+        $data['add_time'] = time();
+        logic('SmsLog')->add($data);
         
         return ['code'=>$result, 'msg'=>$this->status_str[$result], 'data'=>null];
     }

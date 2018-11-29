@@ -30,7 +30,7 @@ class Shop extends Base
         
         if(db("page")->insert($_POST))
         {
-            $this->success('添加成功！', CMS_ADMIN.'Page' , 1);
+            $this->success('添加成功', CMS_ADMIN.'Page' , 1);
         }
 		else
 		{
@@ -61,7 +61,7 @@ class Shop extends Base
         
         if(db('page')->where("id=$id")->update($_POST))
         {
-            $this->success('修改成功！', CMS_ADMIN.'Page' , 1);
+            $this->success('修改成功', CMS_ADMIN.'Page' , 1);
         }
 		else
 		{
@@ -94,13 +94,14 @@ class Shop extends Base
             $res = $this->getLogic()->setting($_POST, $where);
             if($res['code'] == ReturnData::SUCCESS)
             {
+                if($this->login_info['status']==0){$this->getLogic()->edit(['status'=>3], $where);} //完善资料之后变更状态为【待审】
                 $this->success($res['msg']);
             }
             
             $this->error($res['msg']);
         }
         
-        //获取分类
+        //获取类目
         $where2['parent_id'] = 0;
         $where2['delete_time'] = 0; //未删除
         $category_list = logic('Category')->getAllCategoryList($where2,['id'=>'desc'],['content']);
@@ -128,6 +129,7 @@ class Shop extends Base
         return $this->fetch('shop/changePassword');
     }
     
+    //设置头像
     public function setavatar()
     {
         $where['id'] = $this->login_info['id'];
@@ -136,7 +138,6 @@ class Shop extends Base
         {
             $where['id'] = $this->login_info['id'];
             
-            //文章分类
             $postdata = array(
                 'img'  => $_POST['head_img']
             );
@@ -157,6 +158,7 @@ class Shop extends Base
         return $this->fetch();
     }
     
+    //设置封面
     public function setcover()
     {
         $where['id'] = $this->login_info['id'];
@@ -166,6 +168,35 @@ class Shop extends Base
             $where['id'] = $this->login_info['id'];
             
             $res = $this->getLogic()->edit($_POST, $where);
+            if($res['code'] == ReturnData::SUCCESS)
+            {
+                $this->success($res['msg']);
+            }
+            
+            $this->error($res['msg']);
+        }
+        
+        $this->assign('post', $this->getLogic()->getOne($where));
+        return $this->fetch();
+    }
+    
+    //设置二维码
+    public function setqrcode()
+    {
+        $where['id'] = $this->login_info['id'];
+        
+		if(Helper::isPostRequest())
+        {
+            $where['id'] = $this->login_info['id'];
+            
+            $postdata = array(
+                'img'  => $_POST['qrcode']
+            );
+            $url = url('api/Image/base64ImageUpload');
+            $res = curl_request($url,$postdata,'POST');
+            if($res['code'] != ReturnData::SUCCESS){$this->error($res['msg']);}
+            
+            $res = $this->getLogic()->edit(['qrcode'=>$res['data']], $where);
             if($res['code'] == ReturnData::SUCCESS)
             {
                 $this->success($res['msg']);

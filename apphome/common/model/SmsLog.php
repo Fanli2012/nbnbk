@@ -265,31 +265,9 @@ class SmsLog extends Base
     }
     
     //状态
-    public function getStatusAttr($data)
+    public function getStatusTextAttr($value,$data)
     {
         $arr = array(1 => '成功', 2 => '失败');
         return $arr[$data['status']];
-    }
-    
-    //发送成功
-    public function success($mobile, $text, $result)
-    {
-        $this->add(array(
-            'mobile' => $mobile,
-            'text'   => $text,
-            'status' => self::SUCCESS,
-            'result' => json_encode($result)
-        ));
-    }
-    
-    //发送失败
-    public function fail($mobile, $text, $result)
-    {
-        $this->add(array(
-            'mobile' => $mobile,
-            'text'   => $text,
-            'status' => self::FAIL,
-            'result' => json_encode($result)
-        ));
     }
 }

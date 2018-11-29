@@ -1,26 +1,21 @@
 <?php
 // +----------------------------------------------------------------------
-// | 阿里云OSS服务
+// | mPDF生成PDF文件
 // +----------------------------------------------------------------------
 namespace app\common\service;
 require_once EXTEND_PATH.'mpdf/mpdf.php';
 
 class Pdf
 {
-    const OSS_ACCESS_ID = '';
-    const OSS_ACCESS_KEY = '';
-    const OSS_ENDPOINT = 'oss-cn-beijing.aliyuncs.com';
-    const OSS_TEST_BUCKET = 'cheyoubao';
-    
     /**
      * 浏览器中浏览PDF
      */
-    public static function mpdf2()
+    public static function browserOnlinePdf()
     {
-        //实例化mpdf
-        //设置中文编码
+        // 实例化mpdf
+        // 设置中文编码
         $mpdf = new \mPDF('zh-cn','A4', 0, '宋体', 0, 0);
-        //html内容
+        // html内容
         $html='<h1><a name="top"></a>一个PDF文件</h1>';
         $mpdf->WriteHTML($html);
         $mpdf->Output();
@@ -37,7 +32,7 @@ class Pdf
          
         //设置字体,解决中文乱码
         $mpdf->useAdobeCJK = true;
-        //$mpdf->SetAutoFont(AUTOFONT_ALL);//使用6.0以上版本不需要
+        //$mpdf->SetAutoFont(AUTOFONT_ALL); //使用6.0以上版本不需要
          
         //获取要生成的静态文件
         $html = file_get_contents('http://www.thinkphp.cn/extend/728.html');
@@ -78,80 +73,7 @@ class Pdf
          
         //输出pdf
         $mpdf->Output();//可以写成下载此pdf   $mpdf->Output('文件名','D');
-         
+        
         exit;
-    }
-
-    public static function getBucketName()
-    {
-        return self::OSS_TEST_BUCKET;
-    }
-
-    /**
-     * 工具方法，创建一个存储空间，如果发生异常直接exit
-     */
-    public static function createBucket()
-    {
-        $ossClient = self::getOssClient();
-        if (is_null($ossClient)) exit(1);
-        $bucket = self::getBucketName();
-        $acl = OssClient::OSS_ACL_TYPE_PUBLIC_READ;
-        try {
-            $res = $ossClient->createBucket($bucket, $acl);
-        } catch (OssException $e) {
-            return ['code'=>0, 'msg'=>$e->getMessage(), 'data'=>''];
-        }
-        
-        return ['code'=>1, 'msg'=>'操作成功', 'data'=>$res];
-    }
-    
-    /**
-     * 上传指定的本地文件内容
-     *
-     * @param OssClient $ossClient OssClient实例
-     * @param string $bucket 存储空间名称
-     * @return null
-     */
-    public static function uploadFile($object, $filePath)
-    {
-        //$object = "oss-php-sdk-test/upload-test-object-name.txt";
-        //$filePath = __FILE__;
-        $options = array();
-        $ossClient = self::getOssClient();
-        $bucket = self::getBucketName();
-        
-        try {//self::createBucket();
-            $res = $ossClient->uploadFile($bucket, $object, $filePath, $options);
-        } catch (OssException $e) {
-            return ['code'=>0, 'msg'=>$e->getMessage(), 'data'=>''];
-        }
-        
-        return ['code'=>1, 'msg'=>'操作成功', 'data'=>$res];
-    }
-    
-    /**
-     * 把本地变量的内容到文件
-     *
-     * 简单上传,上传指定变量的内存值作为object的内容
-     *
-     * @param OssClient $ossClient OssClient实例
-     * @param string $bucket 存储空间名称
-     * @return null
-     */
-    public static function putObject($object, $filePath)
-    {
-        //$object = "oss-php-sdk-test/upload-test-object-name.txt";
-        $content = file_get_contents($filePath);
-        $options = array();
-        $ossClient = self::getOssClient();
-        $bucket = self::getBucketName();
-        
-        try {
-            $res = $ossClient->putObject($bucket, $object, $content, $options);
-        } catch (OssException $e) {
-            return ['code'=>0, 'msg'=>$e->getMessage(), 'data'=>''];
-        }
-        
-        return ['code'=>1, 'msg'=>'操作成功', 'data'=>$res];
     }
 }

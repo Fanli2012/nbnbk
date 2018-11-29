@@ -15,6 +15,7 @@ class Image extends Common
     
     public $path;
     public $public_path;
+    public $file_size = 2048000; //最大文件上传大小2M
     
     public function __construct()
     {
@@ -24,7 +25,7 @@ class Image extends Common
         $this->public_path = $_SERVER['DOCUMENT_ROOT'];
     }
     
-    //单文件/图片上传，成功返回路径，不含域名
+    //文件/图片上传，成功返回路径，不含域名
     public function imageUpload(Request $request)
 	{
         $res = [];
@@ -37,7 +38,7 @@ class Image extends Common
             
             foreach($files as $key=>$file)
             {
-                $type = strtolower(substr(strrchr($file["name"], '.'), 1)); //文件后缀
+                $type = strtolower(substr(strrchr($file['name'], '.'), 1)); //文件后缀
                 
                 $image_path = $this->path.'/'.date('Ymdhis',time()).rand(1000,9999).'.'.$type;
                 $uploads_path = $this->path; //存储路径
@@ -48,22 +49,22 @@ class Image extends Common
                 if(!in_array($type, $allow_type))
                 {
                     //如果不被允许，则直接停止程序运行
-                    exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件格式不正确')));
+                    exit(json_encode(ReturnData::create(ReturnData::FAIL,null,'文件格式不正确')));
                 }
                 
                 //判断是否是通过HTTP POST上传的
                 if(!is_uploaded_file($file['tmp_name']))
                 {
                     //如果不是通过HTTP POST上传的
-                    exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL)));
+                    exit(json_encode(ReturnData::create(ReturnData::FAIL)));
                 }
                 
                 //文件小于1M
-                if ($file["size"] < 2048000)
+                if ($file['size'] < $this->file_size)
                 {
-                    if ($file["error"] > 0)
+                    if ($file['error'] > 0)
                     {
-                        exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,$file["error"])));
+                        exit(json_encode(ReturnData::create(ReturnData::FAIL,null,$file['error'])));
                     }
                     else
                     {
@@ -72,12 +73,12 @@ class Image extends Common
                             Helper::createDir($this->public_path.$uploads_path); //创建文件夹;
                         }
                         
-                        move_uploaded_file($file["tmp_name"], $this->public_path.$image_path);
+                        move_uploaded_file($file['tmp_name'], $this->public_path.$image_path);
                     }
                 }
                 else
                 {
-                    exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL,null,'文件不得超过2M')));
+                    exit(json_encode(ReturnData::create(ReturnData::FAIL,null,'文件不得超过2M')));
                 }
                 
                 $res[] = $image_path;
@@ -87,7 +88,7 @@ class Image extends Common
         exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
     }
     
-    //阿里云OSS图片上传
+    //阿里云OSS图片上传，成功返回路径，不含域名
     public function ossImageUpload()
     {
         $res = $this->aliyunOSSFileUpload($_FILES);
@@ -114,7 +115,7 @@ class Image extends Common
             
             foreach($files as $key=>$file)
             {
-                $type = strtolower(substr(strrchr($file["name"], '.'), 1)); //文件后缀
+                $type = strtolower(substr(strrchr($file['name'], '.'), 1)); //文件后缀
                 
                 $image_path = $path.'/'.date('Ymdhis',time()).rand(1000,9999).'.'.$type;
                 $uploads_path = $path; //存储路径
@@ -136,11 +137,11 @@ class Image extends Common
                 }
                 
                 //文件小于2M
-                if ($file["size"] < 2048000)
+                if ($file['size'] < $this->file_size)
                 {
-                    if ($file["error"] > 0)
+                    if ($file['error'] > 0)
                     {
-                        return ['code'=>0,'msg'=>$file["error"],'data'=>''];
+                        return ['code'=>0,'msg'=>$file['error'],'data'=>''];
                     }
                     else
                     {
@@ -149,7 +150,7 @@ class Image extends Common
                             Helper::createDir(substr(ROOT_PATH, 0, -1).$uploads_path); //创建文件夹;
                         }
                         
-                        move_uploaded_file($file["tmp_name"], substr(ROOT_PATH, 0, -1).$image_path); */
+                        move_uploaded_file($file['tmp_name'], substr(ROOT_PATH, 0, -1).$image_path); */
                         
                         $image = AliyunOSS::uploadFile($image_path, $file['tmp_name']);
                         if($image && $image['code']==1){}else{return ['code'=>0,'msg'=>'系统错误','data'=>''];}
@@ -204,7 +205,7 @@ class Image extends Common
      * @param string img base64字符串
      * @return string
      */
-    public function base64ImageUpload(Request $request)
+    public function base64ImageUpload()
 	{
         $res = $this->base64ImageSave($_POST['img']);
         
@@ -213,7 +214,7 @@ class Image extends Common
             exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res['data'])));
         }
         
-        exit(json_encode(ReturnData::create(ReturnData::SYSTEM_FAIL, null, $res['msg'])));
+        exit(json_encode(ReturnData::create(ReturnData::FAIL, null, $res['msg'])));
     }
     
     public function base64ImageSave($files)
@@ -240,24 +241,18 @@ class Image extends Common
                     {
                         return ReturnData::create(ReturnData::SUCCESS, $image_path);
                     }
-                    else
-                    {
-                        return ReturnData::create(ReturnData::SYSTEM_FAIL, null, '图片上传失败');
-                    }
+                    
+                    return ReturnData::create(ReturnData::FAIL, null, '图片上传失败');
                 }
-                else
-                {
-                    //文件类型错误
-                    return ReturnData::create(ReturnData::SYSTEM_FAIL, null, '图片上传类型错误');
-                }
+                
+                //图片后缀格式不在范围内
+                return ReturnData::create(ReturnData::FAIL, null, '图片上传类型错误');
             }
-            else
-            {
-                //文件错误
-                return ReturnData::create(ReturnData::SYSTEM_FAIL, null, '文件错误');
-            }
+            
+            //文件错误
+            return ReturnData::create(ReturnData::FAIL, null, '文件错误');
         }
         
-        return ReturnData::create(ReturnData::SYSTEM_FAIL, null, '请上传文件');
+        return ReturnData::create(ReturnData::FAIL, null, '请上传文件');
     }
 }

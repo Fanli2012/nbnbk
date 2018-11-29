@@ -1,6 +1,7 @@
 <?php
 namespace app\common\logic;
 use think\Loader;
+use app\common\lib\Helper;
 use app\common\lib\ReturnData;
 use app\common\model\VerifyCode;
 
@@ -124,5 +125,44 @@ class VerifyCodeLogic extends BaseLogic
     private function getDataView($data = array())
     {
         return getDataAttr($this->getModel(),$data);
+    }
+    
+    /**
+     * 【短信宝】获取短信验证码
+     * @param string $mobile 手机号
+     * @param int $type 请求用途
+     * @return array
+     */
+    public function getVerifyCodeBySmsbao($data)
+    {
+        if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
+        
+        $check = $this->getValidate()->scene('get_smscode_by_smsbao')->check($data);
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        
+        $res = $this->getModel()->getVerifyCodeBySmsbao($data['mobile'],$data['type']);
+        if($res['code'] == ReturnData::SUCCESS){return ReturnData::create(ReturnData::SUCCESS,$res['data']);}
+        
+        return ReturnData::create(ReturnData::FAIL,null,$res['msg']);
+    }
+    
+    /**
+     * 验证码校验
+     * @param int $code 验证码
+     * @param string $mobile 手机号
+     * @param int $type 请求用途
+     * @return array
+     */
+    public function check($data)
+    {
+        if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
+        
+        $check = $this->getValidate()->scene('check')->check($data);
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        
+        $res = $this->getModel()->isVerify($data);
+        if($res){return ReturnData::create(ReturnData::SUCCESS);}
+        
+        return ReturnData::create(ReturnData::FAIL,null,'验证码不存在或已过期');
     }
 }

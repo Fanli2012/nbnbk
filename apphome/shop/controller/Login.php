@@ -42,7 +42,7 @@ class Login extends Controller
         if($shop)
         {
 			session('shop_info', $shop);
-			$this->success('登录成功！', url('shop/Index/index'), 1);
+			$this->success('登录成功', url('shop/Index/index'), 1);
         }
         
         $this->error('登录失败！请重新登录！！', url('shop/Login/index'), 3);
@@ -67,28 +67,47 @@ class Login extends Controller
         return $this->fetch();
     }
     
+    /**
+     * 忘记密码
+     */
+	public function resetpwd()
+	{
+        if(Helper::isPostRequest())
+        {
+            $res = logic('Shop')->resetpwd($_POST);
+            if($res['code'] == ReturnData::SUCCESS)
+            {
+                $this->success($res['msg']);
+            }
+            
+            $this->error($res['msg']);
+        }
+        
+        return $this->fetch();
+    }
+    
     //退出登录
     public function loginout()
     {
         session('shop_info', null);
-		$this->success('退出成功！', '/');
+		$this->success('退出成功', '/');
     }
     
     //密码恢复
-    public function recoverpwd()
+    /* public function recoverpwd()
     {
         $data["user_name"] = "admin888";
         $data["password"] = "21232f297a57a5a743894a0e4a801fc3";
         
         if(db('shop')->where("id=1")->update($data))
         {
-            $this->success('密码恢复成功！', CMS_ADMIN.'Login' , 1);
+            $this->success('密码恢复成功', CMS_ADMIN.'Login' , 1);
         }
 		else
 		{
-			$this->error('密码恢复失败！', CMS_ADMIN.'Login' , 3);
+			$this->error('密码恢复失败', CMS_ADMIN.'Login' , 3);
 		}
-    }
+    } */
 	
 	/**
      * 判断用户名是否存在

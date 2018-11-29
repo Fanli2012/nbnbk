@@ -22,7 +22,7 @@ class Friendlink extends Base
     {
 		if(db('friendlink')->insert($_POST))
         {
-            $this->success('添加成功！', CMS_ADMIN.'Friendlink' , 1);
+            $this->success('添加成功', CMS_ADMIN.'Friendlink' , 1);
         }
 		else
 		{
@@ -52,11 +52,11 @@ class Friendlink extends Base
         
 		if(db('friendlink')->where("id=$id")->update($_POST))
         {
-            $this->success('修改成功！', CMS_ADMIN.'Friendlink' , 1);
+            $this->success('修改成功', CMS_ADMIN.'Friendlink' , 1);
         }
 		else
 		{
-			$this->error('修改失败！', CMS_ADMIN.'Friendlink/edit?id='.$_POST["id"] , 3);
+			$this->error('修改失败', CMS_ADMIN.'Friendlink/edit?id='.$_POST["id"] , 3);
 		}
     }
     

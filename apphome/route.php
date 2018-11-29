@@ -19,22 +19,23 @@ Route::domain('m',	function(){
     // 批量路由规则设置
     Route::rule([
         //其它
-        'sitemap'           => array('index/Index/sitemap',array('ext'=>'xml')), //XML地图
+        '/'                 => array('wap/Index/index',array()),
+        'sitemap'           => array('wap/Index/sitemap',array('ext'=>'xml')), //XML地图
         //文章
-        'articlelist/[:key]'=> array('index/Article/index',array('key'=>'[a-z0-9]*')),
-        'p/<id>'            => array('index/Article/detail',array('id'=>'\d+')),
+        'articlelist/[:key]'=> array('wap/Article/index',array('key'=>'[a-z0-9]*')),
+        'p/<id>'            => array('wap/Article/detail',array('id'=>'\d+')),
         //标签
-        'taglist/[:key]'    => array('index/Tag/index',array('key'=>'[a-z0-9]*')),
-        'tag/<id>'          => array('index/Tag/detail',array('id'=>'\d+')),
+        'taglist/[:key]'    => array('wap/Tag/index',array('key'=>'[a-z0-9]*')),
+        'tag/<id>'          => array('wap/Tag/detail',array('id'=>'\d+')),
         //店铺
-        'shoplist/[:key]'   => array('index/Shop/index',array('key'=>'[a-z0-9]+')),
-        'shop/<id>'         => array('index/Shop/detail',array('id'=>'\d+')),
+        'storelist/[:key]'  => array('wap/Store/index',array('key'=>'[a-z0-9]+')),
+        'Store/<id>'        => array('wap/Store/detail',array('id'=>'\d+')),
         //商品
-        'goodslist/[:key]'   => array('index/Goods/index',array('key'=>'[a-z0-9]*')),
-        'goods/<id>'        => array('index/Goods/detail',array('id'=>'\d+')),
+        'goodslist/[:key]'  => array('wap/Goods/index',array('key'=>'[a-z0-9]*')),
+        'goods/<id>'        => array('wap/Goods/detail',array('id'=>'\d+')),
         //单页
-        'pagelist/<key>'    => array('index/Page/index',array('key'=>'[a-z0-9]*')),
-        'page/<id>'         => array('index/Page/detail',array('ext'=>'html'),array('id'=>'[a-z0-9]+')),
+        'pagelist/<key>'    => array('wap/Page/index',array('key'=>'[a-z0-9]*')),
+        'page/<id>'         => array('wap/Page/detail',array('ext'=>'html'),array('id'=>'[a-z0-9]+')),
         
     ]);
 });
@@ -52,8 +53,8 @@ return [
     'taglist/[:key]'    => array('index/Tag/index',array('key'=>'[a-z0-9]*')),
     'tag/<id>'          => array('index/Tag/detail',array('id'=>'\d+')),
     //店铺
-    'shoplist/[:key]'   => array('index/Shop/index',array('key'=>'[a-z0-9]+')),
-    'shop/<id>'         => array('index/Shop/detail',array('id'=>'\d+')),
+    'storelist/[:key]'   => array('index/Store/index',array('key'=>'[a-z0-9]+')),
+    'store/<id>'         => array('index/Store/detail',array('id'=>'\d+')),
     //商品
     'goodslist/[:key]'   => array('index/Goods/index',array('key'=>'[a-z0-9]*')),
     'goods/<id>'        => array('index/Goods/detail',array('id'=>'\d+')),

@@ -1,6 +1,5 @@
 <?php
 namespace app\api\controller;
-
 use think\Db;
 use think\Request;
 use app\common\lib\Token;
@@ -18,33 +17,6 @@ class VerifyCode extends Base
     public function getLogic()
     {
         return new VerifyCodeLogic();
-    }
-    
-    //手机验证码校验
-    public function check()
-	{
-        //参数
-        $where['mobile'] = input('mobile', null); //手机号码
-        $where['verifyCode'] = input('verifyCode', null); //手机验证码
-        $where['type'] = input('type', null); //验证码类型
-        
-        if ($where['mobile']==null || $where['verifyCode']==null || $where['type']==null)
-		{
-            exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));
-        }
-        
-        if (!Helper::isValidMobile($where['mobile']))
-		{
-			exit(json_encode(ReturnData::create(ReturnData::MOBILE_FORMAT_FAIL)));
-		}
-        
-		$verifyCode = model('VerifyCode')->isVerify($where['mobile'], $where['verifyCode'], $where['type']);
-		if(!$verifyCode)
-		{
-			exit(json_encode(ReturnData::create(ReturnData::INVALID_VERIFYCODE)));
-		}
-		
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS)));
     }
     
     //列表
@@ -116,4 +88,73 @@ class VerifyCode extends Base
             exit(json_encode($res));
         }
     }
+    
+    /**
+     * PC获取短信验证码
+     * @param $mobile 手机号
+     * @param $captcha 验证码
+     * @return string 成功失败信息
+     */
+    public function getPcRegSmscode()
+    {
+        $mobile = input('mobile', null);
+        $check = validate('VerifyCode');
+        if(!$check->scene('get_smscode_by_smsbao')->check($_REQUEST)){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR, null, $check->getError())));}
+        
+        $res = model('VerifyCode')->getVerifyCodeBySmsbao($mobile,input('type', 1));
+        
+        if ($res['code'] == ReturnData::SUCCESS)
+        {
+            exit(json_encode(ReturnData::create(ReturnData::SUCCESS, array('smscode'=>$res['data']['smscode']))));
+        }
+        
+        exit(json_encode(ReturnData::create(ReturnData::FAIL, null, $res['msg'])));
+    }
+    
+    /**
+     * 获取短信验证码
+     * @param $mobile 手机号
+     * @param $type 请求用途
+     * @return string 成功失败信息
+     */
+    public function getSmsCodeBySmsbao()
+    {
+        $res = $this->getLogic()->getVerifyCodeBySmsbao($_REQUEST);
+        if ($res['code'] == ReturnData::SUCCESS)
+        {
+            exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res['data'])));
+        }
+        
+        exit(json_encode(ReturnData::create(ReturnData::FAIL, null, $res['msg'])));
+    }
+    
+    /**
+     * 获取邮箱验证码
+     * @param $email 邮箱
+     * @param $captcha 验证码
+     * @return string 成功失败信息
+     */
+    public function getEmailCode()
+    {
+        $res = logic('EmailVerifyCode')->getEmailCode($_REQUEST);
+        if ($res['code'] == ReturnData::SUCCESS)
+        {
+            exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res['data'])));
+        }
+        
+        exit(json_encode(ReturnData::create(ReturnData::FAIL, null, $res['msg'])));
+    }
+    
+    //手机验证码校验
+    public function check()
+	{
+		$res = $this->getLogic()->check($_REQUEST);
+        if ($res['code'] == ReturnData::SUCCESS)
+        {
+            exit(json_encode(ReturnData::create(ReturnData::SUCCESS)));
+        }
+        
+        exit(json_encode(ReturnData::create(ReturnData::FAIL, null, $res['msg'])));
+    }
+    
 }

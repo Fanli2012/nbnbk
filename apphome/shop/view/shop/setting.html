@@ -11,6 +11,7 @@
                     <li><a href="{:url('shop/Shop/changePassword')}">密码修改</a></li>
                     <li><a href="{:url('shop/Shop/setcover')}">封面设置</a></li>
                     <li><a href="{:url('shop/Shop/setavatar')}">头像</a></li>
+                    <li><a href="{:url('shop/Shop/setqrcode')}">二维码设置</a></li>
                 </ul>
             </div>
             <div class="panel-body">
@@ -23,7 +24,19 @@
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
-                            <span class="text-danger">*</span>分类</label>
+                            <span class="text-danger">*</span>详细地址</label>
+                        <div class="col-sm-4">
+                            <input type="text" name="address" id="address" class="form-control" placeholder="详细地址" value="<?php echo $post['address']; ?>" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <span class="text-danger">*</span>公司名称</label>
+                        <div class="col-sm-4">
+                            <input type="text" name="company_name" id="company_name" class="form-control" placeholder="公司名称" value="<?php echo $post['company_name']; ?>" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <span class="text-danger">*</span>类目</label>
                         <div class="col-sm-4 form-inline">
                             <select class="form-control" id='category_id' name="category_id">
                                 <option value="0">请选择</option>
@@ -35,12 +48,6 @@
                                 <?php }} ?>
                             </select>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">
-                            <span class="text-danger">*</span>详细地址</label>
-                        <div class="col-sm-4">
-                            <input type="text" name="address" id="address" class="form-control" placeholder="详细地址" value="<?php echo $post['address']; ?>" required></div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
@@ -59,12 +66,6 @@
                             <span class="text-danger"></span>统一社会信用代码</label>
                         <div class="col-sm-4">
                             <input type="text" name="business_license_no" id="business_license_no" class="form-control" placeholder="统一社会信用代码" value="<?php echo $post['business_license_no']; ?>"></div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">
-                            <span class="text-danger">*</span>公司名称</label>
-                        <div class="col-sm-4">
-                            <input type="text" name="company_name" id="company_name" class="form-control" placeholder="公司名称" value="<?php echo $post['company_name']; ?>" required></div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
@@ -110,15 +111,15 @@
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
-                            <span class="text-danger"></span>微信号</label>
+                            <span class="text-danger">*</span>微信号</label>
                         <div class="col-sm-4">
-                            <input type="text" name="wechat" id="wechat" class="form-control" placeholder="微信号" value="<?php echo $post['wechat']; ?>" ></div>
+                            <input type="text" name="wechat" id="wechat" class="form-control" placeholder="微信号" value="<?php echo $post['wechat']; ?>" required></div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
-                            <span class="text-danger"></span>QQ</label>
+                            <span class="text-danger">*</span>QQ</label>
                         <div class="col-sm-4">
-                            <input type="text" name="qq" id="qq" class="form-control" placeholder="qq" value="<?php echo $post['qq']; ?>" ></div>
+                            <input type="text" name="qq" id="qq" class="form-control" placeholder="qq" value="<?php echo $post['qq']; ?>" required></div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
@@ -160,6 +161,15 @@
                             <style type="text/css">
                                 #allmap {width:60%;height:300px;overflow:hidden;margin:0;font-family:"微软雅黑";}
                             </style>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"><span class="text-danger">*</span>详细介绍</label>
+                        <div class="col-sm-9">
+<!-- 加载编辑器的容器 --><script id="container" name="content" type="text/plain"><?php echo $post["content"]; ?></script>
+<!-- 配置文件 --><script type="text/javascript" src="/other/flueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 --><script type="text/javascript" src="/other/flueditor/ueditor.all.min.js"></script>
+<!-- 实例化编辑器 --><script type="text/javascript">var ue = UE.getEditor('container',{maximumWords:2000,initialFrameHeight:320,enableAutoSave:false});</script>
                         </div>
                     </div>
                     <div class="form-group">

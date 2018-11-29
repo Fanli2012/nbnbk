@@ -26,71 +26,67 @@ class EmailVerifyCode extends Base
 	const TYPE_VERIFYCODE_LOGIN = 4;                                            //验证码登录
 	const TYPE_CHANGE_MOBILE = 5;                                               //修改手机号码
 	
-    //验证码校验
-    public function isVerify($mobile, $code, $type)
+    /**
+     * 验证码校验
+     * @param int $code 验证码
+     * @param string $email 邮箱
+     * @param int $type 请求用途
+     * @return array
+     */
+    public function isVerify($where)
     {
-        return $this->getOne(array('code'=>$code,'email'=>$mobile,'type'=>$type,'status'=>self::STATUS_UNUSE,'expired_at'=>array('>',date('Y-m-d H:i:s'))));
+        $where2 = $where;
+        $where['status'] = self::STATUS_UNUSE;
+        $where['expire_time'] = array('>',time());
+        $res = $this->getOne($where);
+        if($res)
+        {
+            $this->setVerifyCodeUse($where2);
+        }
+        
+        return $res;
     }
     
-    //验证码设置为已使用
-    public function setVerifyCodeUse($mobile, $code, $type)
+    /**
+     * 验证码设置为已使用
+     * @param int $code 验证码
+     * @param string $email 邮箱
+     * @param int $type 请求用途
+     * @return array
+     */
+    public function setVerifyCodeUse($where)
     {
-        return $this->edit(array('status'=>self::STATUS_USE), array('code'=>$code,'email'=>$mobile,'type'=>$type));
+        return $this->edit(array('status'=>self::STATUS_USE), $where);
     }
     
     //生成验证码
     public function getVerifyCodeBySmtp($email,$type,$text='')
     {
-        //验证手机号
-        if (!Helper::isValidEmail($email))
-        {
-            return ReturnData::create(ReturnData::MOBILE_FORMAT_FAIL);
-        }
-        
-        switch ($type)
-        {
-            case self::TYPE_GENERAL;//通用
-                break;
-            case self::TYPE_REGISTER: //用户注册业务验证码
-                break;
-            case self::TYPE_CHANGE_PASSWORD: //密码修改业务验证码
-                break;
-            case self::TYPE_MOBILEE_BIND: //手机绑定业务验证码
-                break;
-            case self::TYPE_VERIFYCODE_LOGIN: //验证码登录
-                break;
-            case self::TYPE_CHANGE_MOBILE: //修改手机号码
-                break;
-            default:
-                return ReturnData::create(ReturnData::INVALID_VERIFYCODE);
-        }
-        
+        $data['code'] = rand(1000, 9999);
         $data['type'] = $type;
         $data['email'] = $email;
-        $data['code'] = rand(1000, 9999);
         $data['status'] = self::STATUS_UNUSE;
         //30分钟有效
         $time = time();
-        $data['expired_at'] = date('Y-m-d H:i:s',($time+60*30));
-        $data['created_at'] = date('Y-m-d H:i:s',$time);
+        $data['expire_time'] = $time+60*30;
+        $data['add_time'] = $time;
         
+        if($text==''){$text = '【'.sysconfig('CMS_WEBNAME').'】您的验证码是'.$data['code'].'，有效期30分钟。';}
         //短信发送验证码
-        $text = '【'.sysconfig('CMS_WEBNAME').'】您的驗證碼是'.$data['code'].'，有效期30分鐘。';
-        
         $smtpserver = 'smtp.sina.com';//SMTP服务器
         $smtpserverport = 25;//SMTP服务器端口
         $smtpusermail = '1feng2010@sina.com';//SMTP服务器的用户邮箱
         $smtpemailto = $email;//发送给谁
         $smtpuser = "1feng2010@sina.com";//SMTP服务器的用户帐号
         $smtppass = "seo123456";//SMTP服务器的用户密码
-        $mailtitle = '【'.sysconfig('CMS_WEBNAME').'】驗證碼';//邮件主题
+        $mailtitle = '【'.sysconfig('CMS_WEBNAME').'】验证码';//邮件主题
         $mailcontent = $text;//邮件内容
         $mailtype = 'HTML';//邮件格式(HTML/TXT),TXT为文本邮件
         $smtp = new Smtp($smtpserver,$smtpserverport,true,$smtpuser,$smtppass);//这里面的一个true是表示使用身份验证,否则不使用身份验证.
         $smtp->debug = false;//是否显示发送的调试信息
         $state = $smtp->sendmail($smtpemailto, $smtpusermail, $mailtitle, $mailcontent, $mailtype);
-        if($state==""){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '對不起，郵件發送失敗！請檢查郵箱填寫是否有誤。');}
-        
+        if($state==''){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '对不起，邮件发送失败！请检查邮箱填写是否有误。');}
+        //添加验证码记录
 		$this->add($data);
 		
         return ReturnData::create(ReturnData::SUCCESS, array('code' => $data['code']));

@@ -45,6 +45,8 @@ class Goods extends Base
     
     public function add()
     {
+        if($this->login_info['status']==0){$this->error('请先完善资料', url('shop/Shop/setting'));}
+        
         $where['shop_id'] = $this->login_info['id'];
         
         $count = model('GoodsType')->getCount($where);
@@ -52,6 +54,12 @@ class Goods extends Base
         
         $type_list = model('GoodsType')->getAll($where,['listorder'=>'asc'],['content'],15);
         $this->assign('type_list',$type_list);
+        
+        //获取类目
+        $where2['parent_id'] = 0;
+        $where2['delete_time'] = 0; //未删除
+        $category_list = logic('Category')->getAllCategoryList($where2,['id'=>'desc'],['content']);
+        $this->assign('category_list',$category_list);
         
         return $this->fetch();
     }
@@ -61,6 +69,7 @@ class Goods extends Base
         $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
         if(empty($_POST["description"])){if(!empty($_POST["body"])){$_POST['description']=cut_str($_POST["body"]);}} //description
         $_POST['shop_id'] = $this->login_info['id']; // 发布者id
+        $_POST['click'] = rand(200,500);
         
 		//关键词
         if(!empty($_POST["keywords"]))
@@ -116,6 +125,8 @@ class Goods extends Base
     
     public function edit()
     {
+        if($this->login_info['status']==0){$this->error('请先完善资料', url('shop/Shop/setting'));}
+        
         if(!empty($_GET["id"])){$id = $_GET["id"];}else {$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit;}
         
         $where['id'] = $id;
@@ -128,6 +139,12 @@ class Goods extends Base
         
         $type_list = model('GoodsType')->getAll($where2,['listorder'=>'asc'],['content'],15);
         $this->assign('type_list',$type_list);
+        
+        //获取类目
+        $where3['parent_id'] = 0;
+        $where3['delete_time'] = 0; //未删除
+        $category_list = logic('Category')->getAllCategoryList($where3,['id'=>'desc'],['content']);
+        $this->assign('category_list',$category_list);
         
         return $this->fetch();
     }

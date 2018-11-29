@@ -33,6 +33,21 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-sm-3 control-label">
+                        <span class="text-danger">*</span>类目</label>
+                    <div class="col-sm-4 form-inline">
+                        <select class="form-control" id='category_id' name="category_id">
+                            <option value="0">请选择</option>
+                            <?php if($category_list){foreach($category_list as $k=>$v){ ?>
+                            <option <?php if($v["id"]==$post['category_id']){echo 'selected = "selected"';} ?> value="<?php echo $v["id"]; ?>"><?php echo $v["name"]; ?></option>
+                            <?php if($v['sub']){foreach($v['sub'] as $key=>$value){ ?>
+                            <option <?php if($value["id"]==$post['category_id']){echo 'selected = "selected"';} ?> value="<?php echo $value["id"]; ?>">— <?php echo $value["name"]; ?></option>
+                            <?php }} ?>
+                            <?php }} ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-sm-3 control-label"><span class="text-danger"> * </span>上架</label>
                     <div class="col-sm-4">
                         <div class="radio">

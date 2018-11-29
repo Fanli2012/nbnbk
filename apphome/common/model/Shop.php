@@ -261,21 +261,21 @@ class Shop extends Base
     }
     
     //用户状态，0待审，1正常，2锁定
-    public function getStatusAttr($data)
+    public function getStatusTextAttr($value,$data)
     {
         $arr = array(0 => '待审', 1 => '正常', 2 => '锁定');
         return $arr[$data['status']];
     }
     
     //推荐等级，0未推荐，1推荐
-    public function getTuijianAttr($data)
+    public function getTuijianTextAttr($value,$data)
     {
         $arr = array(0 => '未推荐', 1 => '推荐');
         return $arr[$data['tuijian']];
     }
     
     //企业类型，0个人，1公司
-    public function getTypeAttr($data)
+    public function getTypeTextAttr($value,$data)
     {
         $arr = array(0 => '个人', 1 => '公司');
         return $arr[$data['type']];

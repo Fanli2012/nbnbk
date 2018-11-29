@@ -25,102 +25,76 @@ class VerifyCode extends Base
 	const TYPE_VERIFYCODE_LOGIN = 4;                                            //验证码登录
 	const TYPE_CHANGE_MOBILE = 5;                                               //修改手机号码
 	
-    //验证码校验
-    public function isVerify($mobile, $code, $type)
+    /**
+     * 验证码校验
+     * @param int $code 验证码
+     * @param string $mobile 手机号
+     * @param int $type 请求用途
+     * @return array
+     */
+    public function isVerify($where)
     {
-        return $this->getOne(array('code'=>$code,'mobile'=>$mobile,'type'=>$type,'status'=>self::STATUS_UNUSE,'expired_at'=>array('>',date('Y-m-d H:i:s'))));
+        $where2 = $where;
+        $where['status'] = self::STATUS_UNUSE;
+        $where['expire_time'] = array('>',time());
+        $res = $this->getOne($where);
+        if($res)
+        {
+            $this->setVerifyCodeUse($where2);
+        }
+        
+        return $res;
+    }
+    
+    /**
+     * 验证码设置为已使用
+     * @param int $code 验证码
+     * @param string $mobile 手机号
+     * @param int $type 请求用途
+     * @return array
+     */
+    public function setVerifyCodeUse($where)
+    {
+        return $this->edit(array('status'=>self::STATUS_USE), $where);
     }
     
     //生成验证码
     public function getVerifyCodeBySmsbao($mobile,$type,$text='')
     {
-        //验证手机号
-        if (!Helper::isValidMobile($mobile))
-        {
-            return ReturnData::create(ReturnData::MOBILE_FORMAT_FAIL);
-        }
-        
-        switch ($type)
-        {
-            case self::TYPE_GENERAL;//通用
-                break;
-            case self::TYPE_REGISTER: //用户注册业务验证码
-                break;
-            case self::TYPE_CHANGE_PASSWORD: //密码修改业务验证码
-                break;
-            case self::TYPE_MOBILEE_BIND: //手机绑定业务验证码
-                break;
-            case self::TYPE_VERIFYCODE_LOGIN: //验证码登录
-                break;
-            case self::TYPE_CHANGE_MOBILE: //修改手机号码
-                break;
-            default:
-                return ReturnData::create(ReturnData::INVALID_VERIFYCODE);
-        }
-        
+        $data['code'] = rand(1000, 9999);
         $data['type'] = $type;
         $data['mobile'] = $mobile;
-        $data['code'] = rand(1000, 9999);
         $data['status'] = self::STATUS_UNUSE;
         //30分钟有效
         $time = time();
-        $data['expired_at'] = date('Y-m-d H:i:s',($time+60*30));
-        $data['created_at'] = date('Y-m-d H:i:s',$time);
+        $data['expire_time'] = $time+60*30;
+        $data['add_time'] = $time;
         
+        if($text==''){$text = '【'.sysconfig('CMS_WEBNAME').'】您的验证码是'.$data['code'].'，有效期30分钟。';}
         //短信发送验证码
-        $text = '【'.sysconfig('CMS_WEBNAME').'】您的验证码是'.$data['code'].'，有效期30分钟。';
-        $smsbao = new Smsbao('whhmk', 'whhmk');
+        $smsbao = new Smsbao('whhmk', 'whhmk8888');
 		$res = $smsbao->sms($text, $mobile);
-        if($res['code'] != 0){return ReturnData::create(ReturnData::PARAMS_ERROR, null, $res['msg']);}
-        
+        if($res['code'] != ReturnData::SUCCESS){return ReturnData::create(ReturnData::PARAMS_ERROR, null, $res['msg']);}
+        //添加验证码记录
 		$this->add($data);
 		
-        return ReturnData::create(ReturnData::SUCCESS, array('smscode' => $data['code']));
+        return ReturnData::create(ReturnData::SUCCESS, array('code' => $data['code']));
     }
     
     //生成验证码
     public function getVerifyCodeByYunpian($mobile,$type,$text='')
     {
-        //验证手机号
-        if (!Helper::isValidMobile($mobile))
-        {
-            return ReturnData::create(ReturnData::MOBILE_FORMAT_FAIL);
-        }
-        
-        switch ($type)
-        {
-            case self::TYPE_GENERAL;//通用
-                break;
-            case self::TYPE_REGISTER: //用户注册业务验证码
-                break;
-            case self::TYPE_CHANGE_PASSWORD: //密码修改业务验证码
-                break;
-            case self::TYPE_MOBILEE_BIND: //手机绑定业务验证码
-                break;
-            case self::TYPE_VERIFYCODE_LOGIN: //验证码登录
-                break;
-            case self::TYPE_CHANGE_MOBILE: //修改手机号码
-                break;
-            default:
-                return ReturnData::create(ReturnData::INVALID_VERIFYCODE);
-        }
-        
+        $data['code'] = rand(1000, 9999);
         $data['type'] = $type;
         $data['mobile'] = $mobile;
-        $data['code'] = rand(1000, 9999);
         $data['status'] = self::STATUS_UNUSE;
         //30分钟有效
-        $data['expired_at'] = date('Y-m-d H:i:s',(time()+60*30));
+        $time = time();
+        $data['expire_time'] = $time+60*30;
+        $data['add_time'] = $time;
         
         //短信发送验证码
-        if (strpos($data['mobile'], '+') !== false)
-        {
-            $text = "【hoo】Your DC verification Code is: ".$data['code'];
-        }
-        else
-        {
-            $text = "【后】您的验证码是".$data['code']."，有效期20分钟。";
-        }
+        if($text!=''){$text = '【'.sysconfig('CMS_WEBNAME').'】您的验证码是'.$data['code'].'，有效期30分钟。';}
         
         Sms::sendByYp($text,$data['mobile']);
 		

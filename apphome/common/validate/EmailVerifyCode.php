@@ -7,19 +7,21 @@ class EmailVerifyCode extends Validate
 {
     // 验证规则
     protected $rule = [
-        ['id', 'require|number','ID必填|ID必须是数字'],
-        ['code', 'require|max:10','验证码必填|验证码不能超过10个字符'],
-        ['type', 'require|in:0,1,2,3,4,5,6,7,8,9','类型必填|0通用，注册，1:手机绑定业务验证码，2:密码修改业务验证码'],
-        ['email', 'require|max:20|checkEmail','郵箱必填|郵箱不能超過20個字符'],
-        ['status', 'in:0,1','0:未使用 1:已使用'],
-        ['result', 'max:500', '返回结果不能超过500个字符'],
+        ['id', 'require|number|gt:0','ID必填|ID必须是数字|ID格式不正确'],
+        ['code', 'require|max:10|number','验证码必填|验证码不能超过10个字符|验证码格式不正确'],
+        ['type', 'require|number|in:0,1,2,3,4,5,6,7,8,9','验证码类型必填|验证码类型格式不正确|0通用，注册，1:手机绑定业务验证码，2:密码修改业务验证码'],
+        ['email', 'require|email','邮箱必填|邮箱格式不正确'],
+        ['status', 'number|in:0,1','验证码状态格式不正确|0:未使用 1:已使用'],
+        ['add_time', 'require|number|egt:0', '添加时间必填|添加时间格式不正确|添加时间格式不正确'],
+        ['expire_time', 'require|number|egt:0', '过期时间必填|过期时间格式不正确|过期时间格式不正确'],
         ['captcha', 'require|checkCaptcha','验证码必填'],
     ];
     
     protected $scene = [
-        'add' => ['email', 'text', 'status', 'result'],
+        'add' => ['code', 'type', 'email', 'add_time', 'expire_time'],
         'del' => ['id'],
-        'get_verifycode_by_smtp' => ['email', 'type', 'captcha'],
+        'get_verifycode_by_smtp' => ['email', 'type'],
+        'check' => ['code', 'email', 'type'],
     ];
     
     /**
@@ -47,7 +49,7 @@ class EmailVerifyCode extends Validate
             return true;
         }
         
-        return '郵箱格式不正確';
+        return '邮箱格式不正确';
     }
     
     // 图形验证码验证
@@ -55,7 +57,7 @@ class EmailVerifyCode extends Validate
     {
         if(!captcha_check($value))
         {
-            return '圖形驗證碼錯誤';
+            return '图形验证码错误';
         }
         
         return true;

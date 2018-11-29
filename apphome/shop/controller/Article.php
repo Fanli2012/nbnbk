@@ -44,6 +44,8 @@ class Article extends Base
     
     public function add()
     {
+        if($this->login_info['status']==0){$this->error('请先完善资料', url('shop/Shop/setting'));}
+        
         $where['shop_id'] = $this->login_info['id'];
         
         $count = model('Arctype')->getCount($where);
@@ -62,6 +64,7 @@ class Article extends Base
         $content="";if(!empty($_POST["body"])){$content = $_POST["body"];}
         
 		$_POST['shop_id'] = $this->login_info['id']; // 发布者id
+        $_POST['click'] = rand(200,500);
         
 		//关键词
         if(!empty($_POST["keywords"]))
@@ -108,7 +111,7 @@ class Article extends Base
         $res = $this->getLogic()->add($_POST);
 		if($res['code']==ReturnData::SUCCESS)
         {
-            $this->success('添加成功！', url('index'));
+            $this->success('添加成功', url('index'));
         }
 		
         $this->error($res['msg']);
@@ -116,6 +119,8 @@ class Article extends Base
     
     public function edit()
     {
+        if($this->login_info['status']==0){$this->error('请先完善资料', url('shop/Shop/setting'));}
+        
         if(!empty($_GET["id"])){$id = $_GET["id"];}else{$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit;}
         
         $this->assign('id',$id);
@@ -186,7 +191,7 @@ class Article extends Base
         $res = $this->getLogic()->edit($_POST, $where);
         if($res['code']==ReturnData::SUCCESS)
         {
-            $this->success('修改成功！', url('index'), '', 1);
+            $this->success('修改成功', url('index'), '', 1);
         }
 		
         $this->error($res['msg']);

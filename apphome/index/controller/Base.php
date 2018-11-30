@@ -13,7 +13,7 @@ class Base extends Common
         parent::_initialize();
         
         //权限验证
-        /* if(session('admin_user_info')['role_id'] <> 1)
+        /* if(session('admin_info')['role_id'] <> 1)
         {
             $this->check();
         } */
@@ -31,7 +31,7 @@ class Base extends Common
         	if(MODULE_NAME!='Index'&&ACTION_NAME!='index')
             {
         		$menu_id = M('Menu')->where(array('model'=>MODULE_NAME,'action'=>ACTION_NAME))->getField('id');
-        		$check = M('Access')->where(array('role_id'=>session('admin_user_info')['role_id'],'menu_id'=>$menu_id))->find();
+        		$check = M('Access')->where(array('role_id'=>session('admin_info')['role_id'],'menu_id'=>$menu_id))->find();
         			
         		if(empty($check))
                 {

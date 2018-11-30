@@ -7,7 +7,7 @@ use think\Controller;
 
 class Common extends Controller
 {
-    protected $admin_user_info;
+    protected $admin_info;
     
     /**
      * 初始化
@@ -27,16 +27,16 @@ class Common extends Controller
 		
         $route = $request->action().'/'.$request->controller().'/'.$request->module();
         
-		if(!Session::has('admin_user_info'))
+		if(!Session::has('admin_info'))
 		{
 			$this->error('您访问的页面不存在或已被删除', '/', '',3);
 		}
         
-        $this->admin_user_info = Session::get('admin_user_info');
-        $this->assign('admin_user_info', $this->admin_user_info);
+        $this->admin_info = Session::get('admin_info');
+        $this->assign('admin_info', $this->admin_info);
         
         //判断是否拥有权限
-		if($this->admin_user_info['role_id'] <> 1)
+		if($this->admin_info['role_id'] <> 1)
 		{
 			$uncheck = array('fladmin/index/index','fladmin/index/upconfig','fladmin/index/upcache','fladmin/index/welcome');
             
@@ -49,7 +49,7 @@ class Common extends Controller
 				$menu_id = db('menu')->where(array('module'=>$request->module(), 'controller'=>$request->controller(), 'action'=>$request->action()))->value('id');
 				if(!$menu_id){$this->error('你没有权限访问，请联系管理员', url('fladmin/index/index'), '', 3);}
 				
-				$check = db('access')->where(array('role_id' => $this->admin_user_info['role_id'], 'menu_id' => $menu_id))->find();
+				$check = db('access')->where(array('role_id' => $this->admin_info['role_id'], 'menu_id' => $menu_id))->find();
 				
 				if(!$check)
 				{

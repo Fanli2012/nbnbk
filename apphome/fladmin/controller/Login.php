@@ -11,7 +11,7 @@ class Login extends Controller
      */
 	public function index()
 	{
-		if(session('admin_user_info'))
+		if(session('admin_info'))
 		{
 			header("Location: ".url('fladmin/index/index'));
 			exit;
@@ -34,7 +34,7 @@ class Login extends Controller
         $res = logic('Admin')->login($_POST);
         if($res['code'] === ReturnData::SUCCESS)
         {
-            session("admin_user_info", $res['data']);
+            session("admin_info", $res['data']);
             $this->success('登录成功', url('fladmin/index/index'), '', 1);
         }
         
@@ -45,7 +45,7 @@ class Login extends Controller
     public function loginout()
     {
         //Session::clear(); // 清除session
-        session('admin_user_info', null);
+        session('admin_info', null);
 		$this->success('退出成功', '/');
     }
     

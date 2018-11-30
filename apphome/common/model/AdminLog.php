@@ -1,26 +1,31 @@
 <?php
 namespace app\common\model;
+use think\Db;
 
-class Menu extends Base
+class AdminLog extends Base
 {
-	// 设置当前模型对应的完整数据表名称
-    //protected $table = 'fl_menu';
+    // 模型会自动对应数据表，模型类的命名规则是除去表前缀的数据表名称，采用驼峰法命名，并且首字母大写，例如：模型名UserType，约定对应数据表think_user_type(假设数据库的前缀定义是 think_)
+    // 设置当前模型对应的完整数据表名称
+    //protected $table = 'fl_page';
+    
     // 默认主键为自动识别，如果需要指定，可以设置属性
     protected $pk = 'id';
     
     public function getDb()
     {
-        return db('menu');
+        return db('admin_log');
     }
     
-    //状态，0正常，1隐藏
-    const MENU_STATUS_NORMAL  = 0;
-    const MENU_STATUS_DISABLE = 1;
-    //状态描述
-    public static $menu_status_desc = [
-        self::MENU_STATUS_NORMAL  => '正常',
-        self::MENU_STATUS_DISABLE => '隐藏'
-    ];
+    // 开启写入时间戳字段
+    //protected $autoWriteTimestamp = true;
+    
+    /**
+     * auto、insert和update三个属性，可以分别在写入、新增和更新的时候进行字段的自动完成机制，auto属性自动完成包含新增和更新操作
+     * @var array
+     */
+    protected $auto = [];
+    protected $insert = ['add_time'];  
+    protected $update = ['update_time'];
     
     /**
      * 列表
@@ -265,111 +270,4 @@ class Menu extends Base
         return self::where($where)->column($field);
     }
     
-    /**
-     * 获取器——状态
-     * @param int $value
-     * @return string
-     */
-    public function getStatusTextAttr($value, $data)
-    {
-        return self::$menu_status_desc[$data['status']];
-    }
-    
-    /**
-     * 获取器——菜单类型  1：权限认证+菜单；0：只作为菜单
-     * @param int $value
-     * @return string
-     */
-    public function getTypeTextAttr($value, $data)
-    {
-        $arr = array(0 => '只作为菜单', 1 => '权限认证+菜单');
-        return $arr[$data['type']];
-    }
-    
-	/**
-     * 将列表生成树形结构
-     * @param int $parent_id 父级ID
-     * @param int $deep 层级
-     * @return array
-     */
-	public function get_category($parent_id=0,$deep=0)
-	{
-		$arr=array();
-		
-		$cats = model('Menu')->getAll(['parent_id'=>$parent_id], 'listorder asc');
-		if($cats)
-		{
-			foreach($cats as $row)//循环数组
-			{
-				$row['deep'] = $deep;
-                //如果子级不为空
-				if($child = $this->get_category($row["id"],$deep+1))
-				{
-					$row['child'] = $child;
-				}
-				$arr[] = $row;
-			}
-		}
-        
-        return $arr;
-	}
-    
-    /**
-     * 树形结构转成列表
-     * @param array $list 数据
-     * @param int $parent_id 父级ID
-     * @return array
-     */
-	public function category_tree($list,$parent_id=0)
-	{
-		global $temp;
-		if(!empty($list))
-		{
-			foreach($list as $v)
-			{
-				$temp[] = array("id"=>$v['id'],"deep"=>$v['deep'],"name"=>$v['name'],"parent_id"=>$v['parent_id']);
-				//echo $v['id'];
-				if(isset($v['child']))
-				{
-					$this->category_tree($v['child'],$v['parent_id']);
-				}
-			}
-		}
-		
-		return $temp;
-	}
-    
-	//获取后台管理员所具有权限的菜单列表
-	public function getPermissionsMenu($role_id, $parent_id=0, $pad=0)
-	{
-		$res = array();
-		
-		$where['fl_access.role_id'] = $role_id;
-		$where['fl_menu.parent_id'] = $parent_id;
-		$where["fl_menu.status"] = 0;
-		
-		$menu =db('menu')
-			->join('fl_access', 'fl_access.menu_id = fl_menu.id')
-            ->field('fl_menu.*, fl_access.role_id')
-			->where($where)
-			->order('fl_menu.listorder asc')
-            ->select();
-		
-		if($menu)
-		{
-			foreach($menu as $row)
-			{
-				$row['deep'] = $pad;
-				
-				if($PermissionsMenu = $this->getPermissionsMenu($role_id, $row['id'], $pad+1))
-				{
-					$row['child'] = $PermissionsMenu;
-				}
-				
-				$res[] = $row;
-			}
-		}
-		
-		return $res;
-	}
 }

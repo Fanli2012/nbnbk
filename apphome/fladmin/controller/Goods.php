@@ -54,7 +54,7 @@ class Goods extends Base
         if(Helper::isPostRequest())
         {
             $_POST['add_time'] = $_POST['update_time'] = time(); //添加&更新时间
-            $_POST['user_id'] = session('admin_user_info')['id']; // 发布者id
+            $_POST['user_id'] = session('admin_info')['id']; // 发布者id
             
             if(empty($_POST["description"])){if(!empty($_POST["content"])){$_POST['description']=cut_str($_POST["content"]);}} //description
             //关键词
@@ -118,7 +118,7 @@ class Goods extends Base
             unset($_POST['id']);
             
             $_POST['update_time'] = time();//更新时间
-            $_POST['user_id'] = session('admin_user_info')['id']; // 修改者ID
+            $_POST['user_id'] = session('admin_info')['id']; // 修改者ID
             
             if(empty($_POST["description"])){if(!empty($_POST["content"])){$_POST['description']=cut_str($_POST["content"]);}} //description
             //关键词

@@ -65,64 +65,6 @@ if (! function_exists('curl_request'))
     }
 }
 
-//pc前台栏目、标签、内容页面地址生成
-function get_front_url($param='')
-{
-	$url = '';
-	
-    if($param['type'] == 'list')
-    {
-        //列表页
-        $url .= '/cat'.$param['catid'];
-    }
-    else if($param['type'] == 'content')
-    {
-        //内容页
-        $url .= '/p/'.$param['id'];
-    }
-    else if($param['type'] == 'tags')
-    {
-        //tags页面
-        $url .= '/tag'.$param['tagid'];
-    }
-    else if($param['type'] == 'page')
-    {
-        //单页面
-        $url .= '/page/'.$param['pagename'].'.html';
-    }
-    
-    return $url;
-}
-
-//wap前台栏目、标签、内容页面地址生成
-function murl(array $param)
-{
-    $url = '';
-    
-    if($param['type'] == 'list')
-    {
-        //列表页
-        $url .= '/cat'.$param['catid'];
-    }
-    else if($param['type'] == 'content')
-    {
-        //内容页
-        $url .= '/p/'.$param['id'];
-    }
-    else if($param['type'] == 'tags')
-    {
-        //tags页面
-        $url .= '/tag'.$param['tagid'];
-    }
-    else if($param['type'] == 'page')
-    {
-        //单页面
-        $url .= '/'.$param['pagename'].'.html';
-    }
-    
-    return $url;
-}
-
 /**
  * 获取列表分页
  * @param $param['pagenow'] 当前第几页
@@ -284,28 +226,6 @@ function get_prenext(array $param)
 	$plist .= $nextpage; //下一页链接
 	
 	return $plist;
-}
-
-/**
- * 获取分页列表
- * @access    public
- * @param     string  $list_len  列表宽度
- * @param     string  $list_len  列表样式
- * @return    string
- */
-function pagenav(array $param)
-{
-    $prepage = $nextpage = '';
-    $prepagenum = $param["pagenow"]-1;
-    $nextpagenum = $param["pagenow"]+1;
-    
-	if(!empty($param['tuijian'])){$map['tuijian']=$param['tuijian'];}
-	if(!empty($param['typeid'])){$map['typeid']=$param['typeid'];}
-	if(!empty($param['image'])){$map['litpic']=array('NEQ','');}
-	if(!empty($param['row'])){$limit="0,".$param['row'];}else{if(!empty($param['limit'])){$limit=$param['limit'];}else{$limit='0,8';}}
-	if(!empty($param['orderby'])){$orderby=$param['orderby'];}else{$orderby='id desc';}
-	
-    return db("article")->field('body',true)->where($map)->order($orderby)->limit($limit)->select();
 }
 
 //根据总数与每页条数，获取总页数
@@ -675,5 +595,13 @@ function logic($name = '', $config = [])
     return $instance[$guid];
 }
 
+//时间戳转日期
+function toDate($time, $format = 'Y-m-d H:i:s') {
+	if (empty ( $time )) {
+		return '';
+	}
+	$format = str_replace ( '#', ':', $format );
+	return date ($format, $time );
+}
 
 

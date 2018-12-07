@@ -26,12 +26,23 @@ class Index extends Base
         exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
 	}
     
-	//关于
+	// 关于
     public function about(Request $request)
     {
         return ReturnData::create(ReturnData::SUCCESS,array('url'=>'http://www.baidu.com'));
     }
 	
+    /**
+     * 文件转Base64二进制流
+     * @param $url 网络文件路径，绝对地址
+     * @return string
+     */
+    public function getFileBinary()
+    {
+        $str = file_get_contents($_REQUEST['url']);
+        exit(json_encode(ReturnData::create(ReturnData::SUCCESS,chunk_split(base64_encode($str)))));
+    }
+    
     public function arclist()
     {
         echo ':():';

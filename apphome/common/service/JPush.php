@@ -11,16 +11,16 @@ class JPush
 
     public function __construct()
     {
-        $this->appkey='a8976f94ae419d6a9df52a86';
-        $this->secret='3a6cf8cb216a60cdd1bead65';
+        $this->appkey = 'a8976f94ae419d6a9df52a86';
+        $this->secret = '3a6cf8cb216a60cdd1bead65';
     }
     
     /*
     * 消息推送
     * @param uid 推送用户
-    * @param contend 推送内容
+    * @param content 推送内容
     */
-    public final function send($uid='', $contend='您有条新订单待处理', $ext=[])
+    public final function send($uid='', $content='您有条新订单待处理', $ext=[])
     {
         if(empty($uid))
         {
@@ -32,7 +32,7 @@ class JPush
         $pusher->setPlatform('all');
         //$pusher->addAllAudience();
         $pusher->addAlias($uid);
-        $pusher->setNotificationAlert($contend);
+        $pusher->setNotificationAlert($content);
         
         if($ext)
         {

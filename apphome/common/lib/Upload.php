@@ -23,7 +23,7 @@ class Upload
         //缩略图高度
         'thumbHeight' => 150,
     ];
-
+    
     //上传错误信息
     private $upload_error = '';
 

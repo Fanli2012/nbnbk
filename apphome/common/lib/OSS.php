@@ -1,11 +1,9 @@
 <?php
 namespace app\common\lib;
-
 use JohnLui\AliyunOSS;
 
 class OSS
 {
-
     private $ossClient;
 
     public function __construct($isInternal = false)

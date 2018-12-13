@@ -309,13 +309,14 @@ class GoodsType extends Base
     
     /**
      * 获取列表url
-     * @param int $param['id'] 分类ID
+     * @param string $param['key'] 示例：f1
      * @return string
      */
     public function getGoodsTypeUrl($param=[])
     {
-        if(isset($param['id'])){return $url = '/goodslist/'.$param['id'];}
+        if(isset($param['key'])){return $url = '/goodslist/'.$param['key'];}
         return $url = '/goodslist/';
     }
+    
     
 }

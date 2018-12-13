@@ -1,16 +1,16 @@
 # nbnbk
 基于thinkphp5的cms
 
-PC
+PC端
 
 ![alt text](/public/images/screenshots.jpg "网站截图")
 ![alt text](/public/images/screenshots-2.jpg "产品中心")
 
-WAP
+WAP端
 
-![alt text](/public/images/screenshots-wap.jpg "WAP首页")
+![alt text](/public/images/screenshots-wap.gif "WAP首页")
 
-后台
+后台管理
 
 ![alt text](/public/images/screenshots-admin.jpg "后台管理")
 
@@ -29,7 +29,7 @@ WAP
 
 6、http://www.nbnbk3.com只是示例域名，需换成自己绑定的域名
 
-注意：WAP端的域名通常是PC端的子域名，这里PC端的域名是www.nbnbk3.com，WAP端的域名是m.nbnbk3.com
+注意：WAP端的域名通常是PC端的子域名，这里PC端的域名是www.nbnbk3.com，WAP端的域名是m.nbnbk3.com，子域名不是m就要修改apphome/route.php下的m
 
 <strong>PC入口</strong>：http://+PC域名+/
 

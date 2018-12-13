@@ -96,7 +96,7 @@ class Goods extends Base
             }
         } */
         
-        $where['delete_time'] = 0;
+        /* $where['delete_time'] = 0;
         $where['status'] = 0;
         $list = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
         if(!$list){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
@@ -106,7 +106,42 @@ class Goods extends Base
         $page = preg_replace('/&amp;key=[a-z0-9]+/', '', $page);
         $page = preg_replace('/\?page=1"/', '"', $page);
         $this->assign('page', $page);
-        $this->assign('list', $list);
+        $this->assign('list', $list); */
+        
+        $pagesize = 11;
+        $offset = 0;
+        if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
+        $where['status'] = 0;
+        $where['delete_time'] = 0;
+		$res = logic('Goods')->getList($where, 'id desc', ['content'], $offset, $pagesize);
+        if($res['list'])
+        {
+            foreach($res['list'] as $k => $v)
+            {
+                
+            }
+        }
+        $this->assign('list',$res['list']);
+        $totalpage = ceil($res['count']/$pagesize);
+        $this->assign('totalpage',$totalpage);
+        if(isset($_REQUEST['page_ajax']) && $_REQUEST['page_ajax']==1)
+        {
+    		$html = '';
+            if($res['list'])
+            {
+                foreach($res['list'] as $k => $v)
+                {
+                    $html .= '<li><a href="'.model('Goods')->getGoodsDetailUrl(array('id'=>$v['id'])).'">';
+                    $html .= '<img src="'.$v['litpic'].'" alt="'.$v['title'].'" />';
+                    $html .= '<div class="goods_info">';
+                    $html .= '<div class="goods_tit">'.$v['title'].'</div>';
+                    $html .= '<div class="goods_price">￥'.$v['price'].'</div>';
+                    $html .= '</div></a></li>';
+                }
+            }
+            
+    		exit(json_encode($html));
+    	}
         
         //推荐商品
         $relate_tuijian_list = cache("index_goods_detail_relate_tuijian_list_$key");

@@ -13,7 +13,7 @@ class Index extends Base
     //首页
     public function index()
 	{
-        $pagesize = 11;
+        $pagesize = 8;
         $offset = 0;
         if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
         $where['status'] = 0;
@@ -100,6 +100,17 @@ class Index extends Base
             cache("index_index_index_slide_list",$slide_list,86400); //1天
         }
         $this->assign('slide_list',$slide_list);
+        
+        //产品中心
+        $goods_list = cache("index_index_index_goods_list");
+        if(!$goods_list)
+        {
+            $where_goods['status'] = 0;
+            $where_goods['delete_time'] = 0;
+            $goods_list = logic('Goods')->getAll($where_goods, 'update_time desc', '*', 4);
+            cache("index_index_index_goods_list",$goods_list,86400); //1天
+        }
+        $this->assign('goods_list',$goods_list);
         
         return $this->fetch();
     }

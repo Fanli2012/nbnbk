@@ -43,7 +43,7 @@ class Article extends Base
             }
         }
         
-        $where['delete_time'] = 0;
+        /* $where['delete_time'] = 0;
         $where['status'] = 0;
         $list = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
         if(!$list){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
@@ -53,7 +53,42 @@ class Article extends Base
         $page = preg_replace('/&amp;key=[a-z0-9]+/', '', $page);
         $page = preg_replace('/\?page=1"/', '"', $page);
         $this->assign('page', $page);
-        $this->assign('list', $list);
+        $this->assign('list', $list); */
+        
+        $pagesize = 11;
+        $offset = 0;
+        if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
+        $where['status'] = 0;
+        $where['delete_time'] = 0;
+		$res = logic('Article')->getList($where, 'id desc', ['content'], $offset, $pagesize);
+        if($res['list'])
+        {
+            foreach($res['list'] as $k => $v)
+            {
+                
+            }
+        }
+        $this->assign('list',$res['list']);
+        $totalpage = ceil($res['count']/$pagesize);
+        $this->assign('totalpage',$totalpage);
+        if(isset($_REQUEST['page_ajax']) && $_REQUEST['page_ajax']==1)
+        {
+    		$html = '';
+            if($res['list'])
+            {
+                foreach($res['list'] as $k => $v)
+                {
+                    $html .= '<a href="'.model('Article')->getArticleDetailUrl(array('id'=>$v['id'])).'" class="weui-media-box weui-media-box_appmsg">';
+                    if(!empty($v['litpic'])){$html .= '<div class="weui-media-box__hd"><img class="weui-media-box__thumb" src="'.$v['litpic'].'" alt="'.$v['title'].'"></div>';}
+                    $html .= '<div class="weui-media-box__bd">';
+                    $html .= '<h4 class="weui-media-box__title">'.$v['title'].'</h4>';
+                    $html .= '<p class="weui-media-box__desc">'.mb_strcut($v['description'],0,120,'UTF-8').'..</p>';
+                    $html .= '</div></a>';
+                }
+            }
+            
+    		exit(json_encode($html));
+    	}
         
         //推荐文章
         $relate_tuijian_list = cache("index_article_detail_relate_tuijian_list_$key");

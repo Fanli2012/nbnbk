@@ -84,6 +84,8 @@ class GuestbookLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
+        $data['add_time'] = time();
+        
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
@@ -97,6 +99,9 @@ class GuestbookLogic extends BaseLogic
     public function edit($data, $where = array())
     {
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
+        
+        $check = $this->getValidate()->scene('edit')->check($data);
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->edit($data,$where);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}

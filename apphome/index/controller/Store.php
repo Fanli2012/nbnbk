@@ -30,58 +30,26 @@ class Store extends Base
             $arr_key = $this->getArrByString($key);
             if(!$arr_key){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
             
-            //省
-            if(isset($arr_key['p']) && !empty($arr_key['p']))
-            {
-                $where['province_id'] = $arr_key['p'];
-                $title = model('Region')->getRegionName($where['province_id']);
-                $this->assign('province',$title);
-                $province_id = $where['province_id'];
-            }
-            
-            //市
-            if(isset($arr_key['c']) && !empty($arr_key['c']))
-            {
-                $where['city_id'] = $arr_key['c'];
-                $region = model('Region')->getOne(['id'=>$where['city_id']]);
-                if($region)
-                {
-                    $title = $region['name'];
-                    $this->assign('city',$region['name']);
-                    $this->assign('province',model('Region')->getRegionName($region['parent_id']));
-                    
-                    $province_id = $region['parent_id'];
-                }
-            }
-            
-            //区
-            if(isset($arr_key['d']) && !empty($arr_key['d']))
-            {
-                $where['district_id'] = $arr_key['d'];
-                $title = model('Region')->getRegionName($where['district_id']);
-            }
-            
-            //企业类型，0个人，1公司
-            if(isset($arr_key['t']) && !empty($arr_key['t']))
-            {
-                $where['type'] = $arr_key['t'];
-            }
-            
             //店铺所属分类id
             if(isset($arr_key['f']) && !empty($arr_key['f']))
             {
                 $where['category_id'] = $arr_key['f'];
                 $this->assign('category_id',$where['category_id']);
                 
-                $category_name = model('Category')->getDb()->where(['id'=>$where['category_id']])->value('name');
+                $category_name = model('Category')->getValue(['id'=>$where['category_id']],'name');
                 $this->assign('category_name',$category_name);
                 
                 $title = $title.$category_name;
             }
         }
+        else
+        {
+            $title = '列表';
+        }
         
         $where['delete_time'] = 0;
         $where['status'] = 1;
+        $where['head_img'] = ['<>',''];
         $posts = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
         if(!$posts){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
         
@@ -95,42 +63,19 @@ class Store extends Base
         //最新
         $where2['delete_time'] = 0;
         $where2['status'] = 1;
+        $where2['head_img'] = ['<>',''];
         $zuixin_list = logic('Shop')->getAll($where2, 'id desc', ['content'], 5);
         $this->assign('zuixin_list', $zuixin_list);
         
         //推荐
         $where3['delete_time'] = 0;
         $where3['status'] = 1;
-        $where3['tuijian'] = 1;
         $where3['head_img'] = ['<>',''];
-        $tuijian_list = logic('Shop')->getAll($where3, 'id desc', ['content'], 5);
+        $tuijian_list = logic('Shop')->getAll($where3, 'click desc', ['content'], 5);
         $this->assign('tuijian_list', $tuijian_list);
         
         //seo标题设置
-        $title = $title.'批发商';
         $this->assign('title',$title);
-        
-        //相关推荐
-        if(isset($province_id))
-        {
-            $region_list = logic('Region')->getAll(['parent_id'=>$province_id]);
-            if($region_list)
-            {
-                foreach($region_list as $k=>$v)
-                {
-                    $where9['city_id'] = $v['id'];
-                    if(isset($arr_key['f'])){$where9['category_id'] = $arr_key['f'];}
-                    
-                    $count = Db::table('fl_shop')->where($where9)->count();
-                    if($count < 5)
-                    {
-                        unset($region_list[$k]);
-                    }
-                }
-            }
-            
-            $this->assign('region_list',$region_list);
-        }
         
         return $this->fetch();
     }
@@ -160,31 +105,70 @@ class Store extends Base
         if(!checkIsNumber(input('id',null))){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
         $shop_id = input('id');
         
-        $where3['id'] = $shop_id;
+        //店铺最新文章
+        $pagesize = 15;
+        $offset = 0;
+        if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
+        $where['shop_id'] = $shop_id;
+        $where['delete_time'] = 0;
+        $where_rand['status'] = 0;
+		$res = logic('Article')->getList($where, 'id desc', ['content'], $offset, $pagesize);
+        if($res['list'])
+        {
+            foreach($res['list'] as $k => $v)
+            {
+                
+            }
+        }
+        $this->assign('list',$res['list']);
+        $totalpage = ceil($res['count']/$pagesize);
+        $this->assign('totalpage',$totalpage);
+        if(isset($_REQUEST['page_ajax']) && $_REQUEST['page_ajax']==1)
+        {
+    		$html = '';
+            if($res['list'])
+            {
+                foreach($res['list'] as $k => $v)
+                {
+                    $html .= '<div class="list">';
+                    if(!empty($v['litpic'])){$html .= '<a class="limg" href="/p/'.$v['id'].'"><img alt="'.$v['title'].'" src="'.$v['litpic'].'"></a>';}
+                    $html .= '<strong class="tit"><a href="/p/'.$v['id'].'" target="_blank">'.$v['title'].'</a></strong><p>'.mb_strcut($v['description'],0,150,'UTF-8').'..</p>';
+                    $html .= '<div class="cl"></div></div>';
+                }
+            }
+            
+    		exit(json_encode($html));
+    	}
+        
+        $where_shop['id'] = $shop_id;
         //$where3['delete_time'] = 0;
         //$where3['status'] = 1;
-        $post = $this->getLogic()->getOne($where3);
+        $post = $this->getLogic()->getOne($where_shop);
         if(!$post)
         {
             $this->error('您访问的页面不存在或已被删除', '/' , 3);
         }
         
-        $post['content']=ReplaceKeyword($post['content']);
+        $post['content'] = logic('Article')->replaceKeyword($post['content']);
         $this->assign('post', $post);
         //var_dump($post);exit;
-        //最新动态
-        $where['shop_id'] = $shop_id;
-        $where['delete_time'] = 0;
-        $article_list = logic('article')->getAll($where, 'id desc', ['content'], 5);
-        if(!$article_list){$article_list = logic('article')->getAll(['delete_time'=>0], 'id desc', ['content'], 5);$this->assign('is_article_list',1);}
-        $this->assign('article_list',$article_list);
         
-        //产品中心
+        //推荐文章
         $where2['shop_id'] = $shop_id;
         $where2['delete_time'] = 0;
-        $goods_list = logic('goods')->getAll($where2, 'id desc', ['body'], 5);
-        if(!$goods_list){$goods_list = logic('goods')->getAll(['delete_time'=>0], 'id desc', ['body'], 5);$this->assign('is_goods_list',1);}
-        $this->assign('goods_list',$goods_list);
+        $where_rand['status'] = 0;
+        //$where2['add_time'] = ['>',(time()-30*3600*24)];
+        $tuijian_list = logic('article')->getAll($where2, 'click desc', ['content'], 5);
+        $this->assign('tuijian_list',$tuijian_list);
+        
+        //店铺推荐
+        $where3['delete_time'] = 0;
+        $where_rand['status'] = 0;
+        $where3['category_id'] = $post['category_id'];
+        $where3['status'] = 1;
+        $where3['head_img'] = ['<>',''];
+        $zuixin_list = logic('Shop')->getAll($where3, 'click desc', ['content'], 5);
+        $this->assign('zuixin_list',$zuixin_list);
         
         return $this->fetch();
     }

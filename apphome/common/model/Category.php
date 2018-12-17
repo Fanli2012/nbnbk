@@ -1,9 +1,8 @@
 <?php
 namespace app\common\model;
-
 use think\Db;
 
-class Shop extends Base
+class Category extends Base
 {
     // 模型会自动对应数据表，模型类的命名规则是除去表前缀的数据表名称，采用驼峰法命名，并且首字母大写，例如：模型名UserType，约定对应数据表think_user_type(假设数据库的前缀定义是 think_)
     // 设置当前模型对应的完整数据表名称
@@ -14,7 +13,7 @@ class Shop extends Base
     
     public function getDb()
     {
-        return db('shop');
+        return db('category');
     }
     
     /**
@@ -260,41 +259,5 @@ class Shop extends Base
         return self::where($where)->column($field);
     }
     
-    /**
-     * 获取器——类别名称
-     * @param int $value
-     * @param array $data
-     * @return string
-     */
-    public function getCategoryTextAttr($value, $data)
-    {
-        return model('Category')->getValue(array('id'=>$data['category_id']),'name');
-    }
     
-    //用户状态，0待审，1正常，2锁定
-    public function getStatusTextAttr($value, $data)
-    {
-        $arr = array(0 => '待审', 1 => '正常', 2 => '锁定');
-        return $arr[$data['status']];
-    }
-    
-    //推荐等级，0未推荐，1推荐
-    public function getTuijianTextAttr($value, $data)
-    {
-        $arr = array(0 => '未推荐', 1 => '推荐');
-        return $arr[$data['tuijian']];
-    }
-    
-    //企业类型，0个人，1公司
-    public function getTypeTextAttr($value, $data)
-    {
-        $arr = array(0 => '个人', 1 => '公司');
-        return $arr[$data['type']];
-    }
-    
-    //文章数
-    public function getArticleCountAttr($value, $data)
-    {
-        return model('Article')->getCount(array('shop_id'=>$data['id'],'status'=>0,'delete_time'=>0));
-    }
 }

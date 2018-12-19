@@ -54,12 +54,12 @@
                             <tr>
                                 <td class="center"><?php echo $row["id"]; ?></td>
                                 <td class="center"><?php echo $row["title"]; ?><?php if($row["tuijian"]==1){echo '<small style="color:red;">[荐]</small>';}if($row["litpic"]){echo '<small style="color:#22ac38">[图]</small>';} ?></td>
-                                <td class="center"><a href="{:url('shop/Article/index')}?typeid=<?php echo $row["typeid"]; ?>"><?php echo $row["typename"]; ?></a></td>
-                                <td class="center"><?php echo date('Y-m-d',$row["updated_at"]); ?></td>
+                                <td class="center"><a href="{:url('shop/Article/index')}?type_id=<?php echo $row["type_id"]; ?>"><?php echo $row["type_name_text"]; ?></a></td>
+                                <td class="center"><?php echo date('Y-m-d',$row["update_time"]); ?></td>
                                 <td class="center"><?php echo $row["click"]; ?></td>
-                                <td class="center"><span class="label label-<?php if($row["is_check"]==0){echo 'success';}else{echo 'danger';} ?>"><?php echo $row["is_check_text"]; ?></span></td>
+                                <td class="center"><span class="label label-<?php if($row["status"]==0){echo 'success';}else{echo 'danger';} ?>"><?php echo $row["status_text"]; ?></span></td>
                                 <td class="center">
-                                    <a href="/p/<?php echo $row["id"]; ?>" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> 预览</a>
+                                    <a href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> 预览</a>
                                     <a href="{:url('shop/Article/edit')}?id=<?php echo $row["id"]; ?>"><i class="glyphicon glyphicon-pencil"></i> 修改</a>
                                     <a data-url="{:url('shop/Article/del')}?id=<?php echo $row["id"]; ?>" data-toggle="modal" data-target="#delConfirmModal" href="javascript:;"><i class="glyphicon glyphicon-remove"></i> 删除</a>
                                 </td>

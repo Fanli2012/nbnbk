@@ -116,11 +116,11 @@ class Shop extends Base
 		if(Helper::isPostRequest())
         {
             $where['id'] = $this->login_info['id'];
-            
             $res = $this->getLogic()->changePassword($_POST, $where);
             if($res['code'] == ReturnData::SUCCESS)
             {
-                $this->success($res['msg']);
+                session('shop_info',null);
+                $this->success($res['msg'], url('shop/login/index'), '', 1);
             }
             
             $this->error($res['msg']);

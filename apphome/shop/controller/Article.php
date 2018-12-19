@@ -23,18 +23,18 @@ class Article extends Base
         {
             $where['title'] = array('like','%'.$_REQUEST['keyword'].'%');
         }
-        if(!empty($_REQUEST["typeid"]) && $_REQUEST["typeid"]!=0)
+        if(!empty($_REQUEST["type_id"]) && $_REQUEST["type_id"]!=0)
         {
-            $where['typeid'] = $_REQUEST["typeid"];
+            $where['type_id'] = $_REQUEST["type_id"];
         }
         if(!empty($_REQUEST["id"]))
         {
-            $where['typeid'] = $_REQUEST["id"];
+            $where['type_id'] = $_REQUEST["id"];
         }
         
         $where['delete_time'] = 0; //未删除
         $where['shop_id'] = $this->login_info['id'];
-        $list = $this->getLogic()->getPaginate($where,['tuijian'=>'desc','updated_at'=>'desc'],['body'],15);
+        $list = $this->getLogic()->getPaginate($where,['tuijian'=>'desc','update_time'=>'desc'],['content'],15);
 		
 		$this->assign('page',$list->render());
         $this->assign('list',$list);
@@ -48,11 +48,11 @@ class Article extends Base
         
         $where['shop_id'] = $this->login_info['id'];
         
-        $count = model('Arctype')->getCount($where);
-        if($count>0){}else{$this->error('请先添加分类', url('shop/Arctype/add'));}
+        $count = model('ArticleType')->getCount($where);
+        if($count>0){}else{$this->error('请先添加分类', url('shop/article_type/add'));}
         
-        $type_list = model('Arctype')->getAll($where,['listorder'=>'asc'],['content'],15);
-        $this->assign('type_list',$type_list);
+        $article_type_list = model('ArticleType')->getAll($where,['listorder'=>'asc'],['content'],15);
+        $this->assign('article_type_list',$article_type_list);
         
         return $this->fetch();
     }
@@ -60,8 +60,8 @@ class Article extends Base
     public function doadd()
     {
         $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
-        if(empty($_POST["description"])){if(!empty($_POST["body"])){$_POST['description']=cut_str($_POST["body"]);}} //description
-        $content="";if(!empty($_POST["body"])){$content = $_POST["body"];}
+        if(empty($_POST["description"])){if(!empty($_POST["content"])){$_POST['description']=cut_str($_POST["content"]);}} //description
+        $content="";if(!empty($_POST["content"])){$content = $_POST["content"];}
         
 		$_POST['shop_id'] = $this->login_info['id']; // 发布者id
         $_POST['click'] = rand(200,500);
@@ -83,7 +83,7 @@ class Article extends Base
 		}
         
 		if(isset($_POST["dellink"]) && $_POST["dellink"]==1 && !empty($content)){$content=replacelinks($content,array(CMS_BASEHOST));} //删除非站内链接
-		$_POST['body']=$content;
+		$_POST['content']=$content;
 		
 		//提取第一个图片为缩略图
 		if(isset($_POST["autolitpic"]) && $_POST["autolitpic"] && empty($litpic))
@@ -128,11 +128,11 @@ class Article extends Base
         $where['shop_id'] = $where2['shop_id'] = $this->login_info['id'];
 		$this->assign('post',$this->getLogic()->getOne($where));
         
-        $count = model('Arctype')->getCount($where2);
-        if($count>0){}else{$this->error('请先添加分类', url('shop/Arctype/add'));}
+        $count = model('ArticleType')->getCount($where2);
+        if($count>0){}else{$this->error('请先添加分类', url('shop/article_type/add'));}
         
-        $type_list = model('Arctype')->getAll($where2,['listorder'=>'asc'],['content'],15);
-        $this->assign('type_list',$type_list);
+        $article_type_list = model('ArticleType')->getAll($where2,['listorder'=>'asc'],['content'],15);
+        $this->assign('article_type_list',$article_type_list);
         
         return $this->fetch();
     }
@@ -141,8 +141,8 @@ class Article extends Base
     {
         if(!empty($_POST["id"])){$id = $_POST["id"];unset($_POST["id"]);}else{$id="";exit;}
         $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
-        if(empty($_POST["description"])){if(!empty($_POST["body"])){$_POST['description']=cut_str($_POST["body"]);}} //description
-        $content="";if(!empty($_POST["body"])){$content = $_POST["body"];}
+        if(empty($_POST["description"])){if(!empty($_POST["content"])){$_POST['description']=cut_str($_POST["content"]);}} //description
+        $content="";if(!empty($_POST["content"])){$content = $_POST["content"];}
         $_POST['updated_at'] = time();//更新时间
         $where['shop_id'] = $this->login_info['id']; // 发布者id
         $where['id'] = $id;
@@ -163,7 +163,7 @@ class Article extends Base
 		}
 		
 		if(isset($_POST["dellink"]) && $_POST["dellink"]==1 && !empty($content)){$content=replacelinks($content,array(CMS_BASEHOST));} //删除非站内链接
-		$_POST['body']=$content;
+		$_POST['content']=$content;
 		
 		//提取第一个图片为缩略图
 		if(isset($_POST["autolitpic"]) && $_POST["autolitpic"] && empty($litpic))

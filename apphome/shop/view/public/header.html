@@ -14,7 +14,7 @@
         <!--导航-->
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/store/{$login_info['id']}" target="_blank"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;店铺预览</a></li>
+                <li><a href="<?php echo model('Shop')->getShopDetailUrl(['id'=>$login_info['id']]); ?>" target="_blank"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;店铺预览</a></li>
                 <li<?php if(request()->controller()=='Article'){echo ' class="active"';} ?>><a href="{:url('shop/Article/index')}"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;文章管理</a></li>
                 <li<?php if(request()->controller()=='Goods'){echo ' class="active"';} ?>><a href="{:url('shop/Goods/index')}"><span class="glyphicon glyphicon-gift"></span>&nbsp;&nbsp;商品管理</a></li>
                 <li<?php if(request()->controller()=='Guestbook'){echo ' class="active"';} ?>><a href="{:url('shop/Guestbook/index')}"><span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;留言管理</a></li>

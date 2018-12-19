@@ -2,6 +2,7 @@
 namespace app\common\validate;
 use think\Validate;
 use app\common\lib\Helper;
+use app\common\lib\Validator;
 
 class Shop extends Validate
 {
@@ -10,9 +11,10 @@ class Shop extends Validate
         ['id', 'require|number','ID必填|ID必须是数字'],
         ['email', 'require|max:20|checkEmail','email必填|email不能超过20个字符'],
         ['user_name', 'require|max:60','用户名必填|用户名不能超过60个字符'],
-        ['password', 'require|max:50','密码必填|密码不能超过50个字符'],
-        ['repassword', 'require|max:50|confirm:password','确认密码必填|确认密码不能超过50个字符|密码与确认密码不一致'],
-        ['pay_password', 'max:50','支付密码不能超过50个字符'],
+        ['password', 'require|max:20|checkPWD','密码必填|密码不能超过20个字符'],
+        ['old_password', 'require|max:20','密码必填|密码不能超过20个字符'],
+        ['re_password', 'require|max:20|confirm:password','确认密码必填|确认密码不能超过20个字符|密码与确认密码不一致'],
+        ['pay_password', 'max:20','支付密码不能超过20个字符'],
         ['add_time', 'require|number', '添加时间必填|添加时间必须是数字'],
         ['introduction', 'max:100','简介不能超过100个字符'],
         ['mobile', 'require|max:20|checkPhone','手机号必填|手机号不能超过60个字符'],
@@ -59,6 +61,7 @@ class Shop extends Validate
         'del' => ['id'],
         'reg' => ['email','password','repassword','smscode','smstype','captcha'],
         'resetpwd' => ['email','password','repassword','smscode','smstype','captcha'],
+        'change_password' => ['password','repassword','old_password'],
     ];
     
     // 图形验证码验证
@@ -111,4 +114,19 @@ class Shop extends Validate
         
         return true;
     }
+    
+    /**
+     * 密码验证
+     * 参数依次为验证数据，验证规则，全部数据(数组)，字段名
+     */
+    protected function checkPWD($value,$rule,$data,$field)
+    {
+        if(Validator::isPWD($value))
+        {
+            return true;
+        }
+        
+        return '密码格式不正确';
+    }
+    
 }

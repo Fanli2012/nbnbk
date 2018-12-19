@@ -7,7 +7,7 @@ namespace app\common\lib;
 class Validator
 {
     /**
-     * @commit: 验证密码
+     * @commit: 验证密码，密码可以包含6个或更多字母，数字，下划线_和连字符-，密码必须包含至少一个大写字母，一个小写字母和一个数字
      * @function: isPWD
      * @param $value
      * @param int $minLen
@@ -15,11 +15,11 @@ class Validator
      * @return bool|int
      */
     public static function isPWD($value,$minLen=6,$maxLen=16){
-        $match='/^[\\~!@#$%^&*()-_=+|{},.?\/:;\'\"\d\w]{'.$minLen.','.$maxLen.'}$/';
+        $match = '/(?=[-_a-zA-Z0-9]*?[A-Z])(?=[-_a-zA-Z0-9]*?[a-z])(?=[-_a-zA-Z0-9]*?[0-9])[-_a-zA-Z0-9]{'.$minLen.','.$maxLen.'}/';
         $v = trim($value);
         if(empty($v))
             return false;
-        return preg_match($match,$v);
+        return preg_match($match, $v);
     }
     
     /**

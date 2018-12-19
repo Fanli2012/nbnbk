@@ -155,15 +155,17 @@ class ShopLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
-        if($data['old_password'] == $data['password']){return ReturnData::create(ReturnData::FAIL,null, '新旧密码不能一致');}
+        $check = $this->getValidate()->scene('change_password')->check($data);
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        
+        $record = $this->getModel()->getOne($where);
+        if(!$record){return ReturnData::create(ReturnData::RECORD_NOT_EXIST);}
+        
         if($data['re_password'] != $data['password']){return ReturnData::create(ReturnData::FAIL,null, '确认密码错误');}
+        if(md5($data['password']) == $record['password']){return ReturnData::create(ReturnData::FAIL,null, '新旧密码不能一致');}
+        if(md5($data['old_password']) != $record['password']){return ReturnData::create(ReturnData::FAIL,null, '旧密码错误');}
         
-        $shop = $this->getModel()->getOne($where);
-        if(!$shop){return ReturnData::create(ReturnData::FAIL,null, '用户不存在');}
-        
-        if($data['old_password'] != $shop['password']){return ReturnData::create(ReturnData::FAIL,null, '旧密码错误');}
-        
-        $res = $this->getModel()->edit(['password'=>$data['password']],$where);
+        $res = $this->getModel()->edit(['password'=>md5($data['password'])],$where);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
         return ReturnData::create(ReturnData::FAIL);

@@ -20,13 +20,14 @@ class Article extends Validate
         ['status', 'in:0,1','审核状态：0正常，1未审核'],
         ['type_id2', 'number|gt:0','栏目ID必须是数字|栏目ID格式不正确'],
         ['user_id', 'number|egt:0', '发布者ID必须是数字|发布者ID格式不正确'],
+        ['shop_id', 'number|egt:0', '店铺ID必须是数字|店铺ID格式不正确'],
         ['add_time', 'require|number|egt:0', '添加时间必填|添加时间格式不正确|添加时间格式不正确'],
         ['update_time', 'require|number|egt:0', '更新时间必填|更新时间格式不正确|更新时间格式不正确'],
     ];
     
     protected $scene = [
-        'add'  => ['type_id', 'tuijian', 'click', 'title', 'writer', 'source', 'litpic', 'keywords', 'seotitle', 'description', 'status', 'type_id2', 'user_id', 'add_time', 'update_time'],
-        'edit' => ['type_id', 'tuijian', 'click', 'title', 'writer', 'source', 'litpic', 'keywords', 'seotitle', 'description', 'status', 'type_id2', 'user_id', 'add_time', 'update_time'],
+        'add'  => ['type_id', 'tuijian', 'click', 'title', 'writer', 'source', 'litpic', 'keywords', 'seotitle', 'description', 'status', 'type_id2', 'user_id', 'shop_id', 'add_time', 'update_time'],
+        'edit' => ['type_id', 'tuijian', 'click', 'title', 'writer', 'source', 'litpic', 'keywords', 'seotitle', 'description', 'status', 'type_id2', 'user_id', 'shop_id', 'add_time', 'update_time'],
         'del'  => ['id'],
     ];
 }

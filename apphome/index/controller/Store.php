@@ -154,21 +154,20 @@ class Store extends Base
         //var_dump($post);exit;
         
         //推荐文章
-        $where2['shop_id'] = $shop_id;
-        $where2['delete_time'] = 0;
+        $where_rand['shop_id'] = $shop_id;
+        $where_rand['delete_time'] = 0;
         $where_rand['status'] = 0;
-        //$where2['add_time'] = ['>',(time()-30*3600*24)];
-        $tuijian_list = logic('article')->getAll($where2, 'click desc', ['content'], 5);
-        $this->assign('tuijian_list',$tuijian_list);
+        //$where_rand['add_time'] = ['>',(time()-30*3600*24)];
+        $relate_tuijian_list = logic('Article')->getAll($where_rand, 'click desc', ['content'], 5);
+        $this->assign('relate_tuijian_list',$relate_tuijian_list);
         
         //店铺推荐
-        $where3['delete_time'] = 0;
-        $where_rand['status'] = 0;
-        $where3['category_id'] = $post['category_id'];
-        $where3['status'] = 1;
-        $where3['head_img'] = ['<>',''];
-        $zuixin_list = logic('Shop')->getAll($where3, 'click desc', ['content'], 5);
-        $this->assign('zuixin_list',$zuixin_list);
+        $where_zuixin['delete_time'] = 0;
+        $where_zuixin['category_id'] = $post['category_id'];
+        $where_zuixin['status'] = 1;
+        $where_zuixin['head_img'] = ['<>',''];
+        $relate_zuixin_list = logic('Shop')->getAll($where_zuixin, 'click desc', ['content'], 5);
+        $this->assign('relate_zuixin_list',$relate_zuixin_list);
         
         return $this->fetch();
     }

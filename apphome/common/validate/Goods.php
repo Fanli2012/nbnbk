@@ -34,6 +34,7 @@ class Goods extends Validate
         ['user_id', 'number|egt:0', '发布者ID必须是数字|发布者ID格式不正确'],
         ['listorder', 'number|egt:0','排序必须是数字|排序格式不正确'],
         ['status', 'in:0,1,2,3','商品状态 0正常 1已删除 2下架 3申请上架'],
+        ['shop_id', 'number|egt:0', '店铺ID必须是数字|店铺ID格式不正确'],
         ['update_time', 'require|number|egt:0', '更新时间必填|更新时间格式不正确|更新时间格式不正确'],
         ['add_time', 'require|number|egt:0', '添加时间必填|添加时间格式不正确|添加时间格式不正确'],
     ];

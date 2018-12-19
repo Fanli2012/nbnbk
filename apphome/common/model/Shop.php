@@ -261,6 +261,17 @@ class Shop extends Base
     }
     
     /**
+     * 获取店铺详情url
+     * @param int $param['id'] 店铺ID
+     * @return string
+     */
+    public function getShopDetailUrl($param=[])
+    {
+        if(isset($param['id'])){return $url = '/store/'.$param['id'];}
+        return $url = '/store/';
+    }
+    
+    /**
      * 获取器——类别名称
      * @param int $value
      * @param array $data

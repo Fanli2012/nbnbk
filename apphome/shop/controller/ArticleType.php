@@ -2,9 +2,9 @@
 namespace app\shop\controller;
 use app\common\lib\ReturnData;
 use app\common\lib\Helper;
-use app\common\logic\ArctypeLogic;
+use app\common\logic\ArticleTypeLogic;
 
-class Arctype extends Base
+class ArticleType extends Base
 {
 	public function _initialize()
 	{
@@ -13,7 +13,7 @@ class Arctype extends Base
     
     public function getLogic()
     {
-        return new ArctypeLogic();
+        return new ArticleTypeLogic();
     }
     
     public function index()

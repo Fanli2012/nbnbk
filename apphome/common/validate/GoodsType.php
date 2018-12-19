@@ -18,12 +18,14 @@ class GoodsType extends Validate
         ['litpic', 'max:150','缩略图不能超过150个字符'],
         ['cover_img', 'max:150','封面不能超过150个字符'],
         ['listorder', 'number|egt:0','排序必须是数字|排序格式不正确'],
+        ['shop_id', 'number|egt:0', '店铺ID必须是数字|店铺ID格式不正确'],
         ['add_time', 'require|number|egt:0', '添加时间必填|添加时间格式不正确|添加时间格式不正确'],
+        ['update_time', 'require|number|egt:0', '更新时间必填|更新时间格式不正确|更新时间格式不正确'],
     ];
     
     protected $scene = [
-        'add'  => ['parent_id', 'name', 'seotitle', 'keywords', 'description', 'filename', 'templist', 'temparticle', 'litpic', 'is_part', 'listorder', 'add_time', 'update_time'],
-        'edit' => ['parent_id', 'name', 'seotitle', 'keywords', 'description', 'filename', 'templist', 'temparticle', 'litpic', 'is_part', 'listorder', 'update_time'],
+        'add'  => ['parent_id', 'name', 'seotitle', 'keywords', 'description', 'filename', 'templist', 'temparticle', 'litpic', 'is_part', 'listorder', 'shop_id', 'add_time', 'update_time'],
+        'edit' => ['parent_id', 'name', 'seotitle', 'keywords', 'description', 'filename', 'templist', 'temparticle', 'litpic', 'is_part', 'listorder', 'shop_id', 'update_time'],
         'del'  => ['id'],
     ];
 }

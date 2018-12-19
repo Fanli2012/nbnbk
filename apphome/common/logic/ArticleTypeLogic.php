@@ -1,5 +1,6 @@
 <?php
 namespace app\common\logic;
+use think\Db;
 use think\Loader;
 use app\common\lib\ReturnData;
 use app\common\model\ArticleType;
@@ -134,9 +135,29 @@ class ArticleTypeLogic extends BaseLogic
         $check = $this->getValidate()->scene('del')->check($where);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
-        $res = $this->getModel()->del($where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        $record = $this->getModel()->getOne($where);
+        if(!$record){return ReturnData::create(ReturnData::RECORD_NOT_EXIST);}
         
+        // 启动事务
+        Db::startTrans();
+        $res = $this->getModel()->edit(['delete_time'=>time()], ['id'=>$record['id']]);
+        if($res)
+        {
+            $where_article['type_id'] = $record['id'];
+            $res2 = model('Article')->edit(['delete_time'=>time()], $where_article);
+            if($res2)
+            {
+                // 提交事务
+                Db::commit();
+                return ReturnData::create(ReturnData::SUCCESS);
+            }
+        }
+        
+        //$res = $this->getModel()->del($where);
+        //if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        
+        // 回滚事务
+        Db::rollback();
         return ReturnData::create(ReturnData::FAIL);
     }
     

@@ -8,7 +8,7 @@
             <div class="panel-body" style="padding: 15px 0;">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="">分类列表</a></li>
-                    <li><a href="{:url('shop/Arctype/add')}">添加分类</a></li>
+                    <li><a href="{:url('add')}">添加分类</a></li>
                 </ul>
             </div>
             <div class="panel-body">
@@ -53,8 +53,8 @@
                                 <td class="center"><?php echo $row["name"]; ?></td>
                                 <td class="center"><?php echo date('Y-m-d',$row["add_time"]); ?></td>
                                 <td class="center">
-                                    <a href="{:url('shop/Arctype/edit')}?id=<?php echo $row["id"]; ?>"><i class="glyphicon glyphicon-pencil"></i> 修改</a>
-                                    <a data-url="{:url('shop/Arctype/del')}?id=<?php echo $row["id"]; ?>" data-toggle="modal" data-target="#delConfirmModal" href="javascript:;"><i class="glyphicon glyphicon-remove"></i> 删除</a>
+                                    <a href="{:url('edit')}?id=<?php echo $row["id"]; ?>"><i class="glyphicon glyphicon-pencil"></i> 修改</a>
+                                    <a data-url="{:url('del')}?id=<?php echo $row["id"]; ?>" data-toggle="modal" data-target="#delConfirmModal" href="javascript:;"><i class="glyphicon glyphicon-remove"></i> 删除</a>
                                 </td>
                             </tr>
                         <?php } ?>

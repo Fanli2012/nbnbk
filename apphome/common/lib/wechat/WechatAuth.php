@@ -146,6 +146,21 @@ class WechatAuth
         return json_decode($info_data, true);
     }
     
+    /**
+     * 小程序登录凭证校验
+     * 小程序调用wx.login() 获取 临时登录凭证code ，并回传到开发者服务器。
+     * 开发者服务器以code换取 用户唯一标识openid 和 会话密钥session_key。
+     * 临时登录凭证校验接口是一个 HTTPS 接口，开发者服务器使用 临时登录凭证code 获取 session_key 和 openid 等。
+     * @param string $js_code 小程序登录时获取的code
+     */
+    public function miniprogram_wxlogin($js_code)
+    {
+        $url = "https://api.weixin.qq.com/sns/jscode2session?appid={$this->app_id}&secret={$this->app_secret}&js_code=$js_code&grant_type=authorization_code";
+        $res = $this->http($url);
+        
+        return json_decode($res, true);
+    }
+    
     // cURL函数简单封装
     public function http($url, $data = null)
     {

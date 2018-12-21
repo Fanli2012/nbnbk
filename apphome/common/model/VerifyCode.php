@@ -70,6 +70,8 @@ class VerifyCode extends Base
         $data['expire_time'] = $time+60*30;
         $data['add_time'] = $time;
         
+        if($this->getOne(['type'=>$type,'mobile'=>$mobile,'add_time'=>['>',$time-120]])){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '请稍后再试');}
+        
         if($text==''){$text = '【'.sysconfig('CMS_WEBNAME').'】您的验证码是'.$data['code'].'，有效期30分钟。';}
         //短信发送验证码
         $smsbao = new Smsbao('whhmk', 'whhmk8888');

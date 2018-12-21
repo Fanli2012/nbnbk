@@ -5,9 +5,9 @@ use think\Request;
 use app\common\lib\Token;
 use app\common\lib\Helper;
 use app\common\lib\ReturnData;
-use app\common\logic\ArctypeLogic;
+use app\common\logic\ArticleTypeLogic;
 
-class Arctype extends Base
+class ArticleType extends Base
 {
 	public function _initialize()
 	{
@@ -16,7 +16,7 @@ class Arctype extends Base
     
     public function getLogic()
     {
-        return new ArctypeLogic();
+        return new ArticleTypeLogic();
     }
     
     //列表
@@ -27,7 +27,13 @@ class Arctype extends Base
         $limit = input('limit',10);
         $offset = input('offset', 0);
         $orderby = input('orderby','listorder asc');
-        if(input('parent_id', null) !== null){$where['parent_id'] = input('parent_id');}
+        if(input('parent_id/d', 0) != 0){$where['parent_id'] = input('parent_id');}
+        if(input('keyword',null)!=null)
+        {
+            $where['name'] = array('like','%'.input('keyword').'%');
+        }
+        if(input('shop_id/d', 0) != 0){$where['shop_id'] = input('shop_id');}
+        if(input('filename', null) != null){$where['filename'] = input('filename');}
         
         $res = $this->getLogic()->getList($where,$orderby,['content'],$offset,$limit);
 		
@@ -38,8 +44,8 @@ class Arctype extends Base
     public function detail()
 	{
         //参数
-        if(input('id', null) !== null){$where['id'] = input('id');}
-        if(!isset($where)){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        $where['id'] = input('id');
         
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
@@ -61,12 +67,11 @@ class Arctype extends Base
     //修改
     public function edit()
     {
-        if(input('id',null)!=null){$id = input('id');}else{$id='';}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
-        
         if(Helper::isPostRequest())
         {
+            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            $where['id'] = input('id');
             unset($_POST['id']);
-            $where['id'] = $id;
             
             $res = $this->getLogic()->edit($_POST,$where);
             
@@ -77,12 +82,10 @@ class Arctype extends Base
     //删除
     public function del()
     {
-        if(input('id',null)!=null){$id = input('id');}else{$id='';}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
-        
         if(Helper::isPostRequest())
         {
-            unset($_POST['id']);
-            $where['id'] = $id;
+            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            $where['id'] = input('id');
             
             $res = $this->getLogic()->del($where);
             

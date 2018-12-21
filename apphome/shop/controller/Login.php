@@ -42,10 +42,10 @@ class Login extends Controller
         if($shop)
         {
 			session('shop_info', $shop);
-			$this->success('登录成功', url('shop/Index/index'), 1);
+			$this->success('登录成功', url('shop/Index/index'), '', 1);
         }
         
-        $this->error('登录失败！请重新登录！！', url('shop/Login/index'), 3);
+        $this->error('登录失败！请重新登录！！', url('shop/Login/index'), '', 3);
     }
     
     /**
@@ -55,10 +55,11 @@ class Login extends Controller
 	{
         if(Helper::isPostRequest())
         {
+            $_POST['smstype'] = 1; //注册
             $res = logic('Shop')->reg($_POST);
             if($res['code'] == ReturnData::SUCCESS)
             {
-                $this->success($res['msg']);
+                $this->success($res['msg'], url('shop/Login/index'), '', 1);
             }
             
             $this->error($res['msg']);
@@ -68,16 +69,44 @@ class Login extends Controller
     }
     
     /**
+     * 注册获取短信验证码
+     * @param $mobile 手机号
+     * @param $captcha 验证码
+     * @return string 成功失败信息
+     */
+    public function getRegSmscode()
+    {
+        //验证码验证
+        if(!captcha_check(input('captcha',null)))
+        {
+            exit(json_encode(ReturnData::create(ReturnData::FAIL, null, '图形验证码错误')));
+        }
+        
+        $mobile = input('mobile', null);
+        $check = validate('VerifyCode');
+        if(!$check->scene('get_smscode_by_smsbao')->check($_REQUEST)){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR, null, $check->getError())));}
+        
+        $res = model('VerifyCode')->getVerifyCodeBySmsbao($mobile,input('type', 1));
+        if ($res['code'] == ReturnData::SUCCESS)
+        {
+            exit(json_encode(ReturnData::create(ReturnData::SUCCESS, array('code'=>$res['data']['code']))));
+        }
+        
+        exit(json_encode(ReturnData::create(ReturnData::FAIL, null, $res['msg'])));
+    }
+    
+    /**
      * 忘记密码
      */
 	public function resetpwd()
 	{
         if(Helper::isPostRequest())
         {
+            $_POST['smstype'] = 3; //密码修改
             $res = logic('Shop')->resetpwd($_POST);
             if($res['code'] == ReturnData::SUCCESS)
             {
-                $this->success($res['msg']);
+                $this->success($res['msg'], url('shop/Login/index'), '', 1);
             }
             
             $this->error($res['msg']);

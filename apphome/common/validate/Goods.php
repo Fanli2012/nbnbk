@@ -21,7 +21,7 @@ class Goods extends Validate
         ['market_price', 'require|regex:/^\d{0,10}(\.\d{0,2})?$/|>=:price', '原价必填|原价格式不正确，原价只能带2位小数的数字|原价必须大于产品价格'],
         ['cost_price', 'regex:/^\d{0,10}(\.\d{0,2})?$/', '成本价格格式不正确，成本价格只能带2位小数的数字'],
         ['shipping_fee', 'regex:/^\d{0,10}(\.\d{0,2})?$/', '运费格式不正确，运费只能带2位小数的数字'],
-        ['goods_number', 'require|number|between:1,99999','库存必填|库存必须是数字|库存只能1-99999'],
+        ['goods_number', 'number|between:1,99999','库存必须是数字|库存只能1-99999'],
         ['sale', 'number|egt:0','销量必须是数字|销量格式不正确'],
         ['warn_number', 'number|between:1,99','商品报警数量必须是数字|商品报警数量只能1-99'],
         ['goods_weight', 'regex:/^\d{0,10}(\.\d{0,2})?$/', '重量格式不正确，重量只能带2位小数的数字'],

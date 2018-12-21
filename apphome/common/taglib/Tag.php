@@ -10,6 +10,7 @@ class Tag extends TagLib
      */
     protected $tags = [
         // 标签定义： attr 属性列表 close 是否闭合(0 或者1 默认1) alias 标签别名 level 嵌套层次
+        'arclist' => ['attr' => 'tuijian,type_id,image,limit,orderby,field,empty'], //文章列表
         'web' => ['attr' => 'name', 'close' => 0],
         'nav' => ['attr' => 'pid,limit,orderby,type'],
         'product' => ['attr' => 'cid,field,orderby,limit,pagesize'],
@@ -23,6 +24,49 @@ class Tag extends TagLib
         'position' => ['close' => 0]
 
     ];
+    
+    /**
+     * 获取文章列表
+     */
+    public function tagArclist($tag, $content)
+    {
+        $tuijian = isset($tag['tuijian']) ? $tag['tuijian'] : 0;
+        $type_id = isset($tag['type_id']) ? $tag['type_id'] : "";
+        $litpic = isset($tag['litpic']) ? $tag['litpic'] : 0;
+        $limit = 10;
+        if(isset($tag['limit'])){$limit=$tag['limit'];}
+        //排序
+        $orderby='id desc';
+        if(isset($tag['orderby'])){$orderby=$tag['orderby'];}
+        
+        $field = isset($tag['field']) ? $tag['field'] : '*';
+        
+        $parse = <<<EOF
+        <?php
+            \$list = db('article');
+            if ("$tuijian" != 0){
+                \$list=\$list->where(["tuijian"=>$tuijian]);
+            }
+            if ("$type_id" != ""){
+                \$list=\$list->where(["type_id"=>"$type_id"]);
+            }
+            if ("$litpic" != 0){
+                \$list=\$list->where(["litpic"=>["<>",""]]);
+            }
+            \$list = \$list->field("$field");
+            \$list=\$list->order("$orderby");
+            \$list=\$list->limit($limit);
+            \$list=\$list->select();
+            
+            \$__LIST__ = \$list;
+            foreach(\$__LIST__ as \$k => \$v):
+            
+            ?>
+EOF;
+        $parse .= $content;
+        $parse .= '<?php endforeach; ?>';
+        return $parse;
+    }
     
     /**
      * 获取网站基本配置
@@ -277,7 +321,7 @@ EOF;
 EOF;
 
         $parse .= $content;
-        $parse .= '<?php endforeach;?>';
+        $parse .= '<?php endforeach; ?>';
         return $parse;
     }
     

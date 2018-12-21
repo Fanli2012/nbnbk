@@ -24,18 +24,13 @@ class Goods extends Base
         {
             $where['title'] = array('like','%'.$_REQUEST['keyword'].'%');
         }
-        if(isset($_REQUEST["typeid"]) && $_REQUEST["typeid"]!=0)
+        if(isset($_REQUEST["type_id"]) && $_REQUEST["type_id"]!=0)
         {
-            $where['typeid'] = $_REQUEST["typeid"];
+            $where['type_id'] = $_REQUEST["type_id"];
         }
-        if(isset($_REQUEST["id"]))
-        {
-            $where['typeid'] = $_REQUEST["id"];
-        }
-        
         $where['delete_time'] = 0; //未删除
         $where['shop_id'] = $this->login_info['id'];
-        $list = $this->getLogic()->getPaginate($where,'id desc',['body'],15);
+        $list = $this->getLogic()->getPaginate($where,'id desc',['content'],15);
 		
 		$this->assign('page',$list->render());
         $this->assign('list',$list);
@@ -56,10 +51,10 @@ class Goods extends Base
         $this->assign('type_list',$type_list);
         
         //获取类目
-        $where2['parent_id'] = 0;
+        /* $where2['parent_id'] = 0;
         $where2['delete_time'] = 0; //未删除
         $category_list = logic('Category')->getAllCategoryList($where2,['id'=>'desc'],['content']);
-        $this->assign('category_list',$category_list);
+        $this->assign('category_list',$category_list); */
         
         return $this->fetch();
     }
@@ -67,25 +62,26 @@ class Goods extends Base
     public function doadd()
     {
         $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
-        if(empty($_POST["description"])){if(!empty($_POST["body"])){$_POST['description']=cut_str($_POST["body"]);}} //description
+        if(empty($_POST["description"])){if(!empty($_POST["content"])){$_POST['description']=cut_str($_POST["content"]);}} //description
         $_POST['shop_id'] = $this->login_info['id']; // 发布者id
         $_POST['click'] = rand(200,500);
+        $_POST['add_time'] = $_POST['update_time'] = time(); // 更新时间
         
 		//关键词
         if(!empty($_POST["keywords"]))
-		{
-			$_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
-		}
-		else
-		{
-			if(!empty($_POST["title"]))
-			{
-				$title=$_POST["title"];
-				$title=str_replace("，","",$title);
-				$title=str_replace(",","",$title);
-				$_POST['keywords']=get_keywords($title);//标题分词
-			}
-		}
+        {
+            $_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
+        }
+        else
+        {
+            if(!empty($_POST["title"]))
+            {
+                $title=$_POST["title"];
+                $title=str_replace("，","",$title);
+                $title=str_replace(",","",$title);
+                $_POST['keywords']=get_participle($title); // 标题分词
+            }
+        }
 		
         if(isset($_POST['promote_start_date'])){$_POST['promote_start_date'] = strtotime($_POST['promote_start_date']);}
         if(isset($_POST['promote_end_date'])){$_POST['promote_end_date'] = strtotime($_POST['promote_end_date']);}
@@ -141,10 +137,10 @@ class Goods extends Base
         $this->assign('type_list',$type_list);
         
         //获取类目
-        $where3['parent_id'] = 0;
+        /* $where3['parent_id'] = 0;
         $where3['delete_time'] = 0; //未删除
         $category_list = logic('Category')->getAllCategoryList($where3,['id'=>'desc'],['content']);
-        $this->assign('category_list',$category_list);
+        $this->assign('category_list',$category_list); */
         
         return $this->fetch();
     }
@@ -154,23 +150,24 @@ class Goods extends Base
         if(!empty($_POST["id"])){$id = $_POST["id"];}else {$id="";exit;}
         
         $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
-        if(empty($_POST["description"])){if(!empty($_POST["body"])){$_POST['description']=cut_str($_POST["body"]);}}//description
+        if(empty($_POST["description"])){if(!empty($_POST["content"])){$_POST['description']=cut_str($_POST["content"]);}}//description
+        $_POST['update_time'] = time(); // 更新时间
         
 		//关键词
         if(!empty($_POST["keywords"]))
-		{
-			$_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
-		}
-		else
-		{
-			if(!empty($_POST["title"]))
-			{
-				$title=$_POST["title"];
-				$title=str_replace("，","",$title);
-				$title=str_replace(",","",$title);
-				$_POST['keywords']=get_keywords($title);//标题分词
-			}
-		}
+        {
+            $_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
+        }
+        else
+        {
+            if(!empty($_POST["title"]))
+            {
+                $title=$_POST["title"];
+                $title=str_replace("，","",$title);
+                $title=str_replace(",","",$title);
+                $_POST['keywords']=get_participle($title); // 标题分词
+            }
+        }
 		
         if(isset($_POST['promote_start_date'])){$_POST['promote_start_date'] = strtotime($_POST['promote_start_date']);}
         if(isset($_POST['promote_end_date'])){$_POST['promote_end_date'] = strtotime($_POST['promote_end_date']);}

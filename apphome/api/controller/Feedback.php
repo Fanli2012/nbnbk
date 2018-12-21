@@ -27,6 +27,7 @@ class Feedback extends Base
         $limit = input('limit',10);
         $offset = input('offset', 0);
         $orderby = input('orderby','id asc');
+        if(input('type', null) != null){$where['type'] = input('type');}
         
         $res = $this->getLogic()->getList($where,$orderby,['content'],$offset,$limit);
 		
@@ -37,8 +38,8 @@ class Feedback extends Base
     public function detail()
 	{
         //参数
-        if(input('id', null) !== null){$where['id'] = input('id');}
-        if(!isset($where)){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        $where['id'] = input('id');
         
         $where['user_id'] = Token::$uid;
         
@@ -64,12 +65,11 @@ class Feedback extends Base
     //修改
     public function edit()
     {
-        if(input('id',null)!=null){$id = input('id');}else{$id='';}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
-        
         if(Helper::isPostRequest())
         {
+            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            $where['id'] = input('id');
             unset($_POST['id']);
-            $where['id'] = $id;
             
             $res = $this->getLogic()->edit($_POST,$where);
             
@@ -80,11 +80,11 @@ class Feedback extends Base
     //删除
     public function del()
     {
-        if(!checkIsNumber(input('id',null))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
-        $where['id'] = input('id');
-        
         if(Helper::isPostRequest())
         {
+            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            $where['id'] = input('id');
+            
             $res = $this->getLogic()->del($where);
             
             exit(json_encode($res));

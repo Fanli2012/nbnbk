@@ -23,15 +23,10 @@ class Article extends Base
         {
             $where['title'] = array('like','%'.$_REQUEST['keyword'].'%');
         }
-        if(!empty($_REQUEST["type_id"]) && $_REQUEST["type_id"]!=0)
+        if(!empty($_REQUEST["type_id"]) && $_REQUEST["type_id"]>0)
         {
             $where['type_id'] = $_REQUEST["type_id"];
         }
-        if(!empty($_REQUEST["id"]))
-        {
-            $where['type_id'] = $_REQUEST["id"];
-        }
-        
         $where['delete_time'] = 0; //未删除
         $where['shop_id'] = $this->login_info['id'];
         $list = $this->getLogic()->getPaginate($where,['tuijian'=>'desc','update_time'=>'desc'],['content'],15);
@@ -47,9 +42,9 @@ class Article extends Base
         if($this->login_info['status']==0){$this->error('请先完善资料', url('shop/Shop/setting'));}
         
         $where['shop_id'] = $this->login_info['id'];
-        
+        $where['delete_time'] = 0;
         $count = model('ArticleType')->getCount($where);
-        if($count>0){}else{$this->error('请先添加分类', url('shop/article_type/add'));}
+        if($count>0){}else{$this->error('请先添加分类', url('shop/ArticleType/add'));}
         
         $article_type_list = model('ArticleType')->getAll($where,['listorder'=>'asc'],['content'],15);
         $this->assign('article_type_list',$article_type_list);
@@ -63,50 +58,38 @@ class Article extends Base
         if(empty($_POST["description"])){if(!empty($_POST["content"])){$_POST['description']=cut_str($_POST["content"]);}} //description
         $content="";if(!empty($_POST["content"])){$content = $_POST["content"];}
         
-		$_POST['shop_id'] = $this->login_info['id']; // 发布者id
+        $_POST['add_time'] = $_POST['update_time'] = time(); // 更新时间
+		$_POST['shop_id'] = $this->login_info['id']; // 发布者ID
         $_POST['click'] = rand(200,500);
         
 		//关键词
         if(!empty($_POST["keywords"]))
-		{
-			$_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
-		}
-		else
-		{
-			if(!empty($_POST["title"]))
-			{
-				$title=$_POST["title"];
-				$title=str_replace("，","",$title);
-				$title=str_replace(",","",$title);
-				$_POST['keywords']=get_keywords($title);//标题分词
-			}
-		}
+        {
+            $_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
+        }
+        else
+        {
+            if(!empty($_POST["title"]))
+            {
+                $title=$_POST["title"];
+                $title=str_replace("，","",$title);
+                $title=str_replace(",","",$title);
+                $_POST['keywords']=get_participle($title); // 标题分词
+            }
+        }
         
-		if(isset($_POST["dellink"]) && $_POST["dellink"]==1 && !empty($content)){$content=replacelinks($content,array(CMS_BASEHOST));} //删除非站内链接
-		$_POST['content']=$content;
-		
-		//提取第一个图片为缩略图
-		if(isset($_POST["autolitpic"]) && $_POST["autolitpic"] && empty($litpic))
-		{
-			if(getfirstpic($content))
-			{
-				//获取文章内容的第一张图片
-				$imagepath = '.'.getfirstpic($content);
-				
-				//获取后缀名
-				preg_match_all ("/\/(.+)\.(gif|jpg|jpeg|bmp|png)$/iU",$imagepath,$out, PREG_PATTERN_ORDER);
-				
-				$saveimage='./uploads/'.date('Y/m',time()).'/'.basename($imagepath,'.'.$out[2][0]).'-lp.'.$out[2][0];
-				
-				//生成缩略图
-				$image = \think\Image::open($imagepath);
-				// 按照原图的比例生成一个最大为240*180的缩略图
-				$image->thumb(CMS_IMGWIDTH, CMS_IMGHEIGHT)->save($saveimage);
-				
-				//缩略图路径
-				$_POST['litpic']='/uploads/'.date('Y/m',time()).'/'.basename($imagepath,'.'.$out[2][0]).'-lp.'.$out[2][0];
-			}
-		}
+        if(isset($_POST["dellink"]) && $_POST["dellink"]==1 && !empty($content)){$content=logic('Article')->replacelinks($content,array(sysconfig('CMS_BASEHOST')));} //删除非站内链接
+        $_POST['content']=$content;
+        
+        // 提取第一个图片为缩略图
+        if(isset($_POST["autolitpic"]) && $_POST["autolitpic"] && empty($litpic))
+        {
+            $litpic = logic('Article')->getBodyFirstPic($content);
+            if($litpic)
+            {
+                $_POST['litpic'] = $litpic;
+            }
+        }
 		
         $res = $this->getLogic()->add($_POST);
 		if($res['code']==ReturnData::SUCCESS)
@@ -121,13 +104,14 @@ class Article extends Base
     {
         if($this->login_info['status']==0){$this->error('请先完善资料', url('shop/Shop/setting'));}
         
-        if(!empty($_GET["id"])){$id = $_GET["id"];}else{$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit;}
+        if(!checkIsNumber(input('id',null))){$this->error('参数错误');}
+        $where['id'] = input('id');
+        $this->assign('id', $where['id']);
         
-        $this->assign('id',$id);
-        $where['id'] = $id;
         $where['shop_id'] = $where2['shop_id'] = $this->login_info['id'];
 		$this->assign('post',$this->getLogic()->getOne($where));
         
+        $where2['delete_time'] = 0;
         $count = model('ArticleType')->getCount($where2);
         if($count>0){}else{$this->error('请先添加分类', url('shop/article_type/add'));}
         
@@ -139,55 +123,44 @@ class Article extends Base
     
     public function doedit()
     {
-        if(!empty($_POST["id"])){$id = $_POST["id"];unset($_POST["id"]);}else{$id="";exit;}
+        $id=$where['id'] = $_POST['id'];
+        unset($_POST['id']);
+        
         $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
         if(empty($_POST["description"])){if(!empty($_POST["content"])){$_POST['description']=cut_str($_POST["content"]);}} //description
         $content="";if(!empty($_POST["content"])){$content = $_POST["content"];}
-        $_POST['updated_at'] = time();//更新时间
-        $where['shop_id'] = $this->login_info['id']; // 发布者id
-        $where['id'] = $id;
+        $_POST['update_time'] = time();//更新时间
+        $where['shop_id'] = $this->login_info['id']; // 发布者ID
         
-		if(!empty($_POST["keywords"]))
-		{
-			$_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
-		}
-		else
-		{
-			if(!empty($_POST["title"]))
-			{
-				$title=$_POST["title"];
-				$title=str_replace("，","",$title);
-				$title=str_replace(",","",$title);
-				$_POST['keywords']=get_keywords($title);//标题分词
-			}
-		}
-		
-		if(isset($_POST["dellink"]) && $_POST["dellink"]==1 && !empty($content)){$content=replacelinks($content,array(CMS_BASEHOST));} //删除非站内链接
-		$_POST['content']=$content;
-		
-		//提取第一个图片为缩略图
-		if(isset($_POST["autolitpic"]) && $_POST["autolitpic"] && empty($litpic))
-		{
-			if(getfirstpic($content))
-			{
-				//获取文章内容的第一张图片
-				$imagepath = '.'.getfirstpic($content);
-				
-				//获取后缀名
-				preg_match_all ("/\/(.+)\.(gif|jpg|jpeg|bmp|png)$/iU",$imagepath,$out, PREG_PATTERN_ORDER);
-				
-				$saveimage='./uploads/'.date('Y/m',time()).'/'.basename($imagepath,'.'.$out[2][0]).'-lp.'.$out[2][0];
-				
-				//生成缩略图
-				$image = \think\Image::open($imagepath);
-				// 按照原图的比例生成一个最大为240*180的缩略图
-				$image->thumb(CMS_IMGWIDTH, CMS_IMGHEIGHT)->save($saveimage);
-				
-				//缩略图路径
-				$_POST['litpic']='/uploads/'.date('Y/m',time()).'/'.basename($imagepath,'.'.$out[2][0]).'-lp.'.$out[2][0];
-			}
-		}
-		
+		//关键词
+        if(!empty($_POST["keywords"]))
+        {
+            $_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
+        }
+        else
+        {
+            if(!empty($_POST["title"]))
+            {
+                $title=$_POST["title"];
+                $title=str_replace("，","",$title);
+                $title=str_replace(",","",$title);
+                $_POST['keywords']=get_participle($title); // 标题分词
+            }
+        }
+        
+        if(isset($_POST["dellink"]) && $_POST["dellink"]==1 && !empty($content)){$content=logic('Article')->replacelinks($content,array(sysconfig('CMS_BASEHOST')));} //删除非站内链接
+        $_POST['content']=$content;
+        
+        // 提取第一个图片为缩略图
+        if(isset($_POST["autolitpic"]) && $_POST["autolitpic"] && empty($litpic))
+        {
+            $litpic = logic('Article')->getBodyFirstPic($content);
+            if($litpic)
+            {
+                $_POST['litpic'] = $litpic;
+            }
+        }
+        
         $res = $this->getLogic()->edit($_POST, $where);
         if($res['code']==ReturnData::SUCCESS)
         {

@@ -49,9 +49,8 @@ class Goods extends Base
     public function detail()
 	{
         //参数
-        $where['id'] = input('param.id',null);
-        
-        if($where['id'] == null){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        $where['id'] = input('id');
         
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
@@ -76,13 +75,12 @@ class Goods extends Base
     //修改
     public function edit()
     {
-        if(input('id',null)!=null){$id = input('id');}else{$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
-        
         if(Helper::isPostRequest())
         {
+            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            $where['id'] = input('id');
             unset($_POST['id']);
-            $where['id'] = $id;
-            $_POST['pubdate'] = time();
+            $_POST['update_time'] = time();
             
             $res = $this->getLogic()->edit($_POST,$where);
             
@@ -93,12 +91,10 @@ class Goods extends Base
     //删除
     public function del()
     {
-        if(input('id',null)!=null){$id = input('id');}else{$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
-        
         if(Helper::isPostRequest())
         {
-            unset($_POST['id']);
-            $where['id'] = $id;
+            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            $where['id'] = input('id');
             
             $res = $this->getLogic()->del($where);
             

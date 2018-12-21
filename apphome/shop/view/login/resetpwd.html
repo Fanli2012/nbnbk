@@ -129,7 +129,7 @@ button.reg-btn:hover { opacity: 0.6; color: #fff; }
 		<div class="form-top">
 			<div class="form-top-left">
 				<h3>重置密码</h3>
-				<p>请输入您的账号:</p>
+				<p>请输入您的账号、密码 / <a href="{:url('reg')}" style="color:#f60;">去注册</a> / <a href="{:url('index')}" style="color:#f60;">登录</a></p>
 			</div>
 			<div class="form-top-right">
 				<i class="glyphicon glyphicon-user"></i>
@@ -157,7 +157,7 @@ button.reg-btn:hover { opacity: 0.6; color: #fff; }
 				</div>
 				<div class="form-group">
 					<label class="sr-only" for="form-repassword">RePassword</label>
-					<input type="password" id="repassword" name="repassword" placeholder="请输入确认密码..." class="form-repassword form-control" required>
+					<input type="password" id="re_password" name="re_password" placeholder="请输入确认密码..." class="form-repassword form-control" required>
 				</div>
                 <input type="text" id="smstype" name="smstype" style="display:none;" value="2">
 				<button type="submit" class="reg-btn">重置密码</button>
@@ -175,18 +175,18 @@ $('.login-form input[type="text"], .login-form input[type="password"], .login-fo
 
 $('.login-form').on('submit', function(e) {
     var password = $('#password').val().trim();
-    var repassword = $('#repassword').val().trim();
-    if(password != repassword){alert('新密码与确认密码不一致');return false;}
+    var re_password = $('#re_password').val().trim();
+    if(password != re_password){alert('新密码与确认密码不一致');return false;}
     
-    var patrn=/^(\w){6,18}$/;  
-    if (!patrn.exec(password) || !patrn.exec(repassword))
+    var patrn=/(?=[-_a-zA-Z0-9]*?[A-Z])(?=[-_a-zA-Z0-9]*?[a-z])(?=[-_a-zA-Z0-9]*?[0-9])[-_a-zA-Z0-9]{6,18}/;  
+    if (!patrn.exec(password) || !patrn.exec(re_password))
     {
-        alert('密码6-18位，可以包含字母、数字、下划线');
+        alert('密码6-18位，至少一个大写字母，一个小写字母和一个数字');
         return false;
     }
     //密码md5加密
-    $('#password').val(md5(password));
-    $('#repassword').val(md5(repassword));
+    //$('#password').val(md5(password));
+    //$('#re_password').val(md5(re_password));
     
 	$(this).find('input[type="text"], input[type="password"], textarea').each(function(){
 		if( $(this).val() == "" ) {
@@ -214,8 +214,8 @@ function getSmsCode()
     {
         $.ajax({
             type: "GET",
-            url: '{:url("api/verify_code/getPcRegSmscode")}',
-            data: { mobile: $('#mobile').val(), type: 2, captcha: $('#captcha').val() },
+            url: '{:url("getRegSmscode")}',
+            data: { mobile: $('#mobile').val(), type: 3, captcha: $('#captcha').val() },
             dataType:"json",
             success: function (res) {
                 console.log(res);

@@ -14,7 +14,7 @@ class Validator
      * @param int $maxLen
      * @return bool|int
      */
-    public static function isPWD($value,$minLen=6,$maxLen=16){
+    public static function isPWD($value,$minLen=6,$maxLen=18){
         $match = '/(?=[-_a-zA-Z0-9]*?[A-Z])(?=[-_a-zA-Z0-9]*?[a-z])(?=[-_a-zA-Z0-9]*?[0-9])[-_a-zA-Z0-9]{'.$minLen.','.$maxLen.'}/';
         $v = trim($value);
         if(empty($v))

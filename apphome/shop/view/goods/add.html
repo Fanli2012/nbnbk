@@ -24,24 +24,9 @@
                     <label class="col-sm-3 control-label">
                         <span class="text-danger">*</span>分类</label>
                     <div class="col-sm-4 form-inline">
-                        <select class="form-control" id='typeid' name="typeid">
+                        <select class="form-control" id='type_id' name="type_id">
                             <?php if($type_list){foreach($type_list as $row){ ?>
                             <option value ="<?php echo $row["id"]; ?>"><?php echo $row["name"]; ?></option>
-                            <?php }} ?>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">
-                        <span class="text-danger">*</span>类目</label>
-                    <div class="col-sm-4 form-inline">
-                        <select class="form-control" id='category_id' name="category_id">
-                            <option value="0">请选择</option>
-                            <?php if($category_list){foreach($category_list as $k=>$v){ ?>
-                            <option value="<?php echo $v["id"]; ?>"><?php echo $v["name"]; ?></option>
-                            <?php if($v['sub']){foreach($v['sub'] as $key=>$value){ ?>
-                            <option value="<?php echo $value["id"]; ?>">— <?php echo $value["name"]; ?></option>
-                            <?php }} ?>
                             <?php }} ?>
                         </select>
                     </div>
@@ -179,7 +164,7 @@ function upImage2()
                 <div class="form-group">
                     <label class="col-sm-3 control-label">图文描述</label>
                     <div class="col-sm-9">
-                        <!-- 加载编辑器的容器 --><script id="container" name="body" type="text/plain"></script>
+                        <!-- 加载编辑器的容器 --><script id="container" name="content" type="text/plain"></script>
                         <!-- 配置文件 --><script type="text/javascript" src="/other/flueditor/ueditor.config.js"></script>
                         <!-- 编辑器源码文件 --><script type="text/javascript" src="/other/flueditor/ueditor.all.min.js"></script>
                         <!-- 实例化编辑器 --><script type="text/javascript">var ue = UE.getEditor('container',{maximumWords:100000,initialFrameHeight:320,enableAutoSave:false});</script>

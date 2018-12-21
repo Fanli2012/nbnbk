@@ -107,7 +107,43 @@ class ShopLogic extends BaseLogic
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
-        $data['updated_at'] = $data['add_time'] = time();
+        //判断手机号
+        if(isset($data['mobile']) && !empty($data['mobile']))
+        {
+            $where_mobile['mobile'] = $data['mobile'];
+            if($this->getModel()->getOne($where_mobile)){
+                return ReturnData::create(ReturnData::FAIL,null,'该手机号已被占用');
+            }
+        }
+        
+        //判断openid
+        if(isset($data['openid']) && !empty($data['openid']))
+        {
+            $where_openid['openid'] = $data['openid'];
+            if($this->getModel()->getOne($where_openid)){
+                return ReturnData::create(ReturnData::FAIL,null,'该openid已被占用');
+            }
+        }
+        
+        //判断用户名
+        if(isset($data['user_name']) && !empty($data['user_name']))
+        {
+            $where_user_name['user_name'] = $data['user_name'];
+            if($this->getModel()->getOne($where_user_name)){
+                return ReturnData::create(ReturnData::FAIL,null,'该用户名已被占用');
+            }
+        }
+        
+        //判断邮箱
+        if(isset($data['email']) && !empty($data['email']))
+        {
+            $where_email['email'] = $data['email'];
+            if($this->getModel()->getOne($where_email)){
+                return ReturnData::create(ReturnData::FAIL,null,'该邮箱已被占用');
+            }
+        }
+        
+        $data['update_time'] = $data['add_time'] = time();
         $res = $this->getModel()->add($data,$type);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
@@ -119,7 +155,7 @@ class ShopLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
-        $data['updated_at'] = time();
+        $data['update_time'] = time();
         $res = $this->getModel()->edit($data,$where);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
@@ -179,7 +215,7 @@ class ShopLogic extends BaseLogic
         $check = $this->getValidate()->scene('setting')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
-        $data['updated_at'] = time();
+        $data['update_time'] = time();
         $res = $this->getModel()->edit($data,$where);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
@@ -191,16 +227,49 @@ class ShopLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
-        $check = $this->getValidate()->scene('reg')->check($data);
+        $check = $this->getValidate()->scene('mobile_reg')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
-        $res = $this->getModel()->getOne(['mobile'=>$data['mobile']]);
-        if($res){return ReturnData::create(ReturnData::FAIL, null, '该手机号已被占用');}
+        //判断手机号
+        if(isset($data['mobile']) && !empty($data['mobile']))
+        {
+            $where_mobile['mobile'] = $data['mobile'];
+            if($this->getModel()->getOne($where_mobile)){
+                return ReturnData::create(ReturnData::FAIL,null,'该手机号已被占用');
+            }
+        }
         
         $data['user_name'] = $data['mobile'];
-        $data['add_time'] = $data['updated_at'] = time();
+        $data['add_time'] = $data['update_time'] = time();
+        $data['password'] = md5($data['password']);
         $res = $this->getModel()->add($data);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if($res)
+        {
+            return ReturnData::create(ReturnData::SUCCESS,$res);
+        }
+        
+        return ReturnData::create(ReturnData::FAIL);
+    }
+    
+    //重置密码
+    public function resetpwd($data)
+    {
+        if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
+        
+        $check = $this->getValidate()->scene('resetpwd')->check($data);
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        
+        $where_mobile['mobile'] = $data['mobile'];
+        $record = $this->getModel()->getOne($where_mobile);
+        if(!$record){return ReturnData::create(ReturnData::FAIL, null, '手机号码不存在');}
+        
+        $data['update_time'] = time();
+        $data['password'] = md5($data['password']);
+        $res = $this->getModel()->edit($data,['id'=>$record['id']]);
+        if($res)
+        {
+            return ReturnData::create(ReturnData::SUCCESS,$res);
+        }
         
         return ReturnData::create(ReturnData::FAIL);
     }

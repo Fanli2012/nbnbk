@@ -37,8 +37,8 @@ class VerifyCode extends Base
     public function detail()
 	{
         //参数
-        if(input('id', '') !== ''){$where['id'] = input('id');}
-        if(!isset($where)){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        $where['id'] = input('id');
         
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
@@ -60,12 +60,11 @@ class VerifyCode extends Base
     //修改
     public function edit()
     {
-        if(input('id',null)!=null){$id = input('id');}else{$id='';}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
-        
         if(Helper::isPostRequest())
         {
+            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            $where['id'] = input('id');
             unset($_POST['id']);
-            $where['id'] = $id;
             
             $res = $this->getLogic()->edit($_POST,$where);
             
@@ -76,39 +75,15 @@ class VerifyCode extends Base
     //删除
     public function del()
     {
-        if(input('id',null)!=null){$id = input('id');}else{$id='';}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
-        
         if(Helper::isPostRequest())
         {
-            unset($_POST['id']);
-            $where['id'] = $id;
+            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            $where['id'] = input('id');
             
             $res = $this->getLogic()->del($where);
             
             exit(json_encode($res));
         }
-    }
-    
-    /**
-     * PC获取短信验证码
-     * @param $mobile 手机号
-     * @param $captcha 验证码
-     * @return string 成功失败信息
-     */
-    public function getPcRegSmscode()
-    {
-        $mobile = input('mobile', null);
-        $check = validate('VerifyCode');
-        if(!$check->scene('get_smscode_by_smsbao')->check($_REQUEST)){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR, null, $check->getError())));}
-        
-        $res = model('VerifyCode')->getVerifyCodeBySmsbao($mobile,input('type', 1));
-        
-        if ($res['code'] == ReturnData::SUCCESS)
-        {
-            exit(json_encode(ReturnData::create(ReturnData::SUCCESS, array('smscode'=>$res['data']['smscode']))));
-        }
-        
-        exit(json_encode(ReturnData::create(ReturnData::FAIL, null, $res['msg'])));
     }
     
     /**

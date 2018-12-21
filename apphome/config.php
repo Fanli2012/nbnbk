@@ -130,8 +130,9 @@ return [
         'taglib_begin' => '{',
         // 标签库标签结束标记
         'taglib_end'   => '}',
+        'taglib_pre_load' => 'app\common\taglib\Tag',
     ],
-
+    
     // 视图输出字符串内容替换
     'view_replace_str'       => [],
     // 默认跳转页面对应的模板文件

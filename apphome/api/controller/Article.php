@@ -25,9 +25,9 @@ class Article extends Base
         //参数
         $limit = input('limit/d',10);
         $offset = input('offset/d', 0);
-        if(input('type_id/d', null) !== null){$where['type_id'] = input('type_id');}
-        if(input('keyword', null) !== null){$where['title'] = ['like','%'.input('keyword').'%'];}
-        if(input('tuijian/d', null) !== null){$where['tuijian'] = input('tuijian');}
+        if(input('type_id/d', 0) != 0){$where['type_id'] = input('type_id');}
+        if(input('keyword', null) != null){$where['title'] = ['like','%'.input('keyword').'%'];}
+        if(input('tuijian/d', 0) != 0){$where['tuijian'] = input('tuijian');}
         $where['delete_time'] = 0;
         $where['status'] = 0;
         $orderby = input('orderby','update_time desc');
@@ -51,6 +51,8 @@ class Article extends Base
         //参数
         if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         $where['id'] = input('id');
+        $where['delete_time'] = 0;
+        $where['status'] = 0;
         
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
@@ -65,7 +67,7 @@ class Article extends Base
     {
         if(Helper::isPostRequest())
         {
-            $_POST['add_time'] = time();
+            $_POST['add_time'] = $_POST['update_time'] = time();
             $res = $this->getLogic()->add($_POST);
             
             exit(json_encode($res));
@@ -75,12 +77,13 @@ class Article extends Base
     //修改
     public function edit()
     {
-        if(input('id',null)!=null){$id = input('id');}else{$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
         if(Helper::isPostRequest())
         {
+            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            $where['id'] = input('id');
             unset($_POST['id']);
-            $where['id'] = $id;
+            $_POST['update_time'] = time();
             
             $res = $this->getLogic()->edit($_POST,$where);
             
@@ -91,12 +94,10 @@ class Article extends Base
     //删除
     public function del()
     {
-        if(input('id',null)!=null){$id = input('id');}else{$id="";}if(preg_match('/[0-9]*/',$id)){}else{exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
-        
         if(Helper::isPostRequest())
         {
-            unset($_POST['id']);
-            $where['id'] = $id;
+            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            $where['id'] = input('id');
             
             $res = $this->getLogic()->del($where);
             

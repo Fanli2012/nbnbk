@@ -7,13 +7,18 @@ function messageNotice(message)
 
 /**
  * 时间戳转日期格式
- * @param {int} time 时间戳
+ * @param {int} timestamp 时间戳
  * @param {string} format 日期格式Y-m-d H:i:s
  * @return {string} 2018-12-31 00:00:00
  */
-function formatDate(time,format='Y-m-d H:i:s'){
-    var date = new Date(time);
+function formatDateTime(timestamp,format='Y-m-d H:i:s')
+{
+    if(timestamp.length==10)
+    {
+        timestamp = timestamp * 1000;
+    }
     
+    var date = new Date(timestamp); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
     var year = date.getFullYear(),
         month = date.getMonth()+1,//月份是从0开始的
         day = date.getDate(),
@@ -34,8 +39,6 @@ function formatDate(time,format='Y-m-d H:i:s'){
                         
     return newTime;
 }
-
-
 
 
 

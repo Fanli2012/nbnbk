@@ -12,7 +12,7 @@
 <div class="row"><div class="col-md-1"></div><div class="col-md-10">
 
 <?php if($list->total()){foreach($list as $row){ ?><div class="list"><?php if(!empty($row['litpic'])){ ?><a class="limg" href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>"><img alt="<?php echo $row['title']; ?>" src="<?php echo $row['litpic']; ?>"></a><?php } ?>
-<strong class="tit"><a href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>" target="_blank"><?php echo $row['title']; ?></a></strong><p><?php echo mb_strcut($row['description'],0,150,'UTF-8'); ?>..</p>
+<strong class="tit"><a href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>"><?php echo $row['title']; ?></a></strong><p><?php echo mb_strcut($row['description'],0,150,'UTF-8'); ?>..</p>
 <div class="info"><span class="fl"><em><?php echo date("Y-m-d",$row['update_time']); ?></em></span><span class="fr"><em><?php echo $row['click']; ?></em>人阅读</span></div><div class="cl"></div></div><?php }}else{echo '<div style="text-align:center;padding:20px;">暂无记录</div>';} ?><div id="lad2"><script>ljs2();</script></div>
 
 <div class="bootstrap-front-pagination"><?php echo $page; ?><div class="cl"></div></div>

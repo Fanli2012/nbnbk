@@ -549,10 +549,11 @@ function checkIsNumber($data)
 function service($name = '', $config = [])
 {
     static $instance = [];
-    $guid = $name . 'Service';
+    $guid = $name;
+    //$guid = $name . 'Service';
     if (!isset($instance[$guid]))
     {
-        $class = 'App\\Http\\Service\\' . ucfirst($name);
+        $class = 'app\\common\\service\\' . ucfirst($name);
         if (class_exists($class))
         {
             $service = new $class($config);

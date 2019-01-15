@@ -12,9 +12,9 @@ class DateAndTime
     public static function getTimestamp($digits = 10)
     {
         $digits = $digits > 10 ? $digits : 10;
-        $digits = $digits - 10;
         if ($digits > 10)
         {
+            $digits = $digits - 10;
             return number_format(microtime(true),$digits,'','');
         }
         return time();

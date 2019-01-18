@@ -86,7 +86,7 @@ class Wechat extends UserBase
         $add_data['source'] = 5;
         $add_data['head_img'] = isset($data['avatarUrl'])?$data['avatarUrl']:'';
         $add_data['sex'] = isset($data['gender'])?$data['gender']:0;
-        $add_data['nickname'] = isset($data['nickName'])?$data['nickName']:'';
+        $add_data['nickname'] = isset($data['nickName']) ? $this->filterEmoji($data['nickName']) : '';
         $add_data['openid'] = isset($data['openId'])?$data['openId']:'';
         $add_res = logic('User')->xcxadd($add_data);
         if($add_res['code'] != ReturnData::SUCCESS)
@@ -100,4 +100,17 @@ class Wechat extends UserBase
         $data['id'] = $add_res['data']['id'];
 		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $data)));
     }
+    
+    /**
+	 * 过滤emoji
+	 */
+	public function filterEmoji($str)
+	{
+        // preg_replace_callback执行一个正则表达式搜索并且使用一个回调进行替换
+		$str = preg_replace_callback('/./u', function (array $match) {
+                    return strlen($match[0]) >= 4 ? '' : $match[0];
+                }, $str);
+        
+		return $str;
+	}
 }

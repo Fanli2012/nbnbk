@@ -1,0 +1,63 @@
+{extend name="public/base" /}
+{block name="title"}企业修改{/block}
+
+{block name="content"}
+<script language="javascript" type="text/javascript" src="/js/My97DatePicker/WdatePicker.js"></script>
+<h5 class="sub-header"><a href="{:url('index')}">企业列表</a> > 企业修改</h5>
+
+<form id="addarc" method="post" action="" role="form" enctype="multipart/form-data" class="table-responsive">
+<table class="table table-striped table-bordered">
+<tbody>
+    <tr>
+        <td align="right">手机号：</td>
+        <td><input name="mobile" type="text" id="mobile" value="<?php echo $post["mobile"]; ?>" class="required" style="width:60%" placeholder="在此输入手机号"><input style="display:none;" name="id" type="text" id="id" value="<?php echo $id; ?>"></td>
+    </tr>
+	<tr>
+        <td align="right">企业类型：</td>
+        <td>
+			<input type="radio" value='0' name="type" <?php if($post['type']==0){echo 'checked';} ?> />&nbsp;个人&nbsp;&nbsp;
+			<input type="radio" value='1' name="type" <?php if($post['type']==1){echo 'checked';} ?> />&nbsp;公司
+		</td>
+    </tr>
+    <tr>
+        <td align="right">年费：</td>
+        <td colspan="2"><input name="annual_fee" type="text" id="annual_fee" style="width:100px" value="<?php echo $post["annual_fee"]; ?>"></td>
+    </tr>
+    <tr>
+        <td align="right">过期时间：</td>
+        <td colspan="2"><input name="expire_time" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" type="text" id="expire_time" style="width:185px" value="<?php echo $post["expire_time"]; ?>"></td>
+    </tr>
+    <tr>
+        <td colspan="2"><button type="submit" class="btn btn-success" value="Submit">保存(Submit)</button>&nbsp;&nbsp;<button type="reset" class="btn btn-default" value="Reset">重置(Reset)</button><input type="hidden"></input></td>
+    </tr>
+</tbody></table></form><!-- 表单结束 -->
+
+<script>
+$(function(){
+    $(".required").blur(function(){
+        var $parent = $(this).parent();
+        $parent.find(".formtips").remove();
+        if(this.value=="")
+        {
+            $parent.append(' <small class="formtips onError"><font color="red">不能为空！</font></small>');
+        }
+        else
+        {
+            $parent.append(' <small class="formtips onSuccess"><font color="green">OK</font></small>');
+        }
+    });
+
+    //重置
+    $('#addarc input[type="reset"]').click(function(){
+            $(".formtips").remove(); 
+    });
+
+    $("#addarc").submit(function(){
+        $(".required").trigger('blur');
+        var numError = $('#addarc .onError').length;
+        
+        if(numError){return false;}
+    });
+});
+</script>
+{/block}

@@ -13,8 +13,8 @@ class Index extends Base
     //首页
     public function index()
 	{
-        Log::error('错误信息');Log::info('日志信息');
-        $pagesize = 11;
+        Log::error('错误信息');Log::info('首页');
+        $pagesize = 5;
         $offset = 0;
         if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
         $where['status'] = 0;

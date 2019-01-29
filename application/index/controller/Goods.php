@@ -36,6 +36,9 @@ class Goods extends Base
                 $type_id = $where['type_id'] = $arr_key['f'];
                 
                 $post = model('GoodsType')->getOne(['id'=>$arr_key['f']]);
+                if(!$post){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+                $title = $post['name'].'-'.sysconfig('CMS_WEBNAME');
+                if($post['seotitle']){$title = $post['seotitle'];}
                 $this->assign('post',$post);
                 
                 //面包屑导航
@@ -134,8 +137,8 @@ class Goods extends Base
         $this->assign('relate_rand_list',$relate_rand_list);
         
         //seo标题设置
-        $title = $title.'最新动态';
         $this->assign('title',$title);
+        
         return $this->fetch();
     }
 	

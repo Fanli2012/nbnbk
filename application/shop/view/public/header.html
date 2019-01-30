@@ -22,7 +22,7 @@
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;{$login_info['mobile']}
+                        <span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;<?php if($login_info['mobile']){echo $login_info['mobile'];}else{echo $login_info['user_name'];} ?>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dLabel">

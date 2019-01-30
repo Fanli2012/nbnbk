@@ -13,7 +13,7 @@
 <div class="bootstrap-front-pagination"><?php echo $page; ?><div class="cl"></div></div><div id="lad3"><script>ljs3();</script></div></div><!-- fl_640 end -->
 
 <div class="fr_300"><div id="rad1"><script>rjs1();</script></div>
-<div class="side"><div class="stit"><h2><?php echo $post['name']; ?>推荐</h2><a href="javascript:getmore({limit:5,type_id:<?php echo $post['id']; ?>,tuijian:1,mode:1,orderby:'rand()'});" class="more">换一换</a><div class="cl"></div></div>	
+<div class="side"><div class="stit"><h2>推荐阅读</h2><a href="javascript:getmore({limit:5,type_id:<?php echo $post['id']; ?>,tuijian:1,mode:1,orderby:'rand()'});" class="more">换一换</a><div class="cl"></div></div>	
 <ul class="uli chs" id="xglist"><?php if($relate_tuijian_list){foreach($relate_tuijian_list as $row){ ?><li><a href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>"><?php echo $row['title']; ?></a></li><?php }} ?></ul><div class="cl"></div></div>
 
 <div id="rad3"><script>rjs3();</script></div>

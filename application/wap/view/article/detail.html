@@ -1,6 +1,6 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0,viewport-fit=cover">
-<title><?php if(!empty($post['seotitle'])){echo $post['seotitle'];}else{echo $post['title'].'-'.sysconfig('CMS_WEBNAME');} ?></title>
+<title><?php if($post['seotitle']){echo $post['seotitle'];}else{echo $post['title'].'-'.sysconfig('CMS_WEBNAME');} ?></title>
 <meta name="keywords" content="<?php echo $post['keywords']; ?>" /><meta name="description" content="<?php echo $post['description']; ?>" />
 <link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/wap/weui.min.css"/>
 <link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/wap/style.css"/>

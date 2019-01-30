@@ -144,6 +144,8 @@ class ShopLogic extends BaseLogic
         }
         
         $data['update_time'] = $data['add_time'] = time();
+        if(isset($data['password']) && !empty($data['password'])){$data['password'] = md5($data['password']);}else{$data['password'] = md5('Fanli123456');}
+        
         $res = $this->getModel()->add($data,$type);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
@@ -156,6 +158,8 @@ class ShopLogic extends BaseLogic
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
         $data['update_time'] = time();
+        if(isset($data['password']) && !empty($data['password'])){$data['password'] = md5($data['password']);}else{unset($data['password']);}
+        
         $res = $this->getModel()->edit($data,$where);
         if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         

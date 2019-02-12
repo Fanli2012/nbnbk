@@ -56,6 +56,7 @@ class Index extends Base
             $where2['delete_time'] = 0;
             $where2['status'] = 0;
             $where2['tuijian'] = 1;
+            $where2['add_time'] = ['<',time()];
             //$where2['add_time'] = ['>',(time()-30*3600*24)];
             $relate_tuijian_list = logic('Article')->getAll($where2, 'update_time desc', ['content'], 5);
             cache("index_index_index_relate_tuijian_list",$relate_tuijian_list,3600); //1小时
@@ -68,6 +69,7 @@ class Index extends Base
         {
             $where_rand['delete_time'] = 0;
             $where_rand['status'] = 0;
+            $where_rand['add_time'] = ['<',time()];
             $relate_rand_list = logic('Article')->getAll($where_rand, 'rand()', ['content'], 5);
             cache("index_index_index_relate_rand_list",$relate_rand_list,3600); //1小时
         }
@@ -265,6 +267,7 @@ class Index extends Base
         //最新文章
         $where['delete_time'] = 0;
         $where['status'] = 0;
+        $where['add_time'] = ['<',time()];
         $list = logic('Article')->getAll($where, 'update_time desc', ['content'], 100);
         $this->assign('list',$list);
         

@@ -2,6 +2,7 @@
 {block name="title"}文章修改{/block}
 
 {block name="content"}
+<script language="javascript" type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/My97DatePicker/WdatePicker.js"></script>
 <h5 class="sub-header"><a href="{:url('index')}">文章列表</a> > 文章修改</h5>
 
 <form id="addarc" method="post" action="{:url('edit')}" role="form" enctype="multipart/form-data" class="table-responsive">
@@ -27,6 +28,10 @@
                 <?php }else{?><option value="<?php echo $i; ?>"><?php echo $tuijian[$i]; ?></option><?php }} ?>
             </select>
         </td>
+    </tr>
+    <tr>
+        <td align="right">发布时间：</td>
+        <td colspan="2"><input name="update_time" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" type="text" id="update_time" style="width:185px" value="<?php if($post['update_time']!=0){echo date('Y-m-d H:i:s',$post['update_time']);} ?>"></td>
     </tr>
     <tr>
         <td align="right">seoTitle：</td>

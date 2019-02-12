@@ -131,7 +131,7 @@ class AdminLogic extends BaseLogic
         if(!isset($data['update_time'])){$data['update_time']=time();}
         
         $admin = $this->getModel()->getOne($where);
-        if(!$record){return ReturnData::create(ReturnData::RECORD_NOT_EXIST);}
+        if(!$admin){return ReturnData::create(ReturnData::RECORD_NOT_EXIST);}
         
         //判断用户名
         if(isset($data['name']) && !empty($data['name']))

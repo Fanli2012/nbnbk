@@ -163,7 +163,7 @@ class Store extends Base
         
         //店铺推荐
         $where_zuixin['delete_time'] = 0;
-        $where_zuixin['category_id'] = $post['category_id'];
+        //$where_zuixin['category_id'] = $post['category_id'];
         $where_zuixin['status'] = 1;
         $where_zuixin['head_img'] = ['<>',''];
         $relate_zuixin_list = logic('Shop')->getAll($where_zuixin, 'click desc', ['content'], 5);

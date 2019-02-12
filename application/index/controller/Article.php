@@ -48,6 +48,7 @@ class Article extends Base
         
         $where['delete_time'] = 0;
         $where['status'] = 0;
+        $where['add_time'] = ['<',time()];
         $list = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
         if(!$list){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
         
@@ -66,6 +67,7 @@ class Article extends Base
             $where_tuijian['status'] = 0;
             $where_tuijian['tuijian'] = 1;
             $where_tuijian['litpic'] = ['<>',''];
+            $where_tuijian['add_time'] = ['<',time()];
             if(isset($type_id)){$where_tuijian['type_id'] = $type_id;}
             $relate_tuijian_list = logic('Article')->getAll($where_tuijian, 'update_time desc', ['content'], 5);
             cache("index_article_detail_relate_tuijian_list_$key",$relate_tuijian_list,2592000);
@@ -78,6 +80,7 @@ class Article extends Base
         {
             $where_rand['delete_time'] = 0;
             $where_rand['status'] = 0;
+            $where_rand['add_time'] = ['<',time()];
             if(isset($type_id)){$where_rand['type_id'] = $type_id;}
             $relate_rand_list = logic('Article')->getAll($where_rand, 'rand()', ['content'], 5);
             cache("index_article_detail_relate_rand_list_$key",$relate_rand_list,2592000);
@@ -158,8 +161,8 @@ class Article extends Base
         {
             return $res;
         }
-        $res['previous_article'] = model('Article')->getOne(['id'=>['<',$param['article_id']],'type_id'=>$post['type_id']],['content']);
-        $res['next_article'] = model('Article')->getOne(['id'=>['>',$param['article_id']],'type_id'=>$post['type_id']],['content']);
+        $res['previous_article'] = model('Article')->getOne(['id'=>['<',$param['article_id']],'type_id'=>$post['type_id']],['content'],'id desc');
+        $res['next_article'] = model('Article')->getOne(['id'=>['>',$param['article_id']],'type_id'=>$post['type_id']],['content'],'id asc');
         return $res;
     }
 }

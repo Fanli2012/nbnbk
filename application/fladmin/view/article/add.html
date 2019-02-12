@@ -2,6 +2,7 @@
 {block name="title"}文章添加{/block}
 
 {block name="content"}
+<script language="javascript" type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/My97DatePicker/WdatePicker.js"></script>
 <h5 class="sub-header"><a href="{:url('index')}">文章列表</a> > 文章添加</h5>
 
 <form id="addarc" method="post" action="{:url('add')}" role="form" enctype="multipart/form-data" class="table-responsive">
@@ -26,6 +27,10 @@
                 for($i=0;$i<count($tuijian);$i++){?><option value="<?php echo $i; ?>"><?php echo $tuijian[$i]; ?></option><?php } ?>
             </select>
         </td>
+    </tr>
+    <tr>
+        <td align="right">发布时间：</td>
+        <td colspan="2"><input name="update_time" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" type="text" id="update_time" style="width:185px" value=""></td>
     </tr>
     <tr>
         <td align="right">seoTitle：</td>

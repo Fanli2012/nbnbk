@@ -107,7 +107,7 @@ class GoodsSearchword extends Base
      * @param string $field 字段
      * @return array
      */
-    public function getOne($where, $field = '*')
+    public function getOne($where, $field = '*', $order = '')
     {
         $res = self::where($where);
         
@@ -120,7 +120,7 @@ class GoodsSearchword extends Base
             $res = $res->field($field);
         }
         
-        $res = $res->find();
+        $res = $res->order($order)->find();
         
         return $res;
     }

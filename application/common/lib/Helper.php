@@ -428,4 +428,24 @@ class Helper
         
 		return $str;
 	}
+    
+    /**
+	 * http 404
+	 */
+	public static function http404()
+	{
+        header("HTTP/1.1 404 Not Found");
+        header("Status: 404 Not Found");
+        exit;
+    }
+    
+    /**
+	 * http 301
+	 */
+	public static function http301($url)
+	{
+        header("HTTP/1.1 301 Moved Permanently"); 
+        header("Location:$url");
+        exit;
+    }
 }

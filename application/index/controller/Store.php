@@ -28,7 +28,7 @@ class Store extends Base
         if($key != null)
         {
             $arr_key = $this->getArrByString($key);
-            if(!$arr_key){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
+            if(!$arr_key){Helper::http404();}
             
             //店铺所属分类id
             if(isset($arr_key['f']) && !empty($arr_key['f']))
@@ -51,7 +51,7 @@ class Store extends Base
         $where['status'] = 1;
         $where['head_img'] = ['<>',''];
         $posts = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
-        if(!$posts){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
+        if(!$posts){Helper::http404();}
         
         $page = $posts->render();
         $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
@@ -102,7 +102,7 @@ class Store extends Base
     //店铺详情页
     public function detail()
 	{
-        if(!checkIsNumber(input('id',null))){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
+        if(!checkIsNumber(input('id',null))){Helper::http404();}
         $shop_id = input('id');
         
         //店铺最新文章
@@ -144,10 +144,7 @@ class Store extends Base
         //$where3['delete_time'] = 0;
         //$where3['status'] = 1;
         $post = $this->getLogic()->getOne($where_shop);
-        if(!$post)
-        {
-            $this->error('您访问的页面不存在或已被删除', '/' , 3);
-        }
+        if(!$post){Helper::http404();}
         
         $post['content'] = logic('Article')->replaceKeyword($post['content']);
         $this->assign('post', $post);
@@ -166,6 +163,7 @@ class Store extends Base
         //$where_zuixin['category_id'] = $post['category_id'];
         $where_zuixin['status'] = 1;
         $where_zuixin['head_img'] = ['<>',''];
+        $where_zuixin['tuijian'] = 1;
         $relate_zuixin_list = logic('Shop')->getAll($where_zuixin, 'click desc', ['content'], 5);
         $this->assign('relate_zuixin_list',$relate_zuixin_list);
         

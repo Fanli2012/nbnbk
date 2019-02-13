@@ -29,7 +29,7 @@ WAP端
 
 6、http://www.nbnbk3.com只是示例域名，需换成自己绑定的域名
 
-注意：WAP端的域名通常是PC端的子域名，这里PC端的域名是www.nbnbk3.com，WAP端的域名是m.nbnbk3.com，子域名不是m就要修改apphome/route.php下的m
+注意：WAP端的域名通常是PC端的子域名，这里PC端的域名是www.nbnbk3.com，WAP端的域名是m.nbnbk3.com，子域名不是m就要修改application/route.php下的m
 
 <strong>PC入口</strong>：http://+PC域名+/
 
@@ -53,15 +53,17 @@ WAP端
 
 # 安装
 
+跟thinkphp5安装一样，只是多了一步数据库导入
+
 1、 导入数据库
 
-1) 打开根目录下的nbnbk.sql文件，将 http://www.nbnbk3.com 改成自己的站点根网址，格式：http://+域名
+1) 打开根目录下的nbnbk.sql文件，替换文件里面的 http://www.nbnbk3.com 为自己的站点根网址，格式：http(s)://+域名
 
 2) 导入数据库
 
 2、 修改数据库连接参数
 
-打开/apphome/database.php文件,修改相关配置
+打开/application/database.php文件,修改相关配置
 
 3、 登录后台->系统设置->系统配置参数，更新配置：http://www.nbnbk3.com/fladmin/Index/upcache
 

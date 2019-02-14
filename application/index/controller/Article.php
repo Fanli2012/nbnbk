@@ -117,7 +117,7 @@ class Article extends Base
             $where_zuixin['delete_time'] = 0;
             $where_zuixin['status'] = 0;
             $where_zuixin['type_id'] = $post['type_id'];
-            $where_zuixin['id'] = ['<',$id];
+            $where_zuixin['id'] = ['<',($id-1)];
             $relate_zuixin_list = logic('Article')->getAll($where_zuixin, 'update_time desc', ['content'], 5);
             if(!$relate_zuixin_list){unset($where_zuixin['id']);$relate_zuixin_list = logic('Article')->getAll($where_zuixin, 'update_time desc', ['content'], 5);}
             cache("index_article_detail_relate_zuixin_list_$id",$relate_zuixin_list,2592000);

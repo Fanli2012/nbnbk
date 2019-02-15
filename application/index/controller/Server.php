@@ -5,6 +5,7 @@ use think\Log;
 use think\Request;
 use think\Session;
 use app\common\lib\ReturnData;
+use app\common\lib\Helper;
 
 class Server extends Base
 {

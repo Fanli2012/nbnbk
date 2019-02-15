@@ -22,7 +22,7 @@ class Search extends Base
         if($key != null)
         {
             $arr_key = logic('Article')->getArrByString($key);
-            if(!$arr_key){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+            if(!$arr_key){Helper::http404();}
             
             //分类id
             if(isset($arr_key['f']) && $arr_key['f']>0)
@@ -39,8 +39,9 @@ class Search extends Base
         
         $where['delete_time'] = 0;
         $where['status'] = 0;
+        $where['add_time'] = ['<',time()];
         $list = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
-        if(!$list){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+        if(!$list){Helper::http404();}
         
         $page = $list->render();
         $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
@@ -52,6 +53,7 @@ class Search extends Base
         //最新
         $where2['delete_time'] = 0;
         $where2['status'] = 0;
+        $where2['add_time'] = ['<',time()];
         $zuixin_list = logic('Article')->getAll($where2, 'id desc', ['content'], 5);
         $this->assign('zuixin_list',$zuixin_list);
         
@@ -60,6 +62,7 @@ class Search extends Base
         $where3['status'] = 0;
         $where3['tuijian'] = 1;
         $where3['litpic'] = ['<>',''];
+        $where3['add_time'] = ['<',time()];
         $tuijian_list = logic('Article')->getAll($where3, 'id desc', ['content'], 5);
         $this->assign('tuijian_list',$tuijian_list);
         
@@ -73,14 +76,15 @@ class Search extends Base
     public function detail()
 	{
         $keyword = input('keyword', null);
-        if(!$keyword){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+        if(!$keyword){Helper::http404();}
         
         $where['title'] = array('like','%'.$keyword.'%');
         
         $where['delete_time'] = 0;
         $where['status'] = 0;
+        $where['add_time'] = ['<',time()];
         $list = logic('Article')->getPaginate($where, 'update_time desc', ['content']);
-        if(!$list){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+        if(!$list){Helper::http404();}
         
         $page = $list->render();
         $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
@@ -92,6 +96,7 @@ class Search extends Base
         //最新
         $where2['delete_time'] = 0;
         $where2['status'] = 0;
+        $where2['add_time'] = ['<',time()];
         $relate_zuixin_list = logic('Article')->getAll($where2, 'id desc', ['content'], 5);
         $this->assign('relate_zuixin_list',$relate_zuixin_list);
         
@@ -100,6 +105,7 @@ class Search extends Base
         $where3['status'] = 0;
         $where3['tuijian'] = 1;
         $where3['litpic'] = ['<>',''];
+        $where3['add_time'] = ['<',time()];
         $relate_tuijian_list = logic('Article')->getAll($where3, 'id desc', ['content'], 5);
         $this->assign('relate_tuijian_list',$relate_tuijian_list);
         //搜索词

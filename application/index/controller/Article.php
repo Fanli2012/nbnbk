@@ -49,7 +49,7 @@ class Article extends Base
         $where['delete_time'] = 0;
         $where['status'] = 0;
         $where['add_time'] = ['<',time()];
-        $list = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
+        $list = $this->getLogic()->getPaginate($where, 'id desc', ['content'], 11);
         if(!$list){Helper::http404();}
         
         $page = $list->render();
@@ -131,6 +131,7 @@ class Article extends Base
             $where_rand['delete_time'] = 0;
             $where_rand['status'] = 0;
             $where_rand['type_id'] = $post['type_id'];
+            $where_rand['add_time'] = ['<',time()];
             $relate_rand_list = logic('Article')->getAll($where_rand, 'rand()', ['content'], 5);
             cache("index_article_detail_relate_rand_list_$id",$relate_rand_list,2592000);
         }

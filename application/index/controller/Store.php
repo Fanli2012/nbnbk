@@ -106,12 +106,13 @@ class Store extends Base
         $shop_id = input('id');
         
         //店铺最新文章
-        $pagesize = 15;
+        $pagesize = 11;
         $offset = 0;
         if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
         $where['shop_id'] = $shop_id;
         $where['delete_time'] = 0;
-        $where_rand['status'] = 0;
+        $where['status'] = 0;
+        $where['add_time'] = ['<',time()];
 		$res = logic('Article')->getList($where, 'id desc', ['content'], $offset, $pagesize);
         if($res['list'])
         {
@@ -154,6 +155,7 @@ class Store extends Base
         $where_rand['shop_id'] = $shop_id;
         $where_rand['delete_time'] = 0;
         $where_rand['status'] = 0;
+        $where_rand['add_time'] = ['<',time()];
         //$where_rand['add_time'] = ['>',(time()-30*3600*24)];
         $relate_tuijian_list = logic('Article')->getAll($where_rand, 'click desc', ['content'], 5);
         $this->assign('relate_tuijian_list',$relate_tuijian_list);

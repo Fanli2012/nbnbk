@@ -3,6 +3,7 @@ namespace app\index\controller;
 use think\Request;
 use think\Db;
 use think\Controller;
+use app\common\lib\Helper;
 
 class Common extends Controller
 {
@@ -35,6 +36,6 @@ class Common extends Controller
     //设置空操作
     public function _empty()
     {
-        return $this->error('您访问的页面不存在或已被删除');
+        Helper::http404();
     }
 }

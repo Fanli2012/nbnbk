@@ -113,9 +113,9 @@ class Index extends Base
         $cat=input('cat');
         $pagenow=input('page');
         
-		if(empty($cat) || !preg_match('/[0-9]+/',$cat)){$this->error('您访问的页面不存在或已被删除', '/' , 3);exit;}
+		if(empty($cat) || !preg_match('/[0-9]+/',$cat)){Helper::http404();}
         
-		if(cache("catid$cat")){$post=cache("catid$cat");}else{$post = db('arctype')->where("id=$cat")->find();if(empty($post)){$this->error('您访问的页面不存在或已被删除', '/' , 3);exit;}cache("catid$cat",$post,2592000);}
+		if(cache("catid$cat")){$post=cache("catid$cat");}else{$post = db('arctype')->where("id=$cat")->find();if(empty($post)){Helper::http404();}cache("catid$cat",$post,2592000);}
         $this->assign('post',$post);
         
 		$subcat="";$sql="";
@@ -131,7 +131,7 @@ class Index extends Base
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果
 		}else{$pages = $counts/$pagesize;}
-		if(!empty($pagenow)){if($pagenow==1 || $pagenow>$pages){header("HTTP/1.0 404 Not Found");$this->error('您访问的页面不存在或已被删除');exit;}$page = $pagenow-1;$nextpage=$pagenow+1;$previouspage=$pagenow-1;}else{$page = 0;$nextpage=2;$previouspage=0;}
+		if(!empty($pagenow)){if($pagenow==1 || $pagenow>$pages){Helper::http404();}$page = $pagenow-1;$nextpage=$pagenow+1;$previouspage=$pagenow-1;}else{$page = 0;$nextpage=2;$previouspage=0;}
 		$this->assign('page',$page);
 		$this->assign('pages',$pages);
 		$this->assign('counts',$counts);
@@ -147,10 +147,10 @@ class Index extends Base
     public function detail()
 	{
         $id=input('id');
-        if(empty($id) || !preg_match('/[0-9]+/',$id)){$this->error('您访问的页面不存在或已被删除', '/' , 3);exit;}
+        if(empty($id) || !preg_match('/[0-9]+/',$id)){Helper::http404();}
         $article = db('article');
 		
-		if(cache("detailid$id")){$post=cache("detailid$id");}else{$post = db('article')->where("id=$id")->find();if(empty($post)){$this->error('您访问的页面不存在或已被删除', '/' , 3);exit;}$post['name'] = db('arctype')->where("id=".$post['typeid'])->value('name');cache("detailid$id",$post,2592000);}
+		if(cache("detailid$id")){$post=cache("detailid$id");}else{$post = db('article')->where("id=$id")->find();if(empty($post)){Helper::http404();}$post['name'] = db('arctype')->where("id=".$post['typeid'])->value('name');cache("detailid$id",$post,2592000);}
 		if($post)
         {
 			$cat=$post['typeid'];
@@ -161,10 +161,7 @@ class Index extends Base
             $pre = get_article_prenext(array('aid'=>$post["id"],'typeid'=>$post["typeid"],'type'=>"pre"));
             $this->assign('pre',$pre);
         }
-        else
-        {
-            $this->error('您访问的页面不存在或已被删除', '/' , 3);exit;
-        }
+        else{Helper::http404();}
         
         //获取最新列表
         $where = '';
@@ -184,7 +181,7 @@ class Index extends Base
         $tag=input('tag');
         $pagenow=input('page');
         
-		if(empty($tag) || !preg_match('/[0-9]+/',$tag)){$this->error('您访问的页面不存在或已被删除', '/' , 3);exit;}
+		if(empty($tag) || !preg_match('/[0-9]+/',$tag)){Helper::http404();}
         
 		$post = db('tagindex')->where("id=$tag")->find();
         $this->assign('post',$post);
@@ -195,7 +192,7 @@ class Index extends Base
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果
 		}else{$pages = $counts/$pagesize;}
-		if(!empty($pagenow)){if($pagenow==1 || $pagenow>$pages){header("HTTP/1.0 404 Not Found");$this->error('您访问的页面不存在或已被删除');exit;}$page = $pagenow-1;$nextpage=$pagenow+1;$previouspage=$pagenow-1;}else{$page = 0;$nextpage=2;$previouspage=0;}
+		if(!empty($pagenow)){if($pagenow==1 || $pagenow>$pages){Helper::http404();}$page = $pagenow-1;$nextpage=$pagenow+1;$previouspage=$pagenow-1;}else{$page = 0;$nextpage=2;$previouspage=0;}
 		$this->assign('page',$page);
 		$this->assign('pages',$pages);
 		$this->assign('counts',$counts);
@@ -247,7 +244,7 @@ class Index extends Base
 		if($counts % $pagesize){//取总数据量除以每页数的余数
 		$pages = intval($counts/$pagesize) + 1; //如果有余数，则页数等于总数据量除以每页数的结果取整再加一,如果没有余数，则页数等于总数据量除以每页数的结果
 		}else{$pages = $counts/$pagesize;}
-		if(!empty($pagenow)){if($pagenow==1 || $pagenow>$pages){header("HTTP/1.0 404 Not Found");$this->error('您访问的页面不存在或已被删除');exit;}$page = $pagenow-1;$nextpage=$pagenow+1;$previouspage=$pagenow-1;}else{$page = 0;$nextpage=2;$previouspage=0;}
+		if(!empty($pagenow)){if($pagenow==1 || $pagenow>$pages){Helper::http404();}$page = $pagenow-1;$nextpage=$pagenow+1;$previouspage=$pagenow-1;}else{$page = 0;$nextpage=2;$previouspage=0;}
 		$this->assign('page',$page);
 		$this->assign('pages',$pages);
 		$this->assign('counts',$counts);

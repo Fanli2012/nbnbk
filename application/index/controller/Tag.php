@@ -64,7 +64,7 @@ class Tag extends Base
     //详情页
     public function detail()
 	{
-        if(!checkIsNumber(input('id',null))){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
+        if(!checkIsNumber(input('id',null))){Helper::http404();}
         $id = input('id');
         
         $where['fl_taglist.tag_id'] = $id;

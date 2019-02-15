@@ -28,7 +28,7 @@ class Goods extends Base
         if($key != null)
         {
             $arr_key = logic('Article')->getArrByString($key);
-            if(!$arr_key){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+            if(!$arr_key){Helper::http404();}
             
             //分类id
             if(isset($arr_key['f']) && $arr_key['f']>0)
@@ -36,7 +36,7 @@ class Goods extends Base
                 $type_id = $where['type_id'] = $arr_key['f'];
                 
                 $post = model('GoodsType')->getOne(['id'=>$arr_key['f']]);
-                if(!$post){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+                if(!$post){Helper::http404();}
                 $title = $post['name'].'-'.sysconfig('CMS_WEBNAME');
                 if($post['seotitle']){$title = $post['seotitle'];}
                 $this->assign('post',$post);
@@ -102,7 +102,7 @@ class Goods extends Base
         $where['delete_time'] = 0;
         $where['status'] = 0;
         $list = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
-        if(!$list){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+        if(!$list){Helper::http404();}
         
         $page = $list->render();
         $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
@@ -145,7 +145,7 @@ class Goods extends Base
     //详情
     public function detail()
 	{
-        if(!checkIsNumber(input('id',null))){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+        if(!checkIsNumber(input('id',null))){Helper::http404();}
         $id = input('id');
         
         $post = cache("index_goods_detail_$id");
@@ -153,7 +153,7 @@ class Goods extends Base
         {
             $where['id'] = $id;
             $post = $this->getLogic()->getOne($where);
-            if(!$post){$this->error('您访问的页面不存在或已被删除', '/' , '', 3);}
+            if(!$post){Helper::http404();}
             cache("index_goods_detail_$id",$post,2592000);
             
         }

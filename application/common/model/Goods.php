@@ -322,7 +322,15 @@ class Goods extends Base
      */
     public function getGoodsImgListAttr($value, $data)
     {
-        return model('GoodsImg')->getAll(['goods_id'=>$data['id']]);
+        $res = model('GoodsImg')->getAll(['goods_id'=>$data['id']]);
+        if(!$res){return [];}
+        
+        foreach($res as $k=>$v)
+        {
+            if($v['url']){$res[$k]['url'] = http_host().$v['url'];}
+        }
+        
+        return $res;
     }
     
     /**

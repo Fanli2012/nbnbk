@@ -158,42 +158,54 @@ class ArticleLogic extends BaseLogic
         return $res;
     }
     
+    // 按二维数组的某一字段长度排序
+    public function arrStringLenSort($arr, $field)
+    {
+        $res = [];
+        
+        foreach($arr as $key=>$value)
+        {
+            $arr[$key]['len'] = strlen($value[$field]);
+        }
+        
+        $len_arr = array_column($arr, 'len');
+        array_multisort($len_arr, SORT_ASC, $arr);
+        
+        return $arr;
+    }
+    
     /**
-     * 为文章内容添加内敛, 排除alt title <a></a>直接的字符替换
+     * 为文章内容添加内链, 排除alt title <a></a>直接的字符替换
      *
      * @param string $body
      * @return string
      */
     public function replaceKeyword($body)
     {
-        $karr = $kaarr = array();
-        
         //暂时屏蔽超链接
         $body = preg_replace("#(<a(.*))(>)(.*)(<)(\/a>)#isU", '\\1-]-\\4-[-\\6', $body);
+        $body = preg_replace_callback("/title=\"(.*)\"/isU", function ($matches) { return 'title="'.urlencode($matches[1]).'"'; }, $body);
+        $body = preg_replace_callback("/alt=\"(.*)\"/isU", function ($matches) { return 'alt="'.urlencode($matches[1]).'"'; }, $body);
         
-        if(cache("keyword_list")){$posts=cache("keyword_list");}else{$posts = db("keyword")->select();cache("keyword_list",$posts,2592000);}
-        
-        foreach($posts as $row)
-        {
-            $name = trim($row['name']);
-            $key_url=trim($row['url']);
-            $karr[] = $name;
-            $kaarr[] = "<a href='$key_url' target='_blank'><u>$name</u></a>";
-        }
-        
-        asort($karr);
-        
+        $posts = cache("keyword_list");
+        if(!$posts){$posts = db("keyword")->select();cache("keyword_list",$posts,2592000);}
+        if(!$posts){return $body;}
         $body = str_replace('\"', '"', $body);
         
-        foreach ($karr as $key => $word)
+        $posts = $this->arrStringLenSort($posts, 'name');
+        
+        foreach ($posts as $key => $value)
         {
-            $body = preg_replace("#".preg_quote($word)."#isU", $kaarr[$key], $body, 1);
+            $body = preg_replace("#".preg_quote($value['name'])."#isU", '<a href="'.$value['url'].'"><u>'.$value['name'].'</u></a>', $body, 1);
         }
         
         //恢复超链接
-        return preg_replace("#(<a(.*))-\]-(.*)-\[-(\/a>)#isU", '\\1>\\3<\\4', $body);
+        $body = preg_replace("#(<a(.*))-\]-(.*)-\[-(\/a>)#isU", '\\1>\\3<\\4', $body);
+        $body = preg_replace_callback("/title=\"(.*)\"/isU", function ($matches) { return 'title="'.urldecode($matches[1]).'"'; }, $body);
+        $body = preg_replace_callback("/alt=\"(.*)\"/isU", function ($matches) { return 'alt="'.urldecode($matches[1]).'"'; }, $body);
+        return $body;
     }
-
+    
     /**
      * 删除非站内链接
      *

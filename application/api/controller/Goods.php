@@ -37,8 +37,7 @@ class Goods extends Base
         {
             foreach($res['list'] as $k=>$v)
             {
-                $res['list'][$k]['url'] = http_host().get_front_url(array("id"=>$v['id'],"type"=>'content'));
-                if(!empty($v['litpic'])){$res['list'][$k]['litpic'] = http_host().$v['litpic'];}
+                if($v['litpic']){$res['list'][$k]['litpic'] = http_host().$v['litpic'];}
             }
         }
         
@@ -55,9 +54,9 @@ class Goods extends Base
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
-        if(!empty($res['litpic'])){$res['litpic'] = http_host().$res['litpic'];}
+        if($res['litpic']){$res['litpic'] = http_host().$res['litpic'];}
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res->append(['goods_img_list','type_name_text','status_text'])->toArray())));
     }
     
     //添加

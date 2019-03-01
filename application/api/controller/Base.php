@@ -17,7 +17,7 @@ class Base extends Common
         parent::_initialize();
         
         //哪些方法不需要TOKEN验证
-        $uncheck = array('article/index','article/detail','arctype/index','arctype/detail','page/index','page/detail','friendlink/index','payment/index','slide/index','sysconfig/index','region/index','region/detail','goods/index','goods/detail','goodstype/index','goodstype/detail','shop/index','shop/detail','guestbook/add','wechat/miniprogramwxlogin','verifycode/getsmscodebysmsbao','verifycode/getemailcode','verifycode/check','emailverifycode/check');
+        $uncheck = array('article/index','article/detail','arctype/index','arctype/detail','page/index','page/detail','friendlink/index','payment/index','slide/index','sysconfig/index','region/index','region/detail','goods/index','goods/detail','goodstype/index','goodstype/detail','shop/index','shop/detail','guestbook/add','wechat/miniprogramwxlogin','verifycode/getsmscodebysmsbao','verifycode/getemailcode','verifycode/check','emailverifycode/check','index/config');
         if(!in_array(strtolower(request()->controller().'/'.request()->action()), $uncheck))
         {
             //TOKEN验证

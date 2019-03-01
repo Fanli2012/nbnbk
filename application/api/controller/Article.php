@@ -57,7 +57,8 @@ class Article extends Base
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
-        if(!empty($res['litpic'])){$res['litpic'] = http_host().$res['litpic'];}
+        if($res['content']){$res['content'] = preg_replace('/src=\"\/uploads\//','src="'.http_host().'/uploads/', $res['content']);}
+        if($res['litpic']){$res['litpic'] = http_host().$res['litpic'];}
         
 		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
     }

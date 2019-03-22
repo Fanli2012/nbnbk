@@ -101,15 +101,16 @@ class Goods extends Base
         
         $where['delete_time'] = 0;
         $where['status'] = 0;
-        $list = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
-        if(!$list){Helper::http404();}
+        $posts = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
         
-        $page = $list->render();
+        $page = $posts->render();
         $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
         $page = preg_replace('/&amp;key=[a-z0-9]+/', '', $page);
         $page = preg_replace('/\?page=1"/', '"', $page);
         $this->assign('page', $page);
+        $list = $posts->toArray();
         $this->assign('list', $list);
+        if(!$list['data']){Helper::http404();}
         
         //推荐商品
         $relate_tuijian_list = cache("index_goods_detail_relate_tuijian_list_$key");

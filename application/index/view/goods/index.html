@@ -3,8 +3,8 @@
 {include file="common/header"/}<div id="tad"><script>tjs();</script></div>
 
 <div class="box mt10">
-<?php if($list->total() > 0){ ?><ul class="goodsul" id="goods_list">
-<?php foreach($list as $k=>$v){ ?>
+<?php if($list['data']){ ?><ul class="goodsul" id="goods_list">
+<?php foreach($list['data'] as $k=>$v){ ?>
 <li><a href="<?php echo model('Goods')->getGoodsDetailUrl(array('id'=>$v['id'])); ?>"><img src="<?php echo $v['litpic']; ?>" alt="<?php echo $v['title']; ?>">
 <p class="title"><?php echo $v['title']; ?></p>
 <p class="desc"><?php echo $v['description']; ?></p>

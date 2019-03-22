@@ -51,14 +51,15 @@ class Store extends Base
         $where['status'] = 1;
         $where['head_img'] = ['<>',''];
         $posts = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
-        if(!$posts){Helper::http404();}
         
         $page = $posts->render();
         $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
         $page = preg_replace('/&amp;key=[a-z0-9]+/', '', $page);
         $page = preg_replace('/\?page=1"/', '"', $page);
         $this->assign('page', $page);
-        $this->assign('posts', $posts);
+        $list = $posts->toArray();
+        $this->assign('list', $list);
+        if(!$list['data']){Helper::http404();}
         
         //最新
         $where2['delete_time'] = 0;

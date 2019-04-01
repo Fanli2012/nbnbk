@@ -48,7 +48,16 @@ class SmsLog extends Base
                 $res['list'] = $res['list']->field($field);
             }
             
-            $res['list'] = $res['list']->order($order)->limit($offset.','.$limit)->select();
+            if(is_array($order))
+            {
+                $res['list'] = $res['list']->orderRaw($order[0]);
+            }
+            else
+            {
+                $res['list'] = $res['list']->order($order);
+            }
+            
+            $res['list'] = $res['list']->limit($offset.','.$limit)->select();
         }
         
         return $res;
@@ -77,7 +86,16 @@ class SmsLog extends Base
             $res = $res->field($field);
         }
         
-        return $res->order($order)->paginate($limit, $simple, array('query' => request()->param()));
+        if(is_array($order))
+        {
+            $res = $res->orderRaw($order[0]);
+        }
+        else
+        {
+            $res = $res->order($order);
+        }
+        
+        return $res->paginate($limit, $simple, array('query' => request()->param()));
     }
     
     /**
@@ -101,7 +119,16 @@ class SmsLog extends Base
             $res = $res->field($field);
         }
         
-        $res = $res->order($order)->limit($limit)->select();
+        if(is_array($order))
+        {
+            $res = $res->orderRaw($order[0]);
+        }
+        else
+        {
+            $res = $res->order($order);
+        }
+        
+        $res = $res->limit($limit)->select();
         
         return $res;
     }
@@ -125,7 +152,16 @@ class SmsLog extends Base
             $res = $res->field($field);
         }
         
-        $res = $res->order($order)->find();
+        if(is_array($order))
+        {
+            $res = $res->orderRaw($order[0]);
+        }
+        else
+        {
+            $res = $res->order($order);
+        }
+        
+        $res = $res->find();
         
         return $res;
     }

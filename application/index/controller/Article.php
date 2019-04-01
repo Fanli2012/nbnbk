@@ -83,7 +83,7 @@ class Article extends Base
             $where_rand['status'] = 0;
             $where_rand['add_time'] = ['<',time()];
             if(isset($type_id)){$where_rand['type_id'] = $type_id;}
-            $relate_rand_list = logic('Article')->getAll($where_rand, 'rand()', ['content'], 5);
+            $relate_rand_list = logic('Article')->getAll($where_rand, ['rand()'], ['content'], 5);
             cache("index_article_detail_relate_rand_list_$key",$relate_rand_list,2592000);
         }
         $this->assign('relate_rand_list',$relate_rand_list);

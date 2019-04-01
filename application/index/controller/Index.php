@@ -70,7 +70,7 @@ class Index extends Base
             $where_rand['delete_time'] = 0;
             $where_rand['status'] = 0;
             $where_rand['add_time'] = ['<',time()];
-            $relate_rand_list = logic('Article')->getAll($where_rand, 'rand()', ['content'], 5);
+            $relate_rand_list = logic('Article')->getAll($where_rand, ['rand()'], ['content'], 5);
             cache("index_index_index_relate_rand_list",$relate_rand_list,3600); //1小时
         }
         $this->assign('relate_rand_list',$relate_rand_list);

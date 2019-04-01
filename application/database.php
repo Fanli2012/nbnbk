@@ -50,4 +50,6 @@ return [
     'auto_timestamp' => false,
     // 是否需要进行SQL性能分析
     'sql_explain'    => false,
+    //取消前台自动格式化
+    'datetime_format'=> false,
 ];

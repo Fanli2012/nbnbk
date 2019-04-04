@@ -43,9 +43,9 @@ class Job extends Base
                 $res['list'] = $res['list']->field($field);
             }
             
-            if(is_array($order))
+            if(is_array($order) && isset($order[0]) && $order[0]=='orderRaw')
             {
-                $res['list'] = $res['list']->orderRaw($order[0]);
+                $res['list'] = $res['list']->orderRaw($order[1]);
             }
             else
             {
@@ -81,9 +81,9 @@ class Job extends Base
             $res = $res->field($field);
         }
         
-        if(is_array($order))
+        if(is_array($order) && isset($order[0]) && $order[0]=='orderRaw')
         {
-            $res = $res->orderRaw($order[0]);
+            $res = $res->orderRaw($order[1]);
         }
         else
         {
@@ -114,9 +114,9 @@ class Job extends Base
             $res = $res->field($field);
         }
         
-        if(is_array($order))
+        if(is_array($order) && isset($order[0]) && $order[0]=='orderRaw')
         {
-            $res = $res->orderRaw($order[0]);
+            $res = $res->orderRaw($order[1]);
         }
         else
         {
@@ -124,6 +124,39 @@ class Job extends Base
         }
         
         $res = $res->limit($limit)->select();
+        
+        return $res;
+    }
+    
+    /**
+     * 获取一条
+     * @param array $where 条件
+     * @param string $field 字段
+     * @return array
+     */
+    public function getOne($where, $field = '*', $order = '')
+    {
+        $res = self::where($where);
+        
+        if(is_array($field))
+        {
+            $res = $res->field($field[0],true);
+        }
+        else
+        {
+            $res = $res->field($field);
+        }
+        
+        if(is_array($order) && isset($order[0]) && $order[0]=='orderRaw')
+        {
+            $res = $res->orderRaw($order[1]);
+        }
+        else
+        {
+            $res = $res->order($order);
+        }
+        
+        $res = $res->find();
         
         return $res;
     }

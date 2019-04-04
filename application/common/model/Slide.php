@@ -53,9 +53,9 @@ class Slide extends Base
                 $res['list'] = $res['list']->field($field);
             }
             
-            if(is_array($order))
+            if(is_array($order) && isset($order[0]) && $order[0]=='orderRaw')
             {
-                $res['list'] = $res['list']->orderRaw($order[0]);
+                $res['list'] = $res['list']->orderRaw($order[1]);
             }
             else
             {
@@ -91,9 +91,9 @@ class Slide extends Base
             $res = $res->field($field);
         }
         
-        if(is_array($order))
+        if(is_array($order) && isset($order[0]) && $order[0]=='orderRaw')
         {
-            $res = $res->orderRaw($order[0]);
+            $res = $res->orderRaw($order[1]);
         }
         else
         {
@@ -124,9 +124,9 @@ class Slide extends Base
             $res = $res->field($field);
         }
         
-        if(is_array($order))
+        if(is_array($order) && isset($order[0]) && $order[0]=='orderRaw')
         {
-            $res = $res->orderRaw($order[0]);
+            $res = $res->orderRaw($order[1]);
         }
         else
         {
@@ -157,9 +157,9 @@ class Slide extends Base
             $res = $res->field($field);
         }
         
-        if(is_array($order))
+        if(is_array($order) && isset($order[0]) && $order[0]=='orderRaw')
         {
-            $res = $res->orderRaw($order[0]);
+            $res = $res->orderRaw($order[1]);
         }
         else
         {

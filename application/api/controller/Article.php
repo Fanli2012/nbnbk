@@ -31,7 +31,7 @@ class Article extends Base
         $where['delete_time'] = 0;
         $where['status'] = 0;
         $orderby = input('orderby','update_time desc');
-        if($orderby=='rand()'){$orderby = ['rand()'];}
+        if($orderby=='rand()'){$orderby = ['orderRaw','rand()'];}
         
         $res = $this->getLogic()->getList($where,$orderby,['content'],$offset,$limit);
 		

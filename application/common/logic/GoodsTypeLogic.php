@@ -116,25 +116,22 @@ class GoodsTypeLogic extends BaseLogic
         
         // 启动事务
         Db::startTrans();
-        $res = $this->getModel()->edit(['delete_time'=>time()], ['id'=>$record['id']]);
-        if($res)
+        $res = $this->getModel()->del(['id'=>$record['id']]);
+        if(!$res)
         {
-            $where_goods['type_id'] = $record['id'];
-            $res2 = model('Goods')->edit(['delete_time'=>time()], $where_goods);
-            if($res2)
-            {
-                // 提交事务
-                Db::commit();
-                return ReturnData::create(ReturnData::SUCCESS);
-            }
+			// 回滚事务
+			Db::rollback();
+			return ReturnData::create(ReturnData::FAIL);
         }
         
         //$res = $this->getModel()->del($where);
         //if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
-        // 回滚事务
-        Db::rollback();
-        return ReturnData::create(ReturnData::FAIL);
+        $where_goods['type_id'] = $record['id'];
+		model('Goods')->del($where_goods);
+		// 提交事务
+		Db::commit();
+		return ReturnData::create(ReturnData::SUCCESS);
     }
     
     /**

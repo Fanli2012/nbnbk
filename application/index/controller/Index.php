@@ -99,7 +99,7 @@ class Index extends Base
         if(!$slide_list)
         {
             $where_slide['status'] = 0;
-            $slide_list = logic('Slide')->getAll($where_slide, 'id desc', '*', 5);
+            $slide_list = logic('Slide')->getAll($where_slide, 'listorder asc', '*', 5);
             cache("index_index_index_slide_list",$slide_list,86400); //1天
         }
         $this->assign('slide_list',$slide_list);

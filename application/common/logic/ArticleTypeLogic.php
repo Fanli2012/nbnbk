@@ -140,25 +140,22 @@ class ArticleTypeLogic extends BaseLogic
         
         // 启动事务
         Db::startTrans();
-        $res = $this->getModel()->edit(['delete_time'=>time()], ['id'=>$record['id']]);
-        if($res)
+        $res = $this->getModel()->del(['id'=>$record['id']]);
+        if(!$res)
         {
-            $where_article['type_id'] = $record['id'];
-            $res2 = model('Article')->edit(['delete_time'=>time()], $where_article);
-            if($res2)
-            {
-                // 提交事务
-                Db::commit();
-                return ReturnData::create(ReturnData::SUCCESS);
-            }
+            // 回滚事务
+			Db::rollback();
+			return ReturnData::create(ReturnData::FAIL);
         }
         
         //$res = $this->getModel()->del($where);
         //if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
         
-        // 回滚事务
-        Db::rollback();
-        return ReturnData::create(ReturnData::FAIL);
+		$where_article['type_id'] = $record['id'];
+		model('Article')->del($where_article);
+		// 提交事务
+		Db::commit();
+		return ReturnData::create(ReturnData::SUCCESS);
     }
     
     /**

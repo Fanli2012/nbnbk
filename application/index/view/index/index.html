@@ -58,10 +58,26 @@ var swiper = new Swiper('.swiper-container', {
 <ul class="uli chs"><?php if($relate_tuijian_list){foreach($relate_tuijian_list as $row){ ?><li><a href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>"><?php echo $row['title']; ?></a></li><?php }} ?></ul><div class="cl"></div></div></div>
 <div class="cl"></div></div>
 
+<div class="tit-h60">推荐</div>
+
+<div id="mz-list" style="background-color:#f8f8f8;">
+<?php if($relate_tuijian_list){foreach($relate_tuijian_list as $row){ ?>
+<div class="mz-list">
+<?php if(!empty($row['litpic'])){ ?><a class="mz-list-img-box" href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>"><img alt="<?php echo $row['title']; ?>" src="<?php echo $row['litpic']; ?>"></a><?php } ?>
+<div class="mz-list-title"><a href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>"><?php echo $row['title']; ?></a></div>
+<div class="mz-list-time"><?php echo date("m-d H:i",$row['update_time']); ?>&nbsp;&nbsp;阅读(<?php echo $row['click']; ?>)&nbsp;&nbsp;<span class="zan">hot</span></div>
+<div class="mz-list-desc"><?php echo mb_strcut($row['description'],0,150,'UTF-8'); ?></div>
+</div>
+<?php }} ?>
+</div>
+
+<div class="tit-h60">最新</div>
+
 <div id="arclist">
 <?php if($list){foreach($list as $row){ ?><div class="list"><?php if(!empty($row['litpic'])){ ?><a class="limg" href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>"><img alt="<?php echo $row['title']; ?>" src="<?php echo $row['litpic']; ?>"></a><?php } ?>
 <strong class="tit"><a href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>"><?php echo $row['title']; ?></a></strong><p><?php echo mb_strcut($row['description'],0,150,'UTF-8'); ?>..</p>
-<div class="info"><span class="fl"><?php if(!empty($row['writer'])){ echo '<i>'.$row['writer'].'</i>'; }elseif(!empty($row['source'])){ echo '<i>'.$row['source'].'</i>'; } ?><em><?php echo date("m-d H:i",$row['update_time']); ?></em></span><span class="fr"><em><?php echo $row['click']; ?></em>人阅读</span></div><div class="cl"></div></div><?php }}else{echo '<div style="text-align:center;padding:20px;">暂无记录</div>';} ?></div>
+<div class="info"><span class="fl"><?php if(!empty($row['writer'])){ echo '<i>'.$row['writer'].'</i>'; }elseif(!empty($row['source'])){ echo '<i>'.$row['source'].'</i>'; } ?><em><?php echo date("m-d H:i",$row['update_time']); ?></em></span><span class="fr"><em><?php echo $row['click']; ?></em>人阅读</span></div><div class="cl"></div></div><?php }}else{echo '<div style="text-align:center;padding:20px;">暂无记录</div>';} ?>
+</div>
 
 </div><!-- fl_640 end -->
 

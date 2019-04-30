@@ -27,7 +27,10 @@
         "topthink/think-angular": "^1.0",
         "predis/predis": "^1.1",
         "jpush/jpush": "^3.5",
-        "jiguang/jmessage": "~1.1"
+        "jiguang/jmessage": "~1.1",
+        "firebase/php-jwt": "^4.0",
+     	"phpmailer/phpmailer": "~5.2",
+     	"phpoffice/phpexcel": "~1.8.1"
     },
     "extra": {
         "think-path": "thinkphp"

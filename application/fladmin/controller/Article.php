@@ -28,7 +28,8 @@ class Article extends Base
         {
             $where['type_id'] = $_REQUEST["type_id"];
         }
-        $where['status'] = 0; //审核过的文章
+        $where['delete_time'] = 0; //0未删除
+		$where['status'] = 0; //审核过的文章
         if(!empty($_REQUEST["status"]))
         {
             $where['status'] = $_REQUEST["status"]; //未审核过的文章

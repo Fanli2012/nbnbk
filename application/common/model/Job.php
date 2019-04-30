@@ -162,39 +162,6 @@ class Job extends Base
     }
     
     /**
-     * 获取一条
-     * @param array $where 条件
-     * @param string $field 字段
-     * @return array
-     */
-    public function getOne($where, $field = '*', $order = '')
-    {
-        $res = self::where($where);
-        
-        if(is_array($field))
-        {
-            $res = $res->field($field[0],true);
-        }
-        else
-        {
-            $res = $res->field($field);
-        }
-        
-        if(is_array($order))
-        {
-            $res = $res->orderRaw($order[0]);
-        }
-        else
-        {
-            $res = $res->order($order);
-        }
-        
-        $res = $res->find();
-        
-        return $res;
-    }
-    
-    /**
      * 添加
      * @param array $data 数据
      * @return int

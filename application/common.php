@@ -506,22 +506,29 @@ function get_pagination_url($http_host,$query_string,$page=0)
     return $res;
 }
 
-//输出json
-function echo_json($data)
+/**
+ * 返回json
+ * @param array $data
+ */
+function echo_json($data = array())
 {
-    header("content-type:application/json");
+    // 返回JSON数据格式到客户端 包含状态信息
+    header('Content-Type:application/json; charset=utf-8');
     exit(json_encode($data));
 }
 
 /**
- * 密码加密
- * @param  string $str 要加密的密码
- * @return string 加密后的密码
+ * 密码加密方法，可以考虑盐值包含时间（例如注册时间），
+ * @param string $pass 原始密码
+ * @return string 多重加密后的32位小写MD5码
  */
-function pwd_encrypt($str)
+function password_encrypt($pass)
 {
-    $pwd_key = 'pwd:';
-    return md5($str.$pwd_key);
+    if ('' == $pass) {
+        return '';
+    }
+    $salt = config('password_salt');
+    return md5(sha1($pass) . $salt);
 }
 
 //判断是否为数字

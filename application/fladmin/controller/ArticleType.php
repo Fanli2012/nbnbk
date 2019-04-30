@@ -93,22 +93,22 @@ class ArticleType extends Base
 		}
 		
         $res = $this->getLogic()->del($where);
-		if($res['code'] == ReturnData::SUCCESS)
+		if($res['code'] != ReturnData::SUCCESS)
         {
-            if(model('Article')->getCount(['type_id'=>$id])>0) //判断该分类下是否有文章，如果有把该分类下的文章也一起删除
-            {
-                if(model('Article')->del(['type_id'=>$id]))
-                {
-                    $this->success('删除成功', url('index'), '',1);
-                }
-                
-                $this->error('栏目下的文章删除失败');
-            }
-            
-            $this->success('删除成功', url('index'), '', 1);
+			$this->error($res['msg']);
         }
 		
-        $this->error($res['msg']);
+		if(model('Article')->getCount(['type_id'=>$id])>0) //判断该分类下是否有文章，如果有把该分类下的文章也一起删除
+		{
+			if(model('Article')->del(['type_id'=>$id]))
+			{
+				$this->success('删除成功', url('index'), '',1);
+			}
+			
+			$this->error('栏目下的文章删除失败');
+		}
+		
+		$this->success('删除成功', url('index'), '', 1);
     }
     
 }

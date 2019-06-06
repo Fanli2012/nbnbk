@@ -6,7 +6,7 @@ use app\common\lib\ReturnData;
 class Index extends Base
 {
     public function index()
-    {
+    {$current_url = request()->url();
 		dd(Article::getList(array('typeid'=>1)));
 		//return $this->fetch();
     }

@@ -87,9 +87,9 @@ class VerifyCodeLogic extends BaseLogic
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->add($data,$type);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //修改
@@ -98,9 +98,9 @@ class VerifyCodeLogic extends BaseLogic
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
         $res = $this->getModel()->edit($data,$where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //删除
@@ -112,9 +112,9 @@ class VerifyCodeLogic extends BaseLogic
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->del($where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     /**
@@ -141,9 +141,9 @@ class VerifyCodeLogic extends BaseLogic
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->getVerifyCodeBySmsbao($data['mobile'],$data['type']);
-        if($res['code'] == ReturnData::SUCCESS){return ReturnData::create(ReturnData::SUCCESS,$res['data']);}
+        if($res['code'] != ReturnData::SUCCESS){return ReturnData::create(ReturnData::FAIL, null, $res['msg']);}
         
-        return ReturnData::create(ReturnData::FAIL,null,$res['msg']);
+        return ReturnData::create(ReturnData::SUCCESS, $res['data']);
     }
     
     /**
@@ -161,8 +161,8 @@ class VerifyCodeLogic extends BaseLogic
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->isVerify($data);
-        if($res){return ReturnData::create(ReturnData::SUCCESS);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL, null, '验证码不存在或已过期');}
         
-        return ReturnData::create(ReturnData::FAIL,null,'验证码不存在或已过期');
+        return ReturnData::create(ReturnData::SUCCESS);
     }
 }

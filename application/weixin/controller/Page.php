@@ -78,19 +78,16 @@ class Page extends Base
     //详情
     public function detail()
 	{
+		//参数
         $id = input('id');
-        
-        $where['filename'] = $id;
-        $post = cache("index_page_detail_$id");
-        if(!$post)
-        {
-            $where['delete_time'] = 0;
-            $post = $this->getLogic()->getOne($where);
-            if(!$post){Helper::http404();}
-            cache("index_page_detail_$id",$post,2592000);
-        }
-        
-        $this->assign('post', $post);
+        $where = array();
+        if (intval($id)) {$where['id'] = $id;}else{$where['filename'] = $id;}
+        $url = sysconfig('CMS_API_URL').'/page/detail';
+		$res = curl_request($url, $where, 'GET');
+        if(empty($res['data'])){Helper::http404();}
+		
+		$assign_data['post'] = $res['data'];
+        $this->assign($assign_data);
         return $this->fetch();
     }
 }

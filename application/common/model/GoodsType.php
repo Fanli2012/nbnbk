@@ -11,6 +11,9 @@ class GoodsType extends Base
         return db('goods_type');
     }
     
+	//商品分类未删除
+	const GOODS_TYPE_UNDELETE = 0;
+	
     /**
      * 列表
      * @param array $where 查询条件
@@ -22,6 +25,7 @@ class GoodsType extends Base
      */
     public function getList($where = array(), $order = '', $field = '*', $offset = 0, $limit = 15)
     {
+		$where['delete_time'] = self::GOODS_TYPE_UNDELETE;
         $res['count'] = self::where($where)->count();
         $res['list'] = array();
         
@@ -65,6 +69,7 @@ class GoodsType extends Base
      */
     public function getPaginate($where = array(), $order = '', $field = '*', $limit = 15, $simple = false)
     {
+		$where['delete_time'] = self::GOODS_TYPE_UNDELETE;
         $res = self::where($where);
         
         if(is_array($field))
@@ -98,6 +103,7 @@ class GoodsType extends Base
      */
     public function getAll($where = array(), $order = '', $field = '*', $limit = '')
     {
+		$where['delete_time'] = self::GOODS_TYPE_UNDELETE;
         $res = self::where($where);
             
         if(is_array($field))
@@ -131,6 +137,7 @@ class GoodsType extends Base
      */
     public function getOne($where, $field = '*', $order = '')
     {
+		$where['delete_time'] = self::GOODS_TYPE_UNDELETE;
         $res = self::where($where);
         
         if(is_array($field))
@@ -221,6 +228,7 @@ class GoodsType extends Base
      */
     public function getCount($where, $field = '*')
     {
+		$where['delete_time'] = self::GOODS_TYPE_UNDELETE;
         return self::where($where)->count($field);
     }
     
@@ -232,6 +240,7 @@ class GoodsType extends Base
      */
     public function getMax($where, $field)
     {
+		$where['delete_time'] = self::GOODS_TYPE_UNDELETE;
         return self::where($where)->max($field);
     }
     
@@ -243,6 +252,7 @@ class GoodsType extends Base
      */
     public function getMin($where, $field)
     {
+		$where['delete_time'] = self::GOODS_TYPE_UNDELETE;
         return self::where($where)->min($field);
     }
     
@@ -254,6 +264,7 @@ class GoodsType extends Base
      */
     public function getAvg($where, $field)
     {
+		$where['delete_time'] = self::GOODS_TYPE_UNDELETE;
         return self::where($where)->avg($field);
     }
     
@@ -265,6 +276,7 @@ class GoodsType extends Base
      */
     public function getSum($where, $field)
     {
+		$where['delete_time'] = self::GOODS_TYPE_UNDELETE;
         return self::where($where)->sum($field);
     }
     
@@ -276,6 +288,7 @@ class GoodsType extends Base
      */
     public function getValue($where, $field)
     {
+		$where['delete_time'] = self::GOODS_TYPE_UNDELETE;
         return self::where($where)->value($field);
     }
     
@@ -287,6 +300,7 @@ class GoodsType extends Base
      */
     public function getColumn($where, $field)
     {
+		$where['delete_time'] = self::GOODS_TYPE_UNDELETE;
         return self::where($where)->column($field);
     }
     

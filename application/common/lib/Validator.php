@@ -460,22 +460,24 @@ class Validator
         return checkdate( $m, $d, $y );
     }
     
-    /**
-     * @commit: 检查日期是否符合0000-00-00
-     * @function: isDate
-     * @param $sDate
-     * @return bool
-     * @author by stars<1014916675@qq.com>
-     * @CreateTime 2017-09-22 18:12
-     */
-    public static function isDate($sDate) {
-        if (ereg("^[0-9]{4}\-[][0-9]{2}\-[0-9]{2}$", $sDate)) {
-            return TRUE;
-        } else {
-            return FALSE;
-        }
-    }
-    
+	/**
+	 * 判断是否是日期格式
+	 * date函数会给月和日补零，所以最终用unix时间戳来校验
+	 */
+	public static function isDate($date_string, $date_format='Y-m-d')
+	{
+		return strtotime( date($date_format, strtotime($date_string)) ) === strtotime( $date_string );
+	}
+	
+	/**
+	 * 判断值是否为时间戳
+	 */
+	public static function isTimestamp($timestamp)
+	{
+		if(!is_numeric($timestamp)){return false;}
+		return strtotime(date('Y-m-d H:i:s', $timestamp)) === (int)$timestamp;
+	}
+	
     /**
      * @commit: 检查日期是否符合0000-00-00 00:00:00
      * @function: isTime

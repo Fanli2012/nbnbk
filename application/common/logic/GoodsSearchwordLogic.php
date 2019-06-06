@@ -82,13 +82,24 @@ class GoodsSearchwordLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
+		//添加时间、更新时间
+		if(!(isset($data['add_time']) && !empty($data['add_time']))){$data['add_time'] = time();}
+		
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
-        $res = $this->getModel()->add($data,$type);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        //判断搜索词是否存在
+        if(isset($data['name']) && !empty($data['name']))
+        {
+            if($this->getModel()->getOne(['name'=>$data['name']])){
+                return ReturnData::create(ReturnData::PARAMS_ERROR,null,'该搜索词已存在');
+            }
+        }
         
-        return ReturnData::create(ReturnData::FAIL);
+        $res = $this->getModel()->add($data, $type);
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
+        
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //修改
@@ -96,10 +107,23 @@ class GoodsSearchwordLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
-        $res = $this->getModel()->edit($data,$where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        $record = $this->getModel()->getOne($where);
+        if(!$record){return ReturnData::create(ReturnData::RECORD_NOT_EXIST);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        //判断搜索词是否存在
+        if(isset($data['name']) && !empty($data['name']))
+        {
+            $where_name['name'] = $data['name'];
+            $where_name['id'] = ['<>',$record['id']]; //排除自身
+            if($this->getModel()->getOne($where_name)){
+                return ReturnData::create(ReturnData::PARAMS_ERROR,null,'该搜索词已存在');
+            }
+        }
+        
+        $res = $this->getModel()->edit($data,$where);
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
+        
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //删除
@@ -111,9 +135,9 @@ class GoodsSearchwordLogic extends BaseLogic
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->del($where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     /**
@@ -124,5 +148,11 @@ class GoodsSearchwordLogic extends BaseLogic
     private function getDataView($data = array())
     {
         return getDataAttr($this->getModel(),$data);
+    }
+	
+    //点击量+1
+    public function clickInc($where)
+    {
+        $this->getModel()->getDb()->where($where)->setInc('click', 1);
     }
 }

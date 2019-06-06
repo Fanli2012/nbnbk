@@ -3,6 +3,8 @@ namespace app\weixin\controller;
 
 class Base extends Common
 {
+    protected $login_info;
+	
 	/**
      * 初始化
      * @param void
@@ -12,32 +14,29 @@ class Base extends Common
 	{
         parent::_initialize();
         
-        //权限验证
-        /* if(session('admin_info')['role_id'] <> 1)
-        {
-            $this->check();
-        } */
+        $this->login_info = session('weixin_user_info');
+        $this->assign('login_info', $this->login_info);
+        
+		//判断是否登录
+        $this->isLogin();
     }
 	
-    public function check()
-    {
-        $uncheckarray = array('Applyindex','Applydelete','Applyoutput','Applylistorder','Applyedit','Applyupdate','Applystatus','Applyinsert');
-        if(in_array(MODULE_NAME.ACTION_NAME,$uncheckarray))
+	//判断是否登录
+	public function isLogin()
+	{
+		//哪些方法不需要TOKEN验证
+        $uncheck = array(
+			'article/index',
+			'article/detail',
+			'articletype/index',
+			'articletype/detail'
+		);
+        if (!in_array(strtolower(request()->controller().'/'.request()->action()), $uncheck))
         {
-
+            if(!session('weixin_user_info'))
+			{
+				header('Location: '.url('login/index'));exit;
+			}
         }
-        else
-        {
-        	if(MODULE_NAME!='Index'&&ACTION_NAME!='index')
-            {
-        		$menu_id = M('Menu')->where(array('model'=>MODULE_NAME,'action'=>ACTION_NAME))->getField('id');
-        		$check = M('Access')->where(array('role_id'=>session('admin_info')['role_id'],'menu_id'=>$menu_id))->find();
-        			
-        		if(empty($check))
-                {
-        			$this->error('您暂时无权限浏览,请联系管理员！');
-        		}
-        	}
-        }
-    }
+	}
 }

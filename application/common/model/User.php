@@ -17,6 +17,19 @@ class User extends Base
         return db('user');
     }
     
+	//用户未删除
+	const USER_UNDELETE = 0;
+    //用户状态：0正常，1待审，2锁定
+    const USER_STATUS_NORMAL = 0;
+    const USER_STATUS_UNCHECK = 1;
+    const USER_STATUS_LOCKING = 2;
+    //状态描述
+    public static $user_status_desc = array(
+        self::USER_STATUS_NORMAL => '正常',
+        self::USER_STATUS_UNCHECK => '待审',
+        self::USER_STATUS_LOCKING => '锁定'
+    );
+	
     /**
      * 列表
      * @param array $where 查询条件
@@ -296,17 +309,16 @@ class User extends Base
         return self::where($where)->column($field);
     }
     
-    //性别，性别1男2女 
-    public function getSexAttr($data)
+    //性别：1男2女
+    public function getSexAttr($value, $data)
     {
         $arr = array(1 => '男', 2 => '女');
         return $arr[$data['sex']];
     }
     
-    //用户状态 1正常状态 2 删除至回收站 3锁定
-    public function getStatusAttr($data)
+    //用户状态：0正常，1待审，2锁定
+    public function getStatusAttr($value, $data)
     {
-        $arr = array(1 => '正常', 2 => '删除', 3 => '锁定');
-        return $arr[$data['status']];
+        return self::$user_status_desc[$data['status']];
     }
 }

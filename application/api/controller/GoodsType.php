@@ -6,6 +6,7 @@ use app\common\lib\Token;
 use app\common\lib\Helper;
 use app\common\lib\ReturnData;
 use app\common\logic\GoodsTypeLogic;
+use app\common\model\GoodsType as GoodsTypeModel;
 
 class GoodsType extends Base
 {
@@ -27,11 +28,13 @@ class GoodsType extends Base
         $limit = input('limit',10);
         $offset = input('offset', 0);
         $orderby = input('orderby','listorder asc');
-        if(input('parent_id', null) != null){$where['parent_id'] = input('parent_id');}
+        if (input('parent_id', '') !== '') {$where['parent_id'] = input('parent_id');}
+        if (input('keyword', '') !== '') {$where['name'] = array('like','%'.input('keyword').'%');}
+        if (input('shop_id', '') !== '') {$where['shop_id'] = input('shop_id');}
         
         $res = $this->getLogic()->getList($where,$orderby,['content'],$offset,$limit);
 		
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
     }
     
     //详情

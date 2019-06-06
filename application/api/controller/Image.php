@@ -408,4 +408,42 @@ class Image extends Common
         //$url = 'https://www.qubaobei.com/'.str_replace('/opt/ci123/www/html/markets/app2/baby/','',PATH.$f_file_name);
         return $dest_image;
     }
+	
+	/**
+     * CURL上传图片
+     * @param [string] $url 图片上传地址
+     * @param [string] $file 图片文件流
+     */
+	public function curlUploadimg($url, $file = $_FILES['file'])
+    {
+		// 创建一个 cURL 句柄
+		$ch = curl_init($url);
+		// 创建一个 CURLFile 对象
+		$cfile = curl_file_create($file['tmp_name'], $file['type'], $file['name']);
+		 // 设置 POST 数据
+		$data = array('file' => $cfile);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+		// 执行句柄
+		$response = curl_exec($ch);
+        if ($response === false)
+		{
+            $error = curl_error($curl);
+            curl_close($curl);
+            return false;
+        }
+		else
+		{
+            // 解决windows 服务器 BOM 问题
+            $response = trim($response,chr(239).chr(187).chr(191));
+            $response = json_decode($response, true);
+        }
+        
+        curl_close($curl);
+		return $response;
+    }
 }

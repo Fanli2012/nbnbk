@@ -13,9 +13,9 @@ class Article extends Base
     protected $pk = 'id';
     
     //可以分别在写入、新增和更新的时候进行字段的自动完成机制，auto属性自动完成包含新增和更新操作
-    protected $auto = [];
-    protected $insert = ['add_time','update_time','delete_time' => 0];  
-    protected $update = ['update_time'];
+    protected $auto = array();
+    protected $insert = array('add_time','update_time','delete_time' => 0);  
+    protected $update = array('update_time');
     
     // 设置当前模型的数据库连接
     /* protected $connection = [
@@ -42,6 +42,17 @@ class Article extends Base
         return db('article');
     }
     
+	//文章未删除
+	const ARTICLE_UNDELETE = 0;
+    //状态：0正常，1未审核
+    const ARTICLE_STATUS_NORMAL = 0;
+    const ARTICLE_STATUS_UNCHECK = 1;
+    //状态描述
+    public static $article_status_desc = array(
+        self::ARTICLE_STATUS_NORMAL => '正常',
+        self::ARTICLE_STATUS_UNCHECK => '未审核'
+    );
+	
     /**
      * 列表
      * @param array $where 查询条件
@@ -53,6 +64,7 @@ class Article extends Base
      */
     public function getList($where = array(), $order = '', $field = '*', $offset = 0, $limit = 15)
     {
+		$where['delete_time'] = self::ARTICLE_UNDELETE;
         $res['count'] = self::where($where)->count();
         $res['list'] = array();
         
@@ -96,6 +108,7 @@ class Article extends Base
      */
     public function getPaginate($where = array(), $order = '', $field = '*', $limit = 15, $simple = false)
     {
+		$where['delete_time'] = self::ARTICLE_UNDELETE;
         $res = self::where($where);
         
         if(is_array($field))
@@ -129,6 +142,7 @@ class Article extends Base
      */
     public function getAll($where = array(), $order = '', $field = '*', $limit = '')
     {
+		$where['delete_time'] = self::ARTICLE_UNDELETE;
         $res = self::where($where);
             
         if(is_array($field))
@@ -162,6 +176,7 @@ class Article extends Base
      */
     public function getOne($where, $field = '*', $order = '')
     {
+		$where['delete_time'] = self::ARTICLE_UNDELETE;
         $res = self::where($where);
         
         if(is_array($field))
@@ -252,6 +267,7 @@ class Article extends Base
      */
     public function getCount($where, $field = '*')
     {
+		$where['delete_time'] = self::ARTICLE_UNDELETE;
         return self::where($where)->count($field);
     }
     
@@ -263,6 +279,7 @@ class Article extends Base
      */
     public function getMax($where, $field)
     {
+		$where['delete_time'] = self::ARTICLE_UNDELETE;
         return self::where($where)->max($field);
     }
     
@@ -274,6 +291,7 @@ class Article extends Base
      */
     public function getMin($where, $field)
     {
+		$where['delete_time'] = self::ARTICLE_UNDELETE;
         return self::where($where)->min($field);
     }
     
@@ -285,6 +303,7 @@ class Article extends Base
      */
     public function getAvg($where, $field)
     {
+		$where['delete_time'] = self::ARTICLE_UNDELETE;
         return self::where($where)->avg($field);
     }
     
@@ -296,6 +315,7 @@ class Article extends Base
      */
     public function getSum($where, $field)
     {
+		$where['delete_time'] = self::ARTICLE_UNDELETE;
         return self::where($where)->sum($field);
     }
     
@@ -307,6 +327,7 @@ class Article extends Base
      */
     public function getValue($where, $field)
     {
+		$where['delete_time'] = self::ARTICLE_UNDELETE;
         return self::where($where)->value($field);
     }
     
@@ -318,6 +339,7 @@ class Article extends Base
      */
     public function getColumn($where, $field)
     {
+		$where['delete_time'] = self::ARTICLE_UNDELETE;
         return self::where($where)->column($field);
     }
     
@@ -340,8 +362,7 @@ class Article extends Base
      */
     public function getStatusTextAttr($value, $data)
     {
-        $arr = array(0 => '正常', 1 => '未审核');
-        return $arr[$data['status']];
+        return self::$article_status_desc[$data['status']];
     }
     
     /**

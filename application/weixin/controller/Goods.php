@@ -137,7 +137,7 @@ class Goods extends Base
         }
         $this->assign('relate_rand_list',$relate_rand_list);
         
-        //seo标题设置
+        //SEO标题设置
         $this->assign('title',$title);
         
         return $this->fetch();
@@ -146,49 +146,30 @@ class Goods extends Base
     //详情
     public function detail()
 	{
-        if(!checkIsNumber(input('id',null))){Helper::http404();}
+		if(!checkIsNumber(input('id',null))){Helper::http404();}
         $id = input('id');
+		
+        $postdata = array(
+            'id'  => $id
+		);
+        if(isset($_SESSION['weixin_user_info'])){$postdata['user_id']=$_SESSION['weixin_user_info']['id'];}
+        $url = sysconfig('CMS_API_URL').'/goods/detail';
+		$res = curl_request($url, $postdata, 'GET');
+		if(empty($res['data'])){Helper::http404();}
+        $assign_data['post'] = $res['data'];
         
-        $post = cache("index_goods_detail_$id");
-        if(!$post)
+        //添加浏览记录
+        if(isset($_SESSION['weixin_user_info']))
         {
-            $where['id'] = $id;
-            $post = $this->getLogic()->getOne($where);
-            if(!$post){Helper::http404();}
-            cache("index_goods_detail_$id",$post,2592000);
-            
+            $postdata = array(
+                'goods_id'  => $id,
+                'access_token' => $_SESSION['weixin_user_info']['access_token']
+            );
+            $url = sysconfig('CMS_API_URL').'/user_goods_history_add';
+            curl_request($url, $postdata, 'POST');
         }
-        $this->assign('post',$post);
         
-        //最新文章
-        $relate_zuixin_list = cache("index_goods_detail_relate_zuixin_list_$id");
-        if(!$relate_zuixin_list)
-        {
-            $where_zuixin['delete_time'] = 0;
-            $where_zuixin['status'] = 0;
-            $where_zuixin['type_id'] = $post['type_id'];
-            $where_zuixin['id'] = ['<',$id];
-            $relate_zuixin_list = logic('Goods')->getAll($where_zuixin, 'update_time desc', ['content'], 5);
-            if(!$relate_zuixin_list){unset($where_zuixin['id']);$relate_zuixin_list = logic('Goods')->getAll($where_zuixin, 'update_time desc', ['content'], 5);}
-            cache("index_goods_detail_relate_zuixin_list_$id",$relate_zuixin_list,2592000);
-        }
-        $this->assign('relate_zuixin_list',$relate_zuixin_list);
-        
-        //随机文章
-        $relate_rand_list = cache("index_goods_detail_relate_rand_list_$id");
-        if(!$relate_rand_list)
-        {
-            $where_rand['delete_time'] = 0;
-            $where_rand['status'] = 0;
-            $where_rand['type_id'] = $post['type_id'];
-            $relate_rand_list = logic('Goods')->getAll($where_rand, ['orderRaw','rand()'], ['content'], 5);
-            cache("index_goods_detail_relate_rand_list_$id",$relate_rand_list,2592000);
-        }
-        $this->assign('relate_rand_list',$relate_rand_list);
-        
-        //面包屑导航
-        $this->assign('bread', logic('Goods')->get_goods_type_path($post['type_id']));
-        
+        $this->assign($assign_data);
         return $this->fetch();
     }
     

@@ -25,7 +25,7 @@ class Region extends Base
         //参数
         $where = array();
         $orderby = input('orderby','id asc');
-        $where['parent_id'] = input('id',86);
+        $where['parent_id'] = input('id', 86);
         
         if ($where['parent_id'] == null)
 		{

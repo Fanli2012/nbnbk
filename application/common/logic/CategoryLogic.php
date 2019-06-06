@@ -93,9 +93,9 @@ class CategoryLogic extends BaseLogic
         
         $data['add_time'] = $data['update_time'] = time();
         $res = $this->getModel()->add($data,$type);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //修改
@@ -114,9 +114,9 @@ class CategoryLogic extends BaseLogic
         
         $data['update_time'] = time();
         $res = $this->getModel()->edit($data,$where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //删除
@@ -128,9 +128,9 @@ class CategoryLogic extends BaseLogic
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->del($where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     /**

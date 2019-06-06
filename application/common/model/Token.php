@@ -15,8 +15,25 @@ class Token extends Base
     {
         return db('token');
     }
+	
+	//token类型：0:app, 1:admin, 2:weixin, 3:wap, 4:pc
+    const TOKEN_TYPE_APP = 0;
+    const TOKEN_TYPE_ADMIN = 1;
+    const TOKEN_TYPE_WEIXIN = 2;
+    const TOKEN_TYPE_WAP = 3;
+    const TOKEN_TYPE_PC = 4;
+    const TOKEN_TYPE_MINIPROGRAM = 5;
+    //状态描述
+    public static $token_type_desc = array(
+        self::TOKEN_TYPE_APP => 'app',
+        self::TOKEN_TYPE_ADMIN => 'admin',
+        self::TOKEN_TYPE_WEIXIN => 'weixin',
+        self::TOKEN_TYPE_WAP => 'wap',
+        self::TOKEN_TYPE_PC => 'pc',
+        self::TOKEN_TYPE_MINIPROGRAM => 'miniprogram'
+    );
     
-    /**
+	/**
      * 列表
      * @param array $where 查询条件
      * @param string $order 排序
@@ -296,9 +313,8 @@ class Token extends Base
     }
     
     //类型，0:app, 1:admin, 2:weixin, 3:wap, 4: pc
-    public function getTypeAttr($data)
+    public function getTypeAttr($value, $data)
     {
-        $arr = array(0 => 'app', 1 => 'admin', 2 => 'weixin', 3 => 'wap', 4 => 'pc');
-        return $arr[$data['type']];
+        return self::$token_type_desc[$data['type']];
     }
 }

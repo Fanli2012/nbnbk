@@ -248,24 +248,42 @@ function get_totalpage(array $param)
 }
 
 /**
- * 获得当前的页面文件的url
- * @access public
+ * 获取当前URL
+ * @param string|true $url URL地址 true 带域名获取
  * @return string
  */
-function GetCurUrl()
+function get_current_url($flag=false)
 {
-    if(!empty($_SERVER['REQUEST_URI']))
-    {
-        $nowurl = $_SERVER['REQUEST_URI'];
-        $nowurls = explode('?', $nowurl);
-        $nowurl = $nowurls[0];
-    }
-    else
-    {
-        $nowurl = $_SERVER['PHP_SELF'];
-    }
+	$url = '';
+	$is_cli = (PHP_SAPI == 'cli') ? true : false;
+	if ($is_cli) {
+		$url = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '';
+	} elseif (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
+		$url = $_SERVER['HTTP_X_REWRITE_URL'];
+	} elseif (isset($_SERVER['REQUEST_URI'])) {
+		$url = $_SERVER['REQUEST_URI'];
+	} elseif (isset($_SERVER['ORIG_PATH_INFO'])) {
+		$url = $_SERVER['ORIG_PATH_INFO'] . (!empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
+	}
+	
+	if ($url && $flag) { $url = http_host().$url; }
+	
+	return $url;
+}
+
+//获取http(s)://+域名
+function http_host($flag=false)
+{
+    $res = '';
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     
-    return $nowurl;
+	$res = "$protocol$_SERVER[HTTP_HOST]";
+	if ($flag)
+    {
+        $res = "$protocol$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; //完整网址
+    }
+	
+    return $res;
 }
 
 /**
@@ -432,23 +450,6 @@ if (! function_exists('dd')) {
     {
         echo '<pre>';print_r($data);exit;
     }
-}
-
-//获取http(s)://+域名
-function http_host($flag=true)
-{
-    $res = '';
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-    if($flag)
-    {
-        $res = "$protocol$_SERVER[HTTP_HOST]";
-    }
-    else
-    {
-        $res = "$protocol$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; //完整网址
-    }
-    
-    return $res;
 }
 
 /**

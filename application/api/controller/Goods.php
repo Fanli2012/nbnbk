@@ -6,6 +6,7 @@ use app\common\lib\Token;
 use app\common\lib\Helper;
 use app\common\lib\ReturnData;
 use app\common\logic\GoodsLogic;
+use app\common\model\Goods as GoodsModel;
 
 class Goods extends Base
 {
@@ -23,26 +24,72 @@ class Goods extends Base
     public function index()
 	{
         //参数
+		$timestamp = time();
         $limit = input('param.limit',10);
         $offset = input('param.offset', 0);
-        if(input('param.typeid', null) !== null){$where['typeid'] = input('param.typeid');}
-        if(input('param.keyword', null) !== null){$where['title'] = ['like','%'.input('param.keyword').'%'];}
-        if(input('tuijian', null) !== null){$where['tuijian'] = input('tuijian');}
-        $where['status'] = 0;
-        $orderby = input('orderby','id desc');
-        if($orderby=='rand()'){$orderby = ['orderRaw','rand()'];}
+		$where = array();
+        if(input('param.type_id', '') !== ''){$where['type_id'] = input('param.type_id');}
+        if(input('tuijian', '') !== ''){$where['tuijian'] = input('tuijian');}
+		if(input('brand_id', '') !== ''){$where['brand_id'] = input('brand_id');}
+        if(input('status', '') === ''){$where['status'] = GoodsModel::GOODS_STATUS_NORMAL;}else{if(input('status') != -1){$where['status'] = input('status');}}
+		//价格区间搜索
+		if(input('min_price', '') !== '' && input('max_price', '') !== '')
+		{
+			$where['price'] = array('>=', input('min_price'));
+			$where['price'] = array('<=', input('max_price'));
+		}
+		//促销商品
+		if(input('is_promote', 0) == 1)
+		{
+			$where['promote_start_date'] = array('<=', $timestamp);
+			$where['promote_end_date'] = array('>=', $timestamp);
+		}
+        //关键词搜索
+        if(input('keyword', '') !== '')
+        {
+			$where['title'] = array('like','%'.input('param.keyword').'%');
+            //添加搜索关键词
+			$where_goods_searchword = array('name'=>input('keyword'));
+            logic('GoodsSearchword')->add($where_goods_searchword);
+			logic('GoodsSearchword')->clickInc($where_goods_searchword); //点击量+1
+        }
+        
+		//排序
+		$orderby = input('orderby','id desc');
+        if(input('orderby', '') !== '')
+        {
+            switch (input('orderby'))
+            {
+                case 1:
+                    $orderby = 'sale desc'; //销量从高到低
+                    break;
+                case 2:
+                    $orderby = 'comments desc'; //评论从高到低
+                    break;
+                case 3:
+                    $orderby = 'price desc'; //价格从高到低
+                    break;
+                case 4:
+                    $orderby = 'price asc'; //价格从低到高
+                    break;
+                case 5:
+                    $orderby = array('orderRaw','rand()'); //随机
+                    break;
+                default:
+                    $orderby = 'update_time desc'; //最新
+            }
+        }
 		
         $res = $this->getLogic()->getList($where, $orderby, ['content'], $offset, $limit);
-		
-        if($res['list'])
+        if($res['count']>0)
         {
             foreach($res['list'] as $k=>$v)
             {
-                if($v['litpic']){$res['list'][$k]['litpic'] = http_host().$v['litpic'];}
+                if($v['litpic']){$res['list'][$k]['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['litpic'];}
             }
         }
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
     }
     
     //详情
@@ -53,11 +100,11 @@ class Goods extends Base
         $where['id'] = input('id');
         
 		$res = $this->getLogic()->getOne($where);
-        if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!$res){exit(json_encode(ReturnData::create(ReturnData::RECORD_NOT_EXIST)));}
         
-        if($res['litpic']){$res['litpic'] = http_host().$res['litpic'];}
+        if($res['litpic']){$res['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$res['litpic'];}
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res->append(['goods_img_list','type_name_text','status_text'])->toArray())));
+		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
     }
     
     //添加
@@ -65,7 +112,7 @@ class Goods extends Base
     {
         if(Helper::isPostRequest())
         {
-            $_POST['add_time'] = $_POST['pubdate'] = time();
+            $_POST['add_time'] = $_POST['update_time'] = time();
             $res = $this->getLogic()->add($_POST);
             
             exit(json_encode($res));

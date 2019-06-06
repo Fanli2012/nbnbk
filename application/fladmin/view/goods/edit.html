@@ -29,7 +29,7 @@
     </tr>
     <tr>
         <td align="right">活动价：</td>
-        <td colspan="2"><input name="promote_price" type="text" id="promote_price" style="width:80px" value="<?php if($post['promote_price']!=0){echo $post['promote_price'];} ?>">&nbsp;&nbsp; 活动开始日期：<input name="promote_start_date" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" type="text" id="promote_start_date" style="width:185px" value="<?php if($post['promote_start_date']!=0){echo $post['promote_start_date'];} ?>">&nbsp;&nbsp; 活动结束日期：<input name="promote_end_date" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" type="text" id="promote_end_date" style="width:185px" value="<?php if($post['promote_end_date']!=0){echo $post['promote_end_date'];} ?>"></td>
+        <td colspan="2"><input autocomplete="off" name="promote_price" type="text" id="promote_price" style="width:80px" value="<?php if($post['promote_price']>0){echo $post['promote_price'];} ?>">&nbsp;&nbsp; 活动开始日期：<input autocomplete="off" name="promote_start_date" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" type="text" id="promote_start_date" style="width:185px" value="<?php echo $post['promote_start_date']; ?>">&nbsp;&nbsp; 活动结束日期：<input autocomplete="off" name="promote_end_date" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" type="text" id="promote_end_date" style="width:185px" value="<?php echo $post['promote_end_date']; ?>"></td>
     </tr>
     <tr>
         <td align="right">推荐：</td>

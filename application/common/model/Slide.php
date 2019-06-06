@@ -1,8 +1,10 @@
 <?php
 namespace app\common\model;
-
 use think\Db;
 
+/**
+ * 幻灯/Banner
+ */
 class Slide extends Base
 {
     // 模型会自动对应数据表，模型类的命名规则是除去表前缀的数据表名称，采用驼峰法命名，并且首字母大写，例如：模型名UserType，约定对应数据表think_user_type(假设数据库的前缀定义是 think_)
@@ -21,10 +23,13 @@ class Slide extends Base
     const SLIDE_STATUS_NORMAL = 0;
     const SLIDE_STATUS_DISABLE = 1;
     //状态描述
-    public static $slide_status_desc = [
+    public static $slide_status_desc = array(
         self::SLIDE_STATUS_NORMAL => '正常',
         self::SLIDE_STATUS_DISABLE => '禁用'
-    ];
+    );
+	
+	//跳转方式
+    public static $slide_target = array(0 => '_blank', 1 => '_self', 2 => '_parent', 3 => '_top', 4 => 'framename');
     
     /**
      * 列表
@@ -314,11 +319,14 @@ class Slide extends Base
     {
         return self::$slide_status_desc[$data['status']];
     }
-    
-    //跳转方式，0_blank，1_self，2_parent，3_top，4framename
+	
+    /**
+     * 获取器——跳转方式，0_blank，1_self，2_parent，3_top，4framename
+     * @param int $value
+     * @return string
+     */
     public function getTargetTextAttr($value, $data)
     {
-        $arr = array(0 => '_blank', 1 => '_self', 2 => '_parent', 3 => '_top', 4 => 'framename');
-        return $arr[$data['target']];
+        return self::$slide_status_desc[$data['target']];
     }
 }

@@ -21,75 +21,55 @@ class Article extends Base
     //列表
     public function index()
 	{
-        $where = [];
-        $title = '';
+		$pagesize = 10;
+        $offset = 0;
         
-        $key = input('key', null);
-        if($key != null)
+		$id = input('id');
+        //文章分类
+        $postdata = array(
+            'id'  => $id
+		);
+        $url = sysconfig('CMS_API_URL').'/article_type/detail';
+		$arctype_detail = curl_request($url,$postdata,'GET');
+        $assign_data['post'] = $arctype_detail['data'];
+        
+        if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
+        
+        //文章列表
+        $postdata2 = array(
+            'limit'   => $pagesize,
+            'offset'  => $offset,
+            'type_id' => $id
+		);
+        $url = sysconfig('CMS_API_URL').'/article/index';
+		$res = curl_request($url, $postdata2, 'GET');
+        if($res['data']['list'])
         {
-            $arr_key = logic('Article')->getArrByString($key);
-            if(!$arr_key){Helper::http404();}
-            
-            //分类id
-            if(isset($arr_key['f']) && $arr_key['f']>0)
+            foreach($res['data']['list'] as $k => $v)
             {
-                $type_id = $where['type_id'] = $arr_key['f'];
-                
-                $post = model('ArticleType')->getOne(['id'=>$arr_key['f']]);
-                if(!$post){Helper::http404();}
-                $title = $post['name'].'-'.sysconfig('CMS_WEBNAME');
-                if($post['seotitle']){$title = $post['seotitle'];}
-                $this->assign('post',$post);
-                
-                //面包屑导航
-                $this->assign('bread', logic('Article')->get_article_type_path($where['type_id']));
+                $res['data']['list'][$k]['update_time'] = date('Y-m-d H:i', $v['update_time']);
             }
         }
+        $assign_data['list'] = $res['data']['list'];
         
-        $where['delete_time'] = 0;
-        $where['status'] = 0;
-        $where['add_time'] = ['<',time()];
-        $posts = $this->getLogic()->getPaginate($where, 'id desc', ['content'], 11);
+        $assign_data['totalpage'] = ceil($res['data']['count']/$pagesize);
         
-        $page = $posts->render();
-        $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
-        $page = preg_replace('/&amp;key=[a-z0-9]+/', '', $page);
-        $page = preg_replace('/\?page=1"/', '"', $page);
-        $this->assign('page', $page);
-        $list = $posts->toArray();
-        $this->assign('list', $list);
-        if(!$list['data']){Helper::http404();}
-        
-        //推荐文章
-        $relate_tuijian_list = cache("index_article_detail_relate_tuijian_list_$key");
-        if(!$relate_tuijian_list)
+        if(isset($_REQUEST['page_ajax']) && $_REQUEST['page_ajax']==1)
         {
-            $where_tuijian['delete_time'] = 0;
-            $where_tuijian['status'] = 0;
-            $where_tuijian['tuijian'] = 1;
-            $where_tuijian['litpic'] = ['<>',''];
-            $where_tuijian['add_time'] = ['<',time()];
-            if(isset($type_id)){$where_tuijian['type_id'] = $type_id;}
-            $relate_tuijian_list = logic('Article')->getAll($where_tuijian, 'update_time desc', ['content'], 5);
-            cache("index_article_detail_relate_tuijian_list_$key",$relate_tuijian_list,2592000);
-        }
-        $this->assign('relate_tuijian_list',$relate_tuijian_list);
-        
-        //随机文章
-        $relate_rand_list = cache("index_article_detail_relate_rand_list_$key");
-        if(!$relate_rand_list)
-        {
-            $where_rand['delete_time'] = 0;
-            $where_rand['status'] = 0;
-            $where_rand['add_time'] = ['<',time()];
-            if(isset($type_id)){$where_rand['type_id'] = $type_id;}
-            $relate_rand_list = logic('Article')->getAll($where_rand, ['orderRaw','rand()'], ['content'], 5);
-            cache("index_article_detail_relate_rand_list_$key",$relate_rand_list,2592000);
-        }
-        $this->assign('relate_rand_list',$relate_rand_list);
-        
-        //seo标题设置
-        $this->assign('title',$title);
+    		$html = '';
+            
+            if($res['data']['list'])
+            {
+                foreach($res['data']['list'] as $k => $v)
+                {
+                    $html .= '<li><a href="'.url('detail').'?id='.$v['id'].'">'.$v['title'].'</a><p>'.$v['update_time'].'</p></li>';
+                }
+            }
+            
+    		exit(json_encode($html));
+    	}
+		//dd($assign_data);
+		$this->assign($assign_data);
         return $this->fetch();
     }
 	
@@ -98,52 +78,18 @@ class Article extends Base
 	{
         if(!checkIsNumber(input('id',null))){Helper::http404();}
         $id = input('id');
-        
-        $post = cache("index_article_detail_$id");
-        if(!$post)
-        {
-            $where['id'] = $id;
-            $post = $this->getLogic()->getOne($where);
-            if(!$post){Helper::http404();}
-            $post['content'] = $this->getLogic()->replaceKeyword($post['content']);
-            cache("index_article_detail_$id",$post,2592000);
-            
-        }
-        $this->assign('post',$post);
-        
-        //最新文章
-        $relate_zuixin_list = cache("index_article_detail_relate_zuixin_list_$id");
-        if(!$relate_zuixin_list)
-        {
-            $where_zuixin['delete_time'] = 0;
-            $where_zuixin['status'] = 0;
-            $where_zuixin['type_id'] = $post['type_id'];
-            $where_zuixin['id'] = ['<',($id-1)];
-            $relate_zuixin_list = logic('Article')->getAll($where_zuixin, 'update_time desc', ['content'], 5);
-            if(!$relate_zuixin_list){unset($where_zuixin['id']);$relate_zuixin_list = logic('Article')->getAll($where_zuixin, 'update_time desc', ['content'], 5);}
-            cache("index_article_detail_relate_zuixin_list_$id",$relate_zuixin_list,2592000);
-        }
-        $this->assign('relate_zuixin_list',$relate_zuixin_list);
-        
-        //随机文章
-        $relate_rand_list = cache("index_article_detail_relate_rand_list_$id");
-        if(!$relate_rand_list)
-        {
-            $where_rand['delete_time'] = 0;
-            $where_rand['status'] = 0;
-            $where_rand['type_id'] = $post['type_id'];
-            $where_rand['add_time'] = ['<',time()];
-            $relate_rand_list = logic('Article')->getAll($where_rand, ['orderRaw','rand()'], ['content'], 5);
-            cache("index_article_detail_relate_rand_list_$id",$relate_rand_list,2592000);
-        }
-        $this->assign('relate_rand_list',$relate_rand_list);
-        
-        //面包屑导航
-        $this->assign('bread', logic('Article')->get_article_type_path($post['type_id']));
-        
-        //上一篇、下一篇
-        $this->assign($this->getPreviousNextArticle(['article_id'=>$id]));
-        
+		
+        $postdata = array(
+            'id'  => $id
+		);
+        $url = sysconfig('CMS_API_URL').'/article/detail';
+		$res = curl_request($url,$postdata,'GET');
+        if(empty($res['data'])){Helper::http404();}
+        $res['data']['content'] = preg_replace('/src=\"\/uploads\/allimg/',"src=\"".sysconfig('CMS_BASEHOST')."/uploads/allimg",$res['data']['content']);
+        $res['data']['update_time'] = date('Y-m-d',$res['data']['update_time']);
+        $assign_data['post'] = $res['data'];
+		//dd($assign_data['post']);
+		$this->assign($assign_data);
         return $this->fetch();
     }
     

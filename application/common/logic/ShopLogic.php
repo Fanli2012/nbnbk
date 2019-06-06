@@ -147,9 +147,9 @@ class ShopLogic extends BaseLogic
         if(isset($data['password']) && !empty($data['password'])){$data['password'] = md5($data['password']);}else{$data['password'] = md5('Fanli123456');}
         
         $res = $this->getModel()->add($data,$type);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //修改
@@ -161,9 +161,9 @@ class ShopLogic extends BaseLogic
         if(isset($data['password']) && !empty($data['password'])){$data['password'] = md5($data['password']);}else{unset($data['password']);}
         
         $res = $this->getModel()->edit($data,$where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //删除
@@ -175,9 +175,9 @@ class ShopLogic extends BaseLogic
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->del($where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     /**
@@ -206,9 +206,9 @@ class ShopLogic extends BaseLogic
         if(md5($data['old_password']) != $record['password']){return ReturnData::create(ReturnData::FAIL,null, '旧密码错误');}
         
         $res = $this->getModel()->edit(['password'=>md5($data['password'])],$where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //修改
@@ -221,9 +221,9 @@ class ShopLogic extends BaseLogic
         
         $data['update_time'] = time();
         $res = $this->getModel()->edit($data,$where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //注册
@@ -247,12 +247,9 @@ class ShopLogic extends BaseLogic
         $data['add_time'] = $data['update_time'] = time();
         $data['password'] = md5($data['password']);
         $res = $this->getModel()->add($data);
-        if($res)
-        {
-            return ReturnData::create(ReturnData::SUCCESS,$res);
-        }
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //重置密码
@@ -270,11 +267,8 @@ class ShopLogic extends BaseLogic
         $data['update_time'] = time();
         $data['password'] = md5($data['password']);
         $res = $this->getModel()->edit($data,['id'=>$record['id']]);
-        if($res)
-        {
-            return ReturnData::create(ReturnData::SUCCESS,$res);
-        }
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
 }

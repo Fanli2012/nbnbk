@@ -26,7 +26,7 @@ class ArticleLogic extends BaseLogic
     {
         $res = $this->getModel()->getList($where, $order, $field, $offset, $limit);
         
-        if($res['list'])
+        if($res['count'] > 0)
         {
             foreach($res['list'] as $k=>$v)
             {
@@ -87,13 +87,17 @@ class ArticleLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
+		//添加时间、更新时间
+		if(!(isset($data['add_time']) && !empty($data['add_time']))){$data['add_time'] = time();}
+		if(!(isset($data['update_time']) && !empty($data['update_time']))){$data['update_time'] = time();}
+		
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->add($data,$type);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //修改
@@ -101,10 +105,16 @@ class ArticleLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
-        $res = $this->getModel()->edit($data,$where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+		//更新时间
+		if(!(isset($data['update_time']) && !empty($data['update_time']))){$data['update_time'] = time();}
+		
+        $record = $this->getModel()->getOne($where);
+        if(!$record){return ReturnData::create(ReturnData::RECORD_NOT_EXIST);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        $res = $this->getModel()->edit($data,$where);
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
+        
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //删除
@@ -115,10 +125,10 @@ class ArticleLogic extends BaseLogic
         $check = $this->getValidate()->scene('del')->check($where);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
-        $res = $this->getModel()->del($where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        $res = $this->getModel()->edit(array('delete_time'=>time()), $where);
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     /**

@@ -170,12 +170,12 @@ class Goods extends Base
         $this->assign('id', $where['id']);
         
         $post = $this->getLogic()->getOne($where);
-        $this->assign('post', $post);
         
         //时间戳转日期格式
         if($post['promote_start_date'] == 0){$post['promote_start_date'] = '';}else{$post['promote_start_date'] = date('Y-m-d H:i:s',$post['promote_start_date']);}
         if($post['promote_end_date'] == 0){$post['promote_end_date'] = '';}else{$post['promote_end_date'] = date('Y-m-d H:i:s',$post['promote_end_date']);}
         
+		$this->assign('post', $post);
         //分类列表
         $this->assign('goods_type_list', $this->goods_type_list);
         //品牌列表

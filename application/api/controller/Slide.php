@@ -6,6 +6,7 @@ use app\common\lib\Token;
 use app\common\lib\Helper;
 use app\common\lib\ReturnData;
 use app\common\logic\SlideLogic;
+use app\common\model\Slide as SlideModel;
 
 class Slide extends Base
 {
@@ -26,23 +27,22 @@ class Slide extends Base
         $where = array();
         $limit = input('limit',10);
         $offset = input('offset', 0);
-        if(input('keyword', null) !== null){$where['title'] = ['like','%'.input('keyword').'%'];}
-        if(input('target', null) !== null){$where['target'] = input('target');}
-        if(input('group_id', null) !== null){$where['group_id'] = input('group_id');}
-        $where['status'] = 0;
+        if(input('keyword', '') !== ''){$where['title'] = ['like','%'.input('keyword').'%'];}
+        if(input('target', '') !== ''){$where['target'] = input('target');}
+        if(input('group_id', '') !== ''){$where['group_id'] = input('group_id');}
+		if(input('status', '') === ''){$where['status'] = SlideModel::SLIDE_STATUS_NORMAL;}else{if(input('status') != -1){$where['status'] = input('status');}}
         $orderby = input('orderby','listorder asc');
         
-        $res = $this->getLogic()->getList($where,$orderby,'*',$offset,$limit);
-		
+        $res = $this->getLogic()->getList($where, $orderby, '*', $offset, $limit);
         if($res['count']>0)
         {
             foreach($res['list'] as $k=>$v)
             {
-                if(!empty($v['pic'])){$res['list'][$k]['pic'] = http_host().$v['pic'];}
+                if($v['pic']){$res['list'][$k]['pic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['pic'];}
             }
         }
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
     }
     
     //详情
@@ -55,9 +55,9 @@ class Slide extends Base
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         
-        if(!empty($res['pic'])){$res['pic'] = http_host().$res['pic'];}
+        if($res['pic']){$res['pic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$res['pic'];}
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
     }
     
     //添加

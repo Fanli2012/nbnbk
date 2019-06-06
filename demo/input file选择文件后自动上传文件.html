@@ -1,0 +1,43 @@
+<html><head>
+<title>input file选择文件后自动上传文件</title>
+<script src="https://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
+</head><body>
+<input type="file" name="file" id="file" onchange ="fileLoad(this)" />
+<script type="text/javascript">
+//1创建fileLoad方法用来上传文件
+function fileLoad(ele){
+	  //2创建一个formData对象
+	var formData = new FormData();
+	//3获取传入元素的val
+	var name = $(ele).val();
+	  //4获取files
+	var files = $(ele)[0].files[0];
+	//5将name 和 files 添加到formData中，键值对形式
+	formData.append("file", files);
+	formData.append("name", name);
+	$.ajax({
+		url: "{:url('api/Image/imageUpload')}",
+		type: 'POST',
+		data: formData,
+		dataType: 'json',
+		processData: false,// 6告诉jQuery不要去处理发送的数据
+		contentType: false, // 7告诉jQuery不要去设置Content-Type请求头
+		beforeSend: function () {
+			//8发送之前的动作
+			alert("我还没开始发送呢");
+		},
+		success: function (responseStr) {
+		    //9成功后的动作
+			//alert("成功啦");
+			console.log(responseStr);
+			if(responseStr.code==1){$('#file').val(responseStr.msg);}
+		},
+		error : function (responseStr) {
+			//10出错后的动作
+			alert("出错啦");
+		}
+	});
+}
+</script>
+</body>
+</html>

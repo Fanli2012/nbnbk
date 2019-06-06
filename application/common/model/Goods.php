@@ -37,6 +37,19 @@ class Goods extends Base
         return db('goods');
     }
     
+	//商品未删除
+	const GOODS_UNDELETE = 0;
+    //商品状态：0正常，1下架，2申请上架
+    const GOODS_STATUS_NORMAL = 0;
+    const GOODS_STATUS_UNDERCARRIAGE = 1;
+	const GOODS_STATUS_APPLY_SHELVES = 2;
+    //状态描述
+    public static $goods_status_desc = array(
+        self::GOODS_STATUS_NORMAL => '正常',
+        self::GOODS_STATUS_UNDERCARRIAGE => '下架',
+        self::GOODS_STATUS_APPLY_SHELVES => '申请上架'
+    );
+	
     /**
      * 列表
      * @param array $where 查询条件
@@ -48,6 +61,7 @@ class Goods extends Base
      */
     public function getList($where = array(), $order = '', $field = '*', $offset = 0, $limit = 15)
     {
+		$where['delete_time'] = self::GOODS_UNDELETE;
         $res['count'] = self::where($where)->count();
         $res['list'] = array();
         
@@ -91,6 +105,7 @@ class Goods extends Base
      */
     public function getPaginate($where = array(), $order = '', $field = '*', $limit = 15, $simple = false)
     {
+		$where['delete_time'] = self::GOODS_UNDELETE;
         $res = self::where($where);
         
         if(is_array($field))
@@ -124,6 +139,7 @@ class Goods extends Base
      */
     public function getAll($where = array(), $order = '', $field = '*', $limit = '')
     {
+		$where['delete_time'] = self::GOODS_UNDELETE;
         $res = self::where($where);
             
         if(is_array($field))
@@ -157,6 +173,7 @@ class Goods extends Base
      */
     public function getOne($where, $field = '*', $order = '')
     {
+		$where['delete_time'] = self::GOODS_UNDELETE;
         $res = self::where($where);
         
         if(is_array($field))
@@ -247,6 +264,7 @@ class Goods extends Base
      */
     public function getCount($where, $field = '*')
     {
+		$where['delete_time'] = self::GOODS_UNDELETE;
         return self::where($where)->count($field);
     }
     
@@ -258,6 +276,7 @@ class Goods extends Base
      */
     public function getMax($where, $field)
     {
+		$where['delete_time'] = self::GOODS_UNDELETE;
         return self::where($where)->max($field);
     }
     
@@ -269,6 +288,7 @@ class Goods extends Base
      */
     public function getMin($where, $field)
     {
+		$where['delete_time'] = self::GOODS_UNDELETE;
         return self::where($where)->min($field);
     }
     
@@ -280,6 +300,7 @@ class Goods extends Base
      */
     public function getAvg($where, $field)
     {
+		$where['delete_time'] = self::GOODS_UNDELETE;
         return self::where($where)->avg($field);
     }
     
@@ -291,6 +312,7 @@ class Goods extends Base
      */
     public function getSum($where, $field)
     {
+		$where['delete_time'] = self::GOODS_UNDELETE;
         return self::where($where)->sum($field);
     }
     
@@ -302,6 +324,7 @@ class Goods extends Base
      */
     public function getValue($where, $field)
     {
+		$where['delete_time'] = self::GOODS_UNDELETE;
         return self::where($where)->value($field);
     }
     
@@ -313,6 +336,7 @@ class Goods extends Base
      */
     public function getColumn($where, $field)
     {
+		$where['delete_time'] = self::GOODS_UNDELETE;
         return self::where($where)->column($field);
     }
     
@@ -346,8 +370,7 @@ class Goods extends Base
      */
     public function getStatusTextAttr($value, $data)
     {
-        $arr = array(0 => '正常', 1 => '已删除', 2 => '下架', 3 => '申请上架');
-        return $arr[$data['status']];
+        return self::$goods_status_desc[$data['status']];
     }
     
     /**
@@ -359,11 +382,11 @@ class Goods extends Base
     public function getGoodsImgListAttr($value, $data)
     {
         $res = model('GoodsImg')->getAll(['goods_id'=>$data['id']]);
-        if(!$res){return [];}
+        if(!$res){return array();}
         
         foreach($res as $k=>$v)
         {
-            if($v['url']){$res[$k]['url'] = http_host().$v['url'];}
+            if($v['url']){$res[$k]['url'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['url'];}
         }
         
         return $res;

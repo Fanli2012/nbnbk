@@ -17,7 +17,7 @@ class Common extends Controller
 	public function _initialize()
 	{
         $route = request()->module().'/'.request()->controller().'/'.request()->action();
-        
+        //店铺登录信息
         $this->login_info = session('shop_info');
         $this->assign('login_info', $this->login_info);
         

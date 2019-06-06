@@ -86,7 +86,7 @@ class Wechat extends UserBase
         $add_data['source'] = 5;
         $add_data['head_img'] = isset($data['avatarUrl'])?$data['avatarUrl']:'';
         $add_data['sex'] = isset($data['gender'])?$data['gender']:0;
-        $add_data['nickname'] = isset($data['nickName']) ? $this->filterEmoji($data['nickName']) : '';
+        $add_data['nickname'] = isset($data['nickName']) ? Helper::filterEmoji($data['nickName']) : '';
         $add_data['openid'] = isset($data['openId'])?$data['openId']:'';
         $add_res = logic('User')->xcxadd($add_data);
         if($add_res['code'] != ReturnData::SUCCESS)

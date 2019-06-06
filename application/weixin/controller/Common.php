@@ -1,14 +1,12 @@
 <?php
 namespace app\weixin\controller;
-use think\Request;
-use think\Db;
 use think\Controller;
+use think\Db;
+use think\Request;
 use app\common\lib\Helper;
 
 class Common extends Controller
 {
-    protected $login_info;
-    
     /**
      * 初始化
      * @param void
@@ -16,21 +14,11 @@ class Common extends Controller
      */
 	public function _initialize()
 	{
-        $route = request()->module().'/'.request()->controller().'/'.request()->action();
-        
-        $this->login_info = session('shop_info');
-        $this->assign('login_info', $this->login_info);
-        
-        //判断是否拥有权限
-		/* if($this->shop_info['role_id'] <> 1)
-		{
-			$uncheck = array('shop/index/index','shop/index/upconfig','shop/index/upcache','shop/index/welcome');
-            
-			if(!in_array($route, $uncheck))
-			{
-				
-			}
-        } */
+		parent::_initialize();
+		
+		$this->isWechatBrowser = Helper::isWechatBrowser();
+		$this->assign('isWechatBrowser', $this->isWechatBrowser);
+		
     }
 	
     //设置空操作

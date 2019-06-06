@@ -10,7 +10,7 @@ class ReturnData
     const SYSTEM_FAIL           = 8002; //系统错误，如数据写入失败之类的
     const PARAMS_ERROR          = 8003; //参数错误
     const NOT_FOUND             = 8004; //资源未找到
-    const TOKEN_ERROR           = 8005; //token错误
+    const TOKEN_ERROR           = 8005; //Token错误
     const SIGN_ERROR            = 8006; //签名错误
     const RECORD_EXIST          = 8007; //记录已存在
     const RECORD_NOT_EXIST      = 8008; //记录不存在
@@ -40,18 +40,18 @@ class ReturnData
     const APPLY_SIGN_FAIL        = 8510; //注册邀请码错误
 	
     //验证码
-    const CODE_NOT_EXIST    = 8801; //当前状态不能操作
+    const CODE_NOT_EXIST            = 8801; //当前状态不能操作
 	
     //app
-    const AUTH_FAIL = 9001; //鉴权失败
-    const TOKEN_EXP = 9002; //Token失效
-    const MOBILE_FORMAT_FAIL    = 9003; //手机格式不正确
-    const VERIFY_TYPE_FAIL    = 9004; //验证码业务类型无效
-    const BANK_TYPE_FAIL    = 9005; //该银行不支持
-    const INVALID_IDCARD = 9006;//身份证无效
-    const REQUEST_AMOUNT_MIN_LESS = 9007;//小于最小提现金额
+    const AUTH_FAIL                 = 9001; //鉴权失败
+    const TOKEN_EXPIRED             = 9002; //Token失效
+    const MOBILE_FORMAT_FAIL        = 9003; //手机格式不正确
+    const VERIFY_TYPE_FAIL          = 9004; //验证码业务类型无效
+    const BANK_TYPE_FAIL            = 9005; //该银行不支持
+    const INVALID_IDCARD            = 9006;//身份证无效
+    const REQUEST_AMOUNT_MIN_LESS   = 9007;//小于最小提现金额
     const SERVICE_AMOUNT_NOT_ENOUGH = 9008;//可提现余额不足
-
+	
     //中文错误详情
     public static $codeTexts = array(
         0    => '操作成功',
@@ -60,7 +60,7 @@ class ReturnData
         8002 => '系统错误，请联系管理员',
         8003 => '参数错误',
         8004 => '资源未找到',
-        8005 => 'token错误',
+        8005 => 'Token错误',
         8006 => '签名错误',
         8007 => '记录已存在',
         8008 => '记录不存在',
@@ -148,5 +148,17 @@ class ReturnData
         if ($data['code'] == self::SUCCESS){return true;}
         
         return false;
+    }
+	
+    //获取错误代码对应的文字
+    public static function getCodeText($code)
+    {
+		$res = '';
+        if (isset(self::$codeTexts[$code]))
+		{
+            $res = self::$codeTexts[$code];
+        }
+		
+        return $res;
     }
 }

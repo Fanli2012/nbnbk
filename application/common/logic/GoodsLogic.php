@@ -26,12 +26,13 @@ class GoodsLogic extends BaseLogic
     {
         $res = $this->getModel()->getList($where, $order, $field, $offset, $limit);
         
-        if($res['list'])
+        if($res['count'] > 0)
         {
             foreach($res['list'] as $k=>$v)
             {
                 //$res['list'][$k] = $this->getDataView($v);
                 //$res['list'][$k]['typename'] = $this->getModel()->getTypenameAttr($v);
+				$res['list'][$k] = $res['list'][$k]->append(['price','is_promote','goods_img_list','type_name_text','status_text'])->toArray();
             }
         }
         
@@ -73,6 +74,8 @@ class GoodsLogic extends BaseLogic
         $res = $this->getModel()->getOne($where, $field);
         if(!$res){return false;}
         
+		$res = $res->append(['price','is_promote','goods_img_list','type_name_text','status_text'])->toArray();
+		
         //$res = $this->getDataView($res);
         //$res['typename'] = $this->getModel()->getTypenameAttr($res);
         
@@ -85,14 +88,27 @@ class GoodsLogic extends BaseLogic
     public function add($data = array(), $type=0)
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
-        
+		
+        //添加时间、更新时间
+		if(!(isset($data['add_time']) && !empty($data['add_time']))){$data['add_time'] = time();}
+		if(!(isset($data['update_time']) && !empty($data['update_time']))){$data['update_time'] = time();}
+		
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
-        $res = $this->getModel()->add($data,$type);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        //判断货号
+        if(isset($data['sn']) && !empty($data['sn']))
+        {
+            $where_sn['sn'] = $data['sn'];
+            if($this->getModel()->getOne($where_sn)){
+                return ReturnData::create(ReturnData::FAIL, null, '该货号已存在');
+            }
+        }
         
-        return ReturnData::create(ReturnData::FAIL);
+        $res = $this->getModel()->add($data,$type);
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
+        
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //修改
@@ -100,13 +116,29 @@ class GoodsLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
+		//更新时间
+        if(!(isset($data['update_time']) && !empty($data['update_time']))){$data['update_time'] = time();}
+		
         $check = $this->getValidate()->scene('edit')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
-        $res = $this->getModel()->edit($data,$where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        $record = $this->getModel()->getOne($where);
+        if(!$record){return ReturnData::create(ReturnData::RECORD_NOT_EXIST);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        //判断货号
+        if(isset($data['sn']) && !empty($data['sn']))
+        {
+            $where_sn['sn'] = $data['sn'];
+			$where_sn['id'] = ['<>',$record['id']]; //排除自身
+            if($this->getModel()->getOne($where_sn)){
+                return ReturnData::create(ReturnData::FAIL, null, '该货号已存在');
+            }
+        }
+        
+        $res = $this->getModel()->edit($data, $where);
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
+        
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //删除
@@ -117,10 +149,10 @@ class GoodsLogic extends BaseLogic
         $check = $this->getValidate()->scene('del')->check($where);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
-        $res = $this->getModel()->del($where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        $res = $this->getModel()->edit(array('delete_time'=>time()), $where);
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     /**

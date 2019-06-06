@@ -167,4 +167,10 @@ class Article extends Base
         $res['next_article'] = model('Article')->getOne(['id'=>['>',$param['article_id']],'type_id'=>$post['type_id']],['content'],'id asc');
         return $res;
     }
+	
+    //详情
+    public function imglist()
+	{
+        return $this->fetch();
+    }
 }

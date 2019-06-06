@@ -1,1 +1,14 @@
-<div id="footer" class="box">&copy;<?php echo sysconfig('CMS_WEBNAME'); ?> 部分文章来源于网络，如果侵犯了您的权益，请<a href="<?php echo model('Page')->getPageDetailUrl(array('id'=>'contact')); ?>">联系我们</a>。<a target="_blank" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/sitemap.xml">网站地图</a><div class="m-auto"><script>count_js();</script></div></div>
+<!--底部导航-start-->
+<div class="foohi">
+<div class="footer">
+	<ul>
+    <?php $current_url = get_current_url(); ?>
+	<a href="<?php echo '/weixin'; ?>"><li<?php if('/weixin' == $current_url){echo ' class="on"';} ?>><img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/home_icon<?php if('/weixin' == $current_url){echo '2';} ?>.png"><p>首页</p></li></a>
+    <a href="<?php echo 'weixin_category_goods_list'; ?>"><li<?php if('weixin_category_goods_list' == $current_url){echo ' class="on"';} ?>><img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/brand_icon<?php if('weixin_category_goods_list' == $current_url){echo '2';} ?>.png"><p>分类</p></li></a>	
+    <a href="<?php echo url('cart/index'); ?>"><li<?php if(url('cart/index') == $current_url){echo ' class="on"';} ?>><img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/car_icon<?php if(url('cart/index') == $current_url){echo '2';} ?>.png"><p>购物车</p></li></a>	
+    <a href="<?php echo url('user/index'); ?>"><li<?php if(url('user/index') == $current_url){echo ' class="on"';} ?>><img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/center_icon<?php if(url('user/index') == $current_url){echo '2';} ?>.png"><p>个人中心</p></li></a></ul>
+</div>
+</div>
+<!--底部导航-end-->
+
+<?php if($isWechatBrowser){ ?>{include file="common/wxshare"/}<?php } ?>

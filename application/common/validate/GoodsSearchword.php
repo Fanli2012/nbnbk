@@ -12,12 +12,11 @@ class GoodsSearchword extends Validate
         ['listorder', 'number|egt:0','排序必须是数字|排序格式不正确'],
         ['status', 'in:0,1','状态，0正常，1禁用'],
         ['add_time', 'require|number|egt:0', '添加时间必填|添加时间格式不正确|添加时间格式不正确'],
-        ['update_time', 'require|number|egt:0', '更新时间必填|更新时间格式不正确|更新时间格式不正确'],
     ];
     
     protected $scene = [
-        'add'  => ['name', 'click', 'listorder', 'status', 'add_time', 'update_time'],
-        'edit' => ['name', 'click', 'listorder', 'status', 'update_time'],
+        'add'  => ['name', 'click', 'listorder', 'status', 'add_time'],
+        'edit' => ['name', 'click', 'listorder', 'status'],
         'del'  => ['id'],
     ];
 }

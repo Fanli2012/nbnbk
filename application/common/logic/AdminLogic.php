@@ -115,9 +115,9 @@ class AdminLogic extends BaseLogic
         $data['pwd'] = md5($data['pwd']);
         
         $res = $this->getModel()->add($data,$type);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //修改
@@ -169,9 +169,9 @@ class AdminLogic extends BaseLogic
         if(isset($data['pwd']) && !empty($data['pwd'])){$data['pwd'] = md5($data['pwd']);}else{unset($data['pwd']);}
         
         $res = $this->getModel()->edit($data,$where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //删除
@@ -183,9 +183,9 @@ class AdminLogic extends BaseLogic
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->del($where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     /**
@@ -210,17 +210,14 @@ class AdminLogic extends BaseLogic
         
         //用户名/邮箱/手机登录
         $admin = $this->getModel()->where(function($query) use ($name,$pwd){$query->where('name',$name)->where('pwd',$pwd)->where('delete_time',0);})->whereOr(function($query) use ($name,$pwd){$query->where('email',$name)->where('pwd',$pwd)->where('delete_time',0);})->whereOr(function($query) use ($name,$pwd){$query->where('mobile',$name)->where('pwd',$pwd)->where('delete_time',0);})->find();
-        if($admin)
-        {
-            $admin = $admin->append(['role_name','status_text'])->toArray();
-			//$admin['role_name'] = model('AdminRole')->getValue(['id'=>$admin['role_id']], 'name');
-			//更新登录时间
-			$this->getModel()->edit(['login_time'=>time()], ['id'=>$admin['id']]);
-			
-            return ReturnData::create(ReturnData::SUCCESS, $admin);
-        }
-        
-        return ReturnData::create(ReturnData::FAIL);
+        if($admin){return ReturnData::create(ReturnData::FAIL);}
+		
+        $admin = $admin->append(['role_name','status_text'])->toArray();
+		//$admin['role_name'] = model('AdminRole')->getValue(['id'=>$admin['role_id']], 'name');
+		//更新登录时间
+		$this->getModel()->edit(['login_time'=>time()], ['id'=>$admin['id']]);
+		
+		return ReturnData::create(ReturnData::SUCCESS, $admin);
     }
     
     /**

@@ -86,9 +86,9 @@ class TokenLogic extends BaseLogic
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->add($data,$type);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //修改
@@ -97,9 +97,9 @@ class TokenLogic extends BaseLogic
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
         $res = $this->getModel()->edit($data,$where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //删除
@@ -111,9 +111,9 @@ class TokenLogic extends BaseLogic
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->del($where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     /**
@@ -124,5 +124,61 @@ class TokenLogic extends BaseLogic
     private function getDataView($data = array())
     {
         return getDataAttr($this->getModel(),$data);
+    }
+	
+    /**
+     * Token验证
+     * @param access_token
+     * @return array
+     */
+    public function checkToken($access_token)
+    {
+        $token_info = model('token')->getOne(array('token'=>$access_token));
+		if (!$token_info) {return ReturnData::create(ReturnData::TOKEN_ERROR);}
+		if ($token_info['expire_time'] < time()) {return ReturnData::create(ReturnData::TOKEN_EXPIRE);}
+		
+		return ReturnData::create(ReturnData::SUCCESS, $token_info);
+    }
+	
+    /**
+     * 生成Token
+     * 
+     * @param $type
+     * @param $user_id
+     * @param $data
+     * 
+     * @return string
+     */
+    public function getToken($user_id, $type, $data = array())
+    {
+		$data = $data ? json_encode($data) : '';
+        //支持多账号登录
+        if ($token = $this->getModel()->getOne(array('user_id' => $user_id, 'type' => $type), '*', 'id desc'))
+		{
+            if ($data == $token['data'] && $token['expire_time']>time())
+			{
+                return $token;
+            }
+        }
+		
+        //生成新token
+		do {
+			$token = md5($type . '-' . $user_id . '-' . microtime() . rand(0, 9999));
+		} while ($this->getModel()->getOne(array('token' => $token)));
+		
+        $expire_time = time() + 3600*24*30; //Token 30天过期
+		$token_data = array(
+            'token'       => $token,
+            'type'        => $type,
+            'user_id'     => $user_id,
+            'data'        => $data,
+            'expire_time' => $expire_time,
+			'add_time'    => time()
+        );
+        $token_id = $this->getModel()->add($token_data);
+		if(!$token_id){return false;}
+		$token_data['id'] = $token_id;
+		
+        return $token_data;
     }
 }

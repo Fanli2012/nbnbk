@@ -95,9 +95,9 @@ class ArticleTypeLogic extends BaseLogic
         }
         
         $res = $this->getModel()->add($data,$type);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //修改
@@ -122,9 +122,9 @@ class ArticleTypeLogic extends BaseLogic
         }
         
         $res = $this->getModel()->edit($data,$where);
-        if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::FAIL);
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //删除
@@ -149,7 +149,7 @@ class ArticleTypeLogic extends BaseLogic
         }
         
         //$res = $this->getModel()->del($where);
-        //if($res){return ReturnData::create(ReturnData::SUCCESS,$res);}
+        //if($res){return ReturnData::create(ReturnData::SUCCESS, $res);}
         
 		$where_article['type_id'] = $record['id'];
 		model('Article')->del($where_article);

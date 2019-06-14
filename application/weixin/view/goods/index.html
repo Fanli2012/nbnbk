@@ -1,21 +1,43 @@
-<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport"><meta http-equiv="Cache-Control" content="no-siteapp" /><meta http-equiv="Cache-Control" content="no-transform" />
-<title><?php echo $title; if( input('page',1) > 1 ){ echo '_第'.input('page').'页'; } echo '-'.sysconfig('CMS_WEBNAME'); ?></title><meta name="keywords" content="<?php echo $post["keywords"]; ?>" /><meta name="description" content="<?php echo $post["description"]; ?>" /><link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/style.css" media="all"><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/ad.js"></script></head><body><script>site();</script>
-{include file="common/header"/}<div id="tad"><script>tjs();</script></div>
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+<title>LQYCMS微商城</title><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
+<link href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/weixin/style.css" type="text/css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/weixin/mobile.js"></script>
+<meta name="keywords" content="关键词"><meta name="description" content="描述"></head><body style="background-color:#f1f1f1;">
+<div class="classreturn loginsignup">
+    <div class="ds-in-bl return"><a href="javascript:history.back(-1);"><img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/return.png" alt="返回"></a></div>
+    <div class="ds-in-bl tit center"><span>商品列表</span></div>
+</div>
 
-<div class="box mt10">
-<?php if($list['data']){ ?><ul class="goodsul" id="goods_list">
-<?php foreach($list['data'] as $k=>$v){ ?>
-<li><a href="<?php echo model('Goods')->getGoodsDetailUrl(array('id'=>$v['id'])); ?>"><img src="<?php echo $v['litpic']; ?>" alt="<?php echo $v['title']; ?>">
-<p class="title"><?php echo $v['title']; ?></p>
-<p class="desc"><?php echo $v['description']; ?></p>
-<div class="item-prices green"><div class="item-link">立即<br>抢购</div><div class="item-info"><div class="price"><i>¥</i><em class="J_actPrice"><span class="yen"><?php echo ceil($v['price']); ?></span></em></div>
-<div class="dock"><div class="dock-price"><del class="orig-price">¥<?php echo $v['market_price']; ?></del></div><div class="prompt"><div class="sold-num"><em><?php echo $v['click']; ?></em> 人气</div></div></div>
-</div></div>
-</a></li>
-<?php } ?><div class="cl"></div></ul><?php }else{ ?><div style="text-align:center;padding:20px;">暂无记录</div><?php } ?>
+<nav class="storenav">
+    <ul class="table-cell">
+        <li<?php if(!isset($_REQUEST['orderby'])){echo ' class="red"';} ?>>
+            <a href="<?php $complexorder = $request_param; unset($complexorder['orderby']); echo url('goods/index').'?'.http_build_query($complexorder); ?>">
+                <span class="lb">综合</span>
+            </a>
+        </li>
+        <li<?php if(isset($_REQUEST['orderby']) && $_REQUEST['orderby']==1){echo ' class="red"';} ?>>
+            <a href="<?php $saleorder = $request_param;$saleorder['orderby']=1;echo url('goods/index').'?'.http_build_query($saleorder); ?>">
+                <span class="dq">销量</span>
+            </a>
+        </li>
+        <li<?php if((isset($_REQUEST['orderby']) && ($_REQUEST['orderby']==3 || $_REQUEST['orderby']==4))){echo ' class="red"';} ?>>
+            <a href="<?php $priceorder = $request_param; if(isset($_REQUEST['orderby']) && $_REQUEST['orderby']==3){ $priceorder['orderby']=4; }else{ $priceorder['orderby']=3; } echo url('goods/index').'?'.http_build_query($priceorder); ?>">
+                <span class="jg">价格 </span>
+                <i class="pr<?php if(isset($_REQUEST['orderby']) && $_REQUEST['orderby']==3){echo ' bpr1';}elseif(isset($_REQUEST['orderby']) && $_REQUEST['orderby']==4){echo ' bpr2';} ?>"></i>
+            </a>
+        </li>
+    </ul><div class="cl"></div>
+</nav>
 
-<div class="bootstrap-front-pagination"><?php echo $page; ?><div class="cl"></div></div>
+<div class="floor">
+    <?php if($goods_list){ ?>
+    <ul class="goods_list" id="goods_list">
+    <?php foreach($goods_list as $k=>$v){ ?>
+        <li><a href="<?php echo url('goods/detail').'?id='.$v['id']; ?>"><img alt="<?php echo $v['title']; ?>" src="<?php echo $v['litpic']; ?>"><div class="goods_info"><p class="goods_tit"><?php if($v['is_promote']>0){ ?><span class="badge_comm" style="background-color:#f23030;">Hot</span> <?php } ?><?php echo $v['title']; ?></p><div class="goods_price">￥<b><?php echo $v['price']; ?></b><span class="fr"><?php echo $v['sale']; ?>人付款</span></div></div></a></li>
+    <?php } ?>
+    </ul><?php }else{ ?>
+    <div style="text-align:center;line-height:40px;color:#999;">暂无记录</div><?php } ?>
+</div>
 
-</div><!-- box end -->
-
-{include file="common/footer"/}</body></html>
+{include file="common/footer"/}
+</body></html>

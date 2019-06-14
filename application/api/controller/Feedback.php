@@ -23,13 +23,14 @@ class Feedback extends Base
     public function index()
 	{
         //参数
-        $where = array();
         $limit = input('limit',10);
         $offset = input('offset', 0);
-        $orderby = input('orderby','id asc');
-        if(input('type', null) != null){$where['type'] = input('type');}
-        
-        $res = $this->getLogic()->getList($where,$orderby,['content'],$offset,$limit);
+		
+        $where = array();
+        $orderby = input('orderby','id desc');
+        if(input('type', '') !== ''){$where['type'] = input('type');}
+		$where['user_id'] = $this->login_info['id'];
+        $res = $this->getLogic()->getList($where, $orderby, ['content'], $offset, $limit);
 		
 		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
     }
@@ -40,8 +41,7 @@ class Feedback extends Base
         //参数
         if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         $where['id'] = input('id');
-        
-        $where['user_id'] = Token::$uid;
+        $where['user_id'] = $this->login_info['id'];
         
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
@@ -54,7 +54,7 @@ class Feedback extends Base
     {
         if(Helper::isPostRequest())
         {
-            $_POST['user_id'] = Token::$uid;
+            $_POST['user_id'] = $this->login_info['id'];
             
             $res = $this->getLogic()->add($_POST);
             
@@ -70,8 +70,8 @@ class Feedback extends Base
             if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
             $where['id'] = input('id');
             unset($_POST['id']);
-            
-            $res = $this->getLogic()->edit($_POST,$where);
+            $where['user_id'] = $this->login_info['id'];
+            $res = $this->getLogic()->edit($_POST, $where);
             
             exit(json_encode($res));
         }
@@ -84,7 +84,7 @@ class Feedback extends Base
         {
             if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
             $where['id'] = input('id');
-            
+            $where['user_id'] = $this->login_info['id'];
             $res = $this->getLogic()->del($where);
             
             exit(json_encode($res));

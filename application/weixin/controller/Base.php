@@ -3,8 +3,6 @@ namespace app\weixin\controller;
 
 class Base extends Common
 {
-    protected $login_info;
-	
 	/**
      * 初始化
      * @param void
@@ -13,9 +11,6 @@ class Base extends Common
 	public function _initialize()
 	{
         parent::_initialize();
-        
-        $this->login_info = session('weixin_user_info');
-        $this->assign('login_info', $this->login_info);
         
 		//判断是否登录
         $this->isLogin();

@@ -36,6 +36,12 @@ class Login extends Common
 	/**
      * 微信登录
      * @param string $data['openid'] 微信openid
+	 * @param string $data['unionid'] 微信unionid
+	 * @param int $data['sex'] 性别
+	 * @param string $data['head_img'] 头像
+	 * @param string $data['nickname'] 昵称
+	 * @param int $data['parent_id'] 推荐人ID
+	 * @param string $data['parent_mobile'] 推荐人手机号
      * @return array
      */
     public function wxLogin()
@@ -44,85 +50,12 @@ class Login extends Common
         exit(json_encode($user));
     }
     
-    //注册
-    public function wxRegister(Request $request)
+    //用户名+密码注册
+    public function register()
 	{
-        $data['mobile'] = input('mobile','');
-        $data['user_name'] = input('user_name','');
-        $data['password'] = input('password','');
-        $data['parent_id'] = 0;if(input('parent_id',null)!=null){$data['parent_id'] = input('parent_id');}
-        $parent_mobile = input('parent_mobile','');
-        
-        if (($data['mobile']=='' && $data['user_name']=='') || $data['password']=='')
-		{
-            return ReturnData::create(ReturnData::PARAMS_ERROR);
-        }
-        
-        if ($parent_mobile!='')
-		{
-            if($user = model('User')->getOne(array('mobile'=>$parent_mobile)))
-            {
-                $data['parent_id'] = $user->id;
-            }
-            else
-            {
-                return ReturnData::create(ReturnData::PARAMS_ERROR,null,'推荐人不存在或推荐人手机号错误');
-            }
-        }
-        
-        if ($data['mobile']!='')
-		{
-            //判断手机格式
-            if(!Helper::isValidMobile($data['mobile'])){return ReturnData::create(ReturnData::MOBILE_FORMAT_FAIL);}
-            
-            //判断是否已经注册
-            if (model('User')->getOne(array('mobile'=>$data['mobile'])))
-            {
-                return ReturnData::create(ReturnData::MOBILE_EXIST);
-            }
-        }
-		
-        if ($data['user_name']!='')
-		{
-            if (model('User')->getOne(array('user_name'=>$data['user_name'])))
-            {
-                return ReturnData::create(ReturnData::PARAMS_ERROR,null,'用户名已存在');
-            }
-        }
-        
-        return $this->getLogic()->wxRegister($data);
+		exit(json_encode($this->getLogic()->register(request()->param())));
     }
 	
-    //微信授权注册
-    public function wxOauthRegister()
-	{
-        $data['openid'] = input('openid','');
-        $data['unionid'] = input('unionid','');
-        $data['sex'] = input('sex','');
-        $data['head_img'] = input('head_img','');
-        $data['nickname'] = input('nickname','');
-        $data['parent_id'] = 0;if(input('parent_id',null)!=null){$data['parent_id'] = input('parent_id');}
-        $data['user_name'] = date('YmdHis').dechex(date('His').rand(1000,9999));
-        $data['password'] = md5('123456');
-        
-        if ($data['openid']=='')
-		{
-            return ReturnData::create(ReturnData::PARAMS_ERROR);
-        }
-        
-		if (!model('User')->getOne(array('openid'=>$data['openid'])))
-        {
-            //添加用户
-            $res = $this->getLogic()->wxRegister($data);
-            if($res['code'] != ReturnData::SUCCESS){return $res;}
-            
-            //更新用户名user_name，微信登录没有用户名
-            model('User')->edit(array('user_name'=>date('Ymd').'u'.$res['data']['uid']),array('id'=>$res['data']['uid']));
-        }
-        
-        return $this->getLogic()->wxLogin(array('openid'=>$data['openid']));
-    }
-    
     //验证码登录
 	public function verificationCodeLogin()
     {

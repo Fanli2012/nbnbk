@@ -8,7 +8,7 @@ use app\common\lib\ReturnData;
 use app\common\logic\GoodsLogic;
 use app\common\model\Goods as GoodsModel;
 
-class Goods extends Base
+class Goods extends Common
 {
 	public function _initialize()
 	{
@@ -49,9 +49,7 @@ class Goods extends Base
         {
 			$where['title'] = array('like','%'.input('param.keyword').'%');
             //添加搜索关键词
-			$where_goods_searchword = array('name'=>input('keyword'));
-            logic('GoodsSearchword')->add($where_goods_searchword);
-			logic('GoodsSearchword')->clickInc($where_goods_searchword); //点击量+1
+            logic('GoodsSearchword')->add(array('name'=>input('keyword')));
         }
         
 		//排序

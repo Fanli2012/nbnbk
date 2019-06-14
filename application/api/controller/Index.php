@@ -3,7 +3,7 @@ namespace app\api\controller;
 use app\common\lib\Token;
 use app\common\lib\ReturnData;
 
-class Index extends Base
+class Index extends Common
 {
     public function index()
     {$current_url = request()->url();

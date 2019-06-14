@@ -8,7 +8,7 @@ use app\common\lib\ReturnData;
 use app\common\logic\PageLogic;
 use app\common\model\Page as PageModel;
 
-class Page extends Base
+class Page extends Common
 {
 	public function _initialize()
 	{

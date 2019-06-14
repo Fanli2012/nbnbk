@@ -6,7 +6,7 @@ use app\common\lib\ReturnData;
 use app\common\lib\Helper;
 use app\common\logic\ArticleLogic;
 
-class Article extends Base
+class Article extends Common
 {
     public function _initialize()
 	{
@@ -91,26 +91,5 @@ class Article extends Base
 		//dd($assign_data['post']);
 		$this->assign($assign_data);
         return $this->fetch();
-    }
-    
-    /**
-     * 获取文章上一篇，下一篇
-     * @param int $param['article_id'] 当前文章id
-     * @return array
-     */
-    public function getPreviousNextArticle(array $param)
-    {
-        $res['previous_article'] = [];
-        $res['next_article'] = [];
-        
-        $where['id'] = $param['article_id'];
-        $post = model('Article')->getOne($where,['content']);
-        if(!$post)
-        {
-            return $res;
-        }
-        $res['previous_article'] = model('Article')->getOne(['id'=>['<',$param['article_id']],'type_id'=>$post['type_id']],['content'],'id desc');
-        $res['next_article'] = model('Article')->getOne(['id'=>['>',$param['article_id']],'type_id'=>$post['type_id']],['content'],'id asc');
-        return $res;
     }
 }

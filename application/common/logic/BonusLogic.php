@@ -2,9 +2,9 @@
 namespace app\common\logic;
 use think\Loader;
 use app\common\lib\ReturnData;
-use app\common\model\UserToken;
+use app\common\model\Bonus;
 
-class UserTokenLogic extends BaseLogic
+class BonusLogic extends BaseLogic
 {
     protected function initialize()
     {
@@ -13,12 +13,12 @@ class UserTokenLogic extends BaseLogic
     
     public function getModel()
     {
-        return new UserToken();
+        return new Bonus();
     }
     
     public function getValidate()
     {
-        return Loader::validate('UserToken');
+        return Loader::validate('Bonus');
     }
     
     //列表
@@ -30,7 +30,8 @@ class UserTokenLogic extends BaseLogic
         {
             foreach($res['list'] as $k=>$v)
             {
-                $res['list'][$k] = $this->getDataView($v);
+                //$res['list'][$k] = $this->getDataView($v);
+				$res['list'][$k] = $res['list'][$k]->append(['status_text'])->toArray();
             }
         }
         
@@ -43,7 +44,7 @@ class UserTokenLogic extends BaseLogic
         $res = $this->getModel()->getPaginate($where, $order, $field, $limit);
         
         $res = $res->each(function($item, $key){
-            $item = $this->getDataView($item);
+            //$item = $this->getDataView($item);
             return $item;
         });
         
@@ -59,7 +60,7 @@ class UserTokenLogic extends BaseLogic
         {
             foreach($res as $k=>$v)
             {
-                $res[$k] = $this->getDataView($v);
+                //$res[$k] = $this->getDataView($v);
             }
         } */
         
@@ -72,8 +73,9 @@ class UserTokenLogic extends BaseLogic
         $res = $this->getModel()->getOne($where, $field);
         if(!$res){return false;}
         
-        $res = $this->getDataView($res);
-        
+        //$res = $this->getDataView($res);
+        $res = $res->append(['status_text'])->toArray();
+		
         return $res;
     }
     
@@ -82,11 +84,14 @@ class UserTokenLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
+		//添加时间
+		$time = time();
+		if(!(isset($data['add_time']) && !empty($data['add_time']))){$data['add_time'] = $time;}
+		
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
-        $data['add_time'] = time();
-        $res = $this->getModel()->add($data,$type);
+        $res = $this->getModel()->add($data, $type);
         if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
         return ReturnData::create(ReturnData::SUCCESS, $res);
@@ -96,6 +101,9 @@ class UserTokenLogic extends BaseLogic
     public function edit($data, $where = array())
     {
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
+        
+        $record = $this->getModel()->getOne($where);
+        if(!$record){return ReturnData::create(ReturnData::RECORD_NOT_EXIST);}
         
         $res = $this->getModel()->edit($data,$where);
         if(!$res){return ReturnData::create(ReturnData::FAIL);}
@@ -125,35 +133,5 @@ class UserTokenLogic extends BaseLogic
     private function getDataView($data = array())
     {
         return getDataAttr($this->getModel(),$data);
-    }
-    
-    /**
-     * 生成token
-     * 
-     * @param $uid
-     * 
-     * @return array
-     */
-    public function getToken($uid)
-    {
-        //支持多账号登录
-        if ($token = $this->getModel()->getOne(['uid' => $uid, 'expired_time' => ['>',time()]]))
-		{
-            return array('access_token'=>$token['token'],'expired_time'=>$token['expired_time'],'uid'=>$token['uid']);
-        }
-		
-        //生成新token
-        $token = md5($uid . '-' . microtime() . rand(1000, 9999));
-        $expired_time = time()+3600*24*30; //token 30天过期
-        
-        $add_data = array(
-            'token'        => $token,
-            'uid'          => $uid,
-            'expired_time' => $expired_time,
-            'add_time'     => time()
-        );
-        
-		$this->getModel()->add($add_data);
-        return array('access_token'=>$token, 'expired_time'=>$expired_time, 'uid'=>$uid);
     }
 }

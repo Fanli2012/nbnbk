@@ -7,7 +7,7 @@ use app\common\lib\Helper;
 use app\common\lib\ReturnData;
 use app\common\logic\RegionLogic;
 
-class Region extends Base
+class Region extends Common
 {
 	public function _initialize()
 	{

@@ -4,142 +4,37 @@ use think\Db;
 use think\Request;
 use app\common\lib\ReturnData;
 use app\common\lib\Helper;
-use app\common\logic\GoodsLogic;
 
-class Goods extends Base
+class Goods extends Common
 {
     public function _initialize()
 	{
 		parent::_initialize();
     }
     
-    public function getLogic()
-    {
-        return new GoodsLogic();
-    }
-    
     //列表
     public function index()
 	{
-        $where = [];
-        $title = '';
+		//参数
+        if(input('type_id', '') != ''){$param['type_id'] = input('type_id');}
+        if(input('tuijian', '') != ''){$param['tuijian'] = input('tuijian');}
+        if(input('status', '') != ''){$param['status'] = input('status');}
+        if(input('is_promote', '') != ''){$param['is_promote'] = input('is_promote');}
+        if(input('orderby', '') != ''){$param['orderby'] = input('orderby');}
+        $param['max_price'] = 99999;if(input('max_price', '') != ''){$param['max_price'] = input('max_price');}
+        $param['min_price'] = 0;if(input('min_price', '') != ''){$param['min_price'] = input('min_price');}
+        if(input('brand_id', '') != ''){$param['brand_id'] = input('brand_id');}
+        if(input('keyword', '') != ''){$param['keyword'] = input('keyword');}
+        //获取商品列表
+        $get_data = $param;
+        $get_data['limit'] = 10;
+        $get_data['offset'] = 0;
+        $url = sysconfig('CMS_API_URL').'/goods/index';
+		$res = curl_request($url, $get_data, 'GET');
+        $assign_data['goods_list'] = $res['data']['list'];
+        $assign_data['request_param'] = $param;
         
-        $key = input('key', null);
-        if($key != null)
-        {
-            $arr_key = logic('Article')->getArrByString($key);
-            if(!$arr_key){Helper::http404();}
-            
-            //分类id
-            if(isset($arr_key['f']) && $arr_key['f']>0)
-            {
-                $type_id = $where['type_id'] = $arr_key['f'];
-                
-                $post = model('GoodsType')->getOne(['id'=>$arr_key['f']]);
-                if(!$post){Helper::http404();}
-                $title = $post['name'].'-'.sysconfig('CMS_WEBNAME');
-                if($post['seotitle']){$title = $post['seotitle'];}
-                $this->assign('post',$post);
-                
-                //面包屑导航
-                $this->assign('bread', logic('Goods')->get_goods_type_path($where['type_id']));
-            }
-        }
-        
-        /* $key = input('key', null);
-        if($key != null)
-        {
-            $arr_key = $this->getArrByString($key);
-            if(!$arr_key){$this->error('您访问的页面不存在或已被删除', '/' , 3);}
-            
-            //省
-            if(isset($arr_key['p']) && !empty($arr_key['p']))
-            {
-                $where['fl_shop.province_id'] = $arr_key['p'];
-                $title = model('Region')->getRegionName($where['fl_shop.province_id']);
-                $this->assign('province',$title);
-                
-                $province_id = $arr_key['p'];
-            }
-            
-            //市
-            if(isset($arr_key['c']) && !empty($arr_key['c']))
-            {
-                $where['fl_shop.city_id'] = $arr_key['c'];
-                $region = model('Region')->getOne(['id'=>$where['fl_shop.city_id']]);
-                if($region)
-                {
-                    $title = $region['name'];
-                    $this->assign('city',$region['name']);
-                    $this->assign('province',model('Region')->getRegionName($region['parent_id']));
-                    
-                    $province_id = $region['parent_id'];
-                }
-            }
-            
-            //区
-            if(isset($arr_key['d']) && !empty($arr_key['d']))
-            {
-                $where['fl_shop.district_id'] = $arr_key['d'];
-                $title = model('Region')->getRegionName($where['fl_shop.district_id']);
-            }
-            
-            //判断是否有店铺
-            if(isset($arr_key['s']) && !empty($arr_key['s']))
-            {
-                $where['fl_goods.shop_id'] = $arr_key['s'];
-                $title = $title.model('Shop')->getDb()->where(['id'=>$where['fl_goods.shop_id']])->value('company_name');
-            }
-            
-            //商品类目
-            if(isset($arr_key['f']) && !empty($arr_key['f']))
-            {
-                $where['fl_goods.category_id'] = $arr_key['f'];
-                $title = $title.model('Category')->getDb()->where(['id'=>$where['fl_goods.category_id']])->value('name');
-            }
-        } */
-        
-        $where['delete_time'] = 0;
-        $where['status'] = 0;
-        $posts = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
-        
-        $page = $posts->render();
-        $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
-        $page = preg_replace('/&amp;key=[a-z0-9]+/', '', $page);
-        $page = preg_replace('/\?page=1"/', '"', $page);
-        $this->assign('page', $page);
-        $list = $posts->toArray();
-        $this->assign('list', $list);
-        if(!$list['data']){Helper::http404();}
-        
-        //推荐商品
-        $relate_tuijian_list = cache("index_goods_detail_relate_tuijian_list_$key");
-        if(!$relate_tuijian_list)
-        {
-            $where_tuijian['delete_time'] = 0;
-            $where_tuijian['status'] = 0;
-            $where_tuijian['tuijian'] = 1;
-            if(isset($type_id)){$where_tuijian['type_id'] = $type_id;}
-            $relate_tuijian_list = logic('Goods')->getAll($where_tuijian, 'update_time desc', ['content'], 5);
-            cache("index_goods_detail_relate_tuijian_list_$key",$relate_tuijian_list,2592000);
-        }
-        $this->assign('relate_tuijian_list',$relate_tuijian_list);
-        
-        //随机商品
-        $relate_rand_list = cache("index_goods_detail_relate_rand_list_$key");
-        if(!$relate_rand_list)
-        {
-            $where_rand['delete_time'] = 0;
-            $where_rand['status'] = 0;
-            if(isset($type_id)){$where_rand['type_id'] = $type_id;}
-            $relate_rand_list = logic('Goods')->getAll($where_rand, ['orderRaw','rand()'], ['content'], 5);
-            cache("index_goods_detail_relate_rand_list_$key",$relate_rand_list,2592000);
-        }
-        $this->assign('relate_rand_list',$relate_rand_list);
-        
-        //SEO标题设置
-        $this->assign('title',$title);
-        
+        $this->assign($assign_data);
         return $this->fetch();
     }
 	
@@ -148,45 +43,98 @@ class Goods extends Base
 	{
 		if(!checkIsNumber(input('id',null))){Helper::http404();}
         $id = input('id');
-		
-        $postdata = array(
+		//获取商品详情
+        $get_data = array(
             'id'  => $id
 		);
-        if(isset($_SESSION['weixin_user_info'])){$postdata['user_id']=$_SESSION['weixin_user_info']['id'];}
         $url = sysconfig('CMS_API_URL').'/goods/detail';
-		$res = curl_request($url, $postdata, 'GET');
+		$res = curl_request($url, $get_data, 'GET');
 		if(empty($res['data'])){Helper::http404();}
-        $assign_data['post'] = $res['data'];
-        
+        $post = $res['data'];
+        //判断用户是否收藏该商品，0未收藏，1已收藏
+		$post['is_collect'] = 0;
+        if($this->login_info)
+		{
+			$get_data = array(
+				'goods_id' => $id,
+				'access_token' => $this->login_info['token']['token']
+			);
+			$url = sysconfig('CMS_API_URL').'/user_goods_collect/detail';
+			$res = curl_request($url, $get_data, 'GET');
+			if($res['code'] == ReturnData::SUCCESS || !empty($res['data'])){$post['is_collect'] = 1;}
+		}
         //添加浏览记录
-        if(isset($_SESSION['weixin_user_info']))
+        if($this->login_info)
         {
-            $postdata = array(
+            $post_data = array(
                 'goods_id'  => $id,
-                'access_token' => $_SESSION['weixin_user_info']['access_token']
+                'access_token' => $this->login_info['token']['token']
             );
-            $url = sysconfig('CMS_API_URL').'/user_goods_history_add';
-            curl_request($url, $postdata, 'POST');
+            $url = sysconfig('CMS_API_URL').'/user_goods_history/add';
+            curl_request($url, $post_data, 'POST');
         }
         
+		$assign_data['post'] = $post;
         $this->assign($assign_data);
         return $this->fetch();
     }
     
-	public function test()
-    {
-        //echo '<pre>';print_r(request());exit;
-		//echo (dirname('/images/uiui/1.jpg'));
-		//echo '<pre>';
-		//$str='<p><img border="0" src="./images/1.jpg" alt=""/></p>';
+	//商品分类页
+    public function category_list()
+	{
+		$assign_data['type_id'] = input('type_id', ''); //分类ID
 		
-		//echo getfirstpic($str);
-		//$imagepath='.'.getfirstpic($str);
-		//$image = new \Think\Image(); 
-		//$image->open($imagepath);
-		// 按照原图的比例生成一个最大为240*180的缩略图并保存为thumb.jpg
-		//$image->thumb(CMS_IMGWIDTH, CMS_IMGHEIGHT)->save('./images/1thumb.jpg');
+        $pagesize = 10;
+        $offset = 0;
+        if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
         
+        //获取商品列表
+        $get_data = array(
+            'type_id' => $assign_data['type_id'],
+            'limit'  => $pagesize,
+            'offset' => $offset
+		);
+        $url = sysconfig('CMS_API_URL').'/goods/index';
+		$res = curl_request($url,$get_data,'GET');
+        $assign_data['list'] = $res['data']['list'];
+        //总页数
+        $assign_data['totalpage'] = ceil($res['data']['count']/$pagesize);
+        
+        if(isset($_REQUEST['page_ajax']) && $_REQUEST['page_ajax']==1)
+        {
+    		$html = '';
+            
+            if($res['data']['list'])
+            {
+                foreach($res['data']['list'] as $k => $v)
+                {
+                    $html .= '<li>';
+                    $html .= '<a href="'.url('goods/detail').'?id='.$v['id'].'"><img alt="'.$v['title'].'" src="'.$v['litpic'].'"><div class="goods_info"><p class="goods_tit">';
+                    
+                    if($v['is_promote']>0)
+                    {
+                        $html .= '<span class="badge_comm" style="background-color:#f23030;">Hot</span>';
+                    }
+                    
+                    $html .= $v['title'].'</p><div class="goods_price">￥<b>'.$v['price'].'</b><span class="fr">'.$v['sale'].'人付款</span></div></div></a>';
+                    $html .= '</li>';
+                }
+            }
+            
+    		exit(json_encode($html));
+    	}
+        
+        //商品分类列表
+        $get_data = array(
+            'parent_id' => 0,
+            'limit'     => 15,
+            'offset'    => 0
+		);
+        $url = sysconfig('CMS_API_URL').'/goods_type/index';
+		$res = curl_request($url,$get_data,'GET');
+        $assign_data['goods_type_list'] = $res['data']['list'];
+		
+		$this->assign($assign_data);
         return $this->fetch();
-    }
+	}
 }

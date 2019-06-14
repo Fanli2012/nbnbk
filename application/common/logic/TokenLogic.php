@@ -1,6 +1,7 @@
 <?php
 namespace app\common\logic;
 use think\Loader;
+use think\Validate;
 use app\common\lib\ReturnData;
 use app\common\model\Token;
 

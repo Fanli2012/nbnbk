@@ -6,7 +6,7 @@
 <!--顶部搜索栏-start-->
 <div id="search-placeholder" class="search">
     <div class="search_box">
-        <a href="<?php echo 'weixin_search'; ?>">
+        <a href="<?php echo url('search/index'); ?>">
         <span class="search_btn"><img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/search.png"></span>
         <input type="text" name="keyword" value="" placeholder="搜索您想要的商品"></a>
     </div>
@@ -73,27 +73,27 @@ var swiper = new Swiper('.swiper-nav', {
 <!--菜单-start-->
 <div class="floor home_menu" style="background-color:#fff;border-bottom:1px solid #f0f0f0;border-top:1px solid #f0f0f0;">
     <nav>
-        <a href="<?php echo 'weixin_category_goods_list'; ?>">
+        <a href="<?php echo url('goods/category_list'); ?>">
                 <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/icon_05.png" alt="全部分类" />
                 <span>全部分类</span>
         </a>
-        <a href="<?php echo 'weixin_brand_list'; ?>">
+        <a href="<?php echo url('goods_brand/index'); ?>">
                 <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/icon_07.png" alt="品牌街" />
                 <span>品牌街</span>
         </a>
-        <a href="<?php echo 'weixin_goods_list'; ?>">
+        <a href="<?php echo url('goods/index'); ?>">
                 <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/icon_15.png" alt="优惠商品" />
                 <span>优惠商品</span>
         </a>
-        <a href="<?php echo 'weixin_order_list'; ?>">
+        <a href="<?php echo url('order/index'); ?>">
                 <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/icon_16.png" alt="我的订单" />
                 <span>我的订单</span>
         </a>
-        <a href="<?php echo 'weixin_cart'; ?>">
+        <a href="<?php echo url('cart/index'); ?>">
                 <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/icon_17.png" alt="购物车" />
                 <span>购物车</span>
         </a>
-        <a href="<?php echo 'weixin_user'; ?>">
+        <a href="<?php echo url('user/index'); ?>">
                 <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/icon_19.png" alt="个人中心" />
                 <span>个人中心</span>
         </a>

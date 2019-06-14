@@ -22,14 +22,14 @@ class Login extends Common
     //登录
     public function index()
 	{
-        if(isset($_SESSION['weixin_user_info']))
+        if(session('weixin_user_info'))
         {
-            if(isset($_SERVER["HTTP_REFERER"])){header('Location: '.$_SERVER["HTTP_REFERER"]);exit;}
+            if(isset($_SERVER['HTTP_REFERER'])){header('Location: '.$_SERVER['HTTP_REFERER']);exit;}
             header('Location: '.url('user/index'));exit;
         }
         
         $return_url = '';
-        if(isset($_REQUEST['return_url']) && !empty($_REQUEST['return_url'])){$return_url = $_SESSION['weixin_history_back_url'] = $_REQUEST['return_url'];}
+        if(isset($_REQUEST['return_url']) && !empty($_REQUEST['return_url'])){$return_url = $_REQUEST['return_url'];session('weixin_history_back_url', $return_url);}
         
         if($_SERVER['REQUEST_METHOD'] == 'POST')
         {
@@ -45,14 +45,15 @@ class Login extends Common
             
             $postdata = array(
                 'user_name' => $_POST['user_name'],
-                'password' => $_POST['password']
+                'password' => $_POST['password'],
+                'from' => 2
             );
             $url = sysconfig('CMS_API_URL').'/login/index';
             $res = curl_request($url,$postdata,'POST');
             
             if($res['code'] != ReturnData::SUCCESS){$this->error('登录失败');}
             
-            $_SESSION['weixin_user_info'] = $res['data'];
+            session('weixin_user_info', $res['data']);
             
             if($return_url != ''){header('Location: '.$return_url);exit;}
             header('Location: '.url('user/index'));exit;
@@ -64,15 +65,15 @@ class Login extends Common
     //注册
     public function register()
 	{
-        if(isset($_SESSION['weixin_user_info']))
+        if(session('weixin_user_info'))
         {
             if(isset($_SERVER["HTTP_REFERER"])){header('Location: '.$_SERVER["HTTP_REFERER"]);exit;}
             header('Location: '.url('user/index'));exit;
         }
         
         $return_url = '';
-        if(isset($_REQUEST['return_url']) && !empty($_REQUEST['return_url'])){$_SESSION['weixin_history_back_url'] = $_REQUEST['return_url'];}
-        if(isset($_REQUEST['invite_code']) && !empty($_REQUEST['invite_code'])){$_SESSION['weixin_user_invite_code'] = $_REQUEST['invite_code'];} //推荐人id存在session，首页入口也存了一次
+        if(isset($_REQUEST['return_url']) && !empty($_REQUEST['return_url'])){session('weixin_history_back_url', $_REQUEST['return_url']);}
+        if(isset($_REQUEST['invite_code']) && !empty($_REQUEST['invite_code'])){session('weixin_user_invite_code', $_REQUEST['invite_code']);} //推荐人id存在session，首页入口也存了一次
         
         return $this->fetch();
     }
@@ -80,7 +81,8 @@ class Login extends Common
     //微信网页授权登录
     public function wxOauth()
 	{
-        if (!isset($_SESSION['weixin_oauth']['userinfo']))
+		$weixin_oauth = session('weixin_oauth');
+        if (!isset($weixin_oauth['userinfo']))
         {
             $wechat_auth = new WechatAuth(sysconfig('CMS_WX_APPID'),sysconfig('CMS_WX_APPSECRET'));
             
@@ -91,41 +93,41 @@ class Login extends Common
                 $callback_url = $http_type . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; //回调地址，当前页面
                 //生成唯一随机串防CSRF攻击
                 $state = md5(uniqid(rand(), true));
-                $_SESSION['weixin_oauth']['state'] = $state; //存到SESSION
+                session('weixin_oauth.state', $state); //存到SESSION
                 $authorize_url = $wechat_auth->get_authorize_url($callback_url, $state);
                 
                 header("Location: $authorize_url");exit;
             }
             
             // 依据code码去获取openid和access_token，自己的后台服务器直接向微信服务器申请即可
-            $_SESSION['weixin_oauth']['code'] = $_GET['code'];
+            session('weixin_oauth.code', $_GET['code']);
             
-            if($_GET['state'] != $_SESSION['weixin_oauth']['state'])
+            if($_GET['state'] != session('weixin_oauth.state'))
             {
                 $this->error('您访问的页面不存在或已被删除');
             }
             
             //得到 access_token 与 openid
-            $_SESSION['weixin_oauth']['token'] = $wechat_auth->get_access_token($_GET['code']);
+            session('weixin_oauth.token', $wechat_auth->get_access_token($_GET['code']));
             // 依据申请到的access_token和openid，申请Userinfo信息。
-            $_SESSION['weixin_oauth']['userinfo'] = $wechat_auth->get_user_info($_SESSION['weixin_oauth']['token']['access_token'], $_SESSION['weixin_oauth']['token']['openid']);
+            session('weixin_oauth.userinfo', $wechat_auth->get_user_info(session('weixin_oauth.token')['access_token'], session('weixin_oauth.token')['openid']));
         }
         
         $postdata = array(
-            'openid' => $_SESSION['weixin_oauth']['userinfo']['openid'],
-            'unionid' => isset($_SESSION['weixin_oauth']['userinfo']['unionid']) ? $_SESSION['weixin_oauth']['userinfo']['unionid'] : '',
-            'nickname' => isset($_SESSION['weixin_oauth']['userinfo']['nickname']) ? Helper::filterEmoji($_SESSION['weixin_oauth']['userinfo']['nickname']) : '',
-            'sex' => $_SESSION['weixin_oauth']['userinfo']['sex'],
-            'head_img' => $_SESSION['weixin_oauth']['userinfo']['headimgurl'],
-            'parent_id' => isset($_SESSION['weixin_user_invite_code']) ? $_SESSION['weixin_user_invite_code'] : 0,
+            'openid' => session('weixin_oauth.userinfo')['openid'],
+            'unionid' => isset(session('weixin_oauth.userinfo')['unionid']) ? session('weixin_oauth.userinfo')['unionid'] : '',
+            'nickname' => isset(session('weixin_oauth.userinfo')['nickname']) ? Helper::filterEmoji(session('weixin_oauth.userinfo')['nickname']) : '',
+            'sex' => session('weixin_oauth.userinfo')['sex'],
+            'head_img' => session('weixin_oauth.userinfo')['headimgurl'],
+            'parent_id' => session('weixin_user_invite_code') ? session('weixin_user_invite_code') : 0,
             'parent_mobile' => '',
             'mobile' => ''
         );
-        $url = env('APP_API_URL').'/login/wx_oauth_register';
+        $url = env('APP_API_URL').'/login/wx_login';
         $res = curl_request($url,$postdata,'POST');
-        if($res['code'] != ReturnData::SUCCESS){$this->error('系统错误');}
+        if($res['code'] != ReturnData::SUCCESS){$this->error('操作失败');}
         
-        $_SESSION['weixin_user_info'] = $res['data'];
+        session('weixin_user_info', $res['data']);
         header('Location: '.url('user/index'));exit;
 	}
     
@@ -134,9 +136,9 @@ class Login extends Common
 	 */
 	public function logout()
 	{
-        session_unset();
-        session_destroy(); // 退出登录，清除session
-        
+        //session_unset();
+        //session_destroy(); // 退出登录，清除session
+        session('weixin_user_info', null);
 		$this->success('退出成功', url('index/index'));
 	}
 }

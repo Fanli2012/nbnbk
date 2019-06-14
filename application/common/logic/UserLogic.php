@@ -33,6 +33,7 @@ class UserLogic extends BaseLogic
             foreach($res['list'] as $k=>$v)
             {
                 //$res['list'][$k] = $this->getDataView($v);
+				$res['list'][$k] = $res['list'][$k]->append(array('status_text','sex_text'))->toArray();
             }
         }
         
@@ -75,6 +76,7 @@ class UserLogic extends BaseLogic
         if(!$res){return false;}
         
         //$res = $this->getDataView($res);
+		$res = $res->append(array('status_text','sex_text'))->toArray();
         
         return $res;
     }
@@ -137,6 +139,10 @@ class UserLogic extends BaseLogic
 		if($user['pay_password']){$user['pay_password'] = 1;}else{$user['pay_password'] = 0;}
 		unset($user['password']);
         
+        $user['reciever_address'] = model('UserAddress')->getOne(array('id'=>$user['address_id']));
+        $user['collect_goods_count'] = model('UserGoodsCollect')->getCount(array('user_id'=>$user['id']));
+        $user['bonus_count'] = model('UserBonus')->getCount(array('user_id'=>$user['id'],'status'=>0));
+        
         return $user;
     }
     
@@ -152,7 +158,7 @@ class UserLogic extends BaseLogic
 		//验证数据
         $validate = new Validate([
             ['user_name', 'require|max:30', '账号不能为空|账号不能超过30个字符'],
-            ['password', 'require|max:18', '密码不能为空|密码名不能超过18个字符']
+            ['password', 'require|length:6,18', '密码不能为空|密码6-18位']
         ]);
         if (!$validate->check($data)) {
             return ReturnData::create(ReturnData::FAIL, null, $validate->getError());
@@ -170,7 +176,7 @@ class UserLogic extends BaseLogic
 		//获取用户信息
 		$user_info = $this->getUserInfo(['id'=>$user['id']]);
 		
-		if(isset($data['from']) && $data['from']>=0)
+		if(isset($data['from']) && $data['from']!='')
 		{
 			//生成Token
 			$token = logic('Token')->getToken($user_info['id'], $data['from']);
@@ -184,15 +190,69 @@ class UserLogic extends BaseLogic
 	/**
      * 微信登录
      * @param string $data['openid'] 微信openid
+	 * @param string $data['unionid'] 微信unionid
+	 * @param int $data['sex'] 性别
+	 * @param string $data['head_img'] 头像
+	 * @param string $data['nickname'] 昵称
+	 * @param int $data['parent_id'] 推荐人ID
+	 * @param string $data['parent_mobile'] 推荐人手机号
      * @return array
      */
 	public function wxLogin($data)
     {
+		$edit_user = array();
 		$user = $this->getModel()->getOne(array('openid'=>$data['openid']));
-		if(!$user){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '用户不存在');}
+		if(!$user)
+		{
+			$data['add_time'] = $data['update_time'] = time();
+			
+			//默认用户名
+			if(!(isset($data['user_name']) && !empty($data['user_name'])))
+			{
+				$data['user_name'] = date('YmdHis').dechex(date('His').rand(1000,9999));
+			}
+			
+			//默认密码123456
+			/* if(!(isset($data['password']) && !empty($data['password'])))
+			{
+				$data['password'] = md5('123456');
+			} */
+			
+			$check = $this->getValidate()->scene('wx_register')->check($data);
+			if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+			
+			if (isset($data['parent_mobile']) && $data['parent_mobile'] != '')
+			{
+				if($parent_user = $this->getModel()->getOne(array('mobile'=>$data['parent_mobile'])))
+				{
+					$data['parent_id'] = $parent_user['id'];
+				}
+				else
+				{
+					return ReturnData::create(ReturnData::PARAMS_ERROR, null, '推荐人不存在或推荐人手机号错误');
+				}
+			}
+			
+			//判断用户名
+			if (isset($data['user_name']) && !empty($data['user_name']))
+			{
+				if ($this->getModel()->getOne(array('user_name'=>$data['user_name'])))
+				{
+					return ReturnData::create(ReturnData::PARAMS_ERROR, null, '用户名已存在');
+				}
+			}
+			
+			$user_id = $this->getModel()->add($data);
+			if(!$user_id){return ReturnData::create(ReturnData::SYSTEM_FAIL);}
+			
+			//更新用户名user_name，微信登录没有用户名
+			$edit_user['user_name'] = 'u'.$user_id;
+			$user['id'] = $user_id;
+		}
 		
 		//更新登录时间
-		$this->getModel()->edit(['login_time'=>time()], ['id'=>$user['id']]);
+		$edit_user['login_time'] = time();
+		$this->getModel()->edit($edit_user, array('id'=>$user['id']));
 		
 		//获取用户信息
 		$user_info = $this->getUserInfo(['id'=>$user['id']]);
@@ -204,22 +264,42 @@ class UserLogic extends BaseLogic
 		return ReturnData::create(ReturnData::SUCCESS, $user_info, '登录成功');
     }
     
-    //注册
-    public function wxRegister($data)
+    //用户名+密码注册
+    public function register($data)
 	{
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
-        $data['add_time'] = time();
+        $data['add_time'] = $data['update_time'] = time();
         
-        $validator = $this->getValidate($data, 'wx_register');
-        if ($validator->fails()){return ReturnData::create(ReturnData::PARAMS_ERROR, null, $validator->errors()->first());}
+		$check = $this->getValidate()->scene('register')->check($data);
+		if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+		
+        if (isset($data['parent_mobile']) && $data['parent_mobile'] != '')
+		{
+            if($user = $this->getModel()->getOne(array('mobile'=>$data['parent_mobile'])))
+            {
+                $data['parent_id'] = $user['id'];
+            }
+            else
+            {
+                return ReturnData::create(ReturnData::PARAMS_ERROR, null, '推荐人不存在或推荐人手机号错误');
+            }
+        }
         
+        if (isset($data['user_name']) && $data['user_name'] != '')
+		{
+            if ($this->getModel()->getOne(array('user_name'=>$data['user_name'])))
+            {
+                return ReturnData::create(ReturnData::PARAMS_ERROR,null,'用户名已存在');
+            }
+        }
+		
+        $data['password'] = md5($data['password']);
+		
         $user_id = $this->getModel()->add($data);
         if(!$user_id){return ReturnData::create(ReturnData::SYSTEM_FAIL);}
         
-        //生成token
-		$token = logic('Token')->getToken(Token::TOKEN_TYPE_WEIXIN, $user_id);
-		
-        return ReturnData::create(ReturnData::SUCCESS, $token, '注册成功');
+        return ReturnData::create(ReturnData::SUCCESS, $user_id, '注册成功');
     }
+	
 }

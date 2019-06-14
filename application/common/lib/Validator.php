@@ -7,15 +7,15 @@ namespace app\common\lib;
 class Validator
 {
     /**
-     * @commit: 验证密码，密码可以包含6个或更多字母，数字，下划线_和连字符-，密码必须包含至少一个大写字母，一个小写字母和一个数字
+     * @commit: 验证密码，密码可以包含6个或更多字母，数字，下划线_和连字符-
      * @function: isPWD
      * @param $value
      * @param int $minLen
      * @param int $maxLen
      * @return bool|int
      */
-    public static function isPWD($value,$minLen=6,$maxLen=18){
-        $match = '/(?=[-_a-zA-Z0-9]*?[A-Z])(?=[-_a-zA-Z0-9]*?[a-z])(?=[-_a-zA-Z0-9]*?[0-9])[-_a-zA-Z0-9]{'.$minLen.','.$maxLen.'}/';
+    public static function isPWD($value, $minLen=6, $maxLen=18){
+        $match = '/^[-_a-zA-Z0-9]{'.$minLen.','.$maxLen.'}$/i';
         $v = trim($value);
         if(empty($v))
             return false;
@@ -124,54 +124,6 @@ class Validator
     }
     
     /**
-     * @commit: 邮箱地址合法性检查
-     * @function: isEmails
-     * @param $val
-     * @param string $domain 后缀
-     * @return bool
-     * @author by stars<1014916675@qq.com>
-     * @CreateTime 2017-09-22 18:20
-     */
-    public static function isEmails($val, $domain = "") {
-        if (!$domain) {
-            if (preg_match("/^[a-z0-9-_.]+@[\da-z][\.\w-]+\.[a-z]{2,4}$/i", $val)) {
-                return TRUE;
-            } else
-                return FALSE;
-        }
-        else {
-            if (preg_match("/^[a-z0-9-_.]+@" . $domain . "$/i", $val)) {
-                return TRUE;
-            } else
-                return FALSE;
-        }
-    }
-    
-    /**
-     * @commit:手机号码验证
-     * @function: isMobile
-     * @param $str
-     * @return bool
-     * @author by stars<1014916675@qq.com>
-     * @CreateTime 2017-09-22 18:02
-     */
-    public static function isMobile($str){
-        $exp = "/^13[0-9]{1}[0-9]{8}$|15[012356789]{1}[0-9]{8}$|18[012356789]{1}[0-9]{8}$|14[57]{1}[0-9]$/";
-        if(preg_match($exp,$str)){
-            return true;
-        }else{
-            return false;
-        }
-    }
-    
-    public static function isMobile1($val) {
-        //该表达式可以验证那些不小心把连接符“-”写出“－”的或者下划线“_”的等等
-        if (ereg("(^(\d{2,4}[-_－—]?)?\d{3,8}([-_－—]?\d{3,8})?([-_－—]?\d{1,7})?$)|(^0?1[35]\d{9}$)", $val))
-            return TRUE;
-        return FALSE;
-    }
-    
-    /**
      * @commit: URL验证，纯网址格式，不支持IP验证
      * @function: isUrl
      * @param $str
@@ -239,7 +191,7 @@ class Validator
      * @author by stars<1014916675@qq.com>
      * @CreateTime 2017-09-22 18:03
      */
-    public static function isChinese($str,$charset = 'utf-8'){
+    public static function isChinese($str, $charset = 'utf-8'){
         if(!self::isEmpty($str)) return false;
         $match = (strtolower($charset) == 'gb2312') ? "/^[".chr(0xa1)."-".chr(0xff)."]+$/"
             : "/^[x{4e00}-x{9fa5}]+$/u";
@@ -626,4 +578,127 @@ class Validator
         ImageDestroy($im);
         return true;
     }
+	
+    //验证是否是合法的手机号码
+    public static function isMobile($mobile)
+    {
+        return preg_match('/^(13[0-9]|14[0-9]|15[0-9]|17[0-9]|18[0-9])\d{8}$/', $mobile);
+    }
+	
+    //验证是否是合法的身份证号，简单验证
+    public static function isIdCardNo($idcard)
+    {
+        $length = strlen($idcard);
+
+        //15位老身份证
+        if ($length == 15)
+		{
+            if (checkdate(substr($idcard, 8, 2), substr($idcard, 10, 2), '19' . substr($idcard, 6, 2)))
+			{
+                return true;
+            }
+        }
+		
+        //18位二代身份证号
+        if ($length == 18)
+		{
+            if (!checkdate(substr($idcard, 10, 2), substr($idcard, 12, 2), substr($idcard, 6, 4)))
+			{
+                return false;
+            }
+			
+            $idcard = str_split($idcard);
+            if (strtolower($idcard[17]) == 'x')
+			{
+                $idcard[17] = '10';
+            }
+			
+            //加权求和
+            $sum = 0;
+            //加权因子
+            $wi = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2, 1];
+            for ($i = 0; $i < 17; $i++)
+			{
+                $sum += $wi[$i] * $idcard[$i];
+            }
+
+            //得到验证码所位置
+            $position = $sum % 11;
+
+            //身份证验证位值 10代表X
+            $code = [1, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+            if ($idcard[17] == $code[$position])
+			{
+                return true;
+            }
+        }
+
+        return false;
+    }
+	
+    //验证是否是合法的银行卡，不包含信用卡
+    public static function isBankCard($card)
+    {
+        if (!is_numeric($card))
+		{
+            return false;
+        }
+
+        if (strlen($card) < 16 || strlen($card) > 19)
+		{
+            return false;
+        }
+
+        $cardHeader = [10, 18, 30, 35, 37, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 58, 60, 62, 65, 68, 69, 84, 87, 88, 94, 95, 98, 99];
+        if (!in_array(substr($card, 0, 2), $cardHeader))
+		{
+            return false;
+        }
+
+        $numShouldCheck = str_split(substr($card, 0, -1));
+        krsort($numShouldCheck);
+
+        $odd = $odd['gt9'] = $odd['gt9']['tens'] = $odd['gt9']['unit'] = $odd['lt9'] = $even = [];
+        array_walk($numShouldCheck, function ($item, $key) use (&$odd, &$even, $card){
+
+            if ((strlen($card) == 16) && (substr($card, 0, 2) == '62'))
+			{
+                $key += 1;
+            }
+
+            if (($key & 1))
+			{
+                $t = $item * 2;
+                if ($t > 9)
+				{
+                    $odd['gt9']['unit'][] = intval($t % 10);
+                    $odd['gt9']['tens'][] = intval($t / 10);
+                }
+				else
+				{
+                    $odd['lt9'][] = $t;
+                }
+            }
+			else
+			{
+                $even[] = $item;
+            }
+        });
+		
+        $total = array_sum($even);
+        array_walk_recursive($odd, function ($item, $key) use (&$total) {
+            $total += $item;
+        });
+
+        $luhm = 10 - ($total % 10 == 0 ? 10 : $total % 10);
+
+        $lastNumOfCard = substr($card, -1, 1);
+        if ($luhm != $lastNumOfCard)
+		{
+            return false;
+        }
+		
+        return true;
+    }
+	
 }

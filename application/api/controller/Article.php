@@ -8,7 +8,7 @@ use app\common\lib\ReturnData;
 use app\common\logic\ArticleLogic;
 use app\common\model\Article as ArticleModel;
 
-class Article extends Base
+class Article extends Common
 {
 	public function _initialize()
 	{

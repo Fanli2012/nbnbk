@@ -118,6 +118,7 @@ var swiper = new Swiper('.swiper-container', {
 </div>
 <script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/layer/mobile/layer.js"></script>
 <script>
+var access_token = '<?php if($login_info){echo $login_info['token']['token'];} ?>';
 function mastershow(confirm)
 {
     //如果已经选择属性，则弹出确定按钮，否则弹出加入购物车和立即购买按钮
@@ -171,7 +172,6 @@ function cart_num_add()
 function dosubmit()
 {
     var url = '<?php echo sysconfig('CMS_API_URL').'/cart/add'; ?>';
-    var access_token = '<?php if(isset($_SESSION['weixin_user_info']['access_token'])){echo $_SESSION['weixin_user_info']['access_token'];} ?>';
     if(access_token=='')
     {
         //提示
@@ -181,7 +181,7 @@ function dosubmit()
             ,time: 2 //2秒后自动关闭
         });
         
-        setTimeout("location.href = '<?php /* echo route('weixin_login',array('return_url'=>route('weixin_goods_detail',array('id'=>$post['id'])))); */ ?>'",1000);
+        setTimeout("location.href = '<?php echo url('login/index').'?return_url='.url('goods/detail').'?id='.$post['id']; ?>'", 1000);
         
         return false;
     }
@@ -223,8 +223,7 @@ function dosubmit()
 
 function collect_goods()
 {
-    var url = '<?php if(isset($post['is_collect']) && $post['is_collect']>=1){echo sysconfig('CMS_API_URL').'/collect_goods_delete';}else{echo sysconfig('CMS_API_URL').'/collect_goods_add';} ?>';
-    var access_token = '<?php if(isset($_SESSION['weixin_user_info']['access_token'])){echo $_SESSION['weixin_user_info']['access_token'];} ?>';
+    var url = '<?php if($post['is_collect']==1){echo sysconfig('CMS_API_URL').'/user_goods_collect/del';}else{echo sysconfig('CMS_API_URL').'/user_goods_collect/add';} ?>';
     var goods_id = $("#id").val();
     
     if(access_token=='')
@@ -236,7 +235,7 @@ function collect_goods()
             ,time: 2 //2秒后自动关闭
         });
         
-        setTimeout("location.href = '<?php /* echo route('weixin_login',array('return_url'=>route('weixin_goods_detail',array('id'=>$post['id'])))); */ ?>'",1000);
+        setTimeout("location.href = '<?php echo url('login/index').'?return_url='.url('goods/detail').'?id='.$post['id']; ?>'", 1000);
         
         return false;
     }
@@ -245,18 +244,20 @@ function collect_goods()
 	{
 		if(res.code==0)
 		{
-            window.location.reload();
+            
 		}
 		else
 		{
             
 		}
-        
+		
         layer.open({
             content: res.msg
             ,skin: 'msg'
-            ,time: 2 //2秒后自动关闭
+            ,time: 1 //2秒后自动关闭
         });
+		
+		setInterval(function(){ window.location.reload(); }, 1000);
 	},'json');
 }
 </script>

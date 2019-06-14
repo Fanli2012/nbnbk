@@ -7,6 +7,7 @@ use app\common\lib\Helper;
 
 class Common extends Controller
 {
+    protected $login_info;
     /**
      * 初始化
      * @param void
@@ -16,6 +17,9 @@ class Common extends Controller
 	{
 		parent::_initialize();
 		
+        $this->login_info = session('weixin_user_info');
+        $this->assign('login_info', $this->login_info);
+        
 		$this->isWechatBrowser = Helper::isWechatBrowser();
 		$this->assign('isWechatBrowser', $this->isWechatBrowser);
 		

@@ -19,40 +19,66 @@ class User extends Base
         return new UserLogic();
     }
     
-    //列表
+    //个人中心
     public function index()
 	{
-		$pagesize = 10;
-        $offset = 0;
-        
-		$id = input('id');
-        //文章分类
-        $postdata = array(
-            'id'  => $id
+        $get_data = array(
+            'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/article_type/detail';
-		$arctype_detail = curl_request($url,$postdata,'GET');
-        $assign_data['post'] = $arctype_detail['data'];
+        $url = sysconfig('CMS_API_URL').'/user/detail';
+		$res = curl_request($url, $get_data, 'GET');
+        $assign_data['user_info'] = $res['data'];
+		
+        $this->assign($assign_data);
+		
+        return $this->fetch();
+	}
+    
+    //个人中心-设置
+    public function setting()
+	{
+        return $this->fetch();
+	}
+	
+    //资金管理
+    public function account()
+	{
+        $get_data = array(
+            'access_token' => $this->login_info['token']['token']
+		);
+        $url = sysconfig('CMS_API_URL').'/user/detail';
+		$res = curl_request($url, $get_data, 'GET');
+        $assign_data['user_info'] = $res['data'];
+		
+        $this->assign($assign_data);
+        return $this->fetch();
+    }
+    
+	//我的团队-列表
+    public function myteam()
+	{
+		//获取会员信息
+        $get_data = array(
+            'access_token' => $this->login_info['token']['token']
+		);
+        $url = sysconfig('CMS_API_URL').'/user/detail';
+		$res = curl_request($url,$get_data,'GET');
+        $data['user_info'] = $res['data'];
         
+        //获取直属下级会员列表
+        $pagesize = 10;
+        $offset = 0;
         if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
         
-        //文章列表
-        $postdata2 = array(
-            'limit'   => $pagesize,
-            'offset'  => $offset,
-            'type_id' => $id
+        $get_data = array(
+            'limit'  => $pagesize,
+            'offset' => $offset,
+            'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/article/index';
-		$res = curl_request($url, $postdata2, 'GET');
-        if($res['data']['list'])
-        {
-            foreach($res['data']['list'] as $k => $v)
-            {
-                $res['data']['list'][$k]['update_time'] = date('Y-m-d H:i', $v['update_time']);
-            }
-        }
+        $url = sysconfig('CMS_API_URL').'/user/myteam';
+		$res = curl_request($url, $get_data, 'GET');
         $assign_data['list'] = $res['data']['list'];
-        
+        //总页数
         $assign_data['totalpage'] = ceil($res['data']['count']/$pagesize);
         
         if(isset($_REQUEST['page_ajax']) && $_REQUEST['page_ajax']==1)
@@ -63,55 +89,19 @@ class User extends Base
             {
                 foreach($res['data']['list'] as $k => $v)
                 {
-                    $html .= '<li><a href="'.url('detail').'?id='.$v['id'].'">'.$v['title'].'</a><p>'.$v['update_time'].'</p></li>';
+                    $html .= '<li><span class="goods_thumb" style="width:72px;height:72px;"><img style="width:72px;height:72px;" alt="'.$v['user_name'].'" src="'.$v['head_img'].'"></span>';
+                    $html .= '<div class="goods_info"><p class="goods_tit">'.$v['user_name'].'</p>';
+                    $html .= '<p style="line-height:24px;">佣金：'.$v['commission'].'</p>';
+                    $html .= '<p style="line-height:24px;">注册时间：'.date('Y-m-d',$v['add_time']).'</p>';
+                    $html .= '</div></li>';
                 }
             }
             
     		exit(json_encode($html));
     	}
-		//dd($assign_data);
-		$this->assign($assign_data);
-        return $this->fetch();
-    }
-	
-    //详情
-    public function detail()
-	{
-        if(!checkIsNumber(input('id',null))){Helper::http404();}
-        $id = input('id');
 		
-        $postdata = array(
-            'id'  => $id
-		);
-        $url = sysconfig('CMS_API_URL').'/article/detail';
-		$res = curl_request($url,$postdata,'GET');
-        if(empty($res['data'])){Helper::http404();}
-        $res['data']['content'] = preg_replace('/src=\"\/uploads\/allimg/',"src=\"".sysconfig('CMS_BASEHOST')."/uploads/allimg",$res['data']['content']);
-        $res['data']['update_time'] = date('Y-m-d',$res['data']['update_time']);
-        $assign_data['post'] = $res['data'];
-		//dd($assign_data['post']);
 		$this->assign($assign_data);
         return $this->fetch();
-    }
+	}
     
-    /**
-     * 获取文章上一篇，下一篇
-     * @param int $param['article_id'] 当前文章id
-     * @return array
-     */
-    public function getPreviousNextArticle(array $param)
-    {
-        $res['previous_article'] = [];
-        $res['next_article'] = [];
-        
-        $where['id'] = $param['article_id'];
-        $post = model('Article')->getOne($where,['content']);
-        if(!$post)
-        {
-            return $res;
-        }
-        $res['previous_article'] = model('Article')->getOne(['id'=>['<',$param['article_id']],'type_id'=>$post['type_id']],['content'],'id desc');
-        $res['next_article'] = model('Article')->getOne(['id'=>['>',$param['article_id']],'type_id'=>$post['type_id']],['content'],'id asc');
-        return $res;
-    }
 }

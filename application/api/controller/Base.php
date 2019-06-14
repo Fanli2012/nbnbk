@@ -24,26 +24,12 @@ class Base extends Common
      * @param access_token
      * @return array
      */
-    public function checkToken($access_token)
+    public function checkToken()
     {
 		//哪些方法不需要TOKEN验证
         $uncheck = array(
-			'article/index',
-			'article/detail',
-			'articletype/index',
-			'articletype/detail',
-			'page/index',
-			'page/detail',
-			'friendlink/index',
 			'payment/index',
-			'slide/index',
 			'sysconfig/index',
-			'region/index',
-			'region/detail',
-			'goods/index',
-			'goods/detail',
-			'goodstype/index',
-			'goodstype/detail',
 			'shop/index',
 			'shop/detail',
 			'guestbook/add',

@@ -6,8 +6,9 @@ use app\common\lib\Token;
 use app\common\lib\Helper;
 use app\common\lib\ReturnData;
 use app\common\logic\GoodsBrandLogic;
+use app\common\model\GoodsBrand as GoodsBrandModel;
 
-class Goodsbrand extends Base
+class Goodsbrand extends Common
 {
 	public function _initialize()
 	{
@@ -28,6 +29,7 @@ class Goodsbrand extends Base
         $offset = input('offset', 0);
         $orderby = input('orderby','listorder asc');
         if(input('parent_id', null) != null){$where['parent_id'] = input('parent_id');}
+		if(input('status', '') === ''){$where['status'] = GoodsBrandModel::GOODS_BRAND_STATUS_NORMAL;}else{if(input('status') != -1){$where['status'] = input('status');}}
         
         $res = $this->getLogic()->getList($where,$orderby,['content'],$offset,$limit);
 		

@@ -6,12 +6,11 @@ use think\Request;
 use think\Session;
 use app\common\lib\ReturnData;
 use app\common\lib\Helper;
-use app\common\logic\ShopLogic;
 
 /**
  * 公共-首页
  */
-class Index extends Base
+class Index extends Common
 {
 	/**
      * 首页
@@ -37,7 +36,7 @@ class Index extends Base
 		//分享到首页，把推荐码invite_code存下来
         if(isset($_REQUEST['invite_code']) && !empty($_REQUEST['invite_code']))
         {
-			$_SESSION['weixin_user_invite_code'] = $_REQUEST['invite_code'];
+			session('weixin_user_invite_code', $_REQUEST['invite_code']);
 		}
         
         //banner轮播图

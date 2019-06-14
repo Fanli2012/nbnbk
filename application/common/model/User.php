@@ -310,14 +310,14 @@ class User extends Base
     }
     
     //性别：1男2女
-    public function getSexAttr($value, $data)
+    public function getSexTextAttr($value, $data)
     {
-        $arr = array(1 => '男', 2 => '女');
+        $arr = array(0 => '未知', 1 => '男', 2 => '女');
         return $arr[$data['sex']];
     }
     
     //用户状态：0正常，1待审，2锁定
-    public function getStatusAttr($value, $data)
+    public function getStatusTextAttr($value, $data)
     {
         return self::$user_status_desc[$data['status']];
     }

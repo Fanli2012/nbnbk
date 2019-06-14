@@ -8,7 +8,7 @@ use app\common\lib\ReturnData;
 use app\common\logic\ArticleTypeLogic;
 use app\common\model\ArticleType as ArticleTypeModel;
 
-class ArticleType extends Base
+class ArticleType extends Common
 {
 	public function _initialize()
 	{

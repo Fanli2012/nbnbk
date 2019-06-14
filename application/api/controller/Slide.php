@@ -8,7 +8,7 @@ use app\common\lib\ReturnData;
 use app\common\logic\SlideLogic;
 use app\common\model\Slide as SlideModel;
 
-class Slide extends Base
+class Slide extends Common
 {
 	public function _initialize()
 	{

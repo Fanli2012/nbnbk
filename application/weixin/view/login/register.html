@@ -32,10 +32,7 @@
             <input autocomplete="off" type="text" name="user_name" class="" id="user_name" placeholder="请输入用户名">
         </div>
         <div class="adr-form-group">
-            <input autocomplete="off" type="text" name="mobile" class="" id="mobile" placeholder="请输入手机号码">
-        </div>
-        <div class="adr-form-group">
-            <input autocomplete="off" type="password" name="password" class="" id="password" placeholder="请设置6-20位登录密码">
+            <input autocomplete="off" type="password" name="password" class="" id="password" placeholder="请设置6-18位登录密码">
         </div>
         <div class="adr-form-group">
             <input autocomplete="off" type="password" name="re_password" class="" id="re_password" placeholder="确认密码">
@@ -57,7 +54,6 @@
 function submit()
 {
     var user_name = $("#user_name").val();
-    var mobile = $("#mobile").val();
     var password = $("#password").val();
     var re_password = $("#re_password").val();
     var parent_id = $("#parent_id").val();
@@ -66,28 +62,6 @@ function submit()
     {
         layer.open({
             content: '用户名不能为空'
-            ,skin: 'msg'
-            ,time: 2 //2秒后自动关闭
-        });
-        
-        return false;
-    }
-    
-    if(mobile == '')
-    {
-        layer.open({
-            content: '手机号不能为空'
-            ,skin: 'msg'
-            ,time: 2 //2秒后自动关闭
-        });
-        
-        return false;
-    }
-    
-    if(!validatemobile(mobile))
-    {
-        layer.open({
-            content: '手机号格式不正确'
             ,skin: 'msg'
             ,time: 2 //2秒后自动关闭
         });
@@ -118,18 +92,18 @@ function submit()
     }
     
     //$("#login").submit();
-    $.post('<?php echo sysconfig('CMS_API_URL').'/login/register'; ?>',{user_name:user_name,mobile:mobile,parent_id:parent_id,password:password},function(res)
+    $.post('<?php echo sysconfig('CMS_API_URL').'/login/register'; ?>',{user_name:user_name,parent_id:parent_id,password:password},function(res)
 	{
 		if(res.code==0)
 		{
             //提示
             layer.open({
-                content: '注册成功'
+                content: '注册成功，请登录'
                 ,skin: 'msg'
                 ,time: 2 //2秒后自动关闭
             });
             
-            setInterval(function(){location.href = '<?php echo url('login/index'); ?>';},5000);
+            setInterval(function(){location.href = '<?php echo url('login/index'); ?>';},2000);
 		}
 		else
 		{

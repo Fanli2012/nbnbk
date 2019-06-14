@@ -82,19 +82,19 @@ class GoodsSearchwordLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
-		//添加时间、更新时间
+		//添加时间
 		if(!(isset($data['add_time']) && !empty($data['add_time']))){$data['add_time'] = time();}
 		
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
-        //判断搜索词是否存在
-        if(isset($data['name']) && !empty($data['name']))
-        {
-            if($this->getModel()->getOne(['name'=>$data['name']])){
-                return ReturnData::create(ReturnData::PARAMS_ERROR,null,'该搜索词已存在');
-            }
-        }
+		$record = $this->getModel()->getOne(['name'=>$data['name']]);
+        if($record)
+		{
+			//搜索次数+1
+			$this->getModel()->edit(array('click'=>($record['click']+1)),array('id'=>$record['id']));
+			return ReturnData::create(ReturnData::SUCCESS, $record['id']);
+		}
         
         $res = $this->getModel()->add($data, $type);
         if(!$res){return ReturnData::create(ReturnData::FAIL);}

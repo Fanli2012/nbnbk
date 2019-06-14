@@ -7,7 +7,7 @@ use app\common\lib\Helper;
 use app\common\lib\ReturnData;
 use app\common\logic\FriendlinkLogic;
 
-class Friendlink extends Base
+class Friendlink extends Common
 {
 	public function _initialize()
 	{

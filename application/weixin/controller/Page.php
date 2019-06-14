@@ -6,7 +6,7 @@ use app\common\lib\ReturnData;
 use app\common\lib\Helper;
 use app\common\logic\PageLogic;
 
-class Page extends Base
+class Page extends Common
 {
     public function _initialize()
 	{

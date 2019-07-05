@@ -324,13 +324,21 @@ function get_participle($keyword)
     return ltrim($keywords, ",");
 }
 
-//获取二维码
-function get_erweima($url,$size=6)
+/**
+ * 获取二维码
+ * @param string $url url链接
+ * @param int $size 点的大小：1到10,用于手机端4就可以了
+ * @param string $level 纠错级别：L、M、Q、H
+ * @return string
+ */
+function get_erweima($url, $size = 6, $level = 'H')
 {
-	//Vendor('phpqrcode.qrlib');
     require_once EXTEND_PATH.'phpqrcode/qrlib.php';
+	ob_start();
+	\QRcode::png($url, false, $level, $size);
+	$image_string = base64_encode( ob_get_contents() );
 	ob_end_clean();
-	return 'data:image/png;base64,'.base64_encode(\QRcode::png($url, false, "H", $size));
+	return 'data:image/jpg;base64,' . $image_string;
 }
 
 //判断是否是图片格式，是返回true

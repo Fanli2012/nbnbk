@@ -24,6 +24,11 @@ class BonusLogic extends BaseLogic
     //列表
     public function getList($where = array(), $order = '', $field = '*', $offset = '', $limit = '')
     {
+        $where2 = $where;
+        $where2['end_time'] = array('<', time()); //有效期
+        //设置用户优惠券已过期
+        $this->getModel()->edit(array('status'=>1), $where2);
+        
         $res = $this->getModel()->getList($where, $order, $field, $offset, $limit);
         
         if($res['list'])

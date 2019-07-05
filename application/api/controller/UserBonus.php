@@ -91,7 +91,7 @@ class UserBonus extends Base
         }
     }
 	
-    public function userAvailableBonusList(Request $request)
+    public function user_available_bonus_list()
 	{
         //参数
         $data['user_id'] = $this->login_info['id'];

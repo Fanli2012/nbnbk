@@ -44,7 +44,7 @@ class Login extends Common
 	 * @param string $data['parent_mobile'] 推荐人手机号
      * @return array
      */
-    public function wxLogin()
+    public function wx_login()
     {
 		$user = $this->getLogic()->wxLogin(request()->param());
         exit(json_encode($user));

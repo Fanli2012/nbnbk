@@ -2,7 +2,6 @@
 namespace app\api\controller;
 use think\Db;
 use think\Request;
-use app\common\lib\Token;
 use app\common\lib\Helper;
 use app\common\lib\ReturnData;
 use app\common\logic\UserWithdrawLogic;
@@ -27,7 +26,7 @@ class UserWithdraw extends Base
         $where = array();
         $limit = input('limit',10);
         $offset = input('offset', 0);
-        $orderby = input('orderby','id desc');
+        $orderby = input('orderby', 'id desc');
 		if(input('method', '') !== ''){$where['method'] = input('method');}
 		if(input('status', '') !== ''){$where['status'] = input('status');}
         $where['user_id'] = $this->login_info['id'];

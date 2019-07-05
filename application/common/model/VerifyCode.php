@@ -384,6 +384,30 @@ class VerifyCode extends Base
         return self::where($where)->column($field);
     }
     
+    /**
+     * 某一列的值自增
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认+1
+     * @return array
+     */
+    public function setIncrement($where, $field, $step = 1)
+    {
+		return self::where($where)->setInc($field, $step);
+    }
+    
+    /**
+     * 某一列的值自减
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认-1
+     * @return array
+     */
+    public function setDecrement($where, $field, $step = 1)
+    {
+		return self::where($where)->setDec($field, $step);
+    }
+    
     //类型，0通用，注册，1:手机绑定业务验证码，2:密码修改业务验证码
     public function getTypeAttr($data)
     {

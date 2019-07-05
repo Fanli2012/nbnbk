@@ -16,6 +16,8 @@ class UserAddress extends Base
         return db('user_address');
     }
     
+    const USER_ADDRESS_IS_DEFAULT = 1; //是默认地址
+    
     /**
      * 列表
      * @param array $where 查询条件
@@ -295,4 +297,107 @@ class UserAddress extends Base
         return self::where($where)->column($field);
     }
     
+    /**
+     * 某一列的值自增
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认+1
+     * @return array
+     */
+    public function setIncrement($where, $field, $step = 1)
+    {
+		return self::where($where)->setInc($field, $step);
+    }
+    
+    /**
+     * 某一列的值自减
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认-1
+     * @return array
+     */
+    public function setDecrement($where, $field, $step = 1)
+    {
+		return self::where($where)->setDec($field, $step);
+    }
+    
+    /**
+     * 获取器——国家名称
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getCountryNameAttr($value, $data)
+    {
+		if(isset($data['country_id']) && $data['country_id']>0)
+		{
+			return model('Region')->getValue(array('id'=>$data['country_id']), 'name');
+		}
+        
+		return '';
+    }
+    
+    /**
+     * 获取器——省份名称
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getProvinceNameAttr($value, $data)
+    {
+		if(isset($data['province_id']) && $data['province_id']>0)
+		{
+			return model('Region')->getValue(array('id'=>$data['province_id']), 'name');
+		}
+        
+		return '';
+    }
+	
+    /**
+     * 获取器——城市名称
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getCityNameAttr($value, $data)
+    {
+		if(isset($data['city_id']) && $data['city_id']>0)
+		{
+			return model('Region')->getValue(array('id'=>$data['city_id']), 'name');
+		}
+        
+		return '';
+    }
+	
+    /**
+     * 获取器——县区名称
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getDistrictNameAttr($value, $data)
+    {
+		if(isset($data['district_id']) && $data['district_id']>0)
+		{
+			return model('Region')->getValue(array('id'=>$data['district_id']), 'name');
+		}
+        
+		return '';
+    }
+	
+    /**
+     * 获取器——是否默认文字
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getIsDefaultTextAttr($value, $data)
+    {
+		if(isset($data['is_default']) && $data['is_default']==1)
+		{
+			return '默认';
+		}
+        
+		return '';
+    }
 }

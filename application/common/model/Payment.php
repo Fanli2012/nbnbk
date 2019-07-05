@@ -17,6 +17,15 @@ class Payment extends Base
         return db('payment');
     }
     
+    //状态：0不可用，1正常
+    const PAYMENT_STATUS_UNAVAILABLE = 0;
+    const PAYMENT_STATUS_NORMAL = 1;
+	//状态描述
+    public static $payment_status_desc = array(
+        self::PAYMENT_STATUS_UNAVAILABLE => '不可用',
+        self::PAYMENT_STATUS_NORMAL => '正常'
+    );
+	
     /**
      * 列表
      * @param array $where 查询条件
@@ -296,17 +305,39 @@ class Payment extends Base
         return self::where($where)->column($field);
     }
     
-    //是否显示，默认0显示
-    public function getIsShowAttr($data)
+    /**
+     * 某一列的值自增
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认+1
+     * @return array
+     */
+    public function setIncrement($where, $field, $step = 1)
     {
-        $arr = array(0 => '显示', 1 => '不显示');
-        return $arr[$data['is_show']];
+		return self::where($where)->setInc($field, $step);
     }
     
-    //跳转方式，0_blank，1_self，2_parent，3_top，4framename
-    public function getTargetAttr($data)
+    /**
+     * 某一列的值自减
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认-1
+     * @return array
+     */
+    public function setDecrement($where, $field, $step = 1)
     {
-        $arr = array(0 => '_blank', 1 => '_self', 2 => '_parent', 3 => '_top', 4 => 'framename');
-        return $arr[$data['target']];
+		return self::where($where)->setDec($field, $step);
     }
+    
+    /**
+     * 获取器——审核状态文字
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getStatusTextAttr($value, $data)
+    {
+        return self::$payment_status_desc[$data['status']];
+    }
+    
 }

@@ -27,9 +27,8 @@ class User extends Base
 		);
         $url = sysconfig('CMS_API_URL').'/user/detail';
 		$res = curl_request($url, $get_data, 'GET');
-        $assign_data['user_info'] = $res['data'];
-		
-        $this->assign($assign_data);
+		$this->login_info = array_merge($this->login_info, $res['data']);
+		session('weixin_user_info', $this->login_info);
 		
         return $this->fetch();
 	}
@@ -37,6 +36,14 @@ class User extends Base
     //个人中心-设置
     public function setting()
 	{
+		$get_data = array(
+            'access_token' => $this->login_info['token']['token']
+		);
+        $url = sysconfig('CMS_API_URL').'/user/detail';
+		$res = curl_request($url, $get_data, 'GET');
+		$this->login_info = array_merge($this->login_info, $res['data']);
+		session('weixin_user_info', $this->login_info);
+		
         return $this->fetch();
 	}
 	
@@ -48,9 +55,9 @@ class User extends Base
 		);
         $url = sysconfig('CMS_API_URL').'/user/detail';
 		$res = curl_request($url, $get_data, 'GET');
-        $assign_data['user_info'] = $res['data'];
+		$this->login_info = array_merge($this->login_info, $res['data']);
+		session('weixin_user_info', $this->login_info);
 		
-        $this->assign($assign_data);
         return $this->fetch();
     }
     
@@ -63,7 +70,7 @@ class User extends Base
 		);
         $url = sysconfig('CMS_API_URL').'/user/detail';
 		$res = curl_request($url,$get_data,'GET');
-        $data['user_info'] = $res['data'];
+		$this->login_info = array_merge($this->login_info, $res['data']);
         
         //获取直属下级会员列表
         $pagesize = 10;

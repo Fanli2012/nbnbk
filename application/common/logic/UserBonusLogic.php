@@ -24,9 +24,13 @@ class UserBonusLogic extends BaseLogic
     //列表
     public function getList($where = array(), $order = '', $field = '*', $offset = '', $limit = '')
     {
-        $res = $this->getModel()->getList($where, $order, $field, $offset, $limit);
+        $where2 = $where;
+        $where2['end_time'] = array('<', time()); //有效期
+        //设置用户优惠券已过期
+        $this->getModel()->edit(array('status'=>2), $where2);
         
-        if($res['list'])
+        $res = $this->getModel()->getList($where, $order, $field, $offset, $limit);
+        if($res['count'] > 0)
         {
             foreach($res['list'] as $k=>$v)
             {
@@ -158,15 +162,37 @@ class UserBonusLogic extends BaseLogic
         $where['status'] = UserBonus::USER_BONUS_STATUS_UNUSED;
 		$where['end_time'] = array('>=', time()); //有效期
 		
-        $model = $this->getModel();
 		//满多少使用
         if(isset($data['min_amount']))
 		{
 			$where['min_amount'] = array('<=', $data['min_amount']);
-			$where['money'] = array('<=', $data['min_amount']);
+			$where['bonus_money'] = array('<=', $data['min_amount']);
 		}
-        $res = $model->getAll($where, 'money desc');
-        
+		
+        $res = $this->getModel()->getAll($where, 'bonus_money desc');
+        return $res;
+    }
+	
+    /**
+     * 获取可用优惠券
+     * @param int $data['id'] 优惠券ID
+     * @param int $data['user_id'] 用户ID
+     * @param float $data['min_amount'] 最小金额可以用的优惠券
+     * @return array
+     */
+    public function getUserAvailableBonus(array $data)
+    {
+        $where['status'] = UserBonus::USER_BONUS_STATUS_UNUSED;
+		$where['end_time'] = array('>=', time()); //有效期
+		
+		//满多少使用
+        if(isset($data['min_amount']))
+		{
+			$where['min_amount'] = array('<=', $data['min_amount']);
+			$where['bonus_money'] = array('<=', $data['min_amount']);
+		}
+		
+        $res = $this->getModel()->getOne($where);
         return $res;
     }
 }

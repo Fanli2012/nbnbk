@@ -210,7 +210,7 @@ class AdminLogic extends BaseLogic
         
         //用户名/邮箱/手机登录
         $admin = $this->getModel()->where(function($query) use ($name,$pwd){$query->where('name',$name)->where('pwd',$pwd)->where('delete_time',0);})->whereOr(function($query) use ($name,$pwd){$query->where('email',$name)->where('pwd',$pwd)->where('delete_time',0);})->whereOr(function($query) use ($name,$pwd){$query->where('mobile',$name)->where('pwd',$pwd)->where('delete_time',0);})->find();
-        if($admin){return ReturnData::create(ReturnData::FAIL);}
+        if(!$admin){return ReturnData::create(ReturnData::FAIL, null, '登录名或密码错误');}
 		
         $admin = $admin->append(['role_name','status_text'])->toArray();
 		//$admin['role_name'] = model('AdminRole')->getValue(['id'=>$admin['role_id']], 'name');

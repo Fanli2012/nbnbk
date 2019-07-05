@@ -16,7 +16,7 @@ function fileLoad(ele){
 	formData.append("file", files);
 	formData.append("name", name);
 	$.ajax({
-		url: "{:url('api/Image/imageUpload')}",
+		url: "{:url('api/image/image_upload')}",
 		type: 'POST',
 		data: formData,
 		dataType: 'json',

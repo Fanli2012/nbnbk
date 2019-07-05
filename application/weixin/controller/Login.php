@@ -79,7 +79,7 @@ class Login extends Common
     }
 	
     //微信网页授权登录
-    public function wxOauth()
+    public function wx_oauth()
 	{
 		$weixin_oauth = session('weixin_oauth');
         if (!isset($weixin_oauth['userinfo']))
@@ -113,7 +113,7 @@ class Login extends Common
             session('weixin_oauth.userinfo', $wechat_auth->get_user_info(session('weixin_oauth.token')['access_token'], session('weixin_oauth.token')['openid']));
         }
         
-        $postdata = array(
+        $post_data = array(
             'openid' => session('weixin_oauth.userinfo')['openid'],
             'unionid' => isset(session('weixin_oauth.userinfo')['unionid']) ? session('weixin_oauth.userinfo')['unionid'] : '',
             'nickname' => isset(session('weixin_oauth.userinfo')['nickname']) ? Helper::filterEmoji(session('weixin_oauth.userinfo')['nickname']) : '',
@@ -123,8 +123,8 @@ class Login extends Common
             'parent_mobile' => '',
             'mobile' => ''
         );
-        $url = env('APP_API_URL').'/login/wx_login';
-        $res = curl_request($url,$postdata,'POST');
+        $url = sysconfig('CMS_API_URL').'/login/wx_login';
+        $res = curl_request($url, $post_data, 'POST');
         if($res['code'] != ReturnData::SUCCESS){$this->error('操作失败');}
         
         session('weixin_user_info', $res['data']);
@@ -140,5 +140,16 @@ class Login extends Common
         //session_destroy(); // 退出登录，清除session
         session('weixin_user_info', null);
 		$this->success('退出成功', url('index/index'));
+	}
+	
+	/**
+	 * 重新登录
+	 */
+	public function relogin()
+	{
+        //session_unset();
+        //session_destroy(); // 退出登录，清除session
+        session('weixin_user_info', null);
+		header('Location: '.url('login/index'));exit;
 	}
 }

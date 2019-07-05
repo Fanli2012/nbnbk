@@ -13,9 +13,9 @@
 {include file="common/headerNav"/}
 
 <!--导航左右滑动-start-->
-<!--<link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/swiper.min.css">
+<link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/swiper.min.css">
 <script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/swiper.min.js"></script>
-<div class="swiper-nav">
+<!--<div class="swiper-nav">
     <div class="swiper-wrapper">
         <div class="swiper-slide"><a<?php if($type_id==''){echo ' style="color:#ee5b03;border-bottom:1px solid #ee5b03;"';} ?> href="<?php echo url('goods/category_ist'); ?>" data-id="0">全部</a></div>
         <?php if($goods_type_list){foreach($goods_type_list as $k=>$v){ ?>

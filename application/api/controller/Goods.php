@@ -62,7 +62,7 @@ class Goods extends Common
                     $orderby = 'sale desc'; //销量从高到低
                     break;
                 case 2:
-                    $orderby = 'comments desc'; //评论从高到低
+                    $orderby = 'comment_number desc'; //评论从高到低
                     break;
                 case 3:
                     $orderby = 'price desc'; //价格从高到低

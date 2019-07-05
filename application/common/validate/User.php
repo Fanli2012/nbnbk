@@ -43,6 +43,8 @@ class User extends Validate
         'add' => ['parent_id', 'mobile', 'email', 'nickname', 'user_name', 'password', 'head_img', 'sex', 'birthday', 'openid', 'status', 'add_time'],
 		'register' => ['parent_id', 'user_name', 'password', 'add_time'],
 		'wx_register' => ['parent_id', 'mobile', 'email', 'nickname', 'user_name', 'head_img', 'sex', 'birthday', 'openid', 'add_time'],
+		'user_password_update' => ['password'],
+		'user_pay_password_update' => ['pay_password'],
         'del' => ['id'],
     );
 	
@@ -58,7 +60,7 @@ class User extends Validate
             return true;
         }
 		
-        return '该用户名已被使用';
+        return '用户名格式不正确';
     }
 	
 	// 手机号校验

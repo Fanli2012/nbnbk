@@ -1,6 +1,7 @@
 <?php
 namespace app\common\logic;
 use think\Loader;
+use think\Db;
 use app\common\lib\ReturnData;
 use app\common\model\UserPoint;
 
@@ -77,7 +78,14 @@ class UserPointLogic extends BaseLogic
         return $res;
     }
     
-    //添加
+	/**
+     * 添加一条记录，并增加或减少用户积分，会操作用户积分表，谨慎使用
+     * @param int    $data['user_id'] 用户id
+     * @param int    $data['type'] 0增加,1减少
+     * @param float  $data['point'] 积分
+     * @param string $data['desc'] 描述
+     * @return array
+     */
     public function add($data = array(), $type=0)
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
@@ -86,14 +94,46 @@ class UserPointLogic extends BaseLogic
 		if(!(isset($data['add_time']) && !empty($data['add_time']))){$data['add_time'] = time();}
 		
         $check = $this->getValidate()->scene('add')->check($data);
-        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR, null, $this->getValidate()->getError());}
         
+        if ($data['point']<=0) { return ReturnData::create(ReturnData::PARAMS_ERROR); }
+        
+        $user = model('User')->getOne(['id'=>$data['user_id']]);
+        if(!$user){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '用户不存在');}
+        
+        Db::startTrans(); //启动事务
+        
+        if($data['type'] == UserPoint::USER_POINT_INCREMENT)
+        {
+            //增加用户积分
+            model('User')->setIncrement(array('id'=>$data['user_id']), 'point', $data['point']);
+        }
+        elseif($data['type'] == UserPoint::USER_POINT_DECREMENT)
+        {
+            //判断用户积分是否足够
+            if($data['point'] > $user['point']){return ReturnData::create(ReturnData::FAIL, null, '积分不足');}
+            //减少用户积分
+            model('User')->setDecrement(array('id'=>$data['user_id']), 'point', $data['point']);
+        }
+        else
+        {
+            Db::rollback(); //事务回滚
+            return ReturnData::create(ReturnData::FAIL);
+        }
+        
+        $user_point = model('User')->getValue(array('id'=>$data['user_id']), 'point'); //用户余额
+        $data['user_point'] = $user_point;
         $res = $this->getModel()->add($data, $type);
-        if(!$res){return ReturnData::create(ReturnData::FAIL);}
+        if(!$res)
+        {
+			Db::rollback(); //事务回滚
+			return ReturnData::create(ReturnData::FAIL);
+        }
         
-        return ReturnData::create(ReturnData::SUCCESS, $res);
+		Db::commit(); //事务提交
+		return ReturnData::create(ReturnData::SUCCESS, $res);
     }
-    
+	
     //修改
     public function edit($data, $where = array())
     {

@@ -339,6 +339,30 @@ class Goods extends Base
 		$where['delete_time'] = self::GOODS_UNDELETE;
         return self::where($where)->column($field);
     }
+	
+    /**
+     * 某一列的值自增
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认+1
+     * @return array
+     */
+    public function setIncrement($where, $field, $step = 1)
+    {
+		return self::where($where)->setInc($field, $step);
+    }
+    
+    /**
+     * 某一列的值自减
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认-1
+     * @return array
+     */
+    public function setDecrement($where, $field, $step = 1)
+    {
+		return self::where($where)->setDec($field, $step);
+    }
     
     /**
      * 获取商品详情url
@@ -469,6 +493,26 @@ class Goods extends Base
         }
         
         return 0;
+    }
+    
+    /**
+     * 增加或减少商品库存
+     * 
+     * @access  public
+     * @param int $goods_id  商品ID
+     * @param int $type 1增加库存
+     * @return  bool
+     */
+    public function changeGoodsStock($where)
+    {
+        if(isset($where['type']) && $where['type']==1)
+        {
+            //增加库存
+            return $this->setIncrement(array('id'=>$where['goods_id']), 'goods_number', $where['goods_number']);
+        }
+        
+        //减少库存
+        return $this->setDecrement(array('id'=>$where['goods_id']), 'goods_number', $where['goods_number']);
     }
     
 }

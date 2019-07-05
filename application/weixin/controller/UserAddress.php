@@ -12,25 +12,24 @@ class UserAddress extends Base
 		parent::_initialize();
     }
     
-    //列表
+    //收货地址-列表
     public function index()
 	{
 		//参数
-		$pagesize = 10;
+        $pagesize = 10;
         $offset = 0;
         if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
-        //获取收藏列表
+        //获取收货地址列表
         $get_data = array(
             'limit'  => $pagesize,
             'offset' => $offset,
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user_goods_collect/index';
-		$res = curl_request($url,$get_data,'GET');
+        $url = sysconfig('CMS_API_URL').'/user_address/index';
+		$res = curl_request($url, $get_data, 'GET');
         $assign_data['list'] = $res['data']['list'];
         //总页数
         $assign_data['totalpage'] = ceil($res['data']['count']/$pagesize);
-        
         if(isset($_REQUEST['page_ajax']) && $_REQUEST['page_ajax']==1)
         {
     		$html = '';
@@ -39,18 +38,51 @@ class UserAddress extends Base
             {
                 foreach($res['data']['list'] as $k => $v)
                 {
-                    $html .= '<li><a href="'.url('goods/detail').'?id='.$v['goods']['id'].'"><span class="goods_thumb"><img alt="'.$v['goods']['title'].'" src="'.$v['goods']['litpic'].'"></span></a>';
-                    $html .= '<div class="goods_info"><p class="goods_tit">'.$v['goods']['title'].'</p>';
-                    $html .= '<p class="goods_price">￥<b>'.$v['goods']['price'].'</b></p>';
-					$html .= '<p class="goods_des fr"><span class="btn" onclick="del_collect(\''.$v['goods']['id'].'\')">删除</span></p>';
-					$html .= '</div></li>';
+                    $html .= '<div class="flow-have-adr">';
+                    
+                    if($v['is_default']==1)
+                    {
+                        $html .= '<p class="f-h-adr-title"><label>'.$v['name'].'</label><span class="ect-colory">'.$v['mobile'].'</span><span class="fr">默认</span></p>';
+                    }
+                    else
+                    {
+                        $html .= '<p class="f-h-adr-title"><label>'.$v['name'].'</label><span class="ect-colory">'.$v['mobile'].'</span></p>';
+                    }
+                    
+                    $html .= '<p class="f-h-adr-con">'.$v['province_name'].$v['city_name'].$v['district_name'].' '.$v['address'].'</p>';
+                    $html .= '<div class="adr-edit-del"><a href="'.route('weixin_user_address_update',array('id'=>$v['id'])).'"><i class="iconfont icon-bianji"></i>编辑</a><a href="javascript:del('.$v['id'].');"><i class="iconfont icon-xiao10"></i>删除</a></div>';
+                    $html .= '</div>';
                 }
             }
             
     		exit(json_encode($html));
     	}
-		
+        
 		$this->assign($assign_data);
         return $this->fetch();
-    }
+	}
+    
+    //收货地址-添加
+    public function add()
+	{
+        return $this->fetch();
+	}
+    
+    //收货地址-修改
+    public function edit()
+	{
+        $id = input('id', '');
+        if($id == ''){$this->error('参数错误');}
+        
+        $get_data = array(
+            'id'  => $_REQUEST['id'],
+            'access_token' => $this->login_info['token']['token']
+		);
+        $url = sysconfig('CMS_API_URL').'/user_address/detail';
+		$res = curl_request($url, $get_data, 'GET');
+        $assign_data['post'] = $res['data'];
+        
+		$this->assign($assign_data);
+        return $this->fetch();
+	}
 }

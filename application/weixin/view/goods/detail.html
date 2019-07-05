@@ -67,7 +67,7 @@ var swiper = new Swiper('.swiper-container', {
         </dl>
     </div>
     
-    <div class="goods-comment">用户评价<span>共<?php echo $post['comments']; ?>条评价 ></span></div>
+    <div class="goods-comment">用户评价<span>共<?php echo $post['comment_number']; ?>条评价 ></span></div>
 </div>
 
 <div class="goods-content">
@@ -93,10 +93,10 @@ var swiper = new Swiper('.swiper-container', {
                 <p class="goods_type">库存<span class="attr_storage"><?php echo $post['goods_number']; ?></span>件</p>
               </div>
             </div>
-          </div>  <!--cart_info-->
+          </div><!--cart_info-->
         </div>   
       </div><!--item-->  
-            
+      
       <div class="pop_num">
         <span>数量</span>
         <div class="pop_sum">
@@ -196,7 +196,7 @@ function dosubmit()
 		{
             if(cart_type == 2)
             {
-                location.href = '<?php /* echo substr(route('weixin_cart_checkout',array('ids'=>1)),0,-1); */ ?>' + res.data;
+                location.href = '<?php echo substr(url('cart/checkout').'?cartids=1',0,-1); ?>' + res.data;
                 return false;
             }
             
@@ -267,7 +267,7 @@ function collect_goods()
 <div class="bottom_tool_black">
  <div class="bottom_tool_white">
   <ul>
-    <a href="tel:12345678910"><li>
+    <a href="tel:<?php echo sysconfig('CMS_CONSUMER_HOTLINE'); ?>"><li>
     <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/goods_ic_kefu.png">
     <p>客服</p>
     </li></a>

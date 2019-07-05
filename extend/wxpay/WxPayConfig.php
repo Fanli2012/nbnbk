@@ -77,15 +77,15 @@ class WxPayConfig
 		//证书路径,注意应该填写绝对路径
 		$wxconfig['SSLCERT_PATH'] = self::SSLCERT_PATH;
 		$wxconfig['SSLKEY_PATH'] = self::SSLKEY_PATH;
-
+		
 		//=======【异步通知url设置】===================================
 		//异步通知url，商户根据实际开发过程设定
 		$wxconfig['NOTIFY_URL'] = ''; //放在下单时，添加
-
+		
 		//=======【curl超时设置】===================================
 		//本例程通过curl使用HTTP POST方法，此处可修改其超时时间，默认为30秒
 		$wxconfig['CURL_TIMEOUT'] = 30;
-
+		
 		return $wxconfig;
 	}
 }

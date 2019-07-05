@@ -6,8 +6,9 @@ use app\common\lib\Token;
 use app\common\lib\Helper;
 use app\common\lib\ReturnData;
 use app\common\logic\PaymentLogic;
+use app\common\model\Payment as PaymentModel;
 
-class Payment extends Base
+class Payment extends Common
 {
 	public function _initialize()
 	{
@@ -24,10 +25,10 @@ class Payment extends Base
 	{
         //参数
         $where = array();
-        if(input('status', null) !== null){if(input('status')!=-1){$where['status'] = input('status');}}else{$where['status'] = input('status', 1);}
+		if(input('status', '') === ''){$where['status'] = PaymentModel::PAYMENT_STATUS_NORMAL;}else{if(input('status') != -1){$where['status'] = input('status');}}
         $orderby = input('orderby','listorder asc');
         
-        $res = $this->getLogic()->getAll($where,$orderby);
+        $res = $this->getLogic()->getAll($where, $orderby);
 		
 		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
     }

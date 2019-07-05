@@ -1,5 +1,6 @@
 <?php
 namespace app\common\logic;
+use think\Db;
 use think\Loader;
 use app\common\lib\ReturnData;
 use app\common\model\UserRecharge;
@@ -81,14 +82,15 @@ class UserRechargeLogic extends BaseLogic
     public function add($data = array(), $type=0)
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
-        
+        //充值单号
+		$data['recharge_sn'] = date('YmdHis').rand(1000,9999);
 		//添加时间、更新时间
 		$time = time();
 		if(!(isset($data['add_time']) && !empty($data['add_time']))){$data['add_time'] = $time;}
 		if(!(isset($data['update_time']) && !empty($data['update_time']))){$data['update_time'] = $time;}
 		
         $check = $this->getValidate()->scene('add')->check($data);
-        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR, null, $this->getValidate()->getError());}
         
         $res = $this->getModel()->add($data, $type);
         if(!$res){return ReturnData::create(ReturnData::FAIL);}
@@ -116,7 +118,7 @@ class UserRechargeLogic extends BaseLogic
         if(empty($where)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
         $check = $this->getValidate()->scene('del')->check($where);
-        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR, null, $this->getValidate()->getError());}
         
         $res = $this->getModel()->del($where);
         if(!$res){return ReturnData::create(ReturnData::FAIL);}

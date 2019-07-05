@@ -344,6 +344,30 @@ class Article extends Base
     }
     
     /**
+     * 某一列的值自增
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认+1
+     * @return array
+     */
+    public function setIncrement($where, $field, $step = 1)
+    {
+		return self::where($where)->setInc($field, $step);
+    }
+    
+    /**
+     * 某一列的值自减
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认-1
+     * @return array
+     */
+    public function setDecrement($where, $field, $step = 1)
+    {
+		return self::where($where)->setDec($field, $step);
+    }
+    
+    /**
      * 获取器——分类名称
      * @param int $value
      * @param array $data

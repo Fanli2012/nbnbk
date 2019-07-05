@@ -1,6 +1,7 @@
 <?php
 namespace app\common\logic;
 use think\Loader;
+use think\Db;
 use app\common\lib\ReturnData;
 use app\common\model\UserMoney;
 
@@ -77,7 +78,14 @@ class UserMoneyLogic extends BaseLogic
         return $res;
     }
     
-    //添加
+	/**
+     * 添加一条记录，并增加或减少用户余额，会操作用户余额表，谨慎使用
+     * @param int    $data['user_id'] 用户id
+     * @param int    $data['type'] 0增加,1减少
+     * @param float  $data['money'] 金额
+     * @param string $data['desc'] 描述
+     * @return array
+     */
     public function add($data = array(), $type=0)
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
@@ -86,12 +94,44 @@ class UserMoneyLogic extends BaseLogic
 		if(!(isset($data['add_time']) && !empty($data['add_time']))){$data['add_time'] = time();}
 		
         $check = $this->getValidate()->scene('add')->check($data);
-        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR, null, $this->getValidate()->getError());}
         
+        if ($data['money']<=0) { return ReturnData::create(ReturnData::PARAMS_ERROR); }
+        
+        $user = model('User')->getOne(['id'=>$data['user_id']]);
+        if(!$user){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '用户不存在');}
+        
+        Db::startTrans(); //启动事务
+        
+        if($data['type'] == UserMoney::USER_MONEY_INCREMENT)
+        {
+            //增加用户余额
+            model('User')->setIncrement(array('id'=>$data['user_id']), 'money', $data['money']);
+        }
+        elseif($data['type'] == UserMoney::USER_MONEY_DECREMENT)
+        {
+            //判断用户余额是否足够
+            if($data['money'] > $user['money']){return ReturnData::create(ReturnData::FAIL, null, '余额不足');}
+            //减少用户余额
+            model('User')->setDecrement(array('id'=>$data['user_id']), 'money', $data['money']);
+        }
+        else
+        {
+            Db::rollback(); //事务回滚
+            return ReturnData::create(ReturnData::FAIL);
+        }
+        
+        $user_money = model('User')->getValue(array('id'=>$data['user_id']), 'money'); //用户余额
+        $data['user_money'] = $user_money;
         $res = $this->getModel()->add($data, $type);
-        if(!$res){return ReturnData::create(ReturnData::FAIL);}
+        if(!$res)
+        {
+			Db::rollback(); //事务回滚
+			return ReturnData::create(ReturnData::FAIL);
+        }
         
-        return ReturnData::create(ReturnData::SUCCESS, $res);
+		Db::commit(); //事务提交
+		return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //修改

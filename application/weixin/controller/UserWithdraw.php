@@ -43,7 +43,7 @@ class UserWithdraw extends Base
                     $html .= '<span class="green">- '.$v['money'].'</span>';
                     $html .= '<div class="info"><p class="tit">提现</p>';
                     $html .= '<p class="des">收款账号:'.$v['name'].' ,提现方式:'.$v['method'].' ,姓名:'.$v['name'].'<br>状态:<font color="red">'.$v['status_text'].'</font></p>';
-                    $html .= '<p class="time">'.date('Y-m-d H:i:s',$v['add_time']).'</p></div>';
+                    $html .= '<p class="time">'.date('Y-m-d H:i:s', $v['add_time']).'</p></div>';
                     $html .= '</li>';
                 }
             }
@@ -54,4 +54,25 @@ class UserWithdraw extends Base
 		$this->assign($assign_data);
         return $this->fetch();
     }
+	
+    //提现
+    public function add()
+	{
+        $get_data = array(
+            'access_token' => $this->login_info['token']['token']
+		);
+        $url = sysconfig('CMS_API_URL').'/user/detail';
+		$res = curl_request($url, $get_data, 'GET');
+		$this->login_info = array_merge($this->login_info, $res['data']);
+		session('weixin_user_info', $this->login_info);
+		
+		//是否达到可提现要求，0否
+        $assign_data['is_withdraw'] = 0;
+        $assign_data['min_withdraw_money'] = sysconfig('CMS_MIN_WITHDRAWAL_MONEY'); //最低可提现金额
+        if ( $this->login_info['money'] >= $assign_data['min_withdraw_money'] ) { $assign_data['is_withdraw'] = 1; }
+        
+		$this->assign($assign_data);
+        return $this->fetch();
+    }
+    
 }

@@ -15,8 +15,13 @@ class UserWithdraw extends Base
     {
         return db('user_withdraw');
     }
-    
-	//提现记录未删除
+	
+	const USER_WITHDRAW_DESC = '提现';
+	//提现方式，weixin，bank，alipay
+	const USER_WITHDRAW_METHOD_WEIXIN = 'weixin';
+	const USER_WITHDRAW_METHOD_BANK = 'bank';
+	const USER_WITHDRAW_METHOD_ALIPAY = 'alipay';
+    //提现记录未删除
 	const USER_WITHDRAW_UNDELETE = 0;
     //提现状态：0未处理,1处理中,2成功,3取消，4拒绝
     const USER_WITHDRAW_STATUS_UNPROCESSED = 0;
@@ -310,6 +315,30 @@ class UserWithdraw extends Base
     public function getColumn($where, $field)
     {
         return self::where($where)->column($field);
+    }
+    
+    /**
+     * 某一列的值自增
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认+1
+     * @return array
+     */
+    public function setIncrement($where, $field, $step = 1)
+    {
+		return self::where($where)->setInc($field, $step);
+    }
+    
+    /**
+     * 某一列的值自减
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认-1
+     * @return array
+     */
+    public function setDecrement($where, $field, $step = 1)
+    {
+		return self::where($where)->setDec($field, $step);
     }
     
     //用户状态：0正常，1待审，2锁定

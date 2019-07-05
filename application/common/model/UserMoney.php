@@ -16,6 +16,9 @@ class UserMoney extends Base
         return db('user_money');
     }
     
+    const USER_MONEY_INCREMENT = 0; //用户余额0增加,1减少
+    const USER_MONEY_DECREMENT = 1;
+    
     /**
      * 列表
      * @param array $where 查询条件
@@ -293,6 +296,30 @@ class UserMoney extends Base
     public function getColumn($where, $field)
     {
         return self::where($where)->column($field);
+    }
+    
+    /**
+     * 某一列的值自增
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认+1
+     * @return array
+     */
+    public function setIncrement($where, $field, $step = 1)
+    {
+		return self::where($where)->setInc($field, $step);
+    }
+    
+    /**
+     * 某一列的值自减
+     * @param array $where 条件
+     * @param string $field 字段
+     * @param int $step 默认-1
+     * @return array
+     */
+    public function setDecrement($where, $field, $step = 1)
+    {
+		return self::where($where)->setDec($field, $step);
     }
     
 }

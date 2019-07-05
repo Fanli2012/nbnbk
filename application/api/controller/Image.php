@@ -21,12 +21,14 @@ class Image extends Common
     {
         parent::__construct();
         
+		$this->file_size = sysconfig('IMAGE_UPLOAD_MAX_FILESIZE'); //最大文件上传大小2M
+		
         $this->path = '/uploads/'.date('Y/m',time());
         $this->public_path = $_SERVER['DOCUMENT_ROOT'];
     }
     
     //文件/图片上传，成功返回路径，不含域名
-    public function imageUpload(Request $request)
+    public function image_upload()
 	{
         $res = [];
         $files = $_FILES;//得到传输的数据
@@ -39,8 +41,9 @@ class Image extends Common
             foreach($files as $key=>$file)
             {
                 $type = strtolower(substr(strrchr($file['name'], '.'), 1)); //文件后缀
-                
-                $image_path = $this->path.'/'.date('Ymdhis',time()).rand(1000,9999).'.'.$type;
+                $new_file_name = date('Ymdhis',time()).rand(1000,9999);
+				
+                $image_path = $this->path.'/'.$new_file_name.'.'.$type;
                 $uploads_path = $this->path; //存储路径
                 
                 $allow_type = array('jpg','jpeg','gif','png','doc','docx','txt','pdf'); //定义允许上传的类型
@@ -81,7 +84,7 @@ class Image extends Common
                     exit(json_encode(ReturnData::create(ReturnData::FAIL,null,'文件不得超过2M')));
                 }
                 
-                $res[] = $image_path;
+                $res[] = array('url' => sysconfig('CMS_SITE_CDN_ADDRESS').$image_path, 'path' => $image_path, 'name' => $file['name'], 'file_name' => $new_file_name, 'type' => $type, 'file_size' => $file['size']);
             }
         }
         
@@ -412,9 +415,9 @@ class Image extends Common
 	/**
      * CURL上传图片
      * @param [string] $url 图片上传地址
-     * @param [string] $file 图片文件流
+     * @param [string] $file = $_FILES['file'] 图片文件流
      */
-	public function curlUploadimg($url, $file = $_FILES['file'])
+	public function curl_upload_image($url, $file)
     {
 		// 创建一个 cURL 句柄
 		$ch = curl_init($url);

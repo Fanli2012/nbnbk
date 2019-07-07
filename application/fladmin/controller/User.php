@@ -21,11 +21,16 @@ class User extends Base
     public function index()
     {
         $where = array();
-        if(!empty($_REQUEST['keyword']))
+        if(isset($_REQUEST['keyword']) && $_REQUEST['keyword']!='')
         {
             $where['nickname'] = array('like', '%'.$_REQUEST['keyword'].'%');
         }
-        $list = $this->getLogic()->getPaginate($where, array('id'=>'desc'));
+        //用户状态
+        if(isset($_REQUEST['status']))
+        {
+            $where['status'] = $_REQUEST['status'];
+        }
+        $list = $this->getLogic()->getPaginate($where, 'id desc');
 		
 		$this->assign('page',$list->render());
         $this->assign('list',$list);
@@ -38,15 +43,17 @@ class User extends Base
     {
         if(Helper::isPostRequest())
         {
-            $res = $this->getLogic()->add($_POST);
-            if($res['code'] == ReturnData::SUCCESS)
+            $res = $this->getLogic()->register($_POST);
+            if($res['code'] != ReturnData::SUCCESS)
             {
-                $this->success($res['msg'], url('index'), '', 1);
+                $this->error($res['msg']);
             }
             
-            $this->error($res['msg']);
+            $this->success('操作成功', url('index'), '', 1);
         }
         
+        $assign_data['user_rank'] = model('UserRank')->getAll(array(), 'rank asc');
+        $this->assign($assign_data);
         return $this->fetch();
     }
     
@@ -58,7 +65,7 @@ class User extends Base
             $where['id'] = $_POST['id'];
             unset($_POST['id']);
             
-            $res = $this->getLogic()->edit($_POST,$where);
+            $res = $this->getLogic()->userInfoUpdate($_POST,$where);
             if($res['code'] == ReturnData::SUCCESS)
             {
                 $this->success($res['msg'], url('index'), '', 1);
@@ -92,65 +99,4 @@ class User extends Base
         $this->error($res['msg']);
     }
 	
-    //会员账户记录
-    public function money()
-    {
-        $where = '';
-        if(isset($_REQUEST["user_id"]))
-        {
-            $where['user_id'] = $_REQUEST["user_id"];
-        }
-        
-        $posts = parent::pageList('user_money',$where);
-		
-        if($posts)
-        {
-            foreach($posts as $k=>$v)
-            {
-                $posts[$k]->user = DB::table('user')->where('id', $v->user_id)->first();
-            }
-        }
-        
-        $data['posts'] = $posts;
-        return view('admin.user.money', $data);
-    }
-    
-    //人工充值
-    public function manualRecharge()
-    {
-        if(Helper::isPostRequest())
-        {
-            if(!is_numeric($_POST["money"]) || $_POST["money"]==0){error_jump('金额格式不正确');}
-            
-            unset($_POST["_token"]);
-            
-            if($_POST["money"]>0)
-            {
-                DB::table('user')->where(['id'=>$_POST["id"]])->increment('money', $_POST["money"]);
-                $user_money['type'] = 0;
-            }
-            else
-            {
-                DB::table('user')->where(['id'=>$_POST["id"]])->decrement('money', abs($_POST["money"]));
-                $user_money['type'] = 1;
-            }
-            
-            $user_money['user_id'] = $_POST["id"];
-            $user_money['add_time'] = time();
-            $user_money['money'] = abs($_POST["money"]);
-            $user_money['des'] = '后台充值';
-            $user_money['user_money'] = DB::table('user')->where(array('id'=>$_POST["id"]))->value('money');
-            
-            //添加用户余额记录
-            DB::table('user_money')->insert($user_money);
-            
-            success_jump('操作成功', route('admin_user'));
-        }
-        
-        $data['user'] = object_to_array(DB::table('user')->select('user_name', 'mobile', 'money', 'id')->where('id', $_REQUEST["user_id"])->first(), 1);
-        if(!$data['user']){error_jump('参数错误');}
-        
-        return view('admin.user.manualRecharge', $data);
-    }
-    
 }

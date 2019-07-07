@@ -553,6 +553,37 @@ class Order extends Base
     }
     
     /**
+     * 获取器——订单商品列表
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getGoodsListAttr($value, $data)
+    {
+        //订单商品列表
+		$order_goods = model('OrderGoods')->getAll(array('order_id'=>$data['id']));
+        if(!$order_goods){return array();}
+        foreach($order_goods as $k=>$v)
+        {
+            $order_goods[$k]['refund_status_text'] = model('OrderGoods')->getRefundStatusAttr(null, $v);
+        }
+        
+        return $order_goods;
+    }
+    
+    /**
+     * 获取器——下单人用户信息
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getUserAttr($value, $data)
+    {
+        $user = model('User')->getOne(array('id'=>$data['user_id']), User::USER_COMMON_FIELD);
+        return $user;
+    }
+    
+    /**
      * 根据订单ID返库存
      * @param int $order_id
      * @return bool

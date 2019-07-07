@@ -16,6 +16,9 @@ class UserRecharge extends Base
         return db('user_recharge');
     }
     
+    //未删除
+	const USER_RECHARGE_UNDELETE = 0;
+    
     /**
      * 列表
      * @param array $where 查询条件
@@ -317,6 +320,20 @@ class UserRecharge extends Base
     public function setDecrement($where, $field, $step = 1)
     {
 		return self::where($where)->setDec($field, $step);
+    }
+    
+    //充值类型：1微信，2支付宝
+    public function getPayTypeTextAttr($value, $data)
+    {
+        $arr = array(0 => '未知', 1 => '微信', 2 => '支付宝');
+        return $arr[$data['pay_type']];
+    }
+    
+    //充值状态：0未处理，1成功，2失败
+    public function getStatusTextAttr($value, $data)
+    {
+        $arr = array(0 => '未处理', 1 => '成功', 2 => '失败');
+        return $arr[$data['status']];
     }
     
 }

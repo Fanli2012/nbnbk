@@ -86,6 +86,8 @@ class UserLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
+        $data['add_time'] = $data['update_time'] = time();
+        
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
@@ -283,14 +285,13 @@ class UserLogic extends BaseLogic
 		
         if (isset($data['parent_mobile']) && $data['parent_mobile'] != '')
 		{
-            if($user = $this->getModel()->getOne(array('mobile'=>$data['parent_mobile'])))
-            {
-                $data['parent_id'] = $user['id'];
-            }
-            else
+            $user = $this->getModel()->getOne(array('mobile'=>$data['parent_mobile']));
+            if(!$user)
             {
                 return ReturnData::create(ReturnData::PARAMS_ERROR, null, '推荐人不存在或推荐人手机号错误');
             }
+            
+            $data['parent_id'] = $user['id'];
         }
         
         if (isset($data['user_name']) && $data['user_name'] != '')

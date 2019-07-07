@@ -136,7 +136,7 @@ class TokenLogic extends BaseLogic
     {
         $token_info = model('token')->getOne(array('token'=>$access_token));
 		if (!$token_info) {return ReturnData::create(ReturnData::TOKEN_ERROR);}
-		if ($token_info['expire_time'] < time()) {return ReturnData::create(ReturnData::TOKEN_EXPIRE);}
+		if ($token_info['expire_time'] < time()) {return ReturnData::create(ReturnData::TOKEN_EXPIRED);}
 		
 		return ReturnData::create(ReturnData::SUCCESS, $token_info);
     }

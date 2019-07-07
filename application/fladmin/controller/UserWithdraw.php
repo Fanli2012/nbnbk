@@ -26,7 +26,7 @@ class UserWithdraw extends Base
         {
             $where['name'] = array('like', '%'.$_REQUEST['keyword'].'%');
         }
-        $list = $this->getLogic()->getPaginate($where, array('id'=>'desc'));
+        $list = $this->getLogic()->getPaginate($where, 'id desc');
 		
 		$this->assign('page',$list->render());
         $this->assign('list',$list);
@@ -40,12 +40,12 @@ class UserWithdraw extends Base
         if(Helper::isPostRequest())
         {
             $res = $this->getLogic()->add($_POST);
-            if($res['code'] == ReturnData::SUCCESS)
+            if($res['code'] != ReturnData::SUCCESS)
             {
-                $this->success($res['msg'], url('index'), '', 1);
+                $this->error($res['msg']);
             }
             
-            $this->error($res['msg']);
+            $this->success($res['msg'], url('index'), '', 1);
         }
         
         return $this->fetch();
@@ -60,12 +60,12 @@ class UserWithdraw extends Base
             unset($_POST['id']);
             
             $res = $this->getLogic()->edit($_POST,$where);
-            if($res['code'] == ReturnData::SUCCESS)
+            if($res['code'] != ReturnData::SUCCESS)
             {
-                $this->success($res['msg'], url('index'), '', 1);
+                $this->error($res['msg']);
             }
             
-            $this->error($res['msg']);
+            $this->success($res['msg'], url('index'), '', 1);
         }
         
         if(!checkIsNumber(input('id',null))){$this->error('参数错误');}
@@ -85,14 +85,15 @@ class UserWithdraw extends Base
         $where['id'] = input('id');
         
         $res = $this->getLogic()->del($where);
-		if($res['code'] == ReturnData::SUCCESS)
+		if($res['code'] != ReturnData::SUCCESS)
         {
-            $this->success('删除成功');
+            $this->error($res['msg']);
         }
 		
-        $this->error($res['msg']);
+        $this->success('删除成功');
     }
 	
+    //提现审核
     public function change_status()
     {
         if(!empty($_POST['id'])){$id = $_POST['id'];unset($_POST['id']);}else {$id='';exit;}

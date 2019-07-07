@@ -17,6 +17,9 @@ class User extends Base
         return db('user');
     }
     
+	//用户表常用字段，不包含密码等敏感信息
+	const USER_COMMON_FIELD = 'id,parent_id,mobile,email,nickname,user_name,head_img,sex,birthday,money,commission,consumption_money,frozen_money,point,user_rank,user_rank_points,address_id,openid,refund_account,refund_name,signin_time,group_id,status,add_time,update_time,login_time';
+
 	//用户未删除
 	const USER_UNDELETE = 0;
     //用户状态：0正常，1待审，2锁定

@@ -22,7 +22,8 @@ class Login extends Common
     //登录
     public function index()
 	{
-        if(session('weixin_user_info'))
+        $weixin_user_info = session('weixin_user_info');
+        if($weixin_user_info && isset($weixin_user_info['token']['expire_time']) && $weixin_user_info['token']['expire_time'] > time())
         {
             if(isset($_SERVER['HTTP_REFERER'])){header('Location: '.$_SERVER['HTTP_REFERER']);exit;}
             header('Location: '.url('user/index'));exit;

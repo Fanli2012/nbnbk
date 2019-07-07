@@ -28,8 +28,10 @@ class Base extends Common
 		);
         if (!in_array(strtolower(request()->controller().'/'.request()->action()), $uncheck))
         {
-            if(!session('weixin_user_info'))
+            $weixin_user_info = session('weixin_user_info');
+            if(!($weixin_user_info && isset($weixin_user_info['token']['expire_time']) && $weixin_user_info['token']['expire_time'] > time()))
 			{
+                session('weixin_user_info', null);
 				header('Location: '.url('login/index'));exit;
 			}
         }

@@ -82,10 +82,7 @@ class OrderLogic extends BaseLogic
         if(!$res){return false;}
         
         //$res = $this->getDataView($res);
-        $res = $res->append(array('status_text','country_name','province_name','city_name','district_name','invoice_text','place_type_text','district_name'))->toArray();
-		//订单商品列表
-		$order_goods = model('OrderGoods')->getAll(array('order_id'=>$res['id']));
-		$res['goods_list'] = $order_goods;
+        $res = $res->append(array('goods_list','user','status_text','country_name','province_name','city_name','district_name','invoice_text','place_type_text','district_name'))->toArray();
 		
         return $res;
     }

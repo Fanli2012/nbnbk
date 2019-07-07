@@ -45,6 +45,8 @@ class UserRechargeLogic extends BaseLogic
         
         $res = $res->each(function($item, $key){
             //$item = $this->getDataView($item);
+			$item['user'] = model('User')->getOne(array('id' => $item['user_id']));
+			$item = $item->append(['status_text','pay_type_text'])->toArray();
             return $item;
         });
         

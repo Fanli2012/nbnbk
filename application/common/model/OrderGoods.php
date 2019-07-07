@@ -324,4 +324,32 @@ class OrderGoods extends Base
 		return self::where($where)->setDec($field, $step);
     }
     
+    /**
+     * 获取器——退货状态文字：0无退货，1退款中，2退款成功，3不同意退款
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getRefundStatusAttr($value, $data)
+    {
+        $res = '';
+        if($data['refund_status'] == 0)
+        {
+            $res = '无退货';
+        }
+        elseif($data['refund_status'] == 1)
+        {
+            $res = '退款中';
+        }
+        elseif($data['refund_status'] == 2)
+        {
+            $res = '退款成功';
+        }
+        elseif($data['refund_status'] == 3)
+        {
+            $res = '不同意退款';
+        }
+        
+        return $res;
+    }
 }

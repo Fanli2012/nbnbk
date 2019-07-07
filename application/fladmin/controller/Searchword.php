@@ -20,7 +20,7 @@ class Searchword extends Base
     public function index()
     {
         $where = array();
-        if(!empty($_REQUEST["keyword"]))
+        if(!empty($_REQUEST['keyword']))
         {
             $where['name'] = array('like','%'.$_REQUEST['keyword'].'%');
         }

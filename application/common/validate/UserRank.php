@@ -11,9 +11,9 @@ class UserRank extends Validate
         ['id', 'require|number|max:11','ID必填|ID必须是数字|ID格式不正确'],
         ['title', 'require|max:30','会员等级名称必填|会员等级名称不能超过30个字符'],
         ['min_points', 'require|number|max:11','该等级的最低积分必填|该等级的最低积分必须是数字|该等级的最低积分格式不正确'],
-        ['max_points', 'require|number|max:11','该等级的最高积分必填|该等级的最高积分必须是数字|该等级的最高积分格式不正确'],
+        ['max_points', 'require|number|max:11|>:min_points','该等级的最高积分必填|该等级的最高积分必须是数字|该等级的最高积分格式不正确|最高积分应大于最低积分'],
         ['discount', 'require|number|between:0,100', '该会员等级的商品折扣必填|该会员等级的商品折扣格式不正确|该会员等级的商品折扣格式不正确'],
-        ['rank', 'require|number|max:11', '会员等级必填|会员等级格式不正确|会员等级格式不正确'],
+        ['rank', 'require|number|>:0|max:11', '会员等级必填|会员等级格式不正确|会员等级要大于0|会员等级格式不正确'],
         ['listorder', 'number|max:11', '排序格式不正确|排序格式不正确'],
     ];
     

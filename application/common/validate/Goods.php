@@ -14,6 +14,7 @@ class Goods extends Validate
         ['seotitle', 'max:150','seo标题不能超过150个字符'],
         ['keywords', 'max:60','关键词不能超过60个字符'],
         ['description', 'max:250','描述不能超过250个字符'],
+        ['sell_point', 'max:150','卖点描述不能超过150个字符'],
         ['litpic', 'require|max:150','请上传缩略图|缩略图不能超过150个字符'],
         ['goods_img', 'require|max:150','请上传商品图片|商品的实际大小图片不能超过150个字符'],
         ['sn', 'max:60','货号不能超过60个字符'],

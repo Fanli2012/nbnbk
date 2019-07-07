@@ -41,7 +41,7 @@ class User extends Validate
     
     protected $scene = array(
         'add' => ['parent_id', 'mobile', 'email', 'nickname', 'user_name', 'password', 'head_img', 'sex', 'birthday', 'openid', 'status', 'add_time'],
-		'register' => ['parent_id', 'user_name', 'password', 'add_time'],
+		'register' => ['parent_id', 'mobile', 'email', 'nickname', 'user_name', 'password', 'head_img', 'sex', 'add_time'],
 		'wx_register' => ['parent_id', 'mobile', 'email', 'nickname', 'user_name', 'head_img', 'sex', 'birthday', 'openid', 'add_time'],
 		'user_password_update' => ['password'],
 		'user_pay_password_update' => ['pay_password'],

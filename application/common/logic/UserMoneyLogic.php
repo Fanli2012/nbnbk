@@ -45,6 +45,8 @@ class UserMoneyLogic extends BaseLogic
         
         $res = $res->each(function($item, $key){
             //$item = $this->getDataView($item);
+			$item['user'] = model('User')->getOne(array('id' => $item['user_id']));
+			//$item = $item->append(['type_text'])->toArray();
             return $item;
         });
         

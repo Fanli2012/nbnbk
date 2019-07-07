@@ -83,6 +83,47 @@ background:none;
 .goods_list_s .goods_des{color:#999999;font-size:0.875rem;}
 .goods_list_s .buy{border:1px solid #f23030;border-radius:2px;padding:0 3px;color:#fff;background-color:#f23030;}
 
+.xm-tit{font-size:20px;font-weight:400;background-color:#fff;color:#000000;height:60px;line-height:60px;padding-left:15px;padding-right:15px;text-align: center;}
+.xm-list li{color:#333;border-bottom:1px solid #eee;overflow:hidden;margin:0 15px 0 15px;padding:15px 0 15px 0;}.xm-list li:last-child{border-bottom:0;}.xm-list li:first-child {padding-top:0;}
+.xm-list .xm-list-thumb{width:132px;height:132px;float:left;margin-right:18px;display:block;overflow:hidden;}
+.xm-list .xm-list-thumb img{width:132px;height:132px;border:none;border-radius:4px;}
+.xm-list .xm-list-title{font-size:16px;margin-top:10px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;height:42px;line-height:22px;overflow:hidden;}
+.xm-list .xm-list-desc{color:#777777;font-size:14px;height:20px;line-height:20px;margin-top:8px;overflow:hidden;white-space:nowrap;}
+.xm-list .xm-list-click{color:#aaaaaa;font-size:12px;}
+.xm-list .xm-list-price{height:30px;line-height:32px;font-size:16px;color:#484848;}
+.xm-list .xm-list-price .price{font-size:18px;color:#ff3333;}
+.xm-list .xm-list-price .market-price{font-size:12px;color:#aaaaaa;text-decoration:line-through;}
+.xm-list .xm-list-price .buy{margin-top:12px;width:0;height:0;border-width:4px;border-style:solid;border-color:transparent transparent transparent #000000;}
+
+.ll-tit{font-size:20px;font-weight:400;background-color:#fff;color:#000000;height:60px;line-height:60px;padding-left:15px;padding-right:15px;text-align: center;}
+.ll-list{margin:0 15px 0 15px;overflow:hidden;background-color:#ffffff;}
+.ll-list li{margin-bottom:15px;padding-bottom:10px;width:50%;float:left;}
+.ll-list li a{position:relative;display:block;margin-right:8px;overflow:hidden;}
+.ll-list .ll-list-tit{margin-top:8px;color:#333;font-size:14px;line-height:22px;white-space:nowrap;overflow:hidden;}
+.ll-list .ll-list-tit2{margin-top:8px;color:#333;font-size:14px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;height:40px;line-height:20px;overflow:hidden;}
+.ll-list li:nth-child(even) a{margin-right:0;margin-left:8px;}
+.ll-list li img{border-radius:4px;width:100%;height:46vw;}
+.ll-list .label{font-size:12px;position:absolute;color:#fff;background:#ff3333;display:inline-block;border-bottom-right-radius:5px;padding:0 4px;text-align:center;font-size:12px;}
+.ll-list .ll-list-click{color:#aaaaaa;font-size:12px;}
+.ll-list .ll-list-price{height:30px;line-height:32px;font-size:16px;color:#484848;}
+.ll-list .ll-list-price .price{font-size:18px;color:#ff3333;}
+.ll-list .ll-list-price .market-price{font-size:12px;color:#aaaaaa;text-decoration:line-through;}
+
+.mz-tit{font-size:20px;font-weight:400;background-color:#fff;color:#000000;height:60px;line-height:60px;padding-left:15px;padding-right:15px;text-align: center;}
+.mz-list{margin:0 15px 20px 15px;background-color:#fff;padding-bottom:10px;}.mz-list:first-child{margin-top:0;}
+.mz-list .mz-list-img-box{position:relative;border-radius:2px;border-bottom:1px solid #f1f1f1;display:block;width:100%;height:46vw;overflow:hidden;}
+.mz-list .mz-list-img-box img{width:100%;height:100%;-webkit-transition:all 3s ease-in-out;transition:all 3s ease-in-out;}
+.mz-list .mz-list-img-box .label{font-size:12px;position:absolute;background:#f25c60;display:inline-block;color:#fff;border-bottom-right-radius:5px;padding:0 4px;text-align:center;font-size:12px;}
+.mz-list .mz-list-title{line-height:22px;padding:8px 0 0 0;}.mz-list .mz-list-title a{color: #000;font-size:16px;display:block;}.mz-list .mz-list-title a:hover{text-decoration:underline;}
+.mz-list .mz-list-time{color:#aaaaaa;padding:10px 0 0 0;font-style:normal;font-size:12px;display:block;}
+.mz-list .mz-list-time .zan{background:#f37800;display:inline-block;color:#fff;border-radius:2px;padding:0 2px;text-align:center;font-size:12px;}
+.mz-list .mz-list-price{padding:10px 0 0 0;height:30px;line-height:32px;font-size:16px;color:#484848;}
+.mz-list .mz-list-price .price{font-size:20px;color:#ff3333;}
+.mz-list .mz-list-price .market-price{font-size:12px;color:#aaaaaa;text-decoration:line-through;}
+.mz-list .mz-list-price .buy-num{font-size:12px;color:#aaaaaa;margin-right:10px;}
+.mz-list .mz-list-price .buy{font-size:14px;border-radius:4px;height:30px;color:#ffffff;background-color:#f25c60;padding:0 14px}
+.mz-list .mz-list-price .sold-out{font-size:14px;border-radius:4px;height:30px;color:#aaaaaa;background-color:#eeeeee;padding:0 14px}
+
 .goodslist_limg li{border-bottom:10px solid #f0f0f0;}
 .goodslist_limg li img{width:100%;height: auto;display: block;}
 .goodslist_limg li .goods_info{padding:10px;background-color:#fff;border-top:1px solid #f9f9f9;}

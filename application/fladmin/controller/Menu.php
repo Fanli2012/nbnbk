@@ -38,15 +38,14 @@ class Menu extends Base
         if(Helper::isPostRequest())
         {
             $res = $this->getLogic()->add($_POST);
-            if($res['code'] == ReturnData::SUCCESS)
+            if($res['code'] != ReturnData::SUCCESS)
             {
-                //添加超级管理员权限
-                logic('Access')->add(['role_id' => 1, 'menu_id' => $res['data']]);
-                
-                $this->success($res['msg'], url('index'), '', 1);
+                $this->error($res['msg']);
             }
             
-            $this->error($res['msg']);
+            //添加超级管理员权限
+            logic('Access')->add(['role_id' => 1, 'menu_id' => $res['data']]);
+            $this->success($res['msg'], url('index'), '', 1);
         }
         
         if(!empty($_GET['parent_id'])){$parent_id = $_GET['parent_id'];}else{$parent_id=0;}

@@ -321,6 +321,14 @@ class Page extends Base
     }
     
     /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
+    /**
      * 获取单页详情url
      * @param string $param['id'] 别名
      * @return string

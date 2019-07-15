@@ -35,8 +35,7 @@ class Goods extends Common
 		//价格区间搜索
 		if(input('min_price', '') !== '' && input('max_price', '') !== '')
 		{
-			$where['price'] = array('>=', input('min_price'));
-			$where['price'] = array('<=', input('max_price'));
+			$where['price'] = array(array('>=', input('min_price')),array('<=', input('max_price')));
 		}
 		//促销商品
 		if(input('is_promote', 0) == 1)

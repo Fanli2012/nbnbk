@@ -16,6 +16,8 @@ class Common extends Controller
      */
 	public function _initialize()
 	{
+		if(strlen($_SERVER['REQUEST_URI'])>100){header("HTTP/1.1 404 Not Found");header("Status: 404 Not Found");exit;}
+		
         $route = request()->module().'/'.request()->controller().'/'.request()->action();
         //店铺登录信息
         $this->login_info = session('shop_info');

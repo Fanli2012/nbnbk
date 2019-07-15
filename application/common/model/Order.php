@@ -380,6 +380,14 @@ class Order extends Base
     }
     
     /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
+    /**
      * 获取器——订单状态文字:1待付款，2待发货,3待收货,4待评价(确认收货，交易成功),5退款/售后,6已取消,7无效,8退款成功
      * @param int $value
      * @param array $data
@@ -617,12 +625,5 @@ class Order extends Base
         
         return true;
     }
-    
-    /**
-     * 打印sql
-     */
-    public function toSql($where)
-    {
-        return $this->getDb()->where($where)->getLastSql();
-    }
+
 }

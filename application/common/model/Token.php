@@ -336,6 +336,14 @@ class Token extends Base
 		return self::where($where)->setDec($field, $step);
     }
     
+    /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
     //来源：0app,1admin,2weixin,3wap,4pc,5miniprogram
     public function getTypeTextAttr($value, $data)
     {

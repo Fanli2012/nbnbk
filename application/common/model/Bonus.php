@@ -328,6 +328,14 @@ class Bonus extends Base
 		return self::where($where)->setDec($field, $step);
     }
     
+    /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
     //状态：0可用，1不可用
     public function getStatusTextAttr($value, $data)
     {

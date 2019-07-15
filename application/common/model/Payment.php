@@ -330,6 +330,14 @@ class Payment extends Base
     }
     
     /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
+    /**
      * 获取器——审核状态文字
      * @param int $value
      * @param array $data

@@ -5,7 +5,7 @@ use think\Request;
 use app\common\lib\ReturnData;
 use app\common\lib\Helper;
 
-class GoodsBrand extends Base
+class GoodsBrand extends Common
 {
     public function _initialize()
 	{

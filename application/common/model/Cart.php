@@ -320,6 +320,14 @@ class Cart extends Base
     }
     
     /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
+    /**
      * 获取器——购物车商品类型;0普通;1团购;2拍卖;3夺宝奇兵
      * @param int $value
      * @param array $data

@@ -111,4 +111,11 @@ class User extends Base
         return $this->fetch();
 	}
     
+	//推介赚钱
+    public function referral()
+	{
+		//$this->assign($assign_data);
+        return $this->fetch();
+	}
+    
 }

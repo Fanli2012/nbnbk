@@ -321,6 +321,14 @@ class Shop extends Base
     }
     
     /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
+    /**
      * 获取店铺详情url
      * @param int $param['id'] 店铺ID
      * @return string

@@ -91,7 +91,7 @@ class Article extends Base
             //关键词
             if(!empty($_POST["keywords"]))
             {
-                $_POST['keywords']=str_replace("，",",",$_POST["keywords"]);
+                $_POST['keywords'] = str_replace("，",",",$_POST["keywords"]);
             }
             else
             {
@@ -100,10 +100,11 @@ class Article extends Base
                     $title=$_POST["title"];
                     $title=str_replace("，","",$title);
                     $title=str_replace(",","",$title);
-                    $_POST['keywords']=get_participle($title); // 标题分词
+                    $_POST['keywords'] = get_participle($title); // 标题分词
                 }
             }
             
+			if(isset($_POST['keywords']) && !empty($_POST['keywords'])){$_POST['keywords'] = mb_strcut($_POST['keywords'], 0, 60, 'UTF-8');}
             if(isset($_POST["dellink"]) && $_POST["dellink"]==1 && !empty($content)){$content=logic('Article')->replacelinks($content,array(sysconfig('CMS_BASEHOST')));} //删除非站内链接
             $_POST['content']=$content;
             
@@ -186,6 +187,7 @@ class Article extends Base
                 }
             }
             
+			if(isset($_POST['keywords']) && !empty($_POST['keywords'])){$_POST['keywords'] = mb_strcut($_POST['keywords'], 0, 60, 'UTF-8');}
             if(isset($_POST["dellink"]) && $_POST["dellink"]==1 && !empty($content)){$content=logic('Article')->replacelinks($content,array(sysconfig('CMS_BASEHOST')));} //删除非站内链接
             $_POST['content']=$content;
             

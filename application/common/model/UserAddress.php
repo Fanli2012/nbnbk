@@ -322,6 +322,14 @@ class UserAddress extends Base
     }
     
     /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
+    /**
      * 获取器——国家名称
      * @param int $value
      * @param array $data

@@ -342,6 +342,14 @@ class Admin extends Base
     }
     
     /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
+    /**
      * 获取器——状态
      * @param int $value
      * @return string

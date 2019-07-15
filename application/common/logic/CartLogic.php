@@ -188,7 +188,7 @@ class CartLogic extends BaseLogic
     //购物车结算商品列表
     public function cartCheckoutGoodsList($where)
     {
-        $cartIds = explode("_", $where['cartids']);
+        $cartIds = explode('_', $where['cartids']);
         
         // 获取购物车列表
     	$cartList = $this->getModel()->getAll(array('user_id'=>$where['user_id'],'id'=>array('in',$cartIds)));

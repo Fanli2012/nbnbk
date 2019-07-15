@@ -51,9 +51,8 @@ class Article extends Common
             }
         }
         $assign_data['list'] = $res['data']['list'];
-        
+        //总页数
         $assign_data['totalpage'] = ceil($res['data']['count']/$pagesize);
-        
         if(isset($_REQUEST['page_ajax']) && $_REQUEST['page_ajax']==1)
         {
     		$html = '';

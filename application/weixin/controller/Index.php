@@ -39,6 +39,44 @@ class Index extends Common
 			session('weixin_user_invite_code', $_REQUEST['invite_code']);
 		}
         
+		$pagesize = 8;
+        $offset = 0;
+		if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
+        //最新商品列表
+        $get_data = array(
+            'limit'  => $pagesize,
+            'offset' => $offset
+		);
+        $url = sysconfig('CMS_API_URL').'/goods/index';
+		$res = curl_request($url,$get_data,'GET');
+        $assign_data['goods_list'] = $res['data']['list'];
+		//总页数
+        $assign_data['totalpage'] = ceil($res['data']['count']/$pagesize);
+        if(isset($_REQUEST['page_ajax']) && $_REQUEST['page_ajax']==1)
+        {
+    		$html = '';
+            
+            if($res['data']['list'])
+            {
+                foreach($res['data']['list'] as $k => $v)
+                {
+                    $html .= '<li><a href="'.url('goods/detail').'?id='.$v['id'].'">';
+					if($v['is_promote']>0)
+					{
+						$html .= '<span class="label">限时抢购</span>';
+					}
+					$html .= '<img alt="'.$v['title'].'" src="'.$v['litpic'].'">';
+					$html .= '<div class="ll-list-info">';
+					$html .= '<p class="ll-list-tit2">'.$v['title'].'</p>';
+					$html .= '<p class="ll-list-click">'.$v['click'].'人查看</p>';
+					$html .= '<div class="ll-list-price"><span class="price">￥'.$v['price'].'</span> <span class="market-price">￥'.$v['market_price'].'</span></div>';
+					$html .= '</div></a></li>';
+                }
+            }
+            
+    		exit(json_encode($html));
+    	}
+		
         //banner轮播图
         $get_data = array(
             'group_id' => 1,
@@ -58,14 +96,15 @@ class Index extends Common
 		$res = curl_request($url,$get_data,'GET');
         $assign_data['article_list'] = $res['data']['list'];
         
-        //最新商品列表
+        //畅销商品列表
         $get_data = array(
+            'orderby'=> 1,
             'limit'  => 8,
             'offset' => 0
 		);
         $url = sysconfig('CMS_API_URL').'/goods/index';
 		$res = curl_request($url,$get_data,'GET');
-        $assign_data['goods_list'] = $res['data']['list'];
+        $assign_data['goods_sale_list'] = $res['data']['list'];
         
         //商品推荐
         $get_data = array(
@@ -76,16 +115,6 @@ class Index extends Common
         $url = sysconfig('CMS_API_URL').'/goods/index';
 		$res = curl_request($url,$get_data,'GET');
         $assign_data['goods_recommend_list'] = $res['data']['list'];
-        
-        //畅销商品列表
-        $get_data = array(
-            'orderby'=> 1,
-            'limit'  => 6,
-            'offset' => 0
-		);
-        $url = sysconfig('CMS_API_URL').'/goods/index';
-		$res = curl_request($url,$get_data,'GET');
-        $assign_data['goods_sale_list'] = $res['data']['list'];
         
         //促销、优惠商品列表
         $get_data = array(

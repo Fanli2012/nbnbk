@@ -98,4 +98,20 @@ class Login extends Common
             return ReturnData::create(ReturnData::USER_NOT_EXIST);
         }
     }
+	
+	/**
+     * 微信小程序登录
+     * @param string $_POST['code'] 用户登录凭证（有效期五分钟）。开发者需要在开发者服务器后台调用 auth.code2Session，使用 code 换取 openid 和 session_key 等信息
+	 * @param string $_POST['rawData'] 不包括敏感信息的原始数据字符串，用于计算签名
+	 * @param string $_POST['signature'] 使用 sha1( rawData + sessionkey ) 得到字符串，用于校验用户信息
+	 * @param string $_POST['encryptedData'] 包括敏感数据在内的完整用户信息的加密数据
+	 * @param string $_POST['iv'] 加密算法的初始向量
+     * @return array
+     */
+    public function miniprogram_wxlogin()
+    {
+		$res = $this->getLogic()->miniprogramWxlogin(request()->param());
+        exit(json_encode($res));
+    }
+    
 }

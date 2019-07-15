@@ -320,6 +320,14 @@ class Tag extends Base
     }
     
     /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
+    /**
      * 获取器——状态，0正常，1禁用
      * @param int $value
      * @return string

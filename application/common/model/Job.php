@@ -320,6 +320,14 @@ class Job extends Base
     }
     
     /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
+    /**
      * 获取器——跳转方式，0_blank，1_self，2_parent，3_top，4framename
      * @param int $value
      * @return string

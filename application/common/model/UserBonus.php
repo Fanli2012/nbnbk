@@ -330,6 +330,14 @@ class UserBonus extends Base
 		return self::where($where)->setDec($field, $step);
     }
     
+    /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
     //状态：0未使用1已使用2已过期
     public function getStatusTextAttr($value, $data)
     {

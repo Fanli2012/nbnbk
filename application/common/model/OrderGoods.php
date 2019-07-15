@@ -325,6 +325,14 @@ class OrderGoods extends Base
     }
     
     /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
+    /**
      * 获取器——退货状态文字：0无退货，1退款中，2退款成功，3不同意退款
      * @param int $value
      * @param array $data

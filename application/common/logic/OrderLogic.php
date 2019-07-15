@@ -169,7 +169,17 @@ class OrderLogic extends BaseLogic
         //插入订单
         $check = $this->getValidate()->scene('add')->check($order_info);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR, null, $this->getValidate()->getError());}
-        // 启动事务
+        
+        //判断订单号
+        if(isset($order_info['order_sn']) && $order_info['order_sn']!='')
+        {
+            $where_sn['order_sn'] = $order_info['order_sn'];
+            if($this->getModel()->getOne($where_sn)){
+                return ReturnData::create(ReturnData::FAIL, null, '该订单号已存在');
+            }
+        }
+        
+		// 启动事务
 		Db::startTrans();
         $order_id = $this->getModel()->add($order_info, $type);
         if(!$order_id)

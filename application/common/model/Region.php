@@ -320,6 +320,14 @@ class Region extends Base
 		return self::where($where)->setDec($field, $step);
     }
     
+    /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
     //获取地区名称
     public function getRegionName($id)
     {

@@ -3,8 +3,10 @@ namespace app\common\logic;
 use think\Loader;
 use think\Validate;
 use app\common\lib\ReturnData;
+use app\common\lib\Helper;
 use app\common\model\User;
 use app\common\model\Token;
+use app\common\lib\wechat\WechatAuth;
 
 class UserLogic extends BaseLogic
 {
@@ -264,6 +266,102 @@ class UserLogic extends BaseLogic
 		
 		return ReturnData::create(ReturnData::SUCCESS, $user_info, '登录成功');
     }
+	
+	/**
+     * 微信小程序登录
+     * @param string $data['code'] 用户登录凭证（有效期五分钟）。开发者需要在开发者服务器后台调用 auth.code2Session，使用 code 换取 openid 和 session_key 等信息
+	 * @param string $data['rawData'] 不包括敏感信息的原始数据字符串，用于计算签名
+	 * @param string $data['signature'] 使用 sha1( rawData + sessionkey ) 得到字符串，用于校验用户信息
+	 * @param string $data['encryptedData'] 包括敏感数据在内的完整用户信息的加密数据
+	 * @param string $data['iv'] 加密算法的初始向量
+     * @return array
+     */
+	public function miniprogramWxlogin($data)
+    {
+		$miniprogram_user_info = $this->getMiniprogramLoginUserinfo($data);
+		if($miniprogram_user_info['code'] != ReturnData::SUCCESS){return ReturnData::create(ReturnData::FAIL, null, $miniprogram_user_info['msg']);}
+		$data = array_merge($data, $miniprogram_user_info['data']);
+		$user = $this->getModel()->getOne(array('openid'=>$data['openId']));
+		if(!$user)
+		{
+			$data['add_time'] = $data['update_time'] = time();
+			
+			//默认用户名
+			if(!(isset($data['user_name']) && !empty($data['user_name'])))
+			{
+				$data['user_name'] = date('YmdHis').rand(1000,9999);
+			}
+			
+			//昵称过滤Emoji
+			if (isset($data['nickName']) && !empty($data['nickName']))
+			{
+				$data['nickname'] = Helper::filterEmoji($data['nickName']);
+			}
+			
+			//头像
+			if (isset($data['avatarUrl']) && !empty($data['avatarUrl']))
+			{
+				$data['head_img'] = $data['avatarUrl'];
+			}
+			
+			//性别
+			$data['sex'] = 0;
+			if (isset($data['gender']) && $data['gender']>0)
+			{
+				$data['sex'] = $data['gender'];
+			}
+			
+			//openid
+			$data['sex'] = 0;
+			if (isset($data['openId']) && !empty($data['openId']))
+			{
+				$data['openid'] = $data['openId'];
+			}
+			
+			$check = $this->getValidate()->scene('wx_register')->check($data);
+			if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR, null, $this->getValidate()->getError());}
+			
+			if (isset($data['parent_mobile']) && $data['parent_mobile'] != '')
+			{
+				$parent_user = $this->getModel()->getOne(array('mobile'=>$data['parent_mobile']));
+				if(!$parent_user)
+				{
+					return ReturnData::create(ReturnData::PARAMS_ERROR, null, '推荐人不存在或推荐人手机号错误');
+				}
+				
+				$data['parent_id'] = $parent_user['id'];
+			}
+			
+			//判断用户名
+			if (isset($data['user_name']) && !empty($data['user_name']))
+			{
+				if ($this->getModel()->getOne(array('user_name'=>$data['user_name'])))
+				{
+					return ReturnData::create(ReturnData::PARAMS_ERROR, null, '用户名已存在');
+				}
+			}
+			
+			$user_id = $this->getModel()->add($data);
+			if(!$user_id){return ReturnData::create(ReturnData::SYSTEM_FAIL);}
+			
+			//更新用户名user_name，微信登录没有用户名
+			$edit_user['user_name'] = 'u'.$user_id;
+			$user['id'] = $user_id;
+		}
+		
+		//更新登录时间
+		$edit_user['login_time'] = time();
+		$this->getModel()->edit($edit_user, array('id'=>$user['id']));
+		
+		//获取用户信息
+		$user_info = $this->getUserInfo(['id'=>$user['id']]);
+		
+		//生成Token
+		$token = logic('Token')->getToken($user_info['id'], Token::TOKEN_TYPE_WEIXIN);
+		$user_info['token'] = $token;
+		
+		return ReturnData::create(ReturnData::SUCCESS, $user_info, '登录成功');
+    }
     
 	/**
      * 用户名+密码注册
@@ -451,4 +549,101 @@ class UserLogic extends BaseLogic
         if($password == ''){return '';}
 		return md5($password);
     }
+	
+    /**
+     * 小程序获取用户信息，以code换取 用户唯一标识openid 和 会话密钥session_key
+     * @param string $data['code'] 用户登录凭证（有效期五分钟）。开发者需要在开发者服务器后台调用 auth.code2Session，使用 code 换取 openid 和 session_key 等信息
+	 * @param string $data['rawData'] 不包括敏感信息的原始数据字符串，用于计算签名
+	 * @param string $data['signature'] 使用 sha1( rawData + sessionkey ) 得到字符串，用于校验用户信息
+	 * @param string $data['encryptedData'] 包括敏感数据在内的完整用户信息的加密数据
+	 * @param string $data['iv'] 加密算法的初始向量
+     * @return array
+     */
+    public function getMiniprogramLoginUserinfo($data)
+	{
+        include_once APP_PATH.'common/lib/wechat/aes/wxBizDataCrypt.php';
+        /**
+         * 3.小程序调用server获取token接口, 传入code, rawData, signature, encryptData.
+         */
+        $code = $data['code'];
+		$rawData = $data['rawData'];
+		$signature = $data['signature'];
+		$encryptedData = $data['encryptedData'];
+		$iv = $data['iv'];
+		
+        /**
+         * 4.server调用微信提供的jsoncode2session接口获取openid, session_key, 调用失败应给予客户端反馈
+         * , 微信侧返回错误则可判断为恶意请求, 可以不返回. 微信文档链接
+         * 这是一个 HTTP 接口，开发者服务器使用登录凭证 code 获取 session_key 和 openid。其中 session_key 是对用户数据进行加密签名的密钥。
+         * 为了自身应用安全，session_key 不应该在网络上传输。
+         * 接口地址："https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code"
+         */
+        if($code == null){return ReturnData::create(ReturnData::PARAMS_ERROR);}
+        $wechat = new WechatAuth(sysconfig('CMS_WX_MINIPROGRAM_APPID'), sysconfig('CMS_WX_MINIPROGRAM_APPSECRET'));
+        $res = $wechat->miniprogram_wxlogin($code);
+        if (!isset($res['session_key'])) {
+            return ReturnData::create(ReturnData::PARAMS_ERROR, null, 'requestTokenFailed');
+        }
+        
+        $session_key = $res['session_key'];
+        
+        /**
+         * 5.server计算signature, 并与小程序传入的signature比较, 校验signature的合法性, 不匹配则返回signature不匹配的错误. 不匹配的场景可判断为恶意请求, 可以不返回.
+         * 通过调用接口（如 wx.getUserInfo）获取敏感数据时，接口会同时返回 rawData、signature，其中 signature = sha1( rawData + session_key )
+         *
+         * 将 signature、rawData、以及用户登录态发送给开发者服务器，开发者在数据库中找到该用户对应的 session-key
+         * ，使用相同的算法计算出签名 signature2 ，比对 signature 与 signature2 即可校验数据的可信度。
+         */
+        $signature2 = sha1($rawData . $session_key);
+        if ($signature2 != $signature) return ReturnData::create(ReturnData::PARAMS_ERROR, null, 'signNotMatch');
+        
+        /**
+         *
+         * 6.使用第4步返回的session_key解密encryptData, 将解得的信息与rawData中信息进行比较, 需要完全匹配,
+         * 解得的信息中也包括openid, 也需要与第4步返回的openid匹配. 解密失败或不匹配应该返回客户相应错误.
+         * （使用官方提供的方法即可）
+         */
+        $pc = new \WXBizDataCrypt(sysconfig('CMS_WX_MINIPROGRAM_APPID'), $session_key);
+        $errCode = $pc->decryptData($encryptedData, $iv, $data);
+        
+        if ($errCode != 0)
+        {
+            return ReturnData::create(ReturnData::PARAMS_ERROR, null, 'encryptDataNotMatch');
+        }
+        
+        /**
+         * 7.生成第三方3rd_session，用于第三方服务器和小程序之间做登录态校验。为了保证安全性，3rd_session应该满足：
+         * a.长度足够长。建议有2^128种组合，即长度为16B
+         * b.避免使用srand（当前时间）然后rand()的方法，而是采用操作系统提供的真正随机数机制，比如Linux下面读取/dev/urandom设备
+         * c.设置一定有效时间，对于过期的3rd_session视为不合法
+         *
+         * 以 $session3rd 为key，sessionKey+openId为value，写入memcached
+         */
+        $data = json_decode($data, true);
+        /* $session3rd = randomFromDev(16);
+        $data['session3rd'] = $session3rd;
+        cache($session3rd, $data['openId'] . $session_key); */
+		if(!$data){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '没有数据');}
+        return ReturnData::create(ReturnData::SUCCESS, $data);
+		
+        $user_data['head_img'] = isset($data['avatarUrl'])?$data['avatarUrl']:'';
+        $user_data['sex'] = isset($data['gender'])?$data['gender']:0;
+        $user_data['nickname'] = isset($data['nickName']) ? Helper::filterEmoji($data['nickName']) : '';
+        $user_data['openid'] = isset($data['openId'])?$data['openId']:'';
+        
+		return $user_data;
+		
+		$add_res = logic('User')->xcxadd($add_data);
+        if($add_res['code'] != ReturnData::SUCCESS)
+        {
+            exit(json_encode(ReturnData::create($add_res['code'], null, $add_res['msg'])));
+        }
+        
+        //生成token
+        $data['token'] = logic('UserToken')->getToken($add_res['data']['id']);
+        
+        $data['id'] = $add_res['data']['id'];
+		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $data)));
+    }
+    
 }

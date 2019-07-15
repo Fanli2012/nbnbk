@@ -3,7 +3,7 @@
 {include file="common/header"/}<div id="tad"><script>tjs();</script></div>
 
 <div class="box mt10"><div class="fl_640">
-<h1 class="arct" style="padding:20px 20px 0 20px;"><?php echo $post["title"]; ?> <br><span style="color:#f60;font-weight:400;">￥<?php echo $post["price"]; ?></span></h1>
+<h1 class="arct" style="padding:20px 20px 0 20px;"><?php echo $post["title"]; ?> <br><span style="color:#f60;font-weight:400;">￥<?php echo $post['price']; ?></span> <span style="font-size:16px;color:#aaaaaa;font-weight:400;text-decoration:line-through;">￥<?php echo $post['market_price']; ?></span></h1>
 
 <!--商品图片-start-->
 <?php if($post['goods_img_list']){ ?>

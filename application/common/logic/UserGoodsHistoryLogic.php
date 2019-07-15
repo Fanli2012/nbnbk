@@ -26,12 +26,14 @@ class UserGoodsHistoryLogic extends BaseLogic
     {
         $res = $this->getModel()->getList($where, $order, $field, $offset, $limit);
         
-        if($res['list'])
+        if($res['count'] > 0)
         {
             foreach($res['list'] as $k=>$v)
             {
                 //$res['list'][$k] = $this->getDataView($v);
-				$res['list'][$k]['goods'] = logic('Goods')->getOne(array('id'=>$v['goods_id']), array('content'));
+				$goods = logic('Goods')->getOne(array('id'=>$v['goods_id']), array('content'));
+				if($goods['litpic']){ $goods['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$goods['litpic']; }
+				$res['list'][$k]['goods'] = $goods;
             }
         }
         

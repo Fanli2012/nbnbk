@@ -395,6 +395,14 @@ class EmailVerifyCode extends Base
 		return self::where($where)->setDec($field, $step);
     }
     
+    /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
     //类型，0通用，注册，1:手机绑定业务验证码，2:密码修改业务验证码
     public function getTypeAttr($data)
     {

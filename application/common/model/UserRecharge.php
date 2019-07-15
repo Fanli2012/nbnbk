@@ -322,6 +322,14 @@ class UserRecharge extends Base
 		return self::where($where)->setDec($field, $step);
     }
     
+    /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
     //充值类型：1微信，2支付宝
     public function getPayTypeTextAttr($value, $data)
     {

@@ -328,6 +328,14 @@ class GoodsType extends Base
 		return self::where($where)->setDec($field, $step);
     }
     
+    /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
 	/**
      * 将列表生成树形结构
      * @param int $parent_id 父级ID

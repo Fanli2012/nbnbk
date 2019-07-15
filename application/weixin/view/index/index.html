@@ -125,9 +125,13 @@ var swiper = new Swiper('.swiper-nav', {
     <div class="xm-tit">购·畅销</div>
     <ul class="xm-list cl">
         <?php if($goods_sale_list){foreach($goods_sale_list as $k=>$v){ ?>
-        <li><a href="<?php echo url('goods/detail').'?id='.$v['id']; ?>"><span class="xm-list-thumb"><img alt="" src="<?php echo $v['litpic']; ?>"></span>
+        <li><a href="<?php echo url('goods/detail').'?id='.$v['id']; ?>">
+		<div class="xm-list-thumb">
+            <?php if($v['is_promote']>0){ ?><span class="label">限时抢购</span><?php } ?>
+			<img alt="" src="<?php echo $v['litpic']; ?>">
+		</div>
         <div class="xm-list-info"><p class="xm-list-title"><?php echo $v['title']; ?></p>
-        <p class="xm-list-desc"></p>
+        <p class="xm-list-desc"><?php echo mb_strcut($v['sell_point'],0,36,'UTF-8'); ?></p>
         <p class="xm-list-click"><?php echo $v['click']; ?>人查看</p>
         <p class="xm-list-price"><span class="price">￥<?php echo $v['price']; ?></span> <span class="market-price">￥<?php echo $v['market_price']; ?></span><span class="buy fr"></span></p>
         </div>
@@ -140,10 +144,10 @@ var swiper = new Swiper('.swiper-nav', {
 <!--猜您喜欢-start-->
 <div class="floor" style="background-color:#fff;">
     <div class="ll-tit">购·新品</div>
-    <ul class="ll-list" id="ll-list">
+    <ul class="ll-list" id="goods-list">
     <?php if($goods_list){foreach($goods_list as $k=>$v){ ?>
         <li><a href="<?php echo url('goods/detail').'?id='.$v['id']; ?>">
-            <?php if($v['is_promote']>0){ ?><span class="label">优惠</span><?php } ?>
+            <?php if($v['is_promote']>0){ ?><span class="label">限时抢购</span><?php } ?>
             <img alt="<?php echo $v['title']; ?>" src="<?php echo $v['litpic']; ?>">
             <div class="ll-list-info">
                 <p class="ll-list-tit2"><?php echo $v['title']; ?></p>
@@ -157,7 +161,7 @@ var swiper = new Swiper('.swiper-nav', {
 <!--猜您喜欢-end-->
 
 <!--猜您喜欢-start-->
-<div class="floor guesslike">
+<!--<div class="floor guesslike">
     <div class="banner_headline"><div class="tit"><h4>购·精选</h4></div></div>
     <div class="likeshop">
         <ul class="goods_list" id="goods_list">
@@ -166,11 +170,11 @@ var swiper = new Swiper('.swiper-nav', {
         <?php }} ?>
         </ul>
     </div>
-</div>
+</div>-->
 <!--猜您喜欢-end-->
 
 <!--猜您喜欢-start-->
-<div class="floor guesslike">
+<!--<div class="floor guesslike">
     <div class="banner_headline" style="margin-top:-4px;"><div class="tit"><h4>购·优惠</h4></div></div>
     <div class="likeshop">
         <ul class="goods_list" id="goods_list">
@@ -179,7 +183,7 @@ var swiper = new Swiper('.swiper-nav', {
         <?php }} ?>
         </ul>
     </div>
-</div>
+</div>-->
 <!--猜您喜欢-end-->
 
 <!-- <div id="mz-list" style="background-color:#fff;">
@@ -219,5 +223,65 @@ var swiper = new Swiper('.swiper-nav', {
 <style>
 .banner_tit{font-size:18px;font-weight:400;background-color:#fff;color:#f23030;height:46px;line-height:46px;padding-left:10px;padding-right:10px;border-bottom:1px solid #eee;text-align:center;}
 </style>
+<script>
+$(function(){
+    var ajaxload  = false;
+    var maxpage   = false;
+    var startpage = 1;
+    var totalpage = <?php echo $totalpage; ?>;
+    
+    var tmp_url   = window.location.href;
+    msg = tmp_url.split("#");
+    tmp_url = msg[0];
+    
+    $(window).scroll(function ()
+    {
+        var listheight = $('#goods-list').outerHeight(); 
+        
+        if ($(document).scrollTop() + $(window).height() >= listheight)
+        {
+            if(startpage >= totalpage)
+            {
+                //$("#submit_bt_one").html("已是最后一页，没有更多数据！");
+                return false;
+            }
+            
+            if(!ajaxload && !maxpage)
+            {
+                ajaxload = true;
+                //$("#submit_bt_one").html("努力加载中...");
+                var url = tmp_url;
+                var nextpage = startpage+1;
+                
+                $.get(url,{page_ajax:1,page:nextpage},function(res)
+                {
+                    if(res)
+                    {
+                        $('#goods-list').append(res);
+                        startpage++;
+                        
+                        if(startpage >= totalpage)
+                        {
+                            maxpage = true;
+                            //$("#submit_bt_one").html("已是最后一页，没有更多数据！");
+                        }
+                        else
+                        {
+                            //$("#submit_bt_one").html("点击加载更多");
+                        }
+                        
+                        ajaxload = false;
+                    }
+                    else
+                    {
+                        //$("#submit_bt_one").html("请求失败，请稍候再试！");
+                        ajaxload = false;
+                    }
+                },'json');
+            }
+        }
+    });
+});
+</script>
 {include file="common/footer"/}
 </body></html>

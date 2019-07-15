@@ -368,6 +368,14 @@ class Article extends Base
     }
     
     /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
+    /**
      * 获取器——分类名称
      * @param int $value
      * @param array $data

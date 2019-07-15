@@ -365,6 +365,14 @@ class Goods extends Base
     }
     
     /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
+    /**
      * 获取商品详情url
      * @param int $param['id'] 商品ID
      * @return string
@@ -467,7 +475,7 @@ class Goods extends Base
         }
         
         //返回商品最终购买价格
-        return $final_price;
+        return floatval($final_price);
     }
     
     /**

@@ -17,7 +17,7 @@ class Goods extends Validate
         ['sell_point', 'max:150','卖点描述不能超过150个字符'],
         ['litpic', 'require|max:150','请上传缩略图|缩略图不能超过150个字符'],
         ['goods_img', 'require|max:150','请上传商品图片|商品的实际大小图片不能超过150个字符'],
-        ['sn', 'max:60','货号不能超过60个字符'],
+        ['sn', 'require|max:60','货号不能为空|货号不能超过60个字符'],
         ['price', 'require|regex:/^\d{0,10}(\.\d{0,2})?$/|<=:market_price', '产品价格必填|产品价格只能带2位小数的数字|原价必须大于产品价格'],
         ['market_price', 'require|regex:/^\d{0,10}(\.\d{0,2})?$/|>=:price', '原价必填|原价格式不正确，原价只能带2位小数的数字|原价必须大于产品价格'],
         ['cost_price', 'regex:/^\d{0,10}(\.\d{0,2})?$/', '成本价格格式不正确，成本价格只能带2位小数的数字'],
@@ -41,8 +41,8 @@ class Goods extends Validate
     ];
     
     protected $scene = [
-        'add'  => ['type_id', 'tuijian', 'click', 'title', 'seotitle', 'keywords', 'description', 'litpic', 'goods_img', 'sn', 'price', 'market_price', 'cost_price', 'shipping_fee', 'goods_number', 'sale', 'warn_number', 'goods_weight', 'point', 'comment_number', 'promote_price', 'promote_start_date','promote_end_date', 'brand_id', 'user_id', 'listorder', 'status', 'update_time', 'add_time'],
-        'edit' => ['type_id', 'tuijian', 'click', 'title', 'seotitle', 'keywords', 'description', 'litpic', 'goods_img', 'sn', 'price', 'market_price', 'cost_price', 'shipping_fee', 'goods_number', 'sale', 'warn_number', 'goods_weight', 'point', 'comment_number', 'promote_price', 'promote_start_date','promote_end_date', 'brand_id', 'user_id', 'listorder', 'status', 'update_time'],
+        'add'  => ['type_id', 'tuijian', 'click', 'title', 'seotitle', 'keywords', 'description', 'sell_point', 'litpic', 'goods_img', 'sn', 'price', 'market_price', 'cost_price', 'shipping_fee', 'goods_number', 'sale', 'warn_number', 'goods_weight', 'point', 'comment_number', 'promote_price', 'promote_start_date','promote_end_date', 'brand_id', 'user_id', 'listorder', 'status', 'update_time', 'add_time'],
+        'edit' => ['type_id', 'tuijian', 'click', 'title', 'seotitle', 'keywords', 'description', 'sell_point', 'litpic', 'goods_img', 'sn', 'price', 'market_price', 'cost_price', 'shipping_fee', 'goods_number', 'sale', 'warn_number', 'goods_weight', 'point', 'comment_number', 'promote_price', 'promote_start_date','promote_end_date', 'brand_id', 'user_id', 'listorder', 'status', 'update_time'],
         'del'  => ['id'],
     ];
 }

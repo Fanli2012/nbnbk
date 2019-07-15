@@ -1,14 +1,21 @@
 # nbnbk
 基于thinkphp5的cms
 
+
+## 效果截图
+
 PC端
 
 ![alt text](/public/images/screenshots.jpg "网站截图")
-![alt text](/public/images/screenshots-2.jpg "产品中心")
 
 WAP端
 
 ![alt text](/public/images/screenshots-wap.gif "WAP首页")
+
+微商城
+
+![alt text](/public/images/screenshots-wsc.jpg "商品列表")
+![alt text](/public/images/screenshots-wsc.png "个人中心")
 
 后台管理
 
@@ -34,6 +41,8 @@ WAP端
 <strong>PC入口</strong>：http(s)://+PC域名+/
 
 <strong>WAP入口</strong>：http(s)://+WAP域名+/，WAP域名解析与PC域名一致，都是指向同一目录下
+
+<strong>微商城入口</strong>：http(s)://+PC域名+/weixin，支付仅支持微信支付。
 
 7、后台功能
 1) 文章管理：增删改查，栏目管理
@@ -77,7 +86,8 @@ Linux系统文件/目录权限
 ## 注意
 
 站点只能放在根目录
-public目录做为网站根目录,入口文件在 public/index.php
+
+public目录做为网站根目录，入口文件在 public/index.php
 
 
 ## 环境要求

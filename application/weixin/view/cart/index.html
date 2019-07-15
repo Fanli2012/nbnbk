@@ -3,7 +3,7 @@
 <link href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/weixin/style.css" type="text/css" rel="stylesheet">
 <script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script>
 <script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/weixin/mobile.js"></script>
-<meta name="keywords" content="关键词"><meta name="description" content="描述"></head><body>
+<meta name="keywords" content="关键词"><meta name="description" content="描述"></head><body style="background-color:#ffffff;">
 <div class="classreturn loginsignup">
     <div class="ds-in-bl return"><a href="javascript:history.back(-1);"><img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/return.png" alt="返回"></a></div>
     <div class="ds-in-bl tit center"><span>购物车</span></div>
@@ -18,7 +18,7 @@
     <?php foreach($list as $k=>$v){ ?>
     <div class="sc_list" id="cart_list_<?php echo $v['id']; ?>">
         <div class="radio-img">
-            <div class="radio fl ">
+            <div class="radio fl">
                 <!--商品勾选按钮-->
                 <span onclick="checkGoods(this)" class="che">
                  <i>

@@ -341,6 +341,14 @@ class UserWithdraw extends Base
 		return self::where($where)->setDec($field, $step);
     }
     
+    /**
+     * 打印sql
+     */
+    public function toSql()
+    {
+        return self::getLastSql();
+    }
+	
     //用户状态：0正常，1待审，2锁定
     public function getStatusTextAttr($value, $data)
     {

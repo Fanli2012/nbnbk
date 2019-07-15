@@ -72,7 +72,8 @@ class Goods extends Base
                     $_POST['keywords']=get_participle($title);//标题分词
                 }
             }
-            
+            if(isset($_POST['keywords']) && !empty($_POST['keywords'])){$_POST['keywords'] = mb_strcut($_POST['keywords'], 0, 60, 'UTF-8');}
+			//促销时间
             if(isset($_POST['promote_start_date']) && $_POST['promote_start_date']!=''){$_POST['promote_start_date'] = strtotime($_POST['promote_start_date']);}
             if(isset($_POST['promote_end_date']) && $_POST['promote_end_date']!=''){$_POST['promote_end_date'] = strtotime($_POST['promote_end_date']);}
             if(empty($_POST['promote_price'])){unset($_POST['promote_price']);}
@@ -136,7 +137,8 @@ class Goods extends Base
                     $_POST['keywords']=get_participle($title); //标题分词
                 }
             }
-            
+            if(isset($_POST['keywords']) && !empty($_POST['keywords'])){$_POST['keywords'] = mb_strcut($_POST['keywords'], 0, 60, 'UTF-8');}
+			//促销时间
             if(isset($_POST['promote_start_date']) && $_POST['promote_start_date']!=''){$_POST['promote_start_date'] = strtotime($_POST['promote_start_date']);}
             if(isset($_POST['promote_end_date']) && $_POST['promote_end_date']!=''){$_POST['promote_end_date'] = strtotime($_POST['promote_end_date']);}
             if(empty($_POST['promote_price'])){unset($_POST['promote_price']);}

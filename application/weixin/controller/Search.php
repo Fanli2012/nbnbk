@@ -17,7 +17,7 @@ class Search extends Common
 	{
         //商品热门搜索词列表
         $get_data = array(
-            'limit'  => 10,
+            'limit'  => 50,
             'offset' => 0
 		);
         $url = sysconfig('CMS_API_URL').'/goods_searchword/index';

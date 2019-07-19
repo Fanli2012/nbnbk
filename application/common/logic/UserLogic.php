@@ -7,6 +7,7 @@ use app\common\lib\Helper;
 use app\common\model\User;
 use app\common\model\Token;
 use app\common\lib\wechat\WechatAuth;
+use app\common\lib\Validator;
 
 class UserLogic extends BaseLogic
 {
@@ -225,8 +226,26 @@ class UserLogic extends BaseLogic
 			$check = $this->getValidate()->scene('wx_register')->check($data);
 			if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
 			
+			//昵称过滤Emoji
+			if (isset($data['nickname']) && !empty($data['nickname']))
+			{
+				$data['nickname'] = Helper::filterEmoji($data['nickname']);
+			}
+			
+			//判断推荐人是否存在
+			if (isset($data['parent_id']) && $data['parent_id'] > 0)
+			{
+				$parent_user = $this->getModel()->getOne(array('id'=>$data['parent_id']));
+				if(!$parent_user)
+				{
+					return ReturnData::create(ReturnData::PARAMS_ERROR, null, '推荐人不存在');
+				}
+			}
+			
+			//判断推荐人手机号
 			if (isset($data['parent_mobile']) && $data['parent_mobile'] != '')
 			{
+				if (Validator::isMobile($data['parent_mobile'])) { return ReturnData::create(ReturnData::PARAMS_ERROR, null, '推荐人手机号码错误'); }
 				$parent_user = $this->getModel()->getOne(array('mobile'=>$data['parent_mobile']));
 				if(!$parent_user)
 				{
@@ -274,6 +293,8 @@ class UserLogic extends BaseLogic
 	 * @param string $data['signature'] 使用 sha1( rawData + sessionkey ) 得到字符串，用于校验用户信息
 	 * @param string $data['encryptedData'] 包括敏感数据在内的完整用户信息的加密数据
 	 * @param string $data['iv'] 加密算法的初始向量
+	 * @param int $data['parent_id'] 推荐人ID
+	 * @param string $data['parent_mobile'] 推荐人手机号
      * @return array
      */
 	public function miniprogramWxlogin($data)
@@ -321,8 +342,20 @@ class UserLogic extends BaseLogic
 			$check = $this->getValidate()->scene('wx_register')->check($data);
 			if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR, null, $this->getValidate()->getError());}
 			
+			//判断推荐人是否存在
+			if (isset($data['parent_id']) && $data['parent_id'] > 0)
+			{
+				$parent_user = $this->getModel()->getOne(array('id'=>$data['parent_id']));
+				if(!$parent_user)
+				{
+					return ReturnData::create(ReturnData::PARAMS_ERROR, null, '推荐人不存在');
+				}
+			}
+			
+			//判断推荐人手机号
 			if (isset($data['parent_mobile']) && $data['parent_mobile'] != '')
 			{
+				if (Validator::isMobile($data['parent_mobile'])) { return ReturnData::create(ReturnData::PARAMS_ERROR, null, '推荐人手机号码错误'); }
 				$parent_user = $this->getModel()->getOne(array('mobile'=>$data['parent_mobile']));
 				if(!$parent_user)
 				{
@@ -381,17 +414,30 @@ class UserLogic extends BaseLogic
 		$check = $this->getValidate()->scene('register')->check($data);
 		if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
 		
+		//判断推荐人是否存在
+		if (isset($data['parent_id']) && $data['parent_id'] > 0)
+		{
+			$parent_user = $this->getModel()->getOne(array('id'=>$data['parent_id']));
+			if(!$parent_user)
+			{
+				return ReturnData::create(ReturnData::PARAMS_ERROR, null, '推荐人不存在');
+			}
+		}
+		
+		//判断推荐人手机号
         if (isset($data['parent_mobile']) && $data['parent_mobile'] != '')
 		{
+			if (Validator::isMobile($data['parent_mobile'])) { return ReturnData::create(ReturnData::PARAMS_ERROR, null, '推荐人手机号码错误'); }
             $user = $this->getModel()->getOne(array('mobile'=>$data['parent_mobile']));
             if(!$user)
             {
-                return ReturnData::create(ReturnData::PARAMS_ERROR, null, '推荐人不存在或推荐人手机号错误');
+                return ReturnData::create(ReturnData::PARAMS_ERROR, null, '推荐人不存在');
             }
             
             $data['parent_id'] = $user['id'];
         }
-        
+		
+        //判断用户名
         if (isset($data['user_name']) && $data['user_name'] != '')
 		{
             if ($this->getModel()->getOne(array('user_name'=>$data['user_name'])))

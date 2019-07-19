@@ -106,6 +106,8 @@ class Login extends Common
 	 * @param string $_POST['signature'] 使用 sha1( rawData + sessionkey ) 得到字符串，用于校验用户信息
 	 * @param string $_POST['encryptedData'] 包括敏感数据在内的完整用户信息的加密数据
 	 * @param string $_POST['iv'] 加密算法的初始向量
+	 * @param int $_POST['parent_id'] 推荐人ID
+	 * @param string $_POST['parent_mobile'] 推荐人手机号
      * @return array
      */
     public function miniprogram_wxlogin()

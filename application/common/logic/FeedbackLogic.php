@@ -82,6 +82,9 @@ class FeedbackLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
+		//添加时间
+		if(!(isset($data['add_time']) && !empty($data['add_time']))){$data['add_time'] = time();}
+		
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         

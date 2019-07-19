@@ -6,6 +6,9 @@ use app\common\lib\Helper;
 use app\common\lib\ReturnData;
 use app\common\logic\UserLogic;
 use app\common\model\User as UserModel;
+use app\common\lib\wechat\WechatAuth;
+use app\common\lib\Image;
+use app\common\lib\FileHandle;
 
 class User extends Base
 {
@@ -126,6 +129,115 @@ class User extends Base
 		exit(json_encode($res));
     }
     
+    //用户推介赚钱-小程序二维码
+    public function referral_qrcode()
+	{
+        //参数
+		$public_path = $_SERVER['DOCUMENT_ROOT']; //网站根目录
+        $data['scene'] = input('scene','');
+        $data['page'] = input('page','');
+        $data['width'] = input('width',430);
+        $data['type'] = input('type', 0); //0路径存储，1base64
+        $is_add_avatar = input('is_add_avatar', 0);
+		
+        $image_path = '/uploads/wxacode/'.md5($data['page'].$data['scene'].$data['width']).'.jpg';
+		
+        if($data['type']==0)
+        {
+            $data['image_path'] = $public_path.$image_path;
+			//如果图片存在，直接返回
+			if(FileHandle::check_file_exists($data['image_path']))
+			{
+				$res = sysconfig('CMS_SITE_CDN_ADDRESS').$image_path;
+				exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+			}
+        }
+        
+        $xcx = new WechatAuth(sysconfig('CMS_WX_MINIPROGRAM_APPID'), sysconfig('CMS_WX_MINIPROGRAM_APPSECRET'));
+        $res = $xcx->getwxacodeunlimit($data);
+        
+        if($data['type']==0)
+        {
+            $res = sysconfig('CMS_SITE_CDN_ADDRESS').$image_path;
+			
+            $headurl = model('User')->getValue(['id'=>$this->login_info['id']], 'head_img'); //获取用户头像图片地址
+			if($headurl && $is_add_avatar)
+            {
+				$remote_headurl = $headurl;
+				//判断是否是本地文件
+				if(strtolower(substr($headurl, 0, 4))!='http')
+				{
+					$headurl = $public_path.$headurl;
+					$remote_headurl = sysconfig('CMS_SITE_CDN_ADDRESS').$remote_headurl;
+				}
+				
+				// php保存远程用户头像到本地
+				$new_head_img = $public_path.'/uploads/wxacode/head_img_' . $this->login_info['id'] .'.jpeg';
+				$this->download_img($remote_headurl, $new_head_img);
+				$headurl = $new_head_img;
+				
+				// 生成缩略图
+				$image = \think\Image::open('./uploads/wxacode/head_img_' . $this->login_info['id'] .'.jpeg');
+				// 按照原图的比例生成一个最大为200*200的缩略图
+				$image->crop(200, 200)->save('./uploads/wxacode/head_img_' . $this->login_info['id'] .'.jpeg');
+				
+				//头像存在
+				if(FileHandle::check_file_exists($headurl))
+				{
+					//编辑已保存的原头像，保存成圆形（其实不是圆形，改变它的边角为透明）
+					//header("content-type:image/png"); //传入保存后的头像文件名
+					$imgg = Image::yuan_img($headurl);
+					$head_image_path = $public_path.'/uploads/wxacode/head_img_'.$this->login_info['id'].'.png';
+					imagepng($imgg, $head_image_path);
+					imagedestroy($imgg);
+					
+					//缩小头像（原图为200，430的小程序码logo为192）
+					$target_im = imagecreatetruecolor(192,192); //创建一个新的画布（缩放后的），从左上角开始填充透明背景
+					imagesavealpha($target_im, true);
+					$trans_colour = imagecolorallocatealpha($target_im, 255, 255, 255, 127);
+					imagefill($target_im, 0, 0, $trans_colour);
+					imagefilledellipse($target_im, 96, 96, 192, 192, imagecolorallocatealpha($target_im, 255, 255, 255, 0));
+					
+					$o_image = imagecreatefrompng($head_image_path); //获取上文已保存的修改之后头像的内容
+					imagecopyresampled($target_im,$o_image, 0, 0, 0, 0, 192, 192, 200, 200);
+					$comp_path = $head_image_path;
+					imagepng($target_im, $comp_path);
+					imagedestroy($target_im);
+					
+					//传入保存后的二维码地址  
+					$url = Image::create_pic_watermark($public_path.$image_path, $comp_path, 'center');
+					unlink($head_image_path);
+					if(isset($new_head_img)){unlink($new_head_img);}
+				}
+			}
+        }
+        else
+        {
+			
+        }
+
+        exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+    }
+	
+	/**
+     * 文件下载
+     * @param  [type] $url [下载链接包含协议]
+     * @param  [type] $absolute_path [本地绝对路径包含扩展名]
+     * @return [type] [description]
+     */
+    public function download_img($url, $path)
+	{
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+        $file = curl_exec($ch);
+        curl_close($ch);
+        $resource = fopen($path, 'a');
+        fwrite($resource, $file);
+        fclose($resource);
+    }
+	
     //修改密码
     public function change_password()
     {

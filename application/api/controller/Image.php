@@ -5,6 +5,7 @@ use think\Request;
 use app\common\lib\Helper;
 use app\common\lib\ReturnData;
 use app\common\service\AliyunOSS;
+use app\common\lib\wechat\WechatAuth;
 
 class Image extends Common
 {
@@ -262,20 +263,18 @@ class Image extends Common
     /**
      * 获取小程序码
      * @param string scene 场景值 id=1
-     * @param int shop_id 企业ID 1
      * @param string page 'pages/home/pages/shop/index' 必须是已经发布的小程序存在的页面 id=1
      * @param int width 宽度，默认430
      * @param int type 0路径存储，1base64
      */
-    public function getwxacodeunlimit(Request $request)
+    public function get_wxacodeunlimit()
 	{
-        $data['shop_id'] = input('shop_id', 0);
         $data['scene'] = input('scene','');
         $data['page'] = input('page','');
         $data['width'] = input('width',430);
         $data['type'] = input('type', 0); //0路径存储，1base64
         
-        $image_path = '/uploads/wxacode/'.$data['shop_id'].'.jpg';
+        $image_path = '/uploads/wxacode/'.md5($data['page'].$data['scene']).'.jpg';
         if($data['type']==0)
         {
             $data['image_path'] = $this->public_path.$image_path;
@@ -286,7 +285,8 @@ class Image extends Common
         
         if($data['type']==0)
         {
-            $headurl = db('shop')->where(['id'=>$data['shop_id']])->value('head_img');
+            $res = $image_path;
+            /* $headurl = db('shop')->where(['id'=>$data['shop_id']])->value('head_img');
             if($headurl && file_exists($_SERVER['DOCUMENT_ROOT'].$headurl))
             {
                 $head_image_path = '/uploads/wxacode/';
@@ -313,10 +313,14 @@ class Image extends Common
                 //传入保存后的二维码地址  
                 $url = $this->create_pic_watermark($this->public_path.$image_path, $comp_path, "center");
                 unlink($this->public_path.$head_image_path.$head_img_name);
-            }
+            } */
         }
-        
-        exit(json_encode(ReturnData::create(ReturnData::SUCCESS)));
+        else
+        {
+
+        }
+
+        exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
     }
     
     /**
@@ -435,8 +439,8 @@ class Image extends Common
 		$response = curl_exec($ch);
         if ($response === false)
 		{
-            $error = curl_error($curl);
-            curl_close($curl);
+            $error = curl_error($ch);
+            curl_close($ch);
             return false;
         }
 		else
@@ -446,7 +450,7 @@ class Image extends Common
             $response = json_decode($response, true);
         }
         
-        curl_close($curl);
+        curl_close($ch);
 		return $response;
     }
 }

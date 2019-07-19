@@ -85,7 +85,7 @@ class UserRecharge extends Base
 		$total_fee = floatval($user_recharge['money']*100);//价格0.01
         $attach = 'pay_type=1'; //附加数据，pay_type=1充值支付，示例：xxx=1&yyy=2
 		$notify_url = url('api/notify/wxpay_jsapi'); //通知地址
-		$wxconfig= \WxPayConfig::wxconfig();
+		$wxconfig= \WxPayConfig::wxconfig(); //微信公众号支付配置
         
 		//=========步骤1：网页授权获取用户openid============
 		$jsApi = new \JsApi_pub($wxconfig);

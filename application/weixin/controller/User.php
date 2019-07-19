@@ -27,9 +27,13 @@ class User extends Base
 		);
         $url = sysconfig('CMS_API_URL').'/user/detail';
 		$res = curl_request($url, $get_data, 'GET');
+		if(!($res['code']==ReturnData::SUCCESS && $res['data']))
+		{
+			$this->error('参数错误');
+		}
+		
 		$this->login_info = array_merge($this->login_info, $res['data']);
 		session('weixin_user_info', $this->login_info);
-		
         return $this->fetch();
 	}
     

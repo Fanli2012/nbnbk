@@ -306,4 +306,5 @@ class Helper
         header("Location:$url");
         exit;
     }
+	
 }

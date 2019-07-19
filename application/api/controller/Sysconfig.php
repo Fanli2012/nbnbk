@@ -37,9 +37,9 @@ class Sysconfig extends Base
     public function detail()
 	{
         //参数
-        if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
-        $where['id'] = input('id');
-        
+        $id = input('id');
+		
+		$where['id|varname'] = $id;
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
         

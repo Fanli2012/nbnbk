@@ -32,7 +32,14 @@ class Goodsbrand extends Common
 		if(input('status', '') === ''){$where['status'] = GoodsBrandModel::GOODS_BRAND_STATUS_NORMAL;}else{if(input('status') != -1){$where['status'] = input('status');}}
         
         $res = $this->getLogic()->getList($where,$orderby,['content'],$offset,$limit);
-		
+		if($res['count']>0)
+        {
+            foreach($res['list'] as $k=>$v)
+            {
+                if($v['litpic']){$res['list'][$k]['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['litpic'];}
+            }
+        }
+        
 		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
     }
     

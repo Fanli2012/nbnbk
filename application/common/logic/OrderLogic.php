@@ -101,7 +101,7 @@ class OrderLogic extends BaseLogic
             ['cartids', 'require|max:30', '购物车商品ID不能为空|购物车商品ID不能超过30个字符'],
             ['user_id', 'require|number|max:11','用户ID必填|用户ID必须是数字|用户ID格式不正确'],
             ['user_bonus_id', 'number|max:11', '优惠券ID必须为数字|优惠券ID格式不正确'],
-            ['default_address_id', 'require|number|max:11', '收货地址不能为空|收货地址必须是数字|收货地址格式不正确'],
+            ['user_address_id', 'require|number|max:11', '收货地址不能为空|收货地址必须是数字|收货地址格式不正确'],
             ['shipping_costs', 'regex:/^\d{0,10}(\.\d{0,2})?$/', '运费格式不正确'],
             ['message', 'max:240','买家留言不能超过240个字符'],
             ['place_type', 'in:0,1,2,3,4,5','订单来源：1pc，2weixin，3app，4wap，5miniprogram']
@@ -111,12 +111,11 @@ class OrderLogic extends BaseLogic
         }
         
         //获取订单商品列表
-        $cartCheckoutGoods = logic('Cart')->cartCheckoutGoodsList(array('cartids'=>$data['cartids'], 'user_id'=>$data['user_id']));
-        $order_goods = $cartCheckoutGoods['data'];
+        $order_goods = logic('Cart')->cartCheckoutGoodsList(array('cartids'=>$data['cartids'], 'user_id'=>$data['user_id']));
         if(empty($order_goods['list'])){return ReturnData::create(ReturnData::SYSTEM_FAIL, null, '订单商品不存在');}
         
         //获取收货地址
-        $user_address = model('UserAddress')->getOne(array('user_id'=>$data['user_id'], 'id'=>$data['default_address_id']));
+        $user_address = model('UserAddress')->getOne(array('user_id'=>$data['user_id'], 'id'=>$data['user_address_id']));
         if(!$user_address){return ReturnData::create(ReturnData::SYSTEM_FAIL, null, '收货地址不存在');}
         
         $discount = 0; //优惠金额 = 优惠券

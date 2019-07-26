@@ -54,10 +54,12 @@ class Notify extends Common
 		$temp_out_trade_no = explode('-', $post_data['out_trade_no']);
 		$out_trade_no = $temp_out_trade_no[0];
 		//$post_data['transaction_id'] //微信支付订单号
-		
+		Log::record('充值订单号'.$out_trade_no);
+        
 		//附加参数pay_type:1充值支付,2订单支付
 		if($post_data['pay_type'] == 1)
 		{
+            Log::record('充值支付');
 			//获取充值支付记录
 			$user_recharge = model('UserRecharge')->getOne(array('recharge_sn'=>$out_trade_no, 'status'=>0));
 			if(!$user_recharge){ Log::record('充值记录不存在'); exit('FAILE'); }
@@ -66,9 +68,10 @@ class Notify extends Common
 			Db::startTrans();
 			
 			//更新充值支付记录状态
-			$edit_user_recharge = model('UserRecharge')->edit(array('pay_time'=>$pay_time_timestamp,'update_time'=>time(),'pay_type'=>1,'status'=>1,'trade_no'=>$post_data['transaction_id'],'pay_money'=>$pay_money), array('recharge_sn'=>$post_data['out_trade_no'],'status'=>0));
+			$edit_user_recharge = model('UserRecharge')->edit(array('pay_time'=>$pay_time_timestamp,'update_time'=>time(),'status'=>1,'trade_no'=>$post_data['transaction_id'],'pay_money'=>$pay_money), array('recharge_sn'=>$out_trade_no,'status'=>0));
 			if(!$edit_user_recharge)
 			{
+                Log::record('更新充值支付记录状态失败');
 				Db::rollback();
 				exit('FAILE');
 			}
@@ -79,12 +82,13 @@ class Notify extends Common
 			$user_money_data['money'] = $pay_money;
 			$user_money_data['desc'] = '充值';
 			$user_money = logic('UserMoney')->add($user_money_data);
-			if($user_money['code'] != ReturnData::SUCCESS){ Db::rollback(); exit('FAILE'); }
+			if($user_money['code'] != ReturnData::SUCCESS){ Db::rollback(); Log::record('用户余额记录失败'); exit('FAILE'); }
 			
 			Db::commit();
 		}
 		elseif($post_data['pay_type'] == 2)
 		{
+            Log::record('订单支付');
 			//获取订单记录
 			$order = model('order')->getOne(array('order_sn'=>$out_trade_no, 'order_status'=>0, 'pay_status'=>0));
 			if(!$order){ Log::record('订单不存在'); exit('FAILE'); }
@@ -101,6 +105,7 @@ class Notify extends Common
 			$edit_order = model('Order')->edit($order_update_data, array('order_sn'=>$out_trade_no, 'order_status'=>0, 'pay_status'=>0));
 			if(!$edit_order)
 			{
+                Log::record('订单状态修改失败');
 				exit('FAILE');
 			}
 		}
@@ -119,6 +124,7 @@ class Notify extends Common
 		
 		//file_put_contents("2.txt",$post_data['total_fee'].'--'.$out_trade_no.'--'.$post_data['attach'].'--'.$post_data['pay_type']);
 		
+        Log::record('支付成功');
         exit('SUCCESS');
 	}
 }

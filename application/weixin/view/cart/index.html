@@ -27,7 +27,7 @@
                  </span>
             </div>
             <div class="shopimg fl">
-                <a href="<?php echo url('goods/detail').'?id='.$v['id']; ?>">
+                <a href="<?php echo url('goods/detail').'?id='.$v['goods_id']; ?>">
                     <img src="<?php echo $v['litpic']; ?>">
                 </a>
             </div>
@@ -49,7 +49,7 @@
                 <!--加减数量-->
                 <div class="plus fr get_mp">
                     <span class="mp_minous" onClick="change_goods_number(1,<?php echo $v['goods_id']; ?>)">-</span>
-                    <span class="mp_mp"><input name="goods_number<?php echo $v['goods_id']; ?>" type="text" id="goods_number<?php echo $v['goods_id']; ?>" value="<?php echo $v['goods_number']; ?>" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" autocomplete="off" value="1" onblur="change_goods_number(2,<?php echo $v['goods_id']; ?>)" class="input-num"></span>
+                    <span class="mp_mp"><input name="goods_number<?php echo $v['goods_id']; ?>" type="text" id="goods_number<?php echo $v['goods_id']; ?>" value="<?php echo $v['goods_number']; ?>" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" autocomplete="off" onblur="change_goods_number(2,<?php echo $v['goods_id']; ?>)" class="input-num"></span>
                     <span class="mp_plus" onClick="change_goods_number(3,<?php echo $v['goods_id']; ?>)">+</span>
                 </div>
             </div>
@@ -112,8 +112,8 @@ function cart_submit()
 {
     var cart_goods_ids = '';
     $('[name="checkItem"][checked]').each(function(){
-        var goods_id = $(this).attr('data-cart-id');
-        if(cart_goods_ids){cart_goods_ids = cart_goods_ids+'_'+goods_id;}else{cart_goods_ids = cart_goods_ids+goods_id;}
+        var cart_id = $(this).attr('data-cart-id');
+        if(cart_goods_ids){cart_goods_ids = cart_goods_ids+'_'+cart_id;}else{cart_goods_ids = cart_goods_ids + cart_id;}
     });
     
     if(cart_goods_ids == '')
@@ -249,7 +249,7 @@ function changeCartTotalPrice()
         total_price = total_price + $('#goods_number'+goods_id).val() * $('#goods_price'+goods_id).text();
     });
     
-    $('#total_fee').text(total_price.toFixed(2));
+    $('#total_fee').text(parseFloat(total_price.toFixed(2)));
 }
 </script>
 </body></html>

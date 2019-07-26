@@ -104,8 +104,10 @@ class UserWithdrawLogic extends BaseLogic
 		
         if (isset($data['pay_password']) && !empty($data['pay_password'])) {} else { return ReturnData::create(ReturnData::PARAMS_ERROR, null, '请输入支付密码'); }
         
-        $user = model('User')->getOne(array('id' => $data['user_id'], 'pay_password' => logic('User')->passwordEncrypt($data['pay_password'])));
-        if(!$user){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '支付密码错误');}
+        $user = model('User')->getOne(array('id' => $data['user_id']));
+        if(!$user){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '用户不存在');}
+        if($user['pay_password'] == ''){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '请先设置支付密码');}
+        if($user['pay_password'] != logic('User')->passwordEncrypt($data['pay_password'])){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '支付密码错误');}
         unset($data['pay_password']);
         
         $min_withdraw_money = sysconfig('CMS_MIN_WITHDRAWAL_MONEY'); //最低可提现金额

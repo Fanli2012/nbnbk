@@ -20,7 +20,7 @@
 <!-- 选择收货地址-start -->
 <a href="javascript:;" onclick="selectaddress();">
 <div class="checkout-addr">
-    <input name="default_address_id" type="hidden" id="default_address_id" value="<?php if($user_default_address){echo $user_default_address['id'];} ?>">
+    <input name="user_address_id" type="hidden" id="user_address_id" value="<?php if($user_default_address){echo $user_default_address['id'];} ?>">
     <p class="title"><span class="name" id="default_consignee"><?php if($user_default_address){echo $user_default_address['name'];} ?></span> <span class="tel" id="default_phone"><?php if($user_default_address){echo $user_default_address['mobile'];} ?></span></p>
     <p class="des" id="default_address"><?php if($user_default_address){ ?><?php echo $user_default_address['province_name']; ?><?php echo $user_default_address['city_name']; ?><?php echo $user_default_address['district_name']; ?> <?php echo $user_default_address['address']; ?><?php }else{ ?>请添加收货地址<?php } ?></p>
     <i></i>
@@ -53,9 +53,9 @@ function selectaddress()
 .goodslist li{display:-webkit-box;margin:0 10px;padding:10px;border-bottom: 1px solid #f1f1f1;}
 .goodslist li img{margin-right:10px;display:block;width:78px;height:78px;border: 1px solid #e1e1e1;}
 .goodslist li p {display: block;-webkit-box-flex: 1;width: 100%;}
-.goodslist li p b {display:block;font-size:16px;font-weight:400;line-height: 28px;color:#333;}
-.goodslist li p span {color:#f23030;font-size:18px;display: block;padding-top:8px;}
-.goodslist li p i{color:#666;float:right;font-size:14px;}
+.goodslist li p b {display:block;font-size:16px;font-weight:400;height:28px;line-height: 28px;color:#333;overflow:hidden;}
+.goodslist li p span {color:#f23030;font-size:18px;display: block;padding-top:4px;}
+.goodslist li p i{color:#666;float:right;font-size:14px;margin-top:4px;}
 </style>
 <!-- 订单商品列表-end -->
 <div class="floor">
@@ -100,7 +100,7 @@ function selectaddress()
               '请选择优惠券',
               'background-color: #FF4351; color:#fff;'
             ]
-            ,content: '<div><?php if($user_bonus_list){foreach($user_bonus_list as $k=>$v){ ?><a style="margin-bottom:10px;background-color:#1aad19;border:1px solid #179e16;color:white;border-radius:2px;text-align:center;" class="bottoma" onclick="layer.closeAll();" href="javascript:select_bonus(<?php echo $v['id']; ?>,\'省<?php echo $v['bonus_money']; ?>元\',<?php echo $v['bonus_money']; ?>);">省<?php echo $v['bonus_money']; ?>元</a><?php }} ?><a style="background-color:#ea5a3d;border:1px solid #dd2727;color:white;border-radius:2px;text-align:center;" class="bottoma" onclick="layer.closeAll();" href="javascript:select_bonus(0,\'不使用优惠\',0);">不使用优惠</a></div>'
+            ,content: '<div><?php if($user_bonus_list){foreach($user_bonus_list as $k=>$v){ ?><a style="margin-bottom:10px;background-color:#1aad19;border:1px solid #179e16;color:white;border-radius:2px;text-align:center;" class="bottoma" onclick="layer.closeAll();" href="javascript:select_bonus(<?php echo $v['id']; ?>,\'省<?php echo $v['bonus_money']; ?>元\',<?php echo $v['bonus_money']; ?>);">省<?php echo $v['bonus_money']; ?>元</a><?php }} ?><a style="background-color:#ea5a3d;border:1px solid #dd2727;color:white;border-radius:2px;text-align:center;" class="bottoma" onclick="layer.closeAll();" href="javascript:select_bonus(0,\'不使用优惠券\',0);">不使用优惠券</a></div>'
         });
     }
     
@@ -111,13 +111,13 @@ function selectaddress()
         //更改总计价格
         change_totalamount(money);
     }
-    
+    //修改应付款金额
     function change_totalamount(discount)
     {
         totalamount = $("#product_total_price").val(); //商品总价
         shipping_costs = $("#shipping_costs").val(); //运费
         totalamount = parseFloat(totalamount) + parseFloat(shipping_costs) - parseFloat(discount);
-        $("#totalamount").html(totalamount.toFixed(2));
+        $("#totalamount").html(parseFloat(totalamount.toFixed(2)));
     }
     
     function submit_form()
@@ -125,8 +125,8 @@ function selectaddress()
         //payid = $("#payid").val();
         //if(payid==''){alert("请选择支付方式");}
         
-        default_address_id = $("#default_address_id").val();
-        if(default_address_id==''){alert("请选择收货地址");}
+        user_address_id = $("#user_address_id").val();
+        if(user_address_id==''){alert("请选择收货地址");}
         
         var re = /^[0-9]+.?[0-9]*$/; //判断字符串是否为数字
         /* if (!re.test(payid))
@@ -135,7 +135,7 @@ function selectaddress()
             return false;
         } */
         
-        if (!re.test(default_address_id))
+        if (!re.test(user_address_id))
         {
             alert("收货地址格式不正确");
             return false;
@@ -210,7 +210,7 @@ function selectaddress()
             if (res.code == 0)
             {
                 //订单确认页面
-                $("#default_address_id").val(id);
+                $("#user_address_id").val(id);
                 $("#default_consignee").html($("#consignee"+id).html());
                 $("#default_phone").html($("#con_phone"+id).html());
                 $("#default_address").html($("#con_address"+id).html());
@@ -485,154 +485,6 @@ function selectaddress()
     </script>
 </div>
 <!-- 收货地址选择-end -->
-
-<script>
-function cart_submit()
-{
-    var cart_goods_ids = '';
-    $('[name="checkItem"][checked]').each(function(){
-        var goods_id = $(this).attr('data-cart-id');
-        if(cart_goods_ids){cart_goods_ids = cart_goods_ids+'_'+goods_id;}else{cart_goods_ids = cart_goods_ids+goods_id;}
-    });
-    
-    if(cart_goods_ids == '')
-    {
-        layer.open({
-            content: '请选择商品'
-            ,skin: 'msg'
-            ,time: 2 //2秒后自动关闭
-        });
-        
-        return false;
-    }
-    
-    location.href = '<?php echo substr(url('cart/checkout').'?cartids=1', 0, -1); ?>' + cart_goods_ids;
-}
-
-function change_goods_number(type, id)
-{
-    var goods_number = document.getElementById('goods_number'+id).value;
-    if(type != 2)
-    {
-        var goods_number = document.getElementById('goods_number'+id).value;
-        document.getElementById('goods_number'+id).value = goods_number;
-    }
-    if(type == 1){goods_number--;}
-    if(type == 3){goods_number++;}
-    if(goods_number <= 0){goods_number=1;}
-    if(!/^[0-9]*$/.test(goods_number)){goods_number = document.getElementById('goods_number'+id).value;}
-    document.getElementById('goods_number'+id).value = goods_number;
-    
-    var access_token = '<?php echo $login_info['token']['token']; ?>';
-	var url = '<?php echo sysconfig('CMS_API_URL').'/cart/add'; ?>';
-    
-    $.post(url,{access_token:access_token,goods_id:id,goods_number:goods_number},function(res)
-	{
-        if (res.code == 0)
-        {
-            changeCartTotalPrice();
-        }
-        else if (res.msg != '')
-        {
-            //提示
-            layer.open({
-                content: '姓名不能为空'
-                ,skin: 'msg'
-                ,time: 2 //2秒后自动关闭
-            });
-            
-            var goods_number = document.getElementById('goods_number'+id).value;
-            document.getElementById('goods_number'+id).value = goods_number;
-        }
-    }, 'json');
-}
-
-//删除购物车商品
-$(function () {
-    //删除购物车商品事件
-    $(document).on("click", '.deleteGoods', function (e) {
-        var access_token = '<?php echo $login_info['token']['token']; ?>';
-        var cart_ids = new Array();
-        cart_ids.push($(this).attr('data-cart-id'));
-        layer.open({
-            content: '确定要删除此商品吗'
-            ,btn: ['确定', '取消']
-            ,yes: function(index){
-                layer.close(index);
-                $.ajax({
-                    type : "POST",
-                    url:"<?php echo sysconfig('CMS_API_URL').'/cart/del'; ?>",
-                    dataType:'json',
-                    data: {access_token:access_token,id:cart_ids},
-                    success: function(res){
-                        layer.open({
-                            content: res.msg
-                            ,skin: 'msg'
-                            ,time: 2 //2秒后自动关闭
-                        });
-                        
-                        window.location.reload();
-                    }
-                });
-            }
-        });
-    })
-});
-
-//勾选商品
-function checkGoods(obj)
-{
-    if($(obj).hasClass('check_t'))
-    {
-        //改变颜色
-        $(obj).removeClass('check_t');
-        //取消选中
-        $(obj).find('input').attr('checked',false);
-    }
-    else
-    {
-        //改变颜色
-        $(obj).addClass('check_t');
-        //勾选选中
-        $(obj).find('input').attr('checked',true);
-    }
-
-    //选中全选多选框
-    if($(obj).hasClass('checkFull'))
-    {
-        if($(obj).hasClass('check_t'))
-        {
-            $(".che").each(function(i,o){
-                $(this).addClass('check_t');
-                $(this).find('input').attr('checked',true);
-            });
-        }
-        else
-        {
-            $(".che").each(function(i,o){
-                $(this).removeClass('check_t');
-                $(this).find('input').attr('checked',false);
-            });
-        }
-    }
-    
-    changeCartTotalPrice();
-}
-
-//修改选中商品总价
-function changeCartTotalPrice()
-{
-    var total_price = 0;
-    
-    $('[name="checkItem"][checked]').each(function(){
-        var goods_id = $(this).attr('data-goods-id');
-        
-        total_price = total_price + $('#goods_number'+goods_id).val() * $('#goods_price'+goods_id).text();
-    });
-    
-    $('#total_fee').text(total_price);
-}
-</script>
 
 <script>
 function unshow(id)

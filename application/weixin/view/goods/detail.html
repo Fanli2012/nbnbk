@@ -86,13 +86,11 @@ var swiper = new Swiper('.swiper-container', {
             <img src="<?php echo $post['goods_img']; ?>"  style="width:100%; height:100%;">
           </div>
           <div class="cart_goods_info">
-            <div class="cart_list_name">
-              <div class="cart_detail_gray" style=""><span style="" class="cart_detail_gray_name"><?php echo $post['title']; ?></span></div>
-              <div class="cart_detail_gray" style="">                        
+              <div class="cart_detail_gray"><span style="" class="cart_detail_gray_name"><?php echo $post['title']; ?></span></div>
+              <div class="cart_detail_gray">                        
                 <p class="cart_sum" id="total_price1_296">￥<span class="attr_price"><?php echo $post['price']; ?></span></p>
                 <p class="goods_type">库存<span class="attr_storage"><?php echo $post['goods_number']; ?></span>件</p>
               </div>
-            </div>
           </div><!--cart_info-->
         </div>   
       </div><!--item-->  
@@ -206,6 +204,8 @@ function dosubmit()
                 ,skin: 'msg'
                 ,time: 2 //2秒后自动关闭
             });
+			
+			$("#master").hide();
 		}
 		else
 		{
@@ -217,8 +217,6 @@ function dosubmit()
             });
 		}
 	},'json');
-        
-    $("#master").hide();
 }
 
 function collect_goods()

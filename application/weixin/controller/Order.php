@@ -159,8 +159,8 @@ class Order extends Base
 		);
         $url = sysconfig('CMS_API_URL').'/order/detail';
 		$res = curl_request($url,$get_data,'GET');
-        $assign_data['order'] = $res['data'];
         if($res['code']!=ReturnData::SUCCESS || empty($assign_data['order'])){$this->error('订单不存在或已过期');}
+        $assign_data['order'] = $res['data'];
         
         //获取会员信息
         $get_data = array(
@@ -243,9 +243,9 @@ class Order extends Base
         require_once EXTEND_PATH.'wxpay/WxPayConfig.php'; // 导入微信配置类
 		require_once EXTEND_PATH.'wxpay/WxPayPubHelper.class.php'; // 导入微信支付类
         
-		$body = '订单支付';//订单详情
-		$out_trade_no = $assign_data['order']['order_sn'].'-'.time();//订单号，时间戳保证每次都不一样
-		$total_fee = floatval($assign_data['order']['order_amount']*100);//价格0.01
+		$body = '订单支付'; //订单详情
+		$out_trade_no = $assign_data['order']['order_sn'].'-'.time(); //订单号，时间戳保证每次都不一样
+		$total_fee = floatval($assign_data['order']['order_amount']*100); //价格0.01
         $attach = 'pay_type=2'; //附加数据，pay_type=2订单支付，示例：xxx=1&yyy=2
 		$notify_url = url('api/notify/wxpay_jsapi'); //通知地址
 		$wxconfig = \WxPayConfig::wxconfig();

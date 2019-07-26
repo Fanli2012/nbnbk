@@ -390,7 +390,7 @@ class UserLogic extends BaseLogic
 		$user_info = $this->getUserInfo(['id'=>$user['id']]);
 		
 		//生成Token
-		$token = logic('Token')->getToken($user_info['id'], Token::TOKEN_TYPE_WEIXIN);
+		$token = logic('Token')->getToken($user_info['id'], Token::TOKEN_TYPE_MINIPROGRAM);
 		$user_info['token'] = $token;
 		
 		return ReturnData::create(ReturnData::SUCCESS, $user_info, '登录成功');

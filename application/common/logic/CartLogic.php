@@ -220,6 +220,6 @@ class CartLogic extends BaseLogic
         $res['total_price'] = $total_price;
         $res['total_goods'] = $total_goods;
         
-        return ReturnData::create(ReturnData::SUCCESS, $res);
+        return $res;
     }
 }

@@ -83,6 +83,7 @@ class Goods extends Common
             foreach($res['list'] as $k=>$v)
             {
                 if($v['litpic']){$res['list'][$k]['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['litpic'];}
+				if($v['goods_img']){$res['list'][$k]['goods_img'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['goods_img'];}
             }
         }
         
@@ -100,7 +101,8 @@ class Goods extends Common
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::RECORD_NOT_EXIST)));}
         
         if($res['litpic']){$res['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$res['litpic'];}
-        
+        if($res['goods_img']){$res['goods_img'] = sysconfig('CMS_SITE_CDN_ADDRESS').$res['goods_img'];}
+		
 		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
     }
     

@@ -89,7 +89,7 @@ class Cart extends Base
         $assign_data['checkout_goods'] = $res['data'];
         if(empty($assign_data['checkout_goods']['list'])){$this->error('没有要结算的商品');}
         
-        //判断余额是否足够
+        //判断余额是否足够支付订单
         $is_balance_enough = 1; //足够
         if($assign_data['checkout_goods']['total_price']>$this->login_info['money']){$is_balance_enough = 0;}
         $assign_data['is_balance_enough'] = $is_balance_enough;
@@ -111,20 +111,20 @@ class Cart extends Base
     public function cart_done()
 	{
         $cartids = input('cartids',''); //购物车商品ID，8_9
-        $default_address_id = input('default_address_id',''); //收货地址id
+        $user_address_id = input('user_address_id',''); //收货地址ID
         //$payid = input('payid',''); //支付方式：1余额支付，2微信，3支付宝
         $user_bonus_id = input('user_bonus_id', 0); //优惠券ID，0没有优惠券
         $shipping_costs = input('shipping_costs',''); //运费
         $message = input('message',''); //买家留言
         
-        if($default_address_id == ''){$this->error('请选择收货地址');}
+        if($user_address_id == ''){$this->error('请选择收货地址');}
         //if($payid == ''){$this->error('请选择支付方式');}
         if($cartids == ''){$this->error('没有要结算的商品');}
         
         //订单提交
         $post_data = array(
             'cartids' => $cartids,
-            'default_address_id' => $default_address_id,
+            'user_address_id' => $user_address_id,
             //'payid' => $payid,
             'user_bonus_id' => $user_bonus_id,
             'shipping_costs' => $shipping_costs,

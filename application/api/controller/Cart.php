@@ -27,6 +27,14 @@ class Cart extends Base
         $where['user_id'] = $this->login_info['id'];
         $res = $this->getLogic()->getAll($where);
 		
+		if($res)
+		{
+			foreach($res as $k=>$v)
+            {
+                if($v['litpic']){$res[$k]['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['litpic'];}
+            }
+		}
+		
 		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
     }
     
@@ -95,7 +103,16 @@ class Cart extends Base
 		{
             return ReturnData::create(ReturnData::PARAMS_ERROR);
         }
-        
-        exit( json_encode( $this->getLogic()->cartCheckoutGoodsList($where) ) );
+		
+		$res = $this->getLogic()->cartCheckoutGoodsList($where);
+		if($res['list'])
+		{
+			foreach($res['list'] as $k=>$v)
+            {
+                if($v['litpic']){$res['list'][$k]['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['litpic'];}
+            }
+		}
+		
+        exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
     }
 }

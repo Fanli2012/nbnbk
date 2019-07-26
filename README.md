@@ -111,7 +111,7 @@ www  WEB部署目录（或者子目录）
 ├─application           应用目录
 │  ├─api                API目录主要提供接口
 │  ├─common             公共模块目录（可以更改）
-│  ├─extra
+│  ├─extra              扩展配置文件
 │  ├─fladmin            后台管理目录
 │  ├─index              PC端目录
 │  ├─wap                移动端目录

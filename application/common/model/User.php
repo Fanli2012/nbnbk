@@ -344,16 +344,37 @@ class User extends Base
         return self::getLastSql();
     }
 	
-    //性别：1男2女
+    /**
+     * 获取器——性别：1男2女
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
     public function getSexTextAttr($value, $data)
     {
         $arr = array(0 => '未知', 1 => '男', 2 => '女');
         return $arr[$data['sex']];
     }
     
-    //用户状态：0正常，1待审，2锁定
+    /**
+     * 获取器——用户状态：0正常，1待审，2锁定
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
     public function getStatusTextAttr($value, $data)
     {
         return self::$user_status_desc[$data['status']];
+    }
+    
+    /**
+     * 获取器——用户等级文字
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getUserRankTextAttr($value, $data)
+    {
+        return model('UserRank')->getValue(array('rank'=>$data['user_rank']), 'title');
     }
 }

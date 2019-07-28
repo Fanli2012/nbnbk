@@ -247,31 +247,31 @@ class User extends Base
 		
 		if (!$mobile || !$password || !$oldPassword)
 		{
-            return ReturnCode::create(ReturnCode::PARAMS_ERROR);
+            return ReturnData::create(ReturnData::PARAMS_ERROR);
         }
 		
 		if($password == $oldPassword)
 		{
-			return ReturnCode::create(ReturnCode::PARAMS_ERROR,'新旧密码相同');
+			return ReturnData::create(ReturnData::PARAMS_ERROR,'新旧密码相同');
 		}
 		
 		if (!Helper::isValidMobile($mobile))
 		{
-			return ReturnCode::create(ReturnCode::MOBILE_FORMAT_FAIL);
+			return ReturnData::create(ReturnData::MOBILE_FORMAT_FAIL);
 		}
 		
 		$user = MallDataManager::userFirst(['mobile'=>$mobile,'password'=>$oldPassword,'id'=>$this->login_info['id']]);
 		
 		if(!$user)
 		{
-			return ReturnCode::create(ReturnCode::PARAMS_ERROR,'手机或密码错误');
+			return ReturnData::create(ReturnData::PARAMS_ERROR,'手机或密码错误');
 		}
 		
 		DB::table('user')->where(['mobile'=>$mobile,'password'=>$oldPassword,'id'=>$this->login_info['id']])->update(['password'=>$password]);
 		
 		MallDataManager::tokenDelete(['uid'=>$this->login_info['id']]);
 		
-		return ReturnCode::create(ReturnCode::SUCCESS);
+		return ReturnData::create(ReturnData::SUCCESS);
     }
 	
 	//找回密码，不用输入旧密码
@@ -284,14 +284,14 @@ class User extends Base
 		{
             if (!Helper::isValidMobile($mobile))
 			{
-                return response(ReturnCode::create(ReturnCode::MOBILE_FORMAT_FAIL));
+                return response(ReturnData::create(ReturnData::MOBILE_FORMAT_FAIL));
             }
 			
             //判断验证码是否有效
             $code = input('code', '');
             $type = input('type', null);
             if($type != VerifyCode::TYPE_CHANGE_PASSWORD)
-                return response(ReturnCode::create(ReturnCode::INVALID_VERIFY_CODE,'验证码类型错误'));
+                return response(ReturnData::create(ReturnData::INVALID_VERIFY_CODE,'验证码类型错误'));
             $verifyCode = VerifyCode::isVerify($mobile, $code, $type);
 			
             if($verifyCode)
@@ -308,11 +308,11 @@ class User extends Base
                         
 						MallDataManager::tokenDelete(['uid'=>$user->id]);
 						
-						$response = response(ReturnCode::create(ReturnCode::SUCCESS));
+						$response = response(ReturnData::create(ReturnData::SUCCESS));
                     }
 					else
 					{
-                        $response = response(ReturnCode::create(ReturnCode::PARAMS_ERROR));
+                        $response = response(ReturnData::create(ReturnData::PARAMS_ERROR));
                     }
 					
 					DB::commit();
@@ -322,73 +322,67 @@ class User extends Base
 				catch (Exception $e)
 				{
                     DB::rollBack();
-                    return response(ReturnCode::error($e->getCode(), $e->getMessage()));
+                    return response(ReturnData::error($e->getCode(), $e->getMessage()));
                 }
             }
             else
             {
-                return response(ReturnCode::create(ReturnCode::INVALID_VERIFY_CODE));
+                return response(ReturnData::create(ReturnData::INVALID_VERIFY_CODE));
             }
         }
 		else
 		{
-            return response(ReturnCode::create(ReturnCode::PARAMS_ERROR));
+            return response(ReturnData::create(ReturnData::PARAMS_ERROR));
         }
     }
 	
-	//修改手机号
+	/**
+     * 修改手机号
+     * @param string $_POST['mobile'] 新手机号码
+	 * @param string $_POST['code'] 新手机验证码
+     * @return array
+     */
     public function change_mobile()
     {
         $mobile = input('mobile', null); //新手机号码
-        $verificationCode = input('verificationCode', null); //新手机验证码
-		$oldMobile = input('oldMobile', null); //旧手机号码
-		$oldVerificationCode = input('oldVerificationCode', null); //旧手机验证码
-		$type = input('type', null); //验证码类型
-		
-		if (!$mobile || !$verificationCode || !$oldMobile || !$oldVerificationCode || !$type)
-		{
-            return ReturnCode::create(ReturnCode::PARAMS_ERROR);
+        $code = input('code', null); //新手机验证码
+        
+        if(Helper::isPostRequest())
+        {
+            $where['id'] = $this->login_info['id'];
+            $res = $this->getLogic()->changeMobile($_POST, $where);
+            exit(json_encode($res));
         }
-		
-		if (!Helper::isValidMobile($mobile))
-		{
-			return ReturnCode::create(ReturnCode::MOBILE_FORMAT_FAIL);
-		}
-		
-		if($mobile == $oldMobile)
-		{
-			return ReturnCode::create(ReturnCode::PARAMS_ERROR,'新旧手机号码相同');
-		}
-		
-		if($type != VerifyCode::TYPE_CHANGE_MOBILE)
-		{
-			return ReturnCode::create(ReturnCode::INVALID_VERIFY_CODE,'验证码类型错误');
+    }
+    
+	/**
+     * 微信小程序获取用户手机号码
+     * @param string $_POST['code'] 用户登录凭证（有效期五分钟）。开发者需要在开发者服务器后台调用 auth.code2Session，使用 code 换取 openid 和 session_key 等信息
+	 * @param string $_POST['encryptedData'] 包括敏感数据在内的完整用户信息的加密数据
+	 * @param string $_POST['iv'] 加密算法的初始向量
+     * @return array
+     */
+    public function bind_wechat_miniprogram_user_mobile()
+    {
+        //参数
+        /* $code = input('code', '');
+        $iv = input('iv', '');
+        $code = input('encryptedData', ''); */
+        // 获取小程序用户手机号
+        $res = $this->getLogic()->getWechatUserMobile(request()->param());
+        if($res['code'] != ReturnData::SUCCESS){exit(json_encode($res));}
+        
+        // 判断手机号是否存在
+        $user = model('User')->getOne(array('mobile'=>$res['data']['purePhoneNumber'], 'id'=>array('<>',$this->login_info['id'])));
+        if($user)
+        {
+            exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR, null, '该手机号已存在')));
         }
-		
-		$verifyCode = VerifyCode::isVerify($oldMobile, $oldVerificationCode, $type);
-		if(!$verifyCode)
-		{
-			return ReturnCode::create(ReturnCode::INVALID_VERIFY_CODE);
-		}
-		
-		$verifyCode = null;
-		$verifyCode = VerifyCode::isVerify($mobile, $verificationCode, $type);
-		if(!$verifyCode)
-		{
-			return ReturnCode::create(ReturnCode::INVALID_VERIFY_CODE);
-		}
-		
-		$user = MallDataManager::userFirst(['mobile'=>$oldMobile,'id'=>$this->login_info['id']]);
-		
-		if(!$user)
-		{
-			return ReturnCode::create(ReturnCode::PARAMS_ERROR,'旧手机号码错误');
-		}
-		
-		DB::table('user')->where(['mobile'=>$oldMobile,'id'=>$this->login_info['id']])->update(['mobile'=>$mobile]);
-		
-		MallDataManager::tokenDelete(['uid'=>$this->login_info['id']]);
-		
-		return ReturnCode::create(ReturnCode::SUCCESS);
+        
+        // 修改用户手机号
+        $where_user['id'] = $this->login_info['id'];
+        model('User')->edit(array('mobile'=>$res['data']['purePhoneNumber']), $where_user);
+        
+        exit(json_encode($res));
     }
 }

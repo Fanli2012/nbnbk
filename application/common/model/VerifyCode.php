@@ -20,10 +20,9 @@ class VerifyCode extends Base
     
     const TYPE_GENERAL = 0;                                                     //通用
     const TYPE_REGISTER = 1;                                                    //用户注册业务验证码
-    const TYPE_CHANGE_PASSWORD = 2;                                             //密码修改业务验证码
-    const TYPE_MOBILEE_BIND = 3;                                                //手机绑定业务验证码
+    const TYPE_CHANGE_MOBILE = 2;                                              //修改/绑定手机号码
+    const TYPE_CHANGE_PASSWORD = 3;                                             //密码修改业务验证码
 	const TYPE_VERIFYCODE_LOGIN = 4;                                            //验证码登录
-	const TYPE_CHANGE_MOBILE = 5;                                               //修改手机号码
 	
     /**
      * 验证码校验
@@ -70,11 +69,13 @@ class VerifyCode extends Base
         $data['expire_time'] = $time+60*30;
         $data['add_time'] = $time;
         
-        if($this->getOne(['type'=>$type,'mobile'=>$mobile,'add_time'=>['>',$time-120]])){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '请稍后再试');}
+        //1分钟后再试
+        if($this->getOne(['type'=>$type,'mobile'=>$mobile,'add_time'=>['>',$time-60]])){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '请稍后再试');}
         
         if($text==''){$text = '【'.sysconfig('CMS_WEBNAME').'】您的验证码是'.$data['code'].'，有效期30分钟。';}
         //短信发送验证码
-        $smsbao = new Smsbao('whhmk', 'whhmk8888');
+        //$smsbao = new Smsbao('whhmk', 'whhmk8888');
+        $smsbao = new Smsbao('xmzjt2017', 'zhengkai123');
 		$res = $smsbao->sms($text, $mobile);
         if($res['code'] != ReturnData::SUCCESS){return ReturnData::create(ReturnData::PARAMS_ERROR, null, $res['msg']);}
         //添加验证码记录

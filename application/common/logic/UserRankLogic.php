@@ -85,6 +85,14 @@ class UserRankLogic extends BaseLogic
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
+        //判断会员等级
+        if(isset($data['rank']) && !empty($data['rank']))
+        {
+            if($this->getModel()->getOne(['rank'=>$data['rank']])){
+                return ReturnData::create(ReturnData::PARAMS_ERROR, null, '该会员等级已存在');
+            }
+        }
+        
         $res = $this->getModel()->add($data, $type);
         if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
@@ -96,8 +104,21 @@ class UserRankLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
+        $check = $this->getValidate()->scene('edit')->check($data);
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
+        
         $record = $this->getModel()->getOne($where);
         if(!$record){return ReturnData::create(ReturnData::RECORD_NOT_EXIST);}
+        
+        //判断会员等级
+        if(isset($data['rank']) && !empty($data['rank']))
+        {
+            $where_rank['rank'] = $data['rank'];
+            $where_rank['id'] = ['<>',$record['id']]; //排除自身
+            if($this->getModel()->getOne($where_rank)){
+                return ReturnData::create(ReturnData::PARAMS_ERROR, null, '该会员等级已存在');
+            }
+        }
         
         $res = $this->getModel()->edit($data,$where);
         if(!$res){return ReturnData::create(ReturnData::FAIL);}

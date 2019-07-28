@@ -92,12 +92,12 @@ class EmailVerifyCode extends Base
      * @param $captcha 验证码
      * @return string 成功失败信息
      */
-    public function getEmailCode()
+    public function get_email_verify_code()
     {
         $res = $this->getLogic()->getEmailCode($_REQUEST);
         if ($res['code'] == ReturnData::SUCCESS)
         {
-            exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res['data'])));
+            exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res['data'], '发送成功')));
         }
         
         exit(json_encode(ReturnData::create(ReturnData::FAIL, null, $res['msg'])));

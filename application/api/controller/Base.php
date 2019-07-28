@@ -33,10 +33,9 @@ class Base extends Common
 			'shop/index',
 			'shop/detail',
 			'guestbook/add',
-			'wechat/miniprogramwxlogin',
-			'verifycode/getsmscodebysmsbao',
-			'verifycode/getemailcode',
+			'verifycode/get_mobile_verify_code',
 			'verifycode/check',
+			'emailverifycode/get_email_verify_code',
 			'emailverifycode/check'
 		);
 		

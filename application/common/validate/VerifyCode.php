@@ -2,6 +2,7 @@
 namespace app\common\validate;
 use think\Validate;
 use app\common\lib\Helper;
+use app\common\lib\Validator;
 
 class VerifyCode extends Validate
 {
@@ -31,7 +32,7 @@ class VerifyCode extends Validate
      */
     protected function checkPhone($value,$rule,$data,$field)
     {
-        if(Helper::isValidMobile($value))
+        if(Validator::isMobile($value))
         {
             return true;
         }

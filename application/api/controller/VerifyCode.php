@@ -92,12 +92,12 @@ class VerifyCode extends Base
      * @param $type 请求用途
      * @return string 成功失败信息
      */
-    public function getSmsCodeBySmsbao()
+    public function get_mobile_verify_code()
     {
         $res = $this->getLogic()->getVerifyCodeBySmsbao($_REQUEST);
         if ($res['code'] == ReturnData::SUCCESS)
         {
-            exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res['data'])));
+            exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res['data'], '发送成功')));
         }
         
         exit(json_encode(ReturnData::create(ReturnData::FAIL, null, $res['msg'])));
@@ -109,7 +109,7 @@ class VerifyCode extends Base
      * @param $captcha 验证码
      * @return string 成功失败信息
      */
-    public function getEmailCode()
+    public function get_email_verify_code()
     {
         $res = logic('EmailVerifyCode')->getEmailCode($_REQUEST);
         if ($res['code'] == ReturnData::SUCCESS)

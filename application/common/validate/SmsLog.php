@@ -28,7 +28,7 @@ class SmsLog extends Validate
      */
     protected function checkMobile($value,$rule,$data,$field)
     {
-        if(Helper::isValidMobile($value))
+        if(Validator::isMobile($value))
         {
             return true;
         }

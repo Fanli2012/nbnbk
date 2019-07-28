@@ -6,6 +6,7 @@ use app\common\lib\ReturnData;
 use app\common\lib\Helper;
 use app\common\model\User;
 use app\common\model\Token;
+use app\common\model\VerifyCode;
 use app\common\lib\wechat\WechatAuth;
 use app\common\lib\Validator;
 
@@ -36,7 +37,7 @@ class UserLogic extends BaseLogic
             foreach($res['list'] as $k=>$v)
             {
                 //$res['list'][$k] = $this->getDataView($v);
-				$res['list'][$k] = $res['list'][$k]->append(array('status_text','sex_text'))->toArray();
+				$res['list'][$k] = $res['list'][$k]->append(array('status_text','sex_text', 'user_rank_text'))->toArray();
             }
         }
         
@@ -79,7 +80,7 @@ class UserLogic extends BaseLogic
         if(!$res){return false;}
         
         //$res = $this->getDataView($res);
-		$res = $res->append(array('status_text','sex_text'))->toArray();
+		$res = $res->append(array('status_text', 'sex_text', 'user_rank_text'))->toArray();
         
         return $res;
     }
@@ -147,6 +148,8 @@ class UserLogic extends BaseLogic
         $user['reciever_address'] = model('UserAddress')->getOne(array('id'=>$user['address_id']));
         $user['collect_goods_count'] = model('UserGoodsCollect')->getCount(array('user_id'=>$user['id']));
         $user['bonus_count'] = model('UserBonus')->getCount(array('user_id'=>$user['id'],'status'=>0));
+        
+        $user = $user->append(array('status_text', 'sex_text', 'user_rank_text'))->toArray();
         
         return $user;
     }
@@ -690,6 +693,112 @@ class UserLogic extends BaseLogic
         
         $data['id'] = $add_res['data']['id'];
 		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $data)));
+    }
+    
+    /**
+     * 小程序获取手机号码，以code换取 用户唯一标识openid 和 会话密钥session_key
+     * @param string $param['code'] 用户登录凭证（有效期五分钟）。开发者需要在开发者服务器后台调用 auth.code2Session，使用 code 换取 openid 和 session_key 等信息
+	 * @param string $param['encryptedData'] 包括敏感数据在内的完整用户信息的加密数据
+	 * @param string $param['iv'] 加密算法的初始向量
+     * @return array
+     */
+    public function getWechatUserMobile($param)
+	{
+        include_once APP_PATH.'common/lib/wechat/aes/wxBizDataCrypt.php';
+        /**
+         * 3.小程序调用server获取token接口, 传入code, rawData, signature, encryptData.
+         */
+        $code = $data['code'] = $param['code'];
+		$encryptedData = $data['encryptedData'] = $param['encryptedData'];
+		$iv = $data['iv'] = $param['iv'];
+		
+        /**
+         * 4.server调用微信提供的jsoncode2session接口获取openid, session_key, 调用失败应给予客户端反馈
+         * , 微信侧返回错误则可判断为恶意请求, 可以不返回. 微信文档链接
+         * 这是一个 HTTP 接口，开发者服务器使用登录凭证 code 获取 session_key 和 openid。其中 session_key 是对用户数据进行加密签名的密钥。
+         * 为了自身应用安全，session_key 不应该在网络上传输。
+         * 接口地址："https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code"
+         */
+        if($code == null || $code == ''){return ReturnData::create(ReturnData::PARAMS_ERROR);}
+        $wechat = new WechatAuth(sysconfig('CMS_WX_MINIPROGRAM_APPID'), sysconfig('CMS_WX_MINIPROGRAM_APPSECRET'));
+        $res = $wechat->miniprogram_wxlogin($code);
+        if (!isset($res['session_key'])) {
+            return ReturnData::create(ReturnData::PARAMS_ERROR, null, 'requestTokenFailed');
+        }
+        
+        $session_key = $res['session_key'];
+        
+        /**
+         *
+         * 6.使用第4步返回的session_key解密encryptData, 将解得的信息与rawData中信息进行比较, 需要完全匹配,
+         * 解得的信息中也包括openid, 也需要与第4步返回的openid匹配. 解密失败或不匹配应该返回客户相应错误.
+         * （使用官方提供的方法即可）
+         */
+        $pc = new \WXBizDataCrypt(sysconfig('CMS_WX_MINIPROGRAM_APPID'), $session_key);
+        $errCode = $pc->decryptData($encryptedData, $iv, $data);
+        if ($errCode != 0)
+        {
+            return ReturnData::create(ReturnData::PARAMS_ERROR, null, 'encryptDataNotMatch');
+        }
+        
+        /**
+         * 7.生成第三方3rd_session，用于第三方服务器和小程序之间做登录态校验。为了保证安全性，3rd_session应该满足：
+         * a.长度足够长。建议有2^128种组合，即长度为16B
+         * b.避免使用srand（当前时间）然后rand()的方法，而是采用操作系统提供的真正随机数机制，比如Linux下面读取/dev/urandom设备
+         * c.设置一定有效时间，对于过期的3rd_session视为不合法
+         *
+         * 以 $session3rd 为key，sessionKey+openId为value，写入memcached
+         */
+        $data = json_decode($data, true);
+        /* $session3rd = randomFromDev(16);
+        $data['session3rd'] = $session3rd;
+        cache($session3rd, $data['openId'] . $session_key); */
+		if(!$data){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '没有数据');}
+        return ReturnData::create(ReturnData::SUCCESS, $data);
+    }
+    
+    //用户修改手机号
+    public function changeMobile($data, $where = array())
+    {
+        if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
+        
+        if(!(isset($data['mobile']) && !empty($data['mobile']) && Validator::isMobile($data['mobile'])))
+        {
+            return ReturnData::create(ReturnData::FAIL, null, '手机号格式不正确');
+        }
+        
+		//更新时间
+        if(!(isset($data['update_time']) && !empty($data['update_time']))){$data['update_time'] = time();}
+		
+		//验证数据
+        $validate = new Validate([
+			['code', 'require|number|max:6','验证码不能为空|验证码必须是数字|验证码格式不正确'],
+        ]);
+        if (!$validate->check($data)) {
+            return ReturnData::create(ReturnData::FAIL, null, $validate->getError());
+        }
+		
+        //验证码验证
+        $verify_code_check = logic('VerifyCode')->check(array('mobile'=>$data['mobile'], 'code'=>$data['code'], 'type'=>VerifyCode::TYPE_CHANGE_MOBILE));
+        if($verify_code_check['code'] != ReturnData::SUCCESS){return ReturnData::create(ReturnData::FAIL, null, $verify_code_check['msg']);}
+        
+        $record = $this->getModel()->getOne($where);
+        if(!$record){return ReturnData::create(ReturnData::RECORD_NOT_EXIST);}
+        
+        //判断手机号
+        if(isset($data['mobile']) && $data['mobile'] != '')
+        {
+            $where_user_name['mobile'] = $data['mobile'];
+			$where_user_name['id'] = ['<>',$record['id']]; //排除自身
+            if($this->getModel()->getOne($where_user_name)){
+                return ReturnData::create(ReturnData::FAIL, null, '该手机号已存在');
+            }
+        }
+        
+        $res = $this->getModel()->edit(array('mobile'=>$data['mobile']), $where);
+        if(!$res){return ReturnData::create(ReturnData::FAIL);}
+        
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
 }

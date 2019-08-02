@@ -159,7 +159,7 @@ class Order extends Base
 		);
         $url = sysconfig('CMS_API_URL').'/order/detail';
 		$res = curl_request($url,$get_data,'GET');
-        if($res['code']!=ReturnData::SUCCESS || empty($assign_data['order'])){$this->error('订单不存在或已过期');}
+        if($res['code']!=ReturnData::SUCCESS || empty($res['data'])){$this->error('订单不存在或已过期');}
         $assign_data['order'] = $res['data'];
         
         //获取会员信息

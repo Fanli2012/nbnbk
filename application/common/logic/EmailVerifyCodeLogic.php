@@ -143,9 +143,9 @@ class EmailVerifyCodeLogic extends BaseLogic
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->getVerifyCodeBySmtp($data['email'],$data['type']);
-        if($res['code'] == ReturnData::SUCCESS){return ReturnData::create(ReturnData::SUCCESS,$res['data']);}
+        if($res['code'] != ReturnData::SUCCESS){return ReturnData::create(ReturnData::FAIL, null, $res['msg']);}
         
-        return ReturnData::create(ReturnData::FAIL,null,$res['msg']);
+        return ReturnData::create(ReturnData::SUCCESS, $res['data'], '发送成功');
     }
     
     /**

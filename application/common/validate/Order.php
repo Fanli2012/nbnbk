@@ -18,7 +18,7 @@ class Order extends Validate
         ['order_amount', 'require|regex:/^\d{0,10}(\.\d{0,2})?$/', '应付金额必填|应付金额格式不正确'],
         ['discount', 'require|regex:/^\d{0,10}(\.\d{0,2})?$/', '优惠金额必填|优惠金额格式不正确'],
         ['pay_money', 'regex:/^\d{0,10}(\.\d{0,2})?$/', '支付金额必填|支付金额格式不正确'],
-        ['pay_id', 'number|max:11','支付方式ID必须是数字|支付方式ID格式不正确'],
+        ['payment_id', 'number|max:11','支付方式ID必须是数字|支付方式ID格式不正确'],
         ['pay_time', 'number|max:11', '订单支付时间格式不正确|订单支付时间格式不正确'],
         ['pay_name', 'max:30','支付方式名称不能超过30个字符'],
 		['trade_no', 'max:60','支付订单号不能超过60个字符'],

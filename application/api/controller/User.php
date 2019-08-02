@@ -57,6 +57,8 @@ class User extends Base
 		$res = $this->getLogic()->getUserInfo($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::RECORD_NOT_EXIST)));}
         
+		if($res['head_img']){ $res['head_img'] = (substr($res['head_img'], 0, strlen('http')) === 'http') ? $res['head_img'] : sysconfig('CMS_SITE_CDN_ADDRESS').$res['head_img']; }
+		
 		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
     }
     

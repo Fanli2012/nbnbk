@@ -30,6 +30,7 @@ class Base extends Common
         $uncheck = array(
 			'payment/index',
 			'sysconfig/index',
+			'sysconfig/detail',
 			'shop/index',
 			'shop/detail',
 			'guestbook/add',

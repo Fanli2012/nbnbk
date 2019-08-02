@@ -38,14 +38,14 @@ class Bonus extends Base
             {
                 foreach($res['data']['list'] as $k => $v)
                 {
-                    $html .= '<li><a href="'.$v['goods']['goods_detail_url'].'"><span class="goods_thumb"><img alt="'.$v['goods']['title'].'" src="'.env('APP_URL').$v['goods']['litpic'].'"></span></a>';
-                    $html .= '<div class="goods_info"><p class="goods_tit">'.$v['goods']['title'].'</p>';
-                    $html .= '<p class="goods_price">￥<b>'.$v['goods']['price'].'</b></p>';
-                    $html .= '<p class="goods_des fr"><span id="del_history" onclick="delconfirm(\''.route('weixin_user_goods_history_delete',array('id'=>$v['id'])).'\')">删除</span></p>';
-                    $html .= '</div></li>';
+                    $html .= '<a href="javascript:;" onclick="getbonus('.$v['id'].')">';
+                    $html .= '<div class="flow-have-adr">';
+                    $html .= '<p class="f-h-adr-title"><label>'.$v['name'].'</label><span class="ect-colory fr"><small>￥</small>'.$v['money'].'</span><div class="cl"></div></p>';
+                    $html .= '<p class="f-h-adr-con">有效期至'.date('Y-m-d H:i:s', $v['end_time']).' <span class="fr">满'.$v['min_amount'].'可用</span></p>';
+                    $html .= '</div></a>';
                 }
             }
-            
+			
     		exit(json_encode($html));
     	}
         

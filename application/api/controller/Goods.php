@@ -100,6 +100,7 @@ class Goods extends Common
 		$res = $this->getLogic()->getOne($where);
         if(!$res){exit(json_encode(ReturnData::create(ReturnData::RECORD_NOT_EXIST)));}
         
+		if($res['content']){$res['content'] = str_replace(' style=""', '', preg_replace('/src=\"\/uploads\//','src="'.sysconfig('CMS_SITE_CDN_ADDRESS').'/uploads/', $res['content']));}
         if($res['litpic']){$res['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$res['litpic'];}
         if($res['goods_img']){$res['goods_img'] = sysconfig('CMS_SITE_CDN_ADDRESS').$res['goods_img'];}
 		

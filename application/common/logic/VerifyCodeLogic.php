@@ -143,7 +143,7 @@ class VerifyCodeLogic extends BaseLogic
         $res = $this->getModel()->getVerifyCodeBySmsbao($data['mobile'],$data['type']);
         if($res['code'] != ReturnData::SUCCESS){return ReturnData::create(ReturnData::FAIL, null, $res['msg']);}
         
-        return ReturnData::create(ReturnData::SUCCESS, $res['data']);
+        return ReturnData::create(ReturnData::SUCCESS, $res['data'], '发送成功');
     }
     
     /**

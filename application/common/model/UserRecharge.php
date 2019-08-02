@@ -330,10 +330,10 @@ class UserRecharge extends Base
         return self::getLastSql();
     }
 	
-    //充值类型：1微信，2支付宝
+    //充值类型：1微信公众号，2支付宝APP，3微信APP，4微信小程序
     public function getPayTypeTextAttr($value, $data)
     {
-        $arr = array(0 => '未知', 1 => '微信', 2 => '支付宝');
+        $arr = array(0 => '未知', 1 => '微信公众号', 2 => '支付宝APP', 3 => '微信APP', 4 => '微信小程序');
         return $arr[$data['pay_type']];
     }
     

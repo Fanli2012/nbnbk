@@ -97,7 +97,7 @@ class Notify extends Common
 			//修改订单状态
 			$order_update_data['pay_status'] = 1;
 			$order_update_data['pay_money'] = $pay_money; //支付金额
-			$order_update_data['pay_id'] = 2;
+			$order_update_data['payment_id'] = 2;
 			$order_update_data['pay_time'] = $pay_time_timestamp;
 			$order_update_data['pay_name'] = 'wxpay_jsapi';
 			$order_update_data['trade_no'] = $post_data['transaction_id'];

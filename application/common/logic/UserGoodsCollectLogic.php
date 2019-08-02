@@ -102,7 +102,7 @@ class UserGoodsCollectLogic extends BaseLogic
         $res = $this->getModel()->add($data, $type);
         if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::SUCCESS, $res);
+        return ReturnData::create(ReturnData::SUCCESS, $res, '收藏成功');
     }
     
     //修改
@@ -130,7 +130,7 @@ class UserGoodsCollectLogic extends BaseLogic
         $res = $this->getModel()->del($where);
         if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-        return ReturnData::create(ReturnData::SUCCESS, $res);
+        return ReturnData::create(ReturnData::SUCCESS, $res, '取消成功');
     }
     
     /**

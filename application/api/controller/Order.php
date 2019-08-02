@@ -282,7 +282,7 @@ class Order extends Base
         $order = DB::table('order')->where(['id'=>$id,'status'=>0,'user_id'=>Token::$uid])->first();
         if(!$order){return ReturnCode::create(ReturnCode::PARAMS_ERROR);}
         
-        $order_pay = DB::table('order_pay')->where(['id'=>$order->pay_id])->first();
+        $order_pay = DB::table('order_pay')->where(['id'=>$order->payment_id])->first();
         if(!$order_pay){return ReturnCode::create(ReturnCode::PARAMS_ERROR);}
         
         require_once base_path('resources/org/alipay_app').'/AopClient.php';
@@ -324,7 +324,7 @@ class Order extends Base
         $order_info = DB::table('order')->where(['id'=>$id,'status'=>0,'user_id'=>Token::$uid])->first();
         if(!$order_info){return ReturnCode::create(ReturnCode::PARAMS_ERROR);}
         
-        $order_pay = DB::table('order_pay')->where(['id'=>$order_info->pay_id])->first();
+        $order_pay = DB::table('order_pay')->where(['id'=>$order_info->payment_id])->first();
         if(!$order_pay){return ReturnCode::create(ReturnCode::PARAMS_ERROR);}
         
 		//1.配置

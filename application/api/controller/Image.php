@@ -89,7 +89,7 @@ class Image extends Common
             }
         }
         
-        exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+        exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res), JSON_UNESCAPED_SLASHES)); //让json_encode不自动转义斜杠“/”的方法
     }
     
     //阿里云OSS图片上传，成功返回路径，不含域名

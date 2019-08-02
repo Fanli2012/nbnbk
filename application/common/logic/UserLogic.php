@@ -336,7 +336,7 @@ class UserLogic extends BaseLogic
 			}
 			
 			//openid
-			$data['sex'] = 0;
+			$data['openid'] = 0;
 			if (isset($data['openId']) && !empty($data['openId']))
 			{
 				$data['openid'] = $data['openId'];
@@ -381,7 +381,7 @@ class UserLogic extends BaseLogic
 			if(!$user_id){return ReturnData::create(ReturnData::SYSTEM_FAIL);}
 			
 			//更新用户名user_name，微信登录没有用户名
-			$edit_user['user_name'] = 'u'.$user_id;
+			if(!model('User')->getOne(array('user_name'=>'u'.$user_id))){$edit_user['user_name'] = 'u'.$user_id;}
 			$user['id'] = $user_id;
 		}
 		
@@ -390,7 +390,7 @@ class UserLogic extends BaseLogic
 		$this->getModel()->edit($edit_user, array('id'=>$user['id']));
 		
 		//获取用户信息
-		$user_info = $this->getUserInfo(['id'=>$user['id']]);
+		$user_info = $this->getUserInfo(array('id'=>$user['id']));
 		
 		//生成Token
 		$token = logic('Token')->getToken($user_info['id'], Token::TOKEN_TYPE_MINIPROGRAM);
@@ -470,7 +470,7 @@ class UserLogic extends BaseLogic
 			['parent_id', 'number|max:11','推荐人ID必须是数字|推荐人ID格式不正确'],
 			['email', 'email','邮箱格式不正确'],
 			['nickname', 'max:30','昵称不能超过30个字符'],
-			['user_name', 'max:30|regex:/^[-_a-zA-Z0-9]{3,18}$/i','用户名不能超过30个字符|用户名格式不正确'],
+			['user_name', 'max:30|regex:/^[-_a-zA-Z0-9]{2,18}$/i','用户名不能超过30个字符|用户名2-18个字符'],
 			['head_img', 'max:250','头像格式不正确'],
 			['sex', 'in:0,1,2','性别：1男2女'],
 			['birthday', 'regex:/\d{4}-\d{2}-\d{2}/','生日格式不正确'],

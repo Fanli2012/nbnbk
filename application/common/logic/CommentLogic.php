@@ -96,7 +96,7 @@ class CommentLogic extends BaseLogic
         $res = $this->getModel()->add($data, $type);
         if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-		return ReturnData::create(ReturnData::SUCCESS, $res);
+		return ReturnData::create(ReturnData::SUCCESS, $res, '评价成功');
     }
     
     //修改

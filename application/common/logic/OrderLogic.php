@@ -351,7 +351,8 @@ class OrderLogic extends BaseLogic
 		$time = time();
         $data['pay_status'] = 1;
         $data['pay_money'] = $order['order_amount']; //支付金额
-        $data['pay_id'] = 1;
+        $data['payment_id'] = 1;
+		$data['pay_name'] = model('Payment')->getValue(array('id' => $data['payment_id']), 'pay_name');
         $data['pay_time'] = $time;
         $data['update_time'] = $time;
         $res = $this->getModel()->edit($data, $where);

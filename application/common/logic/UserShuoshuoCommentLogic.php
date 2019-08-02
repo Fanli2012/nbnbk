@@ -2,9 +2,9 @@
 namespace app\common\logic;
 use think\Loader;
 use app\common\lib\ReturnData;
-use app\common\model\UserBonus;
+use app\common\model\UserShuoshuoComment;
 
-class UserBonusLogic extends BaseLogic
+class UserShuoshuoCommentLogic extends BaseLogic
 {
     protected function initialize()
     {
@@ -13,24 +13,20 @@ class UserBonusLogic extends BaseLogic
     
     public function getModel()
     {
-        return new UserBonus();
+        return new UserShuoshuoComment();
     }
     
     public function getValidate()
     {
-        return Loader::validate('UserBonus');
+        return Loader::validate('UserShuoshuoComment');
     }
     
     //列表
     public function getList($where = array(), $order = '', $field = '*', $offset = '', $limit = '')
     {
-        $where2 = $where;
-        $where2['end_time'] = array('<', time()); //有效期
-        //设置用户优惠券已过期
-        $this->getModel()->edit(array('status'=>2), $where2);
-        
         $res = $this->getModel()->getList($where, $order, $field, $offset, $limit);
-        if($res['count'] > 0)
+        
+        if($res['list'])
         {
             foreach($res['list'] as $k=>$v)
             {
@@ -86,30 +82,13 @@ class UserBonusLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
-		//添加时间
-		if(!(isset($data['get_time']) && !empty($data['get_time']))){$data['get_time'] = time();}
-		
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
-        //通过优惠券ID获取优惠券详情
-        $bonus = model('Bonus')->getOne(array('id'=>$data['bonus_id']));
-        if(!$bonus){return ReturnData::create(ReturnData::RECORD_NOT_EXIST, null, '您来晚了，已被抢光啦');}
-        if($bonus['num']==-1 || $bonus['num']>0){}else{return ReturnData::create(ReturnData::PARAMS_ERROR, null, '您来晚了，已被抢光啦');}
-		
-        if($this->getModel()->getOne(['bonus_id'=>$data['bonus_id'],'user_id'=>$data['user_id']])){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '亲，您已领取');}
         
-		$data['bonus_name'] = $bonus['name'];
-		$data['bonus_money'] = $bonus['money'];
-		$data['min_amount'] = $bonus['min_amount'];
-		$data['start_time'] = $bonus['start_time'];
-		$data['end_time'] = $bonus['end_time'];
-		
-        $res = $this->getModel()->add($data, $type);
+        $res = $this->getModel()->add($data,$type);
         if(!$res){return ReturnData::create(ReturnData::FAIL);}
         
-		if($bonus['num']>0){model('Bonus')->getDb()->where(array('id'=>$data['bonus_id']))->setDec('num', 1);}
-		
-        return ReturnData::create(ReturnData::SUCCESS, $res, '领取成功');
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //修改
@@ -117,8 +96,8 @@ class UserBonusLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
-        $record = $this->getModel()->getOne($where);
-        if(!$record){return ReturnData::create(ReturnData::RECORD_NOT_EXIST);}
+        $check = $this->getValidate()->scene('edit')->check($data);
+        if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
         $res = $this->getModel()->edit($data,$where);
         if(!$res){return ReturnData::create(ReturnData::FAIL);}
@@ -148,51 +127,5 @@ class UserBonusLogic extends BaseLogic
     private function getDataView($data = array())
     {
         return getDataAttr($this->getModel(),$data);
-    }
-	
-    /**
-     * 商品结算时，获取优惠券列表
-     * @param int $data['user_id'] 用户ID
-     * @param float $data['min_amount'] 最小金额可以用的优惠券
-     * @return array
-     */
-	public function getAvailableBonusList($data)
-    {
-        $where['user_id'] = $data['user_id'];
-        $where['status'] = UserBonus::USER_BONUS_STATUS_UNUSED;
-		$where['end_time'] = array('>=', time()); //有效期
-		
-		//满多少使用
-        if(isset($data['min_amount']))
-		{
-			$where['min_amount'] = array('<=', $data['min_amount']);
-			$where['bonus_money'] = array('<=', $data['min_amount']);
-		}
-		
-        $res = $this->getModel()->getAll($where, 'bonus_money desc');
-        return $res;
-    }
-	
-    /**
-     * 获取可用优惠券
-     * @param int $data['id'] 优惠券ID
-     * @param int $data['user_id'] 用户ID
-     * @param float $data['min_amount'] 最小金额可以用的优惠券
-     * @return array
-     */
-    public function getUserAvailableBonus(array $data)
-    {
-        $where['status'] = UserBonus::USER_BONUS_STATUS_UNUSED;
-		$where['end_time'] = array('>=', time()); //有效期
-		
-		//满多少使用
-        if(isset($data['min_amount']))
-		{
-			$where['min_amount'] = array('<=', $data['min_amount']);
-			$where['bonus_money'] = array('<=', $data['min_amount']);
-		}
-		
-        $res = $this->getModel()->getOne($where);
-        return $res;
     }
 }

@@ -48,9 +48,9 @@ class ReturnData
     const MOBILE_FORMAT_FAIL        = 9003; //手机格式不正确
     const VERIFY_TYPE_FAIL          = 9004; //验证码业务类型无效
     const BANK_TYPE_FAIL            = 9005; //该银行不支持
-    const INVALID_IDCARD            = 9006;//身份证无效
-    const REQUEST_AMOUNT_MIN_LESS   = 9007;//小于最小提现金额
-    const SERVICE_AMOUNT_NOT_ENOUGH = 9008;//可提现余额不足
+    const INVALID_IDCARD            = 9006; //身份证无效
+    const REQUEST_AMOUNT_MIN_LESS   = 9007; //小于最小提现金额
+    const SERVICE_AMOUNT_NOT_ENOUGH = 9008; //可提现余额不足
 	
     //中文错误详情
     public static $codeTexts = array(

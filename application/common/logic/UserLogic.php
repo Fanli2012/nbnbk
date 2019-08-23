@@ -90,8 +90,11 @@ class UserLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
         
-        $data['add_time'] = $data['update_time'] = time();
-        
+        //添加时间、更新时间
+		$time = time();
+		if(!(isset($data['add_time']) && !empty($data['add_time']))){$data['add_time'] = $time;}
+		if(!(isset($data['update_time']) && !empty($data['update_time']))){$data['update_time'] = $time;}
+		
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
@@ -106,6 +109,10 @@ class UserLogic extends BaseLogic
     {
         if(empty($data)){return ReturnData::create(ReturnData::SUCCESS);}
         
+        //更新时间
+		$time = time();
+		if(!(isset($data['update_time']) && !empty($data['update_time']))){$data['update_time'] = $time;}
+		
         $res = $this->getModel()->edit($data,$where);
         if(!$res){return ReturnData::create(ReturnData::FAIL);}
         

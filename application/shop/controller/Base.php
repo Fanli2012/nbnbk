@@ -3,19 +3,33 @@ namespace app\shop\controller;
 
 class Base extends Common
 {
-	/**
+	protected $login_info;
+	
+    /**
      * 初始化
      * @param void
      * @return void
      */
 	public function _initialize()
 	{
-        parent::_initialize();
+		parent::_initialize();
+		
+        $route = request()->module().'/'.request()->controller().'/'.request()->action();
         
-        //权限验证
-        /* if(session('admin_info')['role_id'] <> 1)
-        {
-            $this->check();
+		if(!session('shop_info'))
+		{
+			$this->error('您访问的页面不存在或已被删除', '/', '', 3);
+		}
+        
+        //判断是否拥有权限
+		/* if($this->shop_info['role_id'] <> 1)
+		{
+			$uncheck = array('shop/index/index','shop/index/upconfig','shop/index/upcache','shop/index/welcome');
+            
+			if(!in_array($route, $uncheck))
+			{
+				
+			}
         } */
     }
 	

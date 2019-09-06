@@ -171,8 +171,10 @@ function change_goods_number(type, id)
 $(function () {
     //删除购物车商品事件
     $(document).on("click", '.deleteGoods', function (e) {
-        var cart_ids = new Array();
-        cart_ids.push($(this).attr('data-cart-id'));
+        //var cart_ids = new Array();
+        //cart_ids.push($(this).attr('data-cart-id'));
+		console.log('cart-id', $(this).attr('data-cart-id'));
+		var cart_id = $(this).attr('data-cart-id');
         layer.open({
             content: '确定要删除此商品吗'
             ,btn: ['确定', '取消']
@@ -182,7 +184,7 @@ $(function () {
                     type : "POST",
                     url:"<?php echo sysconfig('CMS_API_URL').'/cart/del'; ?>",
                     dataType:'json',
-                    data: {access_token:access_token,id:cart_ids},
+                    data: {access_token:access_token, id:cart_id},
                     success: function(res){
                         layer.open({
                             content: res.msg
@@ -190,7 +192,11 @@ $(function () {
                             ,time: 2 //2秒后自动关闭
                         });
                         
-                        window.location.reload();
+						if(res.code == 0){
+							setTimeout(function() {
+								window.location.reload();
+							}, 1000);
+						}
                     }
                 });
             }

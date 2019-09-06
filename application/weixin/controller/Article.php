@@ -30,7 +30,7 @@ class Article extends Common
             'id'  => $id
 		);
         $url = sysconfig('CMS_API_URL').'/article_type/detail';
-		$arctype_detail = curl_request($url,$postdata,'GET');
+		$arctype_detail = Util::curl_request($url,$postdata,'GET');
         $assign_data['post'] = $arctype_detail['data'];
         
         if(isset($_REQUEST['page'])){$offset = ($_REQUEST['page']-1)*$pagesize;}
@@ -42,7 +42,7 @@ class Article extends Common
             'type_id' => $id
 		);
         $url = sysconfig('CMS_API_URL').'/article/index';
-		$res = curl_request($url, $postdata2, 'GET');
+		$res = Util::curl_request($url, $postdata2, 'GET');
         if($res['data']['list'])
         {
             foreach($res['data']['list'] as $k => $v)
@@ -82,7 +82,7 @@ class Article extends Common
             'id'  => $id
 		);
         $url = sysconfig('CMS_API_URL').'/article/detail';
-		$res = curl_request($url,$postdata,'GET');
+		$res = Util::curl_request($url,$postdata,'GET');
         if(empty($res['data'])){Helper::http404();}
         $res['data']['content'] = preg_replace('/src=\"\/uploads\/allimg/',"src=\"".sysconfig('CMS_BASEHOST')."/uploads/allimg",$res['data']['content']);
         $res['data']['update_time'] = date('Y-m-d',$res['data']['update_time']);

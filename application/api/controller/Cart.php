@@ -84,7 +84,7 @@ class Cart extends Base
     {
         if(Helper::isPostRequest())
         {
-            if(input('id', '') !== ''){$where['id'] = input('id');}
+            if(input('id/d', '') !== ''){$where['id'] = input('id');}
             $where['user_id'] = $this->login_info['id'];
             $res = $this->getLogic()->del($where);
             

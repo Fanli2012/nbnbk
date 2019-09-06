@@ -21,7 +21,7 @@ class Search extends Common
             'offset' => 0
 		);
         $url = sysconfig('CMS_API_URL').'/goods_searchword/index';
-		$res = curl_request($url, $get_data, 'GET');
+		$res = Util::curl_request($url, $get_data, 'GET');
         $assign_data['goods_searchword_list'] = $res['data']['list'];
 		
         $this->assign($assign_data);

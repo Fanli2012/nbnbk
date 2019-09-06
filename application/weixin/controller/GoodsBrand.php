@@ -25,7 +25,7 @@ class GoodsBrand extends Common
             'offset' => $offset
 		);
         $url = sysconfig('CMS_API_URL').'/goods_brand/index';
-		$res = curl_request($url,$get_data,'GET');
+		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['list'] = $res['data']['list'];
         //总页数
         $assign_data['totalpage'] = ceil($res['data']['count']/$pagesize);
@@ -58,7 +58,7 @@ class GoodsBrand extends Common
 	{
         $get_data['id'] = $id;
         $url = sysconfig('CMS_API_URL').'/goods_brand/detail';
-		$res = curl_request($url,$postdata,'GET');
+		$res = Util::curl_request($url,$postdata,'GET');
         $assign_data['post'] = $res['data'];
         if(!$assign_data['post']){Helper::http404();}
 		

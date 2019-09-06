@@ -34,7 +34,7 @@ class Goods extends Common
         $get_data['limit'] = $pagesize;
         $get_data['offset'] = $offset;
         $url = sysconfig('CMS_API_URL').'/goods/index';
-		$res = curl_request($url, $get_data, 'GET');
+		$res = Util::curl_request($url, $get_data, 'GET');
         $assign_data['goods_list'] = $res['data']['list'];
         $assign_data['request_param'] = $param;
 		//总页数
@@ -78,7 +78,7 @@ class Goods extends Common
             'id'  => $id
 		);
         $url = sysconfig('CMS_API_URL').'/goods/detail';
-		$res = curl_request($url, $get_data, 'GET');
+		$res = Util::curl_request($url, $get_data, 'GET');
 		if(empty($res['data'])){Helper::http404();}
         $post = $res['data'];
         //判断用户是否收藏该商品，0未收藏，1已收藏
@@ -90,7 +90,7 @@ class Goods extends Common
 				'access_token' => $this->login_info['token']['token']
 			);
 			$url = sysconfig('CMS_API_URL').'/user_goods_collect/detail';
-			$res = curl_request($url, $get_data, 'GET');
+			$res = Util::curl_request($url, $get_data, 'GET');
 			if($res['code'] == ReturnData::SUCCESS || !empty($res['data'])){$post['is_collect'] = 1;}
 		}
         //添加浏览记录
@@ -101,7 +101,7 @@ class Goods extends Common
                 'access_token' => $this->login_info['token']['token']
             );
             $url = sysconfig('CMS_API_URL').'/user_goods_history/add';
-            curl_request($url, $post_data, 'POST');
+            Util::curl_request($url, $post_data, 'POST');
         }
         
 		$assign_data['post'] = $post;
@@ -125,7 +125,7 @@ class Goods extends Common
             'offset' => $offset
 		);
         $url = sysconfig('CMS_API_URL').'/goods/index';
-		$res = curl_request($url,$get_data,'GET');
+		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['list'] = $res['data']['list'];
         //总页数
         $assign_data['totalpage'] = ceil($res['data']['count']/$pagesize);
@@ -175,7 +175,7 @@ class Goods extends Common
             'offset'    => 0
 		);
         $url = sysconfig('CMS_API_URL').'/goods_type/index';
-		$res = curl_request($url,$get_data,'GET');
+		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['goods_type_list'] = $res['data']['list'];
 		
 		$this->assign($assign_data);

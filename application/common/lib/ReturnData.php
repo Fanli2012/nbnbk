@@ -40,7 +40,7 @@ class ReturnData
     const APPLY_SIGN_FAIL        = 8510; //注册邀请码错误
 	
     //验证码
-    const CODE_NOT_EXIST            = 8801; //当前状态不能操作
+    const CODE_NOT_EXIST         = 8801; //当前状态不能操作
 	
     //app
     const AUTH_FAIL                 = 9001; //鉴权失败
@@ -97,7 +97,7 @@ class ReturnData
         9007 => '小于最小提现金额',
         9008 => '可提现余额不足',
         //验证码
-        8801 =>'验证码无效',
+        8801 => '验证码无效',
 	);
 
     public static function create($code, $data = null, $msg = '')

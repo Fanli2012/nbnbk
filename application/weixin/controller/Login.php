@@ -30,8 +30,9 @@ class Login extends Common
         }
         
         $return_url = '';
-        if(isset($_REQUEST['return_url']) && !empty($_REQUEST['return_url'])){$return_url = $_REQUEST['return_url'];session('weixin_history_back_url', $return_url);}
-        
+        if(isset($_REQUEST['return_url']) && !empty($_REQUEST['return_url'])){$return_url = $_REQUEST['return_url']; session('weixin_history_back_url', $return_url);}
+        if($return_url == '' && session('weixin_history_back_url')){ $return_url = session('weixin_history_back_url'); }
+		
         if($_SERVER['REQUEST_METHOD'] == 'POST')
         {
             if($_POST['user_name'] == '')
@@ -50,12 +51,13 @@ class Login extends Common
                 'from' => 2
             );
             $url = sysconfig('CMS_API_URL').'/login/index';
-            $res = curl_request($url,$postdata,'POST');
+            $res = Util::curl_request($url,$postdata,'POST');
             
             if($res['code'] != ReturnData::SUCCESS){$this->error('登录失败');}
             
             session('weixin_user_info', $res['data']);
-            
+            session('weixin_history_back_url', null);
+			
             if($return_url != ''){header('Location: '.$return_url);exit;}
             header('Location: '.url('user/index'));exit;
         }
@@ -125,7 +127,7 @@ class Login extends Common
             'mobile' => ''
         );
         $url = sysconfig('CMS_API_URL').'/login/wx_login';
-        $res = curl_request($url, $post_data, 'POST');
+        $res = Util::curl_request($url, $post_data, 'POST');
         if($res['code'] != ReturnData::SUCCESS){$this->error('操作失败');}
         
         session('weixin_user_info', $res['data']);

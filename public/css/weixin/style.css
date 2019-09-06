@@ -824,7 +824,8 @@ padding: 0 10px 0 10px;
 font-size:16px;
 color: #666;
 border-left: 3px solid #FF0036;border-bottom: 1px solid #f4f4f4;}
-.goods-content .module-content{padding:10px;}
+.goods-content .module-content{padding:10px 0 0 0;}
+.goods-content .module-content img{max-width:100%;height:auto;}
 
 .bottom_tool_black{ width:100%; display:block; position:fixed; bottom:0;background-color:#fff;border-top:1px solid #f1f1f1;z-index:2;}
 .bottom_tool_white { width:40%; float:left;}

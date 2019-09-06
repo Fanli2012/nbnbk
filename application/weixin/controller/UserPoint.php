@@ -26,7 +26,7 @@ class UserPoint extends Base
             'access_token' => $this->login_info['token']['token']
 		);
         $url = sysconfig('CMS_API_URL').'/user_point/index';
-		$res = curl_request($url,$get_data,'GET');
+		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['list'] = $res['data']['list'];
         //总页数
         $assign_data['totalpage'] = ceil($res['data']['count']/$pagesize);

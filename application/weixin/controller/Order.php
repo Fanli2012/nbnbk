@@ -28,7 +28,7 @@ class Order extends Base
             'access_token' => $this->login_info['token']['token']
 		);
         $url = sysconfig('CMS_API_URL').'/order/index';
-		$res = curl_request($url, $get_data, 'GET');
+		$res = Util::curl_request($url, $get_data, 'GET');
         $assign_data['list'] = $res['data']['list'];
         //总页数
         $assign_data['totalpage'] = ceil($res['data']['count']/$pagesize);
@@ -88,7 +88,7 @@ class Order extends Base
             'access_token' => $this->login_info['token']['token']
 		);
         $url = sysconfig('CMS_API_URL').'/order/detail';
-		$res = curl_request($url,$get_data,'GET');
+		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['post'] = $res['data'];
         if(empty($assign_data['post'])){$this->error('订单不存在');}
         
@@ -120,7 +120,7 @@ class Order extends Base
                 'access_token' => $this->login_info['token']['token']
             );
             $url = sysconfig('CMS_API_URL').'/comment/batch_add_goods_comment';
-            $res = curl_request($url, $post_data, 'POST');
+            $res = Util::curl_request($url, $post_data, 'POST');
             if($res['code'] != ReturnData::SUCCESS){$this->error($res['msg']);}
             
             $this->success('评价成功', url('order/index'));
@@ -136,7 +136,7 @@ class Order extends Base
             'access_token' => $this->login_info['token']['token']
 		);
         $url = sysconfig('CMS_API_URL').'/order/detail';
-		$res = curl_request($url,$get_data,'GET');
+		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['post'] = $res['data'];
         if(empty($assign_data['post'])){$this->error('您访问的页面不存在或已被删除');}
         if($assign_data['post']['is_comment'] == 1){$this->error('您已评价', url('order/index'));}
@@ -158,7 +158,7 @@ class Order extends Base
             'access_token' => $this->login_info['token']['token']
 		);
         $url = sysconfig('CMS_API_URL').'/order/detail';
-		$res = curl_request($url,$get_data,'GET');
+		$res = Util::curl_request($url,$get_data,'GET');
         if($res['code']!=ReturnData::SUCCESS || empty($res['data'])){$this->error('订单不存在或已过期');}
         $assign_data['order'] = $res['data'];
         
@@ -167,7 +167,7 @@ class Order extends Base
             'access_token' => $this->login_info['token']['token']
 		);
         $url = sysconfig('CMS_API_URL').'/user/detail';
-		$res = curl_request($url, $get_data, 'GET');
+		$res = Util::curl_request($url, $get_data, 'GET');
 		$this->login_info = array_merge($this->login_info, $res['data']);
 		session('weixin_user_info', $this->login_info);
         
@@ -216,7 +216,7 @@ class Order extends Base
             'access_token' => $this->login_info['token']['token']
 		);
         $url = sysconfig('CMS_API_URL').'/order/order_yuepay';
-		$res = curl_request($url, $post_data, 'POST');
+		$res = Util::curl_request($url, $post_data, 'POST');
         if($res['code'] != ReturnData::SUCCESS){ $this->error('支付失败：'.$res['msg']); }
         
         $this->success('支付成功', url('order/index'));
@@ -234,7 +234,7 @@ class Order extends Base
             'access_token' => $this->login_info['token']['token']
 		);
         $url = sysconfig('CMS_API_URL').'/order/detail';
-		$res = curl_request($url, $get_data, 'GET');
+		$res = Util::curl_request($url, $get_data, 'GET');
         if($res['code'] != ReturnData::SUCCESS || empty($res['data'])){ $this->error('订单不存在'); }
 		$assign_data['order'] = $res['data'];
 		if(!($assign_data['order']['order_status']==0 && $assign_data['order']['pay_status']==0)){ $this->error('订单已过期'); }

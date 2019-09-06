@@ -48,7 +48,7 @@ class Index extends Common
             'offset' => $offset
 		);
         $url = sysconfig('CMS_API_URL').'/goods/index';
-		$res = curl_request($url,$get_data,'GET');
+		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['goods_list'] = $res['data']['list'];
 		//总页数
         $assign_data['totalpage'] = ceil($res['data']['count']/$pagesize);
@@ -84,7 +84,7 @@ class Index extends Common
             'offset' => 0
 		);
         $url = sysconfig('CMS_API_URL').'/slide/index';
-		$res = curl_request($url, $get_data, 'GET');
+		$res = Util::curl_request($url, $get_data, 'GET');
         $assign_data['slide_list'] = $res['data']['list'];
         
         //最新资讯
@@ -93,7 +93,7 @@ class Index extends Common
             'offset' => 0
 		);
         $url = sysconfig('CMS_API_URL').'/article/index';
-		$res = curl_request($url,$get_data,'GET');
+		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['article_list'] = $res['data']['list'];
         
         //畅销商品列表
@@ -103,7 +103,7 @@ class Index extends Common
             'offset' => 0
 		);
         $url = sysconfig('CMS_API_URL').'/goods/index';
-		$res = curl_request($url,$get_data,'GET');
+		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['goods_sale_list'] = $res['data']['list'];
         
         //商品推荐
@@ -113,7 +113,7 @@ class Index extends Common
             'offset' => 0
 		);
         $url = sysconfig('CMS_API_URL').'/goods/index';
-		$res = curl_request($url,$get_data,'GET');
+		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['goods_recommend_list'] = $res['data']['list'];
         
         //促销、优惠商品列表
@@ -123,7 +123,7 @@ class Index extends Common
             'offset' => 0
 		);
         $url = sysconfig('CMS_API_URL').'/goods/index';
-		$res = curl_request($url,$get_data,'GET');
+		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['goods_promote_list'] = $res['data']['list'];
         //dd($assign_data);
 		$this->assign($assign_data);

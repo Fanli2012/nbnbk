@@ -97,7 +97,7 @@ background:none;
 .xm-list .xm-list-price .buy{margin-top:12px;width:0;height:0;border-width:4px;border-style:solid;border-color:transparent transparent transparent #000000;}
 
 .ll-tit{font-size:20px;font-weight:400;background-color:#fff;color:#000000;height:60px;line-height:60px;padding-left:15px;padding-right:15px;text-align: center;}
-.ll-list{margin:0 15px 0 15px;overflow:hidden;background-color:#ffffff;}
+.ll-list{padding:0 15px 0 15px;overflow:hidden;background-color:#ffffff;}
 .ll-list li{margin-bottom:15px;padding-bottom:10px;width:50%;float:left;}
 .ll-list li a{position:relative;display:block;margin-right:8px;overflow:hidden;}
 .ll-list li:nth-child(even) a{margin-right:0;margin-left:8px;}

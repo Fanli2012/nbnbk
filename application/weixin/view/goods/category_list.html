@@ -2,7 +2,7 @@
 <title>商品分类</title><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
 <link href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/weixin/style.css" type="text/css" rel="stylesheet">
 <script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/weixin/mobile.js"></script>
-<meta name="keywords" content="关键词"><meta name="description" content="描述"></head><body style="background-color:#f1f1f1;">
+<meta name="keywords" content="关键词"><meta name="description" content="描述"></head><body>
 
 <div class="classreturn loginsignup">
     <div class="ds-in-bl return"><a href="javascript:history.back(-1);"><img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/return.png" alt="返回"></a></div>
@@ -37,9 +37,17 @@ var swiper = new Swiper('.swiper-nav', {
 
 <div class="floor guesslike">
     <?php if($list){ ?>
-    <ul class="goodslist_limg mt10" id="goods_list">
+	<ul class="ll-list" id="goods_list" style="padding-top:15px;">
     <?php foreach($list as $k=>$v){ ?>
-        <li><a href="<?php echo url('goods/detail').'?id='.$v['id']; ?>"><img alt="<?php echo $v['title']; ?>" src="<?php echo $v['litpic']; ?>"><div class="goods_info"><p class="goods_tit"><?php if($v['is_promote']>0){ ?><span class="badge_comm" style="background-color:#f23030;">Hot</span> <?php } ?><?php echo $v['title']; ?></p><div class="goods_price">￥<b><?php echo $v['price']; ?></b> <span class="market-price" style="font-size:12px;color:#aaaaaa;text-decoration:line-through;">￥<?php echo $v['market_price']; ?></span><span class="fr"><?php echo $v['click']; ?>人查看</span></div></div></a></li>
+        <li><a href="<?php echo url('goods/detail').'?id='.$v['id']; ?>">
+            <?php if($v['is_promote']>0){ ?><span class="label">限时抢购</span><?php } ?>
+            <img alt="<?php echo $v['title']; ?>" src="<?php echo $v['litpic']; ?>">
+            <div class="ll-list-info">
+                <p class="ll-list-tit2"><?php echo $v['title']; ?></p>
+                <p class="ll-list-click"><?php echo $v['click']; ?>人查看</p>
+                <div class="ll-list-price"><span class="price">￥<?php echo $v['price']; ?></span> <span class="market-price">￥<?php echo $v['market_price']; ?></span></div>
+            </div>
+        </a></li>
     <?php } ?>
     </ul><?php }else{ ?><div style="text-align:center;line-height:40px;color:#999;">暂无记录</div><?php } ?>
 </div>

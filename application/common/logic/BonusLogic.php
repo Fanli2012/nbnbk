@@ -29,6 +29,7 @@ class BonusLogic extends BaseLogic
         //设置用户优惠券已过期
         $this->getModel()->edit(array('status'=>1), $where2);
         
+		$where['num'] = array('<>', 0); //优惠券数量不能为0
         $res = $this->getModel()->getList($where, $order, $field, $offset, $limit);
         
         if($res['list'])

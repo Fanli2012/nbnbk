@@ -137,16 +137,14 @@ class Goods extends Common
             {
 				foreach($res['data']['list'] as $k => $v)
                 {
-                    $html .= '<li>';
-                    $html .= '<a href="'.url('goods/detail').'?id='.$v['id'].'"><img alt="'.$v['title'].'" src="'.$v['litpic'].'"><div class="goods_info"><p class="goods_tit">';
-                    
-                    if($v['is_promote']>0)
-                    {
-                        $html .= '<span class="badge_comm" style="background-color:#f23030;">Hot</span>';
-                    }
-                    
-                    $html .= $v['title'].'</p><div class="goods_price">￥<b>'.$v['price'].'</b> <span class="market-price" style="font-size:12px;color:#aaaaaa;text-decoration:line-through;">￥'.$v['market_price'].'</span><span class="fr">'.$v['click'].'人查看</span></div></div></a>';
-                    $html .= '</li>';
+                    $html .= '<li><a href="'.url('goods/detail').'?id='.$v['id'].'">';
+					if($v['is_promote']>0){ $html .= '<span class="label">限时抢购</span>'; }
+					$html .= '<img alt="'.$v['title'].'" src="'.$v['litpic'].'">';
+					$html .= '<div class="ll-list-info">';
+					$html .= '<p class="ll-list-tit2">'.$v['title'].'</p>';
+					$html .= '<p class="ll-list-click">'.$v['click'].'人查看</p>';
+					$html .= '<div class="ll-list-price"><span class="price">￥'.$v['price'].'</span> <span class="market-price">￥'.$v['market_price'].'</span></div>';
+					$html .= '</div></a></li>';
                 }
 				
 				//另一种风格

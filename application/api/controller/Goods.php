@@ -25,10 +25,10 @@ class Goods extends Common
 	{
         //参数
 		$timestamp = time();
-        $limit = input('param.limit',10);
-        $offset = input('param.offset', 0);
+        $limit = input('limit',10);
+        $offset = input('offset', 0);
 		$where = array();
-        if(input('param.type_id', '') !== ''){$where['type_id'] = input('param.type_id');}
+        if(input('type_id', '') !== ''){$where['type_id'] = input('type_id');}
         if(input('tuijian', '') !== ''){$where['tuijian'] = input('tuijian');}
 		if(input('brand_id', '') !== ''){$where['brand_id'] = input('brand_id');}
         if(input('status', '') === ''){$where['status'] = GoodsModel::GOODS_STATUS_NORMAL;}else{if(input('status') != -1){$where['status'] = input('status');}}
@@ -46,7 +46,7 @@ class Goods extends Common
         //关键词搜索
         if(input('keyword', '') !== '')
         {
-			$where['title'] = array('like','%'.input('param.keyword').'%');
+			$where['title'] = array('like','%'.input('keyword').'%');
             //添加搜索关键词
             logic('GoodsSearchword')->add(array('name'=>input('keyword')));
         }

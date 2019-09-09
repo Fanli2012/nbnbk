@@ -32,6 +32,12 @@ class Base extends Common
             if(!($weixin_user_info && isset($weixin_user_info['token']['expire_time']) && $weixin_user_info['token']['expire_time'] > time()))
 			{
                 session('weixin_user_info', null);
+				
+				//登录后跳转链接
+				$return_url = url(request()->controller().'/'.request()->action());
+				if($_SERVER['QUERY_STRING']){$return_url = $return_url.'?'.$_SERVER['QUERY_STRING'];}
+				session('weixin_history_back_url', $return_url);
+				
 				header('Location: '.url('login/index'));exit;
 			}
         }

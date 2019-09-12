@@ -54,7 +54,7 @@ class UserShuoshuo extends Base
             }
             
 			//添加图片
-			if($_POST['shuoshuo_img'])
+			if(isset($_POST['shuoshuo_img']) && $_POST['shuoshuo_img'])
 			{
 				foreach($_POST['shuoshuo_img'] as $k=>$v)
 				{
@@ -84,7 +84,7 @@ class UserShuoshuo extends Base
             
 			model('UserShuoshuoImg')->del(array('user_shuoshuo_id'=>$where['id']));
 			//添加图片
-			if($_POST['shuoshuo_img'])
+			if(isset($_POST['shuoshuo_img']) && $_POST['shuoshuo_img'])
 			{
 				foreach($_POST['shuoshuo_img'] as $k=>$v)
 				{

@@ -186,7 +186,6 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
             array_unshift($columns, $column);
         }
 
-
         $sql = 'CREATE TABLE ';
         $sql .= $this->quoteTableName($table->getName()) . ' (';
         foreach ($columns as $column) {
@@ -255,14 +254,6 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
         $this->startCommandTimer();
         $this->writeCommand('dropTable', array($tableName));
         $this->execute(sprintf('DROP TABLE %s', $this->quoteTableName($tableName)));
-        $this->endCommandTimer();
-    }
-
-    public function truncateTable($tableName)
-    {
-        $this->startCommandTimer();
-        $this->writeCommand('truncateTable', array($tableName));
-        $this->execute(sprintf('DELETE FROM %s', $this->quoteTableName($tableName)));
         $this->endCommandTimer();
     }
 
@@ -350,7 +341,7 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
         $writeColumns = array();
         foreach ($columns as $column) {
             $selectName = $column['name'];
-            $writeName = ($selectName == $columnName)? $newColumnName : $selectName;
+            $writeName = ($selectName == $columnName) ? $newColumnName : $selectName;
             $selectColumns[] = $this->quoteColumnName($selectName);
             $writeColumns[] = $this->quoteColumnName($writeName);
         }
@@ -369,7 +360,6 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
             $sql
         );
         $this->execute($sql);
-
 
         $sql = sprintf(
             'INSERT INTO %s(%s) SELECT %s FROM %s',
@@ -412,7 +402,7 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
         $writeColumns = array();
         foreach ($columns as $column) {
             $selectName = $column['name'];
-            $writeName = ($selectName === $columnName)? $newColumn->getName() : $selectName;
+            $writeName = ($selectName === $columnName) ? $newColumn->getName() : $selectName;
             $selectColumns[] = $this->quoteColumnName($selectName);
             $writeColumns[] = $this->quoteColumnName($writeName);
         }
@@ -425,12 +415,11 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
 
         $this->execute(sprintf('ALTER TABLE %s RENAME TO %s', $tableName, $tmpTableName));
 
-        $val = end($columns);
-        $replacement = ($val['name'] === $columnName) ? "%s %s" : "%s %s,";
         $sql = preg_replace(
-            sprintf("/%s[^,]*[^\)]/", $this->quoteColumnName($columnName)),
-            sprintf($replacement, $this->quoteColumnName($newColumn->getName()), $this->getColumnSqlDefinition($newColumn)),
-            $sql
+            sprintf("/%s[^,]+([,)])/", $this->quoteColumnName($columnName)),
+            sprintf('%s %s$1', $this->quoteColumnName($newColumn->getName()), $this->getColumnSqlDefinition($newColumn)),
+            $sql,
+            1
         );
 
         $this->execute($sql);
@@ -892,6 +881,8 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
                 break;
             case static::PHINX_TYPE_UUID:
                 return array('name' => 'char', 'limit' => 36);
+            case static::PHINX_TYPE_ENUM:
+                return array('name' => 'enum');
             // Geospatial database types
             // No specific data types exist in SQLite, instead all geospatial
             // functionality is handled in the client. See also: SpatiaLite.
@@ -1021,7 +1012,7 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
         if (is_string($default) && 'CURRENT_TIMESTAMP' !== $default) {
             $default = $this->getConnection()->quote($default);
         } elseif (is_bool($default)) {
-            $default = (int) $default;
+            $default = $this->castToBool($default);
         }
         return isset($default) ? ' DEFAULT ' . $default : '';
     }
@@ -1043,6 +1034,9 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
         $limitable = in_array(strtoupper($sqlType['name']), $this->definitionsWithLimits);
         if (($column->getLimit() || isset($sqlType['limit'])) && $limitable) {
             $def .= '(' . ($column->getLimit() ? $column->getLimit() : $sqlType['limit']) . ')';
+        }
+        if (($values = $column->getValues()) && is_array($values)) {
+            $def .= " CHECK({$column->getName()} IN ('" . implode("', '", $values) . "'))";
         }
 
         $default = $column->getDefault();
@@ -1098,6 +1092,14 @@ class SQLiteAdapter extends PdoAdapter implements AdapterInterface
         }
         $def .= ' `' . $indexName . '`';
         return $def;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getColumnTypes()
+    {
+        return array_merge(parent::getColumnTypes(), array('enum'));
     }
 
     /**

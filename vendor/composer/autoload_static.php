@@ -4,13 +4,15 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef
+class ComposerStaticInit2bc4f313dba415539e266f7ac2c87dcd
 {
     public static $files = array (
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
+        '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
         'ddc3cd2a04224f9638c5d0de6a69c7e3' => __DIR__ . '/..' . '/topthink/think-migration/src/config.php',
-        '9e05116ddaa5b1d244b68c3993908acd' => __DIR__ . '/..' . '/topthink/think-queue/src/config.php',
+        'cc56288302d9df745d97c934d6a6e5f0' => __DIR__ . '/..' . '/topthink/think-queue/src/common.php',
         '72c97b53391125cae04082a81029f42d' => __DIR__ . '/..' . '/topthink/think-testing/src/config.php',
     );
 
@@ -19,19 +21,21 @@ class ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef
         array (
             'think\\worker\\' => 13,
             'think\\testing\\' => 14,
-            'think\\sae\\' => 10,
-            'think\\queue\\' => 12,
+            'think\\oracle\\' => 13,
             'think\\mongo\\' => 12,
             'think\\migration\\' => 16,
             'think\\helper\\' => 13,
             'think\\composer\\' => 15,
             'think\\captcha\\' => 14,
-            'think\\angular\\' => 14,
             'think\\' => 6,
         ),
         'p' => 
         array (
             'phpDocumentor\\Reflection\\' => 25,
+        ),
+        'a' => 
+        array (
+            'app\\' => 4,
         ),
         'W' => 
         array (
@@ -41,11 +45,14 @@ class ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef
         'S' => 
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Polyfill\\Ctype\\' => 23,
             'Symfony\\Component\\Yaml\\' => 23,
             'Symfony\\Component\\DomCrawler\\' => 29,
         ),
         'P' => 
         array (
+            'Prophecy\\' => 9,
+            'Predis\\' => 7,
             'Phinx\\' => 6,
         ),
         'D' => 
@@ -63,13 +70,9 @@ class ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef
         array (
             0 => __DIR__ . '/..' . '/topthink/think-testing/src',
         ),
-        'think\\sae\\' => 
+        'think\\oracle\\' => 
         array (
-            0 => __DIR__ . '/..' . '/topthink/think-sae/src',
-        ),
-        'think\\queue\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/topthink/think-queue/src',
+            0 => __DIR__ . '/..' . '/topthink/think-oracle/src',
         ),
         'think\\mongo\\' => 
         array (
@@ -91,20 +94,21 @@ class ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef
         array (
             0 => __DIR__ . '/..' . '/topthink/think-captcha/src',
         ),
-        'think\\angular\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/topthink/think-angular/src',
-        ),
         'think\\' => 
         array (
             0 => __DIR__ . '/../..' . '/thinkphp/library/think',
             1 => __DIR__ . '/..' . '/topthink/think-image/src',
+            2 => __DIR__ . '/..' . '/topthink/think-queue/src',
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
             1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+        ),
+        'app\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/application',
         ),
         'Workerman\\' => 
         array (
@@ -118,6 +122,10 @@ class ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
+        'Symfony\\Polyfill\\Ctype\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+        ),
         'Symfony\\Component\\Yaml\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/yaml',
@@ -125,6 +133,14 @@ class ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef
         'Symfony\\Component\\DomCrawler\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/dom-crawler',
+        ),
+        'Prophecy\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy',
+        ),
+        'Predis\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/predis/predis/src',
         ),
         'Phinx\\' => 
         array (
@@ -136,20 +152,17 @@ class ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef
         ),
     );
 
-    public static $prefixesPsr0 = array (
-        'P' => 
-        array (
-            'Prophecy\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/phpspec/prophecy/src',
-            ),
-        ),
-    );
-
     public static $classMap = array (
         'File_Iterator' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Iterator.php',
         'File_Iterator_Facade' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Facade.php',
         'File_Iterator_Factory' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Factory.php',
+        'PHPUnit\\Framework\\Assert' => __DIR__ . '/..' . '/phpunit/phpunit/src/ForwardCompatibility/Assert.php',
+        'PHPUnit\\Framework\\AssertionFailedError' => __DIR__ . '/..' . '/phpunit/phpunit/src/ForwardCompatibility/AssertionFailedError.php',
+        'PHPUnit\\Framework\\BaseTestListener' => __DIR__ . '/..' . '/phpunit/phpunit/src/ForwardCompatibility/BaseTestListener.php',
+        'PHPUnit\\Framework\\Test' => __DIR__ . '/..' . '/phpunit/phpunit/src/ForwardCompatibility/Test.php',
+        'PHPUnit\\Framework\\TestCase' => __DIR__ . '/..' . '/phpunit/phpunit/src/ForwardCompatibility/TestCase.php',
+        'PHPUnit\\Framework\\TestListener' => __DIR__ . '/..' . '/phpunit/phpunit/src/ForwardCompatibility/TestListener.php',
+        'PHPUnit\\Framework\\TestSuite' => __DIR__ . '/..' . '/phpunit/phpunit/src/ForwardCompatibility/TestSuite.php',
         'PHPUnit_Exception' => __DIR__ . '/..' . '/phpunit/phpunit/src/Exception.php',
         'PHPUnit_Extensions_GroupTestSuite' => __DIR__ . '/..' . '/phpunit/phpunit/src/Extensions/GroupTestSuite.php',
         'PHPUnit_Extensions_PhptTestCase' => __DIR__ . '/..' . '/phpunit/phpunit/src/Extensions/PhptTestCase.php',
@@ -477,6 +490,7 @@ class ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef
         'PHP_Token_NEW' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_NS_C' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_NS_SEPARATOR' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
+        'PHP_Token_NULLSAFE_OBJECT_OPERATOR' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_NUM_STRING' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_OBJECT_CAST' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_OBJECT_OPERATOR' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
@@ -514,6 +528,7 @@ class ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef
         'PHP_Token_STRING' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_STRING_CAST' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_STRING_VARNAME' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
+        'PHP_Token_SUPER' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_SWITCH' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_Stream' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token/Stream.php',
         'PHP_Token_Stream_CachingFactory' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token/Stream/CachingFactory.php',
@@ -528,6 +543,7 @@ class ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef
         'PHP_Token_UNSET' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_UNSET_CAST' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_USE' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
+        'PHP_Token_USE_FUNCTION' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_VAR' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_VARIABLE' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_WHERE' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
@@ -582,16 +598,14 @@ class ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef
         'SebastianBergmann\\RecursionContext\\InvalidArgumentException' => __DIR__ . '/..' . '/sebastian/recursion-context/src/InvalidArgumentException.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
-        'think\\view\\driver\\Angular' => __DIR__ . '/..' . '/topthink/think-angular/drivers/thinkphp5/Angular.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit96a73aea62b1f1d5243690f8990d83ef::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2bc4f313dba415539e266f7ac2c87dcd::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2bc4f313dba415539e266f7ac2c87dcd::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit2bc4f313dba415539e266f7ac2c87dcd::$classMap;
 
         }, null, ClassLoader::class);
     }

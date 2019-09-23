@@ -1,6 +1,5 @@
 <?php
 namespace app\task\controller;
-
 use think\Controller;
 
 class Common extends Controller

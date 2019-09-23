@@ -201,5 +201,27 @@ class Libevent implements EventInterface
     {
         event_base_loop($this->_eventBase);
     }
+
+    /**
+     * Destroy loop.
+     *
+     * @return void
+     */
+    public function destroy()
+    {
+        foreach ($this->_eventSignal as $event) {
+            event_del($event);
+        }
+    }
+
+    /**
+     * Get timer count.
+     *
+     * @return integer
+     */
+    public function getTimerCount()
+    {
+        return count($this->_eventTimer);
+    }
 }
 

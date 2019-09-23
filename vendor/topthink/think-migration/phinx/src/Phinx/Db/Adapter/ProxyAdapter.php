@@ -55,13 +55,12 @@ class ProxyAdapter extends AdapterWrapper
     {
         return 'ProxyAdapter';
     }
-
     /**
      * {@inheritdoc}
      */
     public function createTable(Table $table)
     {
-        $this->recordCommand('createTable', [$table->getName()]);
+        $this->recordCommand('createTable', array($table->getName()));
     }
 
     /**
@@ -69,7 +68,7 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function renameTable($tableName, $newTableName)
     {
-        $this->recordCommand('renameTable', [$tableName, $newTableName]);
+        $this->recordCommand('renameTable', array($tableName, $newTableName));
     }
 
     /**
@@ -77,12 +76,7 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function dropTable($tableName)
     {
-        $this->recordCommand('dropTable', [$tableName]);
-    }
-
-    public function truncateTable($tableName)
-    {
-        $this->recordCommand('truncateTable', [$tableName]);
+        $this->recordCommand('dropTable', array($tableName));
     }
 
     /**
@@ -90,7 +84,7 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function addColumn(Table $table, Column $column)
     {
-        $this->recordCommand('addColumn', [$table, $column]);
+        $this->recordCommand('addColumn', array($table, $column));
     }
 
     /**
@@ -98,7 +92,7 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function renameColumn($tableName, $columnName, $newColumnName)
     {
-        $this->recordCommand('renameColumn', [$tableName, $columnName, $newColumnName]);
+        $this->recordCommand('renameColumn', array($tableName, $columnName, $newColumnName));
     }
 
     /**
@@ -106,7 +100,7 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function changeColumn($tableName, $columnName, Column $newColumn)
     {
-        $this->recordCommand('changeColumn', [$tableName, $columnName, $newColumn]);
+        $this->recordCommand('changeColumn', array($tableName, $columnName, $newColumn));
     }
 
     /**
@@ -114,7 +108,7 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function dropColumn($tableName, $columnName)
     {
-        $this->recordCommand('dropColumn', [$tableName, $columnName]);
+        $this->recordCommand('dropColumn', array($tableName, $columnName));
     }
 
     /**
@@ -122,15 +116,15 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function addIndex(Table $table, Index $index)
     {
-        $this->recordCommand('addIndex', [$table, $index]);
+        $this->recordCommand('addIndex', array($table, $index));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function dropIndex($tableName, $columns, $options = [])
+    public function dropIndex($tableName, $columns, $options = array())
     {
-        $this->recordCommand('dropIndex', [$tableName, $columns, $options]);
+        $this->recordCommand('dropIndex', array($tableName, $columns, $options));
     }
 
     /**
@@ -138,7 +132,7 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function dropIndexByName($tableName, $indexName)
     {
-        $this->recordCommand('dropIndexByName', [$tableName, $indexName]);
+        $this->recordCommand('dropIndexByName', array($tableName, $indexName));
     }
 
     /**
@@ -146,7 +140,7 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function addForeignKey(Table $table, ForeignKey $foreignKey)
     {
-        $this->recordCommand('addForeignKey', [$table, $foreignKey]);
+        $this->recordCommand('addForeignKey', array($table, $foreignKey));
     }
 
     /**
@@ -154,30 +148,30 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function dropForeignKey($tableName, $columns, $constraint = null)
     {
-        $this->recordCommand('dropForeignKey', [$columns, $constraint]);
+        $this->recordCommand('dropForeignKey', array($columns, $constraint));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function createDatabase($name, $options = [])
+    public function createDatabase($name, $options = array())
     {
-        $this->recordCommand('createDatabase', [$name, $options]);
+        $this->recordCommand('createDatabase', array($name, $options));
     }
 
     /**
      * Record a command for execution later.
      *
-     * @param string $name      Command Name
-     * @param array  $arguments Command Arguments
+     * @param string $name Command Name
+     * @param array $arguments Command Arguments
      * @return void
      */
     public function recordCommand($name, $arguments)
     {
-        $this->commands[] = [
+        $this->commands[] = array(
             'name'      => $name,
             'arguments' => $arguments
-        ];
+        );
     }
 
     /**
@@ -211,18 +205,14 @@ class ProxyAdapter extends AdapterWrapper
     public function getInvertedCommands()
     {
         if (null === $this->getCommands()) {
-            return [];
+            return array();
         }
 
-        $invCommands       = [];
-        $supportedCommands = [
-            'createTable',
-            'renameTable',
-            'addColumn',
-            'renameColumn',
-            'addIndex',
-            'addForeignKey'
-        ];
+        $invCommands = array();
+        $supportedCommands = array(
+            'createTable', 'renameTable', 'addColumn',
+            'renameColumn', 'addIndex', 'addForeignKey'
+        );
         foreach (array_reverse($this->getCommands()) as $command) {
             if (!in_array($command['name'], $supportedCommands)) {
                 throw new IrreversibleMigrationException(sprintf(
@@ -230,12 +220,12 @@ class ProxyAdapter extends AdapterWrapper
                     $command['name']
                 ));
             }
-            $invertMethod    = 'invert' . ucfirst($command['name']);
+            $invertMethod = 'invert' . ucfirst($command['name']);
             $invertedCommand = $this->$invertMethod($command['arguments']);
-            $invCommands[]   = [
+            $invCommands[] = array(
                 'name'      => $invertedCommand['name'],
                 'arguments' => $invertedCommand['arguments']
-            ];
+            );
         }
 
         return $invCommands;
@@ -250,7 +240,7 @@ class ProxyAdapter extends AdapterWrapper
     {
         $commands = $this->getCommands();
         foreach ($commands as $command) {
-            call_user_func_array([$this->getAdapter(), $command['name']], $command['arguments']);
+            call_user_func_array(array($this->getAdapter(), $command['name']), $command['arguments']);
         }
     }
 
@@ -263,7 +253,7 @@ class ProxyAdapter extends AdapterWrapper
     {
         $commands = $this->getInvertedCommands();
         foreach ($commands as $command) {
-            call_user_func_array([$this->getAdapter(), $command['name']], $command['arguments']);
+            call_user_func_array(array($this->getAdapter(), $command['name']), $command['arguments']);
         }
     }
 
@@ -275,7 +265,7 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function invertCreateTable($args)
     {
-        return ['name' => 'dropTable', 'arguments' => [$args[0]]];
+        return array('name' => 'dropTable', 'arguments' => array($args[0]));
     }
 
     /**
@@ -286,7 +276,7 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function invertRenameTable($args)
     {
-        return ['name' => 'renameTable', 'arguments' => [$args[1], $args[0]]];
+        return array('name' => 'renameTable', 'arguments' => array($args[1], $args[0]));
     }
 
     /**
@@ -297,7 +287,7 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function invertAddColumn($args)
     {
-        return ['name' => 'dropColumn', 'arguments' => [$args[0]->getName(), $args[1]->getName()]];
+        return array('name' => 'dropColumn', 'arguments' => array($args[0]->getName(), $args[1]->getName()));
     }
 
     /**
@@ -308,7 +298,7 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function invertRenameColumn($args)
     {
-        return ['name' => 'renameColumn', 'arguments' => [$args[0], $args[2], $args[1]]];
+        return array('name' => 'renameColumn', 'arguments' => array($args[0], $args[2], $args[1]));
     }
 
     /**
@@ -319,7 +309,7 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function invertAddIndex($args)
     {
-        return ['name' => 'dropIndex', 'arguments' => [$args[0]->getName(), $args[1]->getColumns()]];
+        return array('name' => 'dropIndex', 'arguments' => array($args[0]->getName(), $args[1]->getColumns()));
     }
 
     /**
@@ -330,6 +320,6 @@ class ProxyAdapter extends AdapterWrapper
      */
     public function invertAddForeignKey($args)
     {
-        return ['name' => 'dropForeignKey', 'arguments' => [$args[0]->getName(), $args[1]->getColumns()]];
+        return array('name' => 'dropForeignKey', 'arguments' => array($args[0]->getName(), $args[1]->getColumns()));
     }
 }

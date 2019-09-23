@@ -30,8 +30,8 @@ namespace Phinx\Seed;
 
 use Phinx\Db\Adapter\AdapterInterface;
 use Phinx\Db\Table;
-use Phinx\Migration\MigrationInterface;
-use think\console\Output;
+use think\console\Input as InputInterface;
+use think\console\Output as OutputInterface;
 
 /**
  * Seed interface
@@ -68,17 +68,32 @@ interface SeedInterface
     public function getAdapter();
 
     /**
-     * Sets the output object to be used in migration object
+     * Sets the input object to be used in migration object
      *
-     * @param Output $output
+     * @param InputInterface $input
      * @return MigrationInterface
      */
-    public function setOutput(Output $output);
+    public function setInput(InputInterface $input);
+
+    /**
+     * Gets the input object to be used in migration object
+     *
+     * @return InputInterface
+     */
+    public function getInput();
+
+    /**
+     * Sets the output object to be used in migration object
+     *
+     * @param OutputInterface $output
+     * @return MigrationInterface
+     */
+    public function setOutput(OutputInterface $output);
 
     /**
      * Gets the output object to be used in migration object
      *
-     * @return Output
+     * @return OutputInterface
      */
     public function getOutput();
 

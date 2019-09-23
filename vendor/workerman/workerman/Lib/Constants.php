@@ -21,10 +21,19 @@ ini_set('display_errors', 'on');
 // Reporting all.
 error_reporting(E_ALL);
 
+// Reset opcache.
+if (function_exists('opcache_reset')) {
+    opcache_reset();
+}
+
 // For onError callback.
 define('WORKERMAN_CONNECT_FAIL', 1);
 // For onError callback.
 define('WORKERMAN_SEND_FAIL', 2);
+
+// Define OS Type
+define('OS_TYPE_LINUX', 'linux');
+define('OS_TYPE_WINDOWS', 'windows');
 
 // Compatible with php7
 if(!class_exists('Error'))

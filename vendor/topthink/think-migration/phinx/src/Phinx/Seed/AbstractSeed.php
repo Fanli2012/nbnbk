@@ -30,7 +30,8 @@ namespace Phinx\Seed;
 
 use Phinx\Db\Table;
 use Phinx\Db\Adapter\AdapterInterface;
-use think\console\Output;
+use think\console\Input as InputInterface;
+use think\console\Output as OutputInterface;
 
 /**
  * Abstract Seed Class.
@@ -50,16 +51,30 @@ abstract class AbstractSeed implements SeedInterface
     protected $adapter;
 
     /**
-     * @var Output
+     * @var InputInterface
+     */
+    protected $input;
+
+    /**
+     * @var OutputInterface
      */
     protected $output;
 
     /**
      * Class Constructor.
      *
+     * @param InputInterface $input
+     * @param OutputInterface $output
      */
-    final public function __construct()
+    final public function __construct(InputInterface $input = null, OutputInterface $output = null)
     {
+        if (!is_null($input)){
+            $this->setInput($input);
+        }
+        if (!is_null($output)){
+            $this->setOutput($output);
+        }
+        
         $this->init();
     }
 
@@ -99,7 +114,24 @@ abstract class AbstractSeed implements SeedInterface
     /**
      * {@inheritdoc}
      */
-    public function setOutput(Output $output)
+    public function setInput(InputInterface $input)
+    {
+        $this->input = $input;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getInput()
+    {
+        return $this->input;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOutput(OutputInterface $output)
     {
         $this->output = $output;
         return $this;
@@ -179,10 +211,5 @@ abstract class AbstractSeed implements SeedInterface
     public function table($tableName, $options = array())
     {
         return new Table($tableName, $options, $this->getAdapter());
-    }
-
-    public function truncateTable($tableName)
-    {
-        $this->table($tableName)->truncate();
     }
 }

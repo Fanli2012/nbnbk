@@ -9,11 +9,12 @@
 // | Author: yunwuxin <448901948@qq.com>
 // +----------------------------------------------------------------------
 namespace tests;
+use app\index\controller\Index;
 
 class IndexTest extends TestCase
 {
-    public function testSomethingIsTrue()
+	public function testHelloWorld()
     {
-        $this->assertTrue(true);
+        $this->visit('/index/index/hello_world_test')->see('Hello world!');
     }
 }

@@ -11,9 +11,10 @@
 
 namespace Symfony\Component\DomCrawler\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
-class CrawlerTest extends \PHPUnit_Framework_TestCase
+class CrawlerTest extends TestCase
 {
     public function testConstructor()
     {
@@ -179,7 +180,7 @@ EOF
 EOF
         , 'UTF-8');
 
-        $this->assertTrue(count(libxml_get_errors()) > 1);
+        $this->assertGreaterThan(1, libxml_get_errors());
 
         libxml_clear_errors();
         libxml_use_internal_errors($internalErrors);
@@ -214,7 +215,13 @@ EOF
         $crawler = new Crawler();
         $crawler->addContent('<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><span>中文</span></html>');
         $this->assertEquals('中文', $crawler->filterXPath('//span')->text(), '->addContent() guess wrong charset');
+    }
 
+    /**
+     * @requires extension iconv
+     */
+    public function testAddContentNonUtf8()
+    {
         $crawler = new Crawler();
         $crawler->addContent(iconv('UTF-8', 'SJIS', '<html><head><meta charset="Shift_JIS"></head><body>日本語</body></html>'));
         $this->assertEquals('日本語', $crawler->filterXPath('//body')->text(), '->addContent() can recognize "Shift_JIS" in html5 meta charset tag');
@@ -308,7 +315,7 @@ EOF
     {
         $crawler = $this->createTestCrawler()->filterXPath('//ul[1]/li');
         $nodes = $crawler->reduce(function ($node, $i) {
-            return $i !== 1;
+            return 1 !== $i;
         });
         $this->assertNotSame($nodes, $crawler, '->reduce() returns a new instance of a crawler');
         $this->assertInstanceOf('Symfony\\Component\\DomCrawler\\Crawler', $nodes, '->reduce() returns a new instance of a crawler');
@@ -366,7 +373,7 @@ EOF
     public function testHtml()
     {
         $this->assertEquals('<img alt="Bar">', $this->createTestCrawler()->filterXPath('//a[5]')->html());
-        $this->assertEquals('<input type="text" value="TextValue" name="TextName"><input type="submit" value="FooValue" name="FooName" id="FooId"><input type="button" value="BarValue" name="BarName" id="BarId"><button value="ButtonValue" name="ButtonName" id="ButtonId"></button>', trim($this->createTestCrawler()->filterXPath('//form[@id="FooFormId"]')->html()));
+        $this->assertEquals('<input type="text" value="TextValue" name="TextName"><input type="submit" value="FooValue" name="FooName" id="FooId"><input type="button" value="BarValue" name="BarName" id="BarId"><button value="ButtonValue" name="ButtonName" id="ButtonId"></button>', trim(preg_replace('~>\s+<~', '><', $this->createTestCrawler()->filterXPath('//form[@id="FooFormId"]')->html())));
 
         try {
             $this->createTestCrawler()->filterXPath('//ol')->html();
@@ -382,6 +389,7 @@ EOF
 
         $this->assertEquals(array('One', 'Two', 'Three'), $crawler->extract('_text'), '->extract() returns an array of extracted data from the node list');
         $this->assertEquals(array(array('One', 'first'), array('Two', ''), array('Three', '')), $crawler->extract(array('_text', 'class')), '->extract() returns an array of extracted data from the node list');
+        $this->assertEquals(array(array(), array(), array()), $crawler->extract(array()), '->extract() returns empty arrays if the attribute list is empty');
 
         $this->assertEquals(array(), $this->createTestCrawler()->filterXPath('//ol')->extract('_text'), '->extract() returns an empty array if the node list is empty');
     }
@@ -406,6 +414,7 @@ EOF
         $this->assertCount(5, $crawler->filterXPath('(//a | //div)//img'));
         $this->assertCount(7, $crawler->filterXPath('((//a | //div)//img | //ul)'));
         $this->assertCount(7, $crawler->filterXPath('( ( //a | //div )//img | //ul )'));
+        $this->assertCount(1, $crawler->filterXPath("//a[./@href][((./@id = 'Klausi|Claudiu' or normalize-space(string(.)) = 'Klausi|Claudiu' or ./@title = 'Klausi|Claudiu' or ./@rel = 'Klausi|Claudiu') or .//img[./@alt = 'Klausi|Claudiu'])]"));
     }
 
     public function testFilterXPath()
@@ -582,7 +591,7 @@ EOF
 
         $this->assertCount(0, $crawler->filterXPath('self::a'), 'The fake root node has no "real" element name');
         $this->assertCount(0, $crawler->filterXPath('self::a/img'), 'The fake root node has no "real" element name');
-        $this->assertCount(9, $crawler->filterXPath('self::*/a'));
+        $this->assertCount(10, $crawler->filterXPath('self::*/a'));
     }
 
     public function testFilter()
@@ -938,6 +947,8 @@ HTML;
             $crawler = new Crawler('<p></p>');
             $crawler->filter('p')->children();
             $this->assertTrue(true, '->children() does not trigger a notice if the node has no children');
+        } catch (\PHPUnit\Framework\Error\Notice $e) {
+            $this->fail('->children() does not trigger a notice if the node has no children');
         } catch (\PHPUnit_Framework_Error_Notice $e) {
             $this->fail('->children() does not trigger a notice if the node has no children');
         }
@@ -1028,6 +1039,8 @@ HTML;
                     <a href="/bar"><img alt="\' Fabien&quot;s Bar"/></a>
 
                     <a href="?get=param">GetLink</a>
+
+                    <a href="/example">Klausi|Claudiu</a>
 
                     <form action="foo" id="FooFormId">
                         <input type="text" value="TextValue" name="TextName" />

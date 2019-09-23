@@ -17,20 +17,14 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "topthink/framework": "~5.0.0",
-        "topthink/think-image": "^1.0",
-        "topthink/think-queue": "^1.1",
-        "topthink/think-migration": "^1.1",
-        "topthink/think-testing": "^1.0",
-        "topthink/think-mongo": "1.7",
-        "topthink/think-captcha": "^1.0",
-        "topthink/think-angular": "^1.0",
-        "predis/predis": "^1.1",
-        "jpush/jpush": "^3.5",
-        "jiguang/jmessage": "~1.1",
-        "firebase/php-jwt": "^4.0",
-     	"phpmailer/phpmailer": "~5.2",
-     	"phpoffice/phpexcel": "~1.8.1"
+        "topthink/framework": "5.0.*",
+		"topthink/think-testing": "^1.0",
+		"predis/predis": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\": "application"
+        }
     },
     "extra": {
         "think-path": "thinkphp"

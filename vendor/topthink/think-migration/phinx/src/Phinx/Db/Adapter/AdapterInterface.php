@@ -28,7 +28,8 @@
  */
 namespace Phinx\Db\Adapter;
 
-use think\console\Output;
+use think\console\Input as InputInterface;
+use think\console\Output as OutputInterface;
 use Phinx\Db\Table;
 use Phinx\Db\Table\Column;
 use Phinx\Db\Table\Index;
@@ -42,34 +43,35 @@ use Phinx\Migration\MigrationInterface;
  */
 interface AdapterInterface
 {
-    const PHINX_TYPE_STRING      = 'string';
-    const PHINX_TYPE_CHAR        = 'char';
-    const PHINX_TYPE_TEXT        = 'text';
-    const PHINX_TYPE_INTEGER     = 'integer';
-    const PHINX_TYPE_BIG_INTEGER = 'biginteger';
-    const PHINX_TYPE_FLOAT       = 'float';
-    const PHINX_TYPE_DECIMAL     = 'decimal';
-    const PHINX_TYPE_DATETIME    = 'datetime';
-    const PHINX_TYPE_TIMESTAMP   = 'timestamp';
-    const PHINX_TYPE_TIME        = 'time';
-    const PHINX_TYPE_DATE        = 'date';
-    const PHINX_TYPE_BINARY      = 'binary';
-    const PHINX_TYPE_BLOB        = 'blob';
-    const PHINX_TYPE_BOOLEAN     = 'boolean';
-    const PHINX_TYPE_JSON        = 'json';
-    const PHINX_TYPE_JSONB       = 'jsonb';
-    const PHINX_TYPE_UUID        = 'uuid';
-    const PHINX_TYPE_FILESTREAM  = 'filestream';
+    const PHINX_TYPE_STRING         = 'string';
+    const PHINX_TYPE_CHAR           = 'char';
+    const PHINX_TYPE_TEXT           = 'text';
+    const PHINX_TYPE_INTEGER        = 'integer';
+    const PHINX_TYPE_BIG_INTEGER    = 'biginteger';
+    const PHINX_TYPE_FLOAT          = 'float';
+    const PHINX_TYPE_DECIMAL        = 'decimal';
+    const PHINX_TYPE_DATETIME       = 'datetime';
+    const PHINX_TYPE_TIMESTAMP      = 'timestamp';
+    const PHINX_TYPE_TIME           = 'time';
+    const PHINX_TYPE_DATE           = 'date';
+    const PHINX_TYPE_BINARY         = 'binary';
+    const PHINX_TYPE_VARBINARY      = 'varbinary';
+    const PHINX_TYPE_BLOB           = 'blob';
+    const PHINX_TYPE_BOOLEAN        = 'boolean';
+    const PHINX_TYPE_JSON           = 'json';
+    const PHINX_TYPE_JSONB          = 'jsonb';
+    const PHINX_TYPE_UUID           = 'uuid';
+    const PHINX_TYPE_FILESTREAM     = 'filestream';
 
     // Geospatial database types
-    const PHINX_TYPE_GEOMETRY   = 'geometry';
-    const PHINX_TYPE_POINT      = 'point';
-    const PHINX_TYPE_LINESTRING = 'linestring';
-    const PHINX_TYPE_POLYGON    = 'polygon';
+    const PHINX_TYPE_GEOMETRY       = 'geometry';
+    const PHINX_TYPE_POINT          = 'point';
+    const PHINX_TYPE_LINESTRING     = 'linestring';
+    const PHINX_TYPE_POLYGON        = 'polygon';
 
     // only for mysql so far
-    const PHINX_TYPE_ENUM = 'enum';
-    const PHINX_TYPE_SET  = 'set';
+    const PHINX_TYPE_ENUM           = 'enum';
+    const PHINX_TYPE_SET            = 'set';
 
     /**
      * Get all migrated version numbers.
@@ -117,12 +119,27 @@ interface AdapterInterface
     public function getOption($name);
 
     /**
-     * Sets the console output.
+     * Sets the console input.
      *
-     * @param Output $output Output
+     * @param InputInterface $input Input
      * @return AdapterInterface
      */
-    public function setOutput(Output $output);
+    public function setInput(InputInterface $input);
+
+    /**
+     * Gets the console input.
+     *
+     * @return InputInterface
+     */
+    public function getInput();
+
+    /**
+     * Sets the console output.
+     *
+     * @param OutputInterface $output Output
+     * @return AdapterInterface
+     */
+    public function setOutput(OutputInterface $output);
 
     /**
      * Gets the console output.
@@ -135,12 +152,28 @@ interface AdapterInterface
      * Records a migration being run.
      *
      * @param MigrationInterface $migration Migration
-     * @param string             $direction Direction
-     * @param int                $startTime Start Time
-     * @param int                $endTime   End Time
+     * @param string $direction Direction
+     * @param int $startTime Start Time
+     * @param int $endTime End Time
      * @return AdapterInterface
      */
     public function migrated(MigrationInterface $migration, $direction, $startTime, $endTime);
+
+    /**
+     * Toggle a migration breakpoint.
+     *
+     * @param MigrationInterface $migration
+     *
+     * @return AdapterInterface
+     */
+    public function toggleBreakpoint(MigrationInterface $migration);
+
+    /**
+     * Reset all migration breakpoints.
+     *
+     * @return int The number of breakpoints reset
+     */
+    public function resetAllBreakpoints();
 
     /**
      * Does the schema table exist?
@@ -297,9 +330,6 @@ interface AdapterInterface
      */
     public function dropTable($tableName);
 
-
-    public function truncateTable($tableName);
-
     /**
      * Returns table columns
      *
@@ -329,8 +359,8 @@ interface AdapterInterface
     /**
      * Renames the specified column.
      *
-     * @param string $tableName     Table Name
-     * @param string $columnName    Column Name
+     * @param string $tableName Table Name
+     * @param string $columnName Column Name
      * @param string $newColumnName New Column Name
      * @return void
      */
@@ -349,7 +379,7 @@ interface AdapterInterface
     /**
      * Drops the specified column.
      *
-     * @param string $tableName  Table Name
+     * @param string $tableName Table Name
      * @param string $columnName Column Name
      * @return void
      */
@@ -447,7 +477,7 @@ interface AdapterInterface
     /**
      * Converts the Phinx logical type to the adapter's SQL type.
      *
-     * @param string  $type
+     * @param string $type
      * @param integer $limit
      * @return string
      */
@@ -456,11 +486,11 @@ interface AdapterInterface
     /**
      * Creates a new database.
      *
-     * @param string $name    Database Name
-     * @param array  $options Options
+     * @param string $name Database Name
+     * @param array $options Options
      * @return void
      */
-    public function createDatabase($name, $options = []);
+    public function createDatabase($name, $options = array());
 
     /**
      * Checks to see if a database exists.

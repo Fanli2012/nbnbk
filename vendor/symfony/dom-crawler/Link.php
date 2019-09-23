@@ -34,8 +34,6 @@ class Link
     protected $currentUri;
 
     /**
-     * Constructor.
-     *
      * @param \DOMElement $node       A \DOMElement instance
      * @param string      $currentUri The URI of the page where the link is embedded (or the base href)
      * @param string      $method     The method to use for the link (get by default)
@@ -44,7 +42,7 @@ class Link
      */
     public function __construct(\DOMElement $node, $currentUri, $method = 'GET')
     {
-        if (!in_array(strtolower(substr($currentUri, 0, 4)), array('http', 'file'))) {
+        if (!\in_array(strtolower(substr($currentUri, 0, 4)), array('http', 'file'))) {
             throw new \InvalidArgumentException(sprintf('Current URI must be an absolute URL ("%s").', $currentUri));
         }
 
@@ -116,7 +114,7 @@ class Link
         }
 
         // relative path
-        $path = parse_url(substr($this->currentUri, strlen($baseUri)), PHP_URL_PATH);
+        $path = parse_url(substr($this->currentUri, \strlen($baseUri)), PHP_URL_PATH);
         $path = $this->canonicalizePath(substr($path, 0, strrpos($path, '/')).'/'.$uri);
 
         return $baseUri.('' === $path || '/' !== $path[0] ? '/' : '').$path;

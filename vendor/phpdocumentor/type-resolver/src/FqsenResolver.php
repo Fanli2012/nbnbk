@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of phpDocumentor.
  *
@@ -52,6 +52,7 @@ class FqsenResolver
      * @param Context $context
      *
      * @return Fqsen
+     * @throws \InvalidArgumentException when type is not a valid FQSEN.
      */
     private function resolvePartialStructuralElementName($type, Context $context)
     {

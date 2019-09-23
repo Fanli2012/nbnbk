@@ -54,7 +54,9 @@ class Timer
         if ($event) {
             self::$_event = $event;
         } else {
-            pcntl_signal(SIGALRM, array('\Workerman\Lib\Timer', 'signalHandle'), false);
+            if (function_exists('pcntl_signal')) {
+                pcntl_signal(SIGALRM, array('\Workerman\Lib\Timer', 'signalHandle'), false);
+            }
         }
     }
 
@@ -74,16 +76,16 @@ class Timer
     /**
      * Add a timer.
      *
-     * @param int      $time_interval
-     * @param callback $func
+     * @param float    $time_interval
+     * @param callable $func
      * @param mixed    $args
      * @param bool     $persistent
-     * @return bool
+     * @return int/false
      */
     public static function add($time_interval, $func, $args = array(), $persistent = true)
     {
         if ($time_interval <= 0) {
-            echo new Exception("bad time_interval");
+            Worker::safeEcho(new Exception("bad time_interval"));
             return false;
         }
 
@@ -93,7 +95,7 @@ class Timer
         }
 
         if (!is_callable($func)) {
-            echo new Exception("not callable");
+            Worker::safeEcho(new Exception("not callable"));
             return false;
         }
 
@@ -107,7 +109,7 @@ class Timer
             self::$_tasks[$run_time] = array();
         }
         self::$_tasks[$run_time][] = array($func, (array)$args, $persistent, $time_interval);
-        return true;
+        return 1;
     }
 
 
@@ -134,7 +136,7 @@ class Timer
                     try {
                         call_user_func_array($task_func, $task_args);
                     } catch (\Exception $e) {
-                        echo $e;
+                        Worker::safeEcho($e);
                     }
                     if ($persistent) {
                         self::add($time_interval, $task_func, $task_args);

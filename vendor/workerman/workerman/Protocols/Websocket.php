@@ -14,6 +14,7 @@
 namespace Workerman\Protocols;
 
 use Workerman\Connection\ConnectionInterface;
+use Workerman\Connection\TcpConnection;
 use Workerman\Worker;
 
 /**
@@ -21,13 +22,6 @@ use Workerman\Worker;
  */
 class Websocket implements \Workerman\Protocols\ProtocolInterface
 {
-    /**
-     * Minimum head length of websocket protocol.
-     *
-     * @var int
-     */
-    const MIN_HEAD_LEN = 2;
-
     /**
      * Websocket blob type.
      *
@@ -54,13 +48,13 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
         // Receive length.
         $recv_len = strlen($buffer);
         // We need more data.
-        if ($recv_len < self::MIN_HEAD_LEN) {
+        if ($recv_len < 6) {
             return 0;
         }
 
         // Has not yet completed the handshake.
         if (empty($connection->websocketHandshake)) {
-            return self::dealHandshake($buffer, $connection);
+            return static::dealHandshake($buffer, $connection);
         }
 
         // Buffer websocket frame data.
@@ -71,9 +65,18 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
                 return 0;
             }
         } else {
-            $data_len     = ord($buffer[1]) & 127;
             $firstbyte    = ord($buffer[0]);
+            $secondbyte   = ord($buffer[1]);
+            $data_len     = $secondbyte & 127;
             $is_fin_frame = $firstbyte >> 7;
+            $masked       = $secondbyte >> 7;
+
+            if (!$masked) {
+                Worker::safeEcho("frame not masked so close the connection\n");
+                $connection->close();
+                return 0;
+            }
+
             $opcode       = $firstbyte & 0xf;
             switch ($opcode) {
                 case 0x0:
@@ -87,9 +90,9 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
                 // Close package.
                 case 0x8:
                     // Try to emit onWebSocketClose callback.
-                    if (isset($connection->onWebSocketClose)) {
+                    if (isset($connection->onWebSocketClose) || isset($connection->worker->onWebSocketClose)) {
                         try {
-                            call_user_func($connection->onWebSocketClose, $connection);
+                            call_user_func(isset($connection->onWebSocketClose)?$connection->onWebSocketClose:$connection->worker->onWebSocketClose, $connection);
                         } catch (\Exception $e) {
                             Worker::log($e);
                             exit(250);
@@ -99,62 +102,18 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
                         }
                     } // Close connection.
                     else {
-                        $connection->close();
+                        $connection->close("\x88\x02\x27\x10", true);
                     }
                     return 0;
                 // Ping package.
                 case 0x9:
-                    // Try to emit onWebSocketPing callback.
-                    if (isset($connection->onWebSocketPing)) {
-                        try {
-                            call_user_func($connection->onWebSocketPing, $connection);
-                        } catch (\Exception $e) {
-                            Worker::log($e);
-                            exit(250);
-                        } catch (\Error $e) {
-                            Worker::log($e);
-                            exit(250);
-                        }
-                    } // Send pong package to client.
-                    else {
-                        $connection->send(pack('H*', '8a00'), true);
-                    }
-
-                    // Consume data from receive buffer.
-                    if (!$data_len) {
-                        $connection->consumeRecvBuffer(self::MIN_HEAD_LEN);
-                        if ($recv_len > self::MIN_HEAD_LEN) {
-                            return self::input(substr($buffer, self::MIN_HEAD_LEN), $connection);
-                        }
-                        return 0;
-                    }
                     break;
                 // Pong package.
                 case 0xa:
-                    // Try to emit onWebSocketPong callback.
-                    if (isset($connection->onWebSocketPong)) {
-                        try {
-                            call_user_func($connection->onWebSocketPong, $connection);
-                        } catch (\Exception $e) {
-                            Worker::log($e);
-                            exit(250);
-                        } catch (\Error $e) {
-                            Worker::log($e);
-                            exit(250);
-                        }
-                    }
-                    //  Consume data from receive buffer.
-                    if (!$data_len) {
-                        $connection->consumeRecvBuffer(self::MIN_HEAD_LEN);
-                        if ($recv_len > self::MIN_HEAD_LEN) {
-                            return self::input(substr($buffer, self::MIN_HEAD_LEN), $connection);
-                        }
-                        return 0;
-                    }
                     break;
                 // Wrong opcode. 
                 default :
-                    echo "error opcode $opcode and close websocket connection. Buffer:" . bin2hex($buffer) . "\n";
+                    Worker::safeEcho("error opcode $opcode and close websocket connection. Buffer:" . bin2hex($buffer) . "\n");
                     $connection->close();
                     return 0;
             }
@@ -179,7 +138,65 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
                 }
             }
             $current_frame_length = $head_len + $data_len;
+
+            $total_package_size = strlen($connection->websocketDataBuffer) + $current_frame_length;
+            if ($total_package_size > $connection::$maxPackageSize) {
+                Worker::safeEcho("error package. package_length=$total_package_size\n");
+                $connection->close();
+                return 0;
+            }
+
             if ($is_fin_frame) {
+                if ($opcode === 0x9) {
+                    if ($recv_len >= $current_frame_length) {
+                        $ping_data = static::decode(substr($buffer, 0, $current_frame_length), $connection);
+                        $connection->consumeRecvBuffer($current_frame_length);
+                        $tmp_connection_type = isset($connection->websocketType) ? $connection->websocketType : static::BINARY_TYPE_BLOB;
+                        $connection->websocketType = "\x8a";
+                        if (isset($connection->onWebSocketPing) || isset($connection->worker->onWebSocketPing)) {
+                            try {
+                                call_user_func(isset($connection->onWebSocketPing)?$connection->onWebSocketPing:$connection->worker->onWebSocketPing, $connection, $ping_data);
+                            } catch (\Exception $e) {
+                                Worker::log($e);
+                                exit(250);
+                            } catch (\Error $e) {
+                                Worker::log($e);
+                                exit(250);
+                            }
+                        } else {
+                            $connection->send($ping_data);
+                        }
+                        $connection->websocketType = $tmp_connection_type;
+                        if ($recv_len > $current_frame_length) {
+                            return static::input(substr($buffer, $current_frame_length), $connection);
+                        }
+                    }
+                    return 0;
+                } else if ($opcode === 0xa) {
+                    if ($recv_len >= $current_frame_length) {
+                        $pong_data = static::decode(substr($buffer, 0, $current_frame_length), $connection);
+                        $connection->consumeRecvBuffer($current_frame_length);
+                        $tmp_connection_type = isset($connection->websocketType) ? $connection->websocketType : static::BINARY_TYPE_BLOB;
+                        $connection->websocketType = "\x8a";
+                        // Try to emit onWebSocketPong callback.
+                        if (isset($connection->onWebSocketPong) || isset($connection->worker->onWebSocketPong)) {
+                            try {
+                                call_user_func(isset($connection->onWebSocketPong)?$connection->onWebSocketPong:$connection->worker->onWebSocketPong, $connection, $pong_data);
+                            } catch (\Exception $e) {
+                                Worker::log($e);
+                                exit(250);
+                            } catch (\Error $e) {
+                                Worker::log($e);
+                                exit(250);
+                            }
+                        }
+                        $connection->websocketType = $tmp_connection_type;
+                        if ($recv_len > $current_frame_length) {
+                            return static::input(substr($buffer, $current_frame_length), $connection);
+                        }
+                    }
+                    return 0;
+                }
                 return $current_frame_length;
             } else {
                 $connection->websocketCurrentFrameLength = $current_frame_length;
@@ -188,18 +205,18 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
 
         // Received just a frame length data.
         if ($connection->websocketCurrentFrameLength === $recv_len) {
-            self::decode($buffer, $connection);
+            static::decode($buffer, $connection);
             $connection->consumeRecvBuffer($connection->websocketCurrentFrameLength);
             $connection->websocketCurrentFrameLength = 0;
             return 0;
         } // The length of the received data is greater than the length of a frame.
         elseif ($connection->websocketCurrentFrameLength < $recv_len) {
-            self::decode(substr($buffer, 0, $connection->websocketCurrentFrameLength), $connection);
+            static::decode(substr($buffer, 0, $connection->websocketCurrentFrameLength), $connection);
             $connection->consumeRecvBuffer($connection->websocketCurrentFrameLength);
             $current_frame_length                    = $connection->websocketCurrentFrameLength;
             $connection->websocketCurrentFrameLength = 0;
             // Continue to read next frame.
-            return self::input(substr($buffer, $current_frame_length), $connection);
+            return static::input(substr($buffer, $current_frame_length), $connection);
         } // The length of the received data is less than the length of a frame.
         else {
             return 0;
@@ -220,7 +237,7 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
         }
         $len = strlen($buffer);
         if (empty($connection->websocketType)) {
-            $connection->websocketType = self::BINARY_TYPE_BLOB;
+            $connection->websocketType = static::BINARY_TYPE_BLOB;
         }
 
         $first_byte = $connection->websocketType;
@@ -240,7 +257,37 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
             if (empty($connection->tmpWebsocketData)) {
                 $connection->tmpWebsocketData = '';
             }
+            // If buffer has already full then discard the current package.
+            if (strlen($connection->tmpWebsocketData) > $connection->maxSendBufferSize) {
+                if ($connection->onError) {
+                    try {
+                        call_user_func($connection->onError, $connection, WORKERMAN_SEND_FAIL, 'send buffer full and drop package');
+                    } catch (\Exception $e) {
+                        Worker::log($e);
+                        exit(250);
+                    } catch (\Error $e) {
+                        Worker::log($e);
+                        exit(250);
+                    }
+                }
+                return '';
+            }
             $connection->tmpWebsocketData .= $encode_buffer;
+            // Check buffer is full.
+            if ($connection->maxSendBufferSize <= strlen($connection->tmpWebsocketData)) {
+                if ($connection->onBufferFull) {
+                    try {
+                        call_user_func($connection->onBufferFull, $connection);
+                    } catch (\Exception $e) {
+                        Worker::log($e);
+                        exit(250);
+                    } catch (\Error $e) {
+                        Worker::log($e);
+                        exit(250);
+                    }
+                }
+            }
+
             // Return empty string.
             return '';
         }
@@ -257,7 +304,7 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
      */
     public static function decode($buffer, ConnectionInterface $connection)
     {
-        $len = $masks = $data = $decoded = null;
+        $masks = $data = $decoded = '';
         $len = ord($buffer[1]) & 127;
         if ($len === 126) {
             $masks = substr($buffer, 4, 4);
@@ -309,7 +356,7 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
             if (preg_match("/Sec-WebSocket-Key: *(.*?)\r\n/i", $buffer, $match)) {
                 $Sec_WebSocket_Key = $match[1];
             } else {
-                $connection->send("HTTP/1.1 400 Bad Request\r\n\r\n<b>400 Bad Request</b><br>Sec-WebSocket-Key not found.<br>This is a WebSocket service and can not be accessed via HTTP.<br>See <a href=\"http://wiki.workerman.net/Error1\">http://wiki.workerman.net/Error1</a>",
+                $connection->send("HTTP/1.1 400 Bad Request\r\n\r\n<b>400 Bad Request</b><br>Sec-WebSocket-Key not found.<br>This is a WebSocket service and can not be accessed via HTTP.<br>See <a href=\"http://wiki.workerman.net/Error1\">http://wiki.workerman.net/Error1</a> for detail.",
                     true);
                 $connection->close();
                 return 0;
@@ -321,10 +368,8 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
             $handshake_message .= "Upgrade: websocket\r\n";
             $handshake_message .= "Sec-WebSocket-Version: 13\r\n";
             $handshake_message .= "Connection: Upgrade\r\n";
-            $handshake_message .= "Server: workerman/".Worker::VERSION."\r\n";
-            $handshake_message .= "Sec-WebSocket-Accept: " . $new_key . "\r\n\r\n";
-            // Mark handshake complete..
-            $connection->websocketHandshake = true;
+            $handshake_message .= "Sec-WebSocket-Accept: " . $new_key . "\r\n";
+
             // Websocket data buffer.
             $connection->websocketDataBuffer = '';
             // Current websocket frame length.
@@ -333,23 +378,19 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
             $connection->websocketCurrentFrameBuffer = '';
             // Consume handshake data.
             $connection->consumeRecvBuffer($header_length);
-            // Send handshake response.
-            $connection->send($handshake_message, true);
 
-            // There are data waiting to be sent.
-            if (!empty($connection->tmpWebsocketData)) {
-                $connection->send($connection->tmpWebsocketData, true);
-                $connection->tmpWebsocketData = '';
-            }
             // blob or arraybuffer
             if (empty($connection->websocketType)) {
-                $connection->websocketType = self::BINARY_TYPE_BLOB;
+                $connection->websocketType = static::BINARY_TYPE_BLOB;
             }
+
+            $has_server_header = false;
+
             // Try to emit onWebSocketConnect callback.
-            if (isset($connection->onWebSocketConnect)) {
-                self::parseHttpHeader($buffer);
+            if (isset($connection->onWebSocketConnect) || isset($connection->worker->onWebSocketConnect)) {
+                static::parseHttpHeader($buffer);
                 try {
-                    call_user_func($connection->onWebSocketConnect, $connection, $buffer);
+                    call_user_func(isset($connection->onWebSocketConnect)?$connection->onWebSocketConnect:$connection->worker->onWebSocketConnect, $connection, $buffer);
                 } catch (\Exception $e) {
                     Worker::log($e);
                     exit(250);
@@ -361,10 +402,36 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
                     $connection->session = \GatewayWorker\Lib\Context::sessionEncode($_SESSION);
                 }
                 $_GET = $_SERVER = $_SESSION = $_COOKIE = array();
+
+                if (isset($connection->headers)) {
+                    if (is_array($connection->headers))  {
+                        foreach ($connection->headers as $header) {
+                            if (strpos($header, 'Server:') === 0) {
+                                $has_server_header = true;
+                            }
+                            $handshake_message .= "$header\r\n";
+                        }
+                    } else {
+                        $handshake_message .= "$connection->headers\r\n";
+                    }
+                }
+            }
+            if (!$has_server_header) {
+                $handshake_message .= "Server: workerman/".Worker::VERSION."\r\n";
+            }
+            $handshake_message .= "\r\n";
+            // Send handshake response.
+            $connection->send($handshake_message, true);
+            // Mark handshake complete..
+            $connection->websocketHandshake = true;
+            // There are data waiting to be sent.
+            if (!empty($connection->tmpWebsocketData)) {
+                $connection->send($connection->tmpWebsocketData, true);
+                $connection->tmpWebsocketData = '';
             }
             if (strlen($buffer) > $header_length) {
-                return self::input(substr($buffer, $header_length), $connection);
-            } 
+                return static::input(substr($buffer, $header_length), $connection);
+            }
             return 0;
         } // Is flash policy-file-request.
         elseif (0 === strpos($buffer, '<polic')) {
@@ -374,7 +441,7 @@ class Websocket implements \Workerman\Protocols\ProtocolInterface
             return 0;
         }
         // Bad websocket handshake request.
-        $connection->send("HTTP/1.1 400 Bad Request\r\n\r\n<b>400 Bad Request</b><br>Invalid handshake data for websocket. ",
+        $connection->send("HTTP/1.1 400 Bad Request\r\n\r\n<b>400 Bad Request</b><br>Invalid handshake data for websocket. <br> See <a href=\"http://wiki.workerman.net/Error1\">http://wiki.workerman.net/Error1</a> for detail.",
             true);
         $connection->close();
         return 0;

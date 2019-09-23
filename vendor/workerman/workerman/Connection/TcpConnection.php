@@ -48,7 +48,7 @@ class TcpConnection extends ConnectionInterface
      *
      * @var int
      */
-    const STATUS_ESTABLISH = 2;
+    const STATUS_ESTABLISHED = 2;
 
     /**
      * Status closing.
@@ -108,11 +108,32 @@ class TcpConnection extends ConnectionInterface
     public $protocol = null;
 
     /**
+     * Transport (tcp/udp/unix/ssl).
+     *
+     * @var string
+     */
+    public $transport = 'tcp';
+
+    /**
      * Which worker belong to.
      *
      * @var Worker
      */
     public $worker = null;
+
+    /**
+     * Bytes read.
+     *
+     * @var int
+     */
+    public $bytesRead = 0;
+
+    /**
+     * Bytes written.
+     *
+     * @var int
+     */
+    public $bytesWritten = 0;
 
     /**
      * Connection->id.
@@ -190,7 +211,7 @@ class TcpConnection extends ConnectionInterface
      *
      * @var int
      */
-    protected $_status = self::STATUS_ESTABLISH;
+    protected $_status = self::STATUS_ESTABLISHED;
 
     /**
      * Remote address.
@@ -207,6 +228,56 @@ class TcpConnection extends ConnectionInterface
     protected $_isPaused = false;
 
     /**
+     * SSL handshake completed or not.
+     *
+     * @var bool
+     */
+    protected $_sslHandshakeCompleted = false;
+
+    /**
+     * All connection instances.
+     *
+     * @var array
+     */
+    public static $connections = array();
+
+    /**
+     * Status to string.
+     *
+     * @var array
+     */
+    public static $_statusToString = array(
+        self::STATUS_INITIAL     => 'INITIAL',
+        self::STATUS_CONNECTING  => 'CONNECTING',
+        self::STATUS_ESTABLISHED => 'ESTABLISHED',
+        self::STATUS_CLOSING     => 'CLOSING',
+        self::STATUS_CLOSED      => 'CLOSED',
+    );
+
+
+    /**
+     * Adding support of custom functions within protocols
+     *
+     * @param string $name
+     * @param array  $arguments
+     * @return void
+     */
+    public function __call($name, $arguments) {
+        // Try to emit custom function within protocol
+        if (method_exists($this->protocol, $name)) {
+            try {
+                return call_user_func(array($this->protocol, $name), $this, $arguments);
+            } catch (\Exception $e) {
+                Worker::log($e);
+                exit(250);
+            } catch (\Error $e) {
+                Worker::log($e);
+                exit(250);
+            }
+        }
+    }
+
+    /**
      * Construct.
      *
      * @param resource $socket
@@ -215,7 +286,10 @@ class TcpConnection extends ConnectionInterface
     public function __construct($socket, $remote_address = '')
     {
         self::$statistics['connection_count']++;
-        $this->id      = $this->_id = self::$_idRecorder++;
+        $this->id = $this->_id = self::$_idRecorder++;
+        if(self::$_idRecorder === PHP_INT_MAX){
+            self::$_idRecorder = 0;
+        }
         $this->_socket = $socket;
         stream_set_blocking($this->_socket, 0);
         // Compatible with hhvm
@@ -223,8 +297,24 @@ class TcpConnection extends ConnectionInterface
             stream_set_read_buffer($this->_socket, 0);
         }
         Worker::$globalEvent->add($this->_socket, EventInterface::EV_READ, array($this, 'baseRead'));
-        $this->maxSendBufferSize = self::$defaultMaxSendBufferSize;
-        $this->_remoteAddress    = $remote_address;
+        $this->maxSendBufferSize        = self::$defaultMaxSendBufferSize;
+        $this->_remoteAddress           = $remote_address;
+        static::$connections[$this->id] = $this;
+    }
+
+    /**
+     * Get status.
+     *
+     * @param bool $raw_output
+     *
+     * @return int
+     */
+    public function getStatus($raw_output = true)
+    {
+        if ($raw_output) {
+            return $this->_status;
+        }
+        return self::$_statusToString[$this->_status];
     }
 
     /**
@@ -232,12 +322,16 @@ class TcpConnection extends ConnectionInterface
      *
      * @param string $send_buffer
      * @param bool  $raw
-     * @return void|bool|null
+     * @return bool|null
      */
     public function send($send_buffer, $raw = false)
     {
+        if ($this->_status === self::STATUS_CLOSING || $this->_status === self::STATUS_CLOSED) {
+            return false;
+        }
+
         // Try to call protocol::encode($send_buffer) before sending.
-        if (false === $raw && $this->protocol) {
+        if (false === $raw && $this->protocol !== null) {
             $parser      = $this->protocol;
             $send_buffer = $parser::encode($send_buffer, $this);
             if ($send_buffer === '') {
@@ -245,23 +339,40 @@ class TcpConnection extends ConnectionInterface
             }
         }
 
-        if ($this->_status === self::STATUS_INITIAL || $this->_status === self::STATUS_CONNECTING) {
+        if ($this->_status !== self::STATUS_ESTABLISHED ||
+            ($this->transport === 'ssl' && $this->_sslHandshakeCompleted !== true)
+        ) {
+            if ($this->_sendBuffer) {
+                if ($this->bufferIsFull()) {
+                    self::$statistics['send_fail']++;
+                    return false;
+                }
+            }
             $this->_sendBuffer .= $send_buffer;
+            $this->checkBufferWillFull();
             return null;
-        } elseif ($this->_status === self::STATUS_CLOSING || $this->_status === self::STATUS_CLOSED) {
-            return false;
         }
 
         // Attempt to send data directly.
         if ($this->_sendBuffer === '') {
-            $len = @fwrite($this->_socket, $send_buffer);
+            if ($this->transport === 'ssl') {
+                Worker::$globalEvent->add($this->_socket, EventInterface::EV_WRITE, array($this, 'baseWrite'));
+                $this->_sendBuffer = $send_buffer;
+                $this->checkBufferWillFull();
+                return null;
+            }
+            set_error_handler(function(){});
+            $len = fwrite($this->_socket, $send_buffer);
+            restore_error_handler();
             // send successful.
             if ($len === strlen($send_buffer)) {
+                $this->bytesWritten += $len;
                 return true;
             }
             // Send only part of the data.
             if ($len > 0) {
                 $this->_sendBuffer = substr($send_buffer, $len);
+                $this->bytesWritten += $len;
             } else {
                 // Connection closed?
                 if (!is_resource($this->_socket) || feof($this->_socket)) {
@@ -283,29 +394,18 @@ class TcpConnection extends ConnectionInterface
                 $this->_sendBuffer = $send_buffer;
             }
             Worker::$globalEvent->add($this->_socket, EventInterface::EV_WRITE, array($this, 'baseWrite'));
-            // Check if the send buffer is full.
-            $this->checkBufferIsFull();
+            // Check if the send buffer will be full.
+            $this->checkBufferWillFull();
             return null;
         } else {
-            // Buffer has been marked as full but still has data to send the packet is discarded.
-            if ($this->maxSendBufferSize <= strlen($this->_sendBuffer)) {
+            if ($this->bufferIsFull()) {
                 self::$statistics['send_fail']++;
-                if ($this->onError) {
-                    try {
-                        call_user_func($this->onError, $this, WORKERMAN_SEND_FAIL, 'send buffer full and drop package');
-                    } catch (\Exception $e) {
-                        Worker::log($e);
-                        exit(250);
-                    } catch (\Error $e) {
-                        Worker::log($e);
-                        exit(250);
-                    }
-                }
                 return false;
             }
+
             $this->_sendBuffer .= $send_buffer;
             // Check if the send buffer is full.
-            $this->checkBufferIsFull();
+            $this->checkBufferWillFull();
         }
     }
 
@@ -318,7 +418,7 @@ class TcpConnection extends ConnectionInterface
     {
         $pos = strrpos($this->_remoteAddress, ':');
         if ($pos) {
-            return trim(substr($this->_remoteAddress, 0, $pos), '[]');
+            return substr($this->_remoteAddress, 0, $pos);
         }
         return '';
     }
@@ -334,6 +434,102 @@ class TcpConnection extends ConnectionInterface
             return (int)substr(strrchr($this->_remoteAddress, ':'), 1);
         }
         return 0;
+    }
+
+    /**
+     * Get remote address.
+     *
+     * @return string
+     */
+    public function getRemoteAddress()
+    {
+        return $this->_remoteAddress;
+    }
+
+    /**
+     * Get local IP.
+     *
+     * @return string
+     */
+    public function getLocalIp()
+    {
+        $address = $this->getLocalAddress();
+        $pos = strrpos($address, ':');
+        if (!$pos) {
+            return '';
+        }
+        return substr($address, 0, $pos);
+    }
+
+    /**
+     * Get local port.
+     *
+     * @return int
+     */
+    public function getLocalPort()
+    {
+        $address = $this->getLocalAddress();
+        $pos = strrpos($address, ':');
+        if (!$pos) {
+            return 0;
+        }
+        return (int)substr(strrchr($address, ':'), 1);
+    }
+
+    /**
+     * Get local address.
+     *
+     * @return string
+     */
+    public function getLocalAddress()
+    {
+        return (string)@stream_socket_get_name($this->_socket, false);
+    }
+
+    /**
+     * Get send buffer queue size.
+     *
+     * @return integer
+     */
+    public function getSendBufferQueueSize()
+    {
+        return strlen($this->_sendBuffer);
+    }
+
+    /**
+     * Get recv buffer queue size.
+     *
+     * @return integer
+     */
+    public function getRecvBufferQueueSize()
+    {
+        return strlen($this->_recvBuffer);
+    }
+
+    /**
+     * Is ipv4.
+     *
+     * return bool.
+     */
+    public function isIpV4()
+    {
+        if ($this->transport === 'unix') {
+            return false;
+        }
+        return strpos($this->getRemoteIp(), ':') === false;
+    }
+
+    /**
+     * Is ipv6.
+     *
+     * return bool.
+     */
+    public function isIpV6()
+    {
+        if ($this->transport === 'unix') {
+            return false;
+        }
+        return strpos($this->getRemoteIp(), ':') !== false;
     }
 
     /**
@@ -361,6 +557,8 @@ class TcpConnection extends ConnectionInterface
         }
     }
 
+
+
     /**
      * Base read handler.
      *
@@ -370,7 +568,21 @@ class TcpConnection extends ConnectionInterface
      */
     public function baseRead($socket, $check_eof = true)
     {
+        // SSL handshake.
+        if ($this->transport === 'ssl' && $this->_sslHandshakeCompleted !== true) {
+            if ($this->doSslHandshake($socket)) {
+                $this->_sslHandshakeCompleted = true;
+                if ($this->_sendBuffer) {
+                    Worker::$globalEvent->add($socket, EventInterface::EV_WRITE, array($this, 'baseWrite'));
+                }
+            } else {
+                return;
+            }
+        }
+
+        set_error_handler(function(){});
         $buffer = fread($socket, self::READ_BUFFER_SIZE);
+        restore_error_handler();
 
         // Check connection closed.
         if ($buffer === '' || $buffer === false) {
@@ -379,11 +591,12 @@ class TcpConnection extends ConnectionInterface
                 return;
             }
         } else {
+            $this->bytesRead += strlen($buffer);
             $this->_recvBuffer .= $buffer;
         }
 
         // If the application layer protocol has been set up.
-        if ($this->protocol) {
+        if ($this->protocol !== null) {
             $parser = $this->protocol;
             while ($this->_recvBuffer !== '' && !$this->_isPaused) {
                 // The current packet length is known.
@@ -394,18 +607,22 @@ class TcpConnection extends ConnectionInterface
                     }
                 } else {
                     // Get current package length.
+                    set_error_handler(function($code, $msg, $file, $line){
+                        Worker::safeEcho("$msg in file $file on line $line\n");
+                    });
                     $this->_currentPackageLength = $parser::input($this->_recvBuffer, $this);
+                    restore_error_handler();
                     // The packet length is unknown.
                     if ($this->_currentPackageLength === 0) {
                         break;
-                    } elseif ($this->_currentPackageLength > 0 && $this->_currentPackageLength <= self::$maxPackageSize) {
+                    } elseif ($this->_currentPackageLength > 0 && $this->_currentPackageLength <= static::$maxPackageSize) {
                         // Data is not enough for a package.
                         if ($this->_currentPackageLength > strlen($this->_recvBuffer)) {
                             break;
                         }
                     } // Wrong package.
                     else {
-                        echo 'error package. package_length=' . var_export($this->_currentPackageLength, true);
+                        Worker::safeEcho('error package. package_length=' . var_export($this->_currentPackageLength, true));
                         $this->destroy();
                         return;
                     }
@@ -472,11 +689,18 @@ class TcpConnection extends ConnectionInterface
      */
     public function baseWrite()
     {
-        $len = @fwrite($this->_socket, $this->_sendBuffer);
+        set_error_handler(function(){});
+        if ($this->transport === 'ssl') {
+            $len = fwrite($this->_socket, $this->_sendBuffer, 8192);
+        } else {
+            $len = fwrite($this->_socket, $this->_sendBuffer);
+        }
+        restore_error_handler();
         if ($len === strlen($this->_sendBuffer)) {
+            $this->bytesWritten += $len;
             Worker::$globalEvent->del($this->_socket, EventInterface::EV_WRITE);
             $this->_sendBuffer = '';
-            // Try to emit onBufferDrain callback when the send buffer becomes empty. 
+            // Try to emit onBufferDrain callback when the send buffer becomes empty.
             if ($this->onBufferDrain) {
                 try {
                     call_user_func($this->onBufferDrain, $this);
@@ -494,11 +718,60 @@ class TcpConnection extends ConnectionInterface
             return true;
         }
         if ($len > 0) {
+            $this->bytesWritten += $len;
             $this->_sendBuffer = substr($this->_sendBuffer, $len);
         } else {
             self::$statistics['send_fail']++;
             $this->destroy();
         }
+    }
+
+    /**
+     * SSL handshake.
+     *
+     * @param $socket
+     * @return bool
+     */
+    public function doSslHandshake($socket){
+        if (feof($socket)) {
+            $this->destroy();
+            return false;
+        }
+        $async = $this instanceof AsyncTcpConnection;
+        if($async){
+            $type = STREAM_CRYPTO_METHOD_SSLv2_CLIENT | STREAM_CRYPTO_METHOD_SSLv23_CLIENT;
+        }else{
+            $type = STREAM_CRYPTO_METHOD_SSLv2_SERVER | STREAM_CRYPTO_METHOD_SSLv23_SERVER;
+        }
+
+        // Hidden error.
+        set_error_handler(function($errno, $errstr, $file){
+            if (!Worker::$daemonize) {
+                Worker::safeEcho("SSL handshake error: $errstr \n");
+            }
+        });
+        $ret     = stream_socket_enable_crypto($socket, true, $type);
+        restore_error_handler();
+        // Negotiation has failed.
+        if (false === $ret) {
+            $this->destroy();
+            return false;
+        } elseif (0 === $ret) {
+            // There isn't enough data and should try again.
+            return false;
+        }
+        if (isset($this->onSslHandshake)) {
+            try {
+                call_user_func($this->onSslHandshake, $this);
+            } catch (\Exception $e) {
+                Worker::log($e);
+                exit(250);
+            } catch (\Error $e) {
+                Worker::log($e);
+                exit(250);
+            }
+        }
+        return true;
     }
 
     /**
@@ -568,11 +841,11 @@ class TcpConnection extends ConnectionInterface
     }
 
     /**
-     * Check whether the send buffer is full.
+     * Check whether the send buffer will be full.
      *
      * @return void
      */
-    protected function checkBufferIsFull()
+    protected function checkBufferWillFull()
     {
         if ($this->maxSendBufferSize <= strlen($this->_sendBuffer)) {
             if ($this->onBufferFull) {
@@ -590,6 +863,41 @@ class TcpConnection extends ConnectionInterface
     }
 
     /**
+     * Whether send buffer is full.
+     *
+     * @return bool
+     */
+    protected function bufferIsFull()
+    {
+        // Buffer has been marked as full but still has data to send then the packet is discarded.
+        if ($this->maxSendBufferSize <= strlen($this->_sendBuffer)) {
+            if ($this->onError) {
+                try {
+                    call_user_func($this->onError, $this, WORKERMAN_SEND_FAIL, 'send buffer full and drop package');
+                } catch (\Exception $e) {
+                    Worker::log($e);
+                    exit(250);
+                } catch (\Error $e) {
+                    Worker::log($e);
+                    exit(250);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Whether send buffer is Empty.
+     *
+     * @return bool
+     */
+    public function bufferIsEmpty()
+    {
+    	return empty($this->_sendBuffer);
+    }
+
+    /**
      * Destroy connection.
      *
      * @return void
@@ -603,12 +911,12 @@ class TcpConnection extends ConnectionInterface
         // Remove event listener.
         Worker::$globalEvent->del($this->_socket, EventInterface::EV_READ);
         Worker::$globalEvent->del($this->_socket, EventInterface::EV_WRITE);
+
         // Close socket.
-        @fclose($this->_socket);
-        // Remove from worker->connections.
-        if ($this->worker) {
-            unset($this->worker->connections[$this->_id]);
-        }
+        set_error_handler(function(){});
+        fclose($this->_socket);
+        restore_error_handler();
+
         $this->_status = self::STATUS_CLOSED;
         // Try to emit onClose callback.
         if ($this->onClose) {
@@ -623,7 +931,7 @@ class TcpConnection extends ConnectionInterface
             }
         }
         // Try to emit protocol::onClose
-        if (method_exists($this->protocol, 'onClose')) {
+        if ($this->protocol && method_exists($this->protocol, 'onClose')) {
             try {
                 call_user_func(array($this->protocol, 'onClose'), $this);
             } catch (\Exception $e) {
@@ -637,6 +945,11 @@ class TcpConnection extends ConnectionInterface
         if ($this->_status === self::STATUS_CLOSED) {
             // Cleaning up the callback to avoid memory leaks.
             $this->onMessage = $this->onClose = $this->onError = $this->onBufferFull = $this->onBufferDrain = null;
+            // Remove from worker->connections.
+            if ($this->worker) {
+                unset($this->worker->connections[$this->_id]);
+            }
+            unset(static::$connections[$this->_id]);
         }
     }
 
@@ -647,6 +960,20 @@ class TcpConnection extends ConnectionInterface
      */
     public function __destruct()
     {
+        static $mod;
         self::$statistics['connection_count']--;
+        if (Worker::getGracefulStop()) {
+            if (!isset($mod)) {
+                $mod = ceil((self::$statistics['connection_count'] + 1) / 3);
+            }
+
+            if (0 === self::$statistics['connection_count'] % $mod) {
+                Worker::log('worker[' . posix_getpid() . '] remains ' . self::$statistics['connection_count'] . ' connection(s)');
+            }
+
+            if(0 === self::$statistics['connection_count']) {
+                Worker::stopAll();
+            }
+        }
     }
 }

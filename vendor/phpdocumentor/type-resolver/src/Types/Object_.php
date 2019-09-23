@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of phpDocumentor.
  *
@@ -31,6 +31,7 @@ final class Object_ implements Type
      * Initializes this object with an optional FQSEN, if not provided this object is considered 'untyped'.
      *
      * @param Fqsen $fqsen
+     * @throws \InvalidArgumentException when provided $fqsen is not a valid type.
      */
     public function __construct(Fqsen $fqsen = null)
     {

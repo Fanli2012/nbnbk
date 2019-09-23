@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of phpDocumentor.
  *
@@ -32,7 +32,7 @@ final class ContextFactory
     /**
      * Build a Context given a Class Reflection.
      *
-     * @param \ReflectionClass $reflector
+     * @param \Reflector $reflector
      *
      * @see Context for more information on Contexts.
      *
@@ -47,7 +47,7 @@ final class ContextFactory
         $fileName = $reflector->getFileName();
         $namespace = $reflector->getNamespaceName();
 
-        if (file_exists($fileName)) {
+        if (is_string($fileName) && file_exists($fileName)) {
             return $this->createForNamespace($namespace, file_get_contents($fileName));
         }
 

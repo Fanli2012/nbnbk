@@ -294,4 +294,9 @@ class Index extends Base
         
         return $this->fetch();
     }
+	
+	public function hello_world_test()
+	{
+		return 'Hello world!';
+	}
 }

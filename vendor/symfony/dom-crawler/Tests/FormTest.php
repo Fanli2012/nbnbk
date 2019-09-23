@@ -11,10 +11,11 @@
 
 namespace Symfony\Component\DomCrawler\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\DomCrawler\FormFieldRegistry;
 
-class FormTest extends \PHPUnit_Framework_TestCase
+class FormTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
@@ -188,8 +189,9 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $form = $this->createForm('<form>'.$form.'</form>');
         $this->assertEquals(
             $values,
-            array_map(function ($field) {
-                    $class = get_class($field);
+            array_map(
+                function ($field) {
+                    $class = \get_class($field);
 
                     return array(substr($class, strrpos($class, '\\') + 1), $field->getValue());
                 },
@@ -368,15 +370,15 @@ class FormTest extends \PHPUnit_Framework_TestCase
     {
         $form = $this->createForm('<form><input type="text" name="foo" value="foo" /><input type="submit" /></form>');
         unset($form['foo']);
-        $this->assertFalse(isset($form['foo']), '->offsetUnset() removes a field');
+        $this->assertArrayNotHasKey('foo', $form, '->offsetUnset() removes a field');
     }
 
     public function testOffsetExists()
     {
         $form = $this->createForm('<form><input type="text" name="foo" value="foo" /><input type="submit" /></form>');
 
-        $this->assertTrue(isset($form['foo']), '->offsetExists() return true if the field exists');
-        $this->assertFalse(isset($form['bar']), '->offsetExists() return false if the field does not exist');
+        $this->assertArrayHasKey('foo', $form, '->offsetExists() return true if the field exists');
+        $this->assertArrayNotHasKey('bar', $form, '->offsetExists() return false if the field does not exist');
     }
 
     public function testGetValues()
@@ -392,6 +394,10 @@ class FormTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->createForm('<form><input type="text" name="foo" value="foo" disabled="disabled" /><input type="text" name="bar" value="bar" /><input type="submit" /></form>');
         $this->assertEquals(array('bar' => 'bar'), $form->getValues(), '->getValues() does not include disabled fields');
+
+        $form = $this->createForm('<form><template><input type="text" name="foo" value="foo" /></template><input type="text" name="bar" value="bar" /><input type="submit" /></form>');
+        $this->assertEquals(array('bar' => 'bar'), $form->getValues(), '->getValues() does not include template fields');
+        $this->assertFalse($form->has('foo'));
     }
 
     public function testSetValues()
@@ -442,6 +448,10 @@ class FormTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->createForm('<form method="post"><input type="file" name="foo[bar]" disabled="disabled" /><input type="submit" /></form>');
         $this->assertEquals(array(), $form->getFiles(), '->getFiles() does not include disabled file fields');
+
+        $form = $this->createForm('<form method="post"><template><input type="file" name="foo"/></template><input type="text" name="bar" value="bar"/><input type="submit"/></form>');
+        $this->assertEquals(array(), $form->getFiles(), '->getFiles() does not include template file fields');
+        $this->assertFalse($form->has('foo'));
     }
 
     public function testGetPhpFiles()
@@ -454,6 +464,15 @@ class FormTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->createForm('<form method="post"><input type="file" name="f.o o[bar][ba.z]" /><input type="file" name="f.o o[bar][]" /><input type="text" name="bar" value="bar" /><input type="submit" /></form>');
         $this->assertEquals(array('f.o o' => array('bar' => array('ba.z' => array('name' => '', 'type' => '', 'tmp_name' => '', 'error' => 4, 'size' => 0), array('name' => '', 'type' => '', 'tmp_name' => '', 'error' => 4, 'size' => 0)))), $form->getPhpFiles(), '->getPhpFiles() preserves periods and spaces in names recursively');
+
+        $form = $this->createForm('<form method="post"><input type="file" name="foo[bar]" /><input type="text" name="bar" value="bar" /><input type="submit" /></form>');
+        $files = $form->getPhpFiles();
+
+        $this->assertSame(0, $files['foo']['bar']['size'], '->getPhpFiles() converts size to int');
+        $this->assertSame(4, $files['foo']['bar']['error'], '->getPhpFiles() converts error to int');
+
+        $form = $this->createForm('<form method="post"><input type="file" name="size[error]" /><input type="text" name="error" value="error" /><input type="submit" /></form>');
+        $this->assertEquals(array('size' => array('error' => array('name' => '', 'type' => '', 'tmp_name' => '', 'error' => 4, 'size' => 0))), $form->getPhpFiles(), '->getPhpFiles() int conversion does not collide with file names');
     }
 
     /**
@@ -846,7 +865,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
     protected function createForm($form, $method = null, $currentUri = null)
     {
         $dom = new \DOMDocument();
-        $dom->loadHTML('<html>'.$form.'</html>');
+        @$dom->loadHTML('<html>'.$form.'</html>');
 
         $xPath = new \DOMXPath($dom);
         $nodes = $xPath->query('//input | //button');
@@ -925,12 +944,12 @@ class FormTest extends \PHPUnit_Framework_TestCase
     {
         $dom = new \DOMDocument();
         $dom->loadHTML('
-              <html>
-                  <form>
-                      <textarea name="example"></textarea>
-                  </form>
-              </html>
-          ');
+            <html>
+                <form>
+                    <textarea name="example"></textarea>
+                </form>
+            </html>'
+        );
 
         $nodes = $dom->getElementsByTagName('form');
         $form = new Form($nodes->item(0), 'http://example.com');

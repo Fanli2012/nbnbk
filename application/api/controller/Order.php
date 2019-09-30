@@ -82,20 +82,20 @@ class Order extends Base
             }
         }
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
 	//订单详情
     public function detail()
 	{
         //参数
-        if(!checkIsNumber(input('id',null))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id',null))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         $id = input('id');
         $where['id'] = $id;
         $where['user_id'] = $this->login_info['id'];
         
         $res = $this->getLogic()->getOne($where);
-		if(!$res){exit(json_encode(ReturnData::create(ReturnData::RECORD_NOT_EXIST)));}
+		if(!$res){Util::echo_json(ReturnData::create(ReturnData::RECORD_NOT_EXIST));}
         
         if($res['goods_list'])
         {
@@ -105,7 +105,7 @@ class Order extends Base
             }
         }
 		
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     //添加
@@ -119,21 +119,21 @@ class Order extends Base
         
         //获取商品列表
         $data['cartids'] = input('cartids','');
-        if($data['cartids']==''){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if($data['cartids']==''){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         
         if(Helper::isPostRequest())
         {
             $data['user_id'] = $this->login_info['id'];
             
             $res = $this->getLogic()->add($data);
-			exit(json_encode($res));
+			Util::echo_json($res);
         }
     }
     
     //修改
     public function edit()
     {
-        if(!checkIsNumber(input('id',''))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id',''))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         $id = input('id');
         
         if(Helper::isPostRequest())
@@ -143,14 +143,14 @@ class Order extends Base
             $where['user_id'] = $this->login_info['id'];
             
             $res = $this->getLogic()->edit($_POST,$where);
-			exit(json_encode($res));
+			Util::echo_json($res);
         }
     }
     
     //删除
     public function del()
     {
-        if(!checkIsNumber(input('id',''))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id',''))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         $id = input('id');
         
         if(Helper::isPostRequest())
@@ -159,60 +159,60 @@ class Order extends Base
             $where['user_id'] = $this->login_info['id'];
             
             $res = $this->getLogic()->del($where);
-			exit(json_encode($res));
+			Util::echo_json($res);
         }
     }
     
     //用户-取消订单
     public function user_cancel_order()
 	{
-        if(!checkIsNumber(input('id',''))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id',''))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         $id = input('id');
         
         $where['id'] = $id;
         $where['user_id'] = $this->login_info['id'];
         
         $res = $this->getLogic()->userCancelOrder($where);
-		exit(json_encode($res));
+		Util::echo_json($res);
     }
     
     //订单-余额支付
     public function order_yuepay()
 	{
-        if(!checkIsNumber(input('id',''))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id',''))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         $id = input('id');
         
         $where['id'] = $id;
         $where['user_id'] = $this->login_info['id'];
         
         $res = $this->getLogic()->orderYuepay($where);
-		exit(json_encode($res));
+		Util::echo_json($res);
     }
     
     //用户-确认收货
     public function user_receipt_confirm()
 	{
-        if(!checkIsNumber(input('id',''))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id',''))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         $id = input('id');
         
         $where['id'] = $id;
         $where['user_id'] = $this->login_info['id'];
         
         $res = $this->getLogic()->orderReceiptConfirm($where);
-		exit(json_encode($res));
+		Util::echo_json($res);
     }
     
     //用户-退款退货
     public function user_order_refund()
 	{
-        if(!checkIsNumber(input('id',null))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id',null))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         $id = input('id');
         
         $where['id'] = $id;
         $where['user_id'] = $this->login_info['id'];
         
         $res = $this->getLogic()->orderRefund($where);
-		exit(json_encode($res));
+		Util::echo_json($res);
     }
     
     //小程序订单支付
@@ -225,10 +225,10 @@ class Order extends Base
 		$where['id'] = $order_id;
         $where['user_id'] = $this->login_info['id'];
 		$res = $this->getLogic()->getOne($where);
-        if(!$res){exit(json_encode(ReturnData::create(ReturnData::RECORD_NOT_EXIST)));}
+        if(!$res){Util::echo_json(ReturnData::create(ReturnData::RECORD_NOT_EXIST));}
         $order_info = $res;
 		
-		if(!($order_info['order_status']==0 && $order_info['pay_status']==0)){exit(json_encode(ReturnData::create(ReturnData::RECORD_NOT_EXIST, null, '订单已过期')));}
+		if(!($order_info['order_status']==0 && $order_info['pay_status']==0)){Util::echo_json(ReturnData::create(ReturnData::RECORD_NOT_EXIST, null, '订单已过期'));}
 		
         //微信支付-start
         require_once EXTEND_PATH.'wxpay/WxPayMiniprogramConfig.php'; // 导入微信配置类
@@ -270,7 +270,7 @@ class Order extends Base
 		
 		$return_data['jsApiParameters'] = array();
 		if($jsApiParameters){$return_data['jsApiParameters'] = $jsApiParameters;}
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $return_data)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $return_data));
     }
 	
     //商城支付宝APP支付

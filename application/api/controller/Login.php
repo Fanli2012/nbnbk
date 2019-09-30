@@ -30,7 +30,7 @@ class Login extends Common
     public function index()
     {
 		$user = $this->getLogic()->login(request()->param());
-        exit(json_encode($user));
+        Util::echo_json($user);
     }
     
 	/**
@@ -47,13 +47,13 @@ class Login extends Common
     public function wx_login()
     {
 		$user = $this->getLogic()->wxLogin(request()->param());
-        exit(json_encode($user));
+        Util::echo_json($user);
     }
     
     //用户名+密码注册
     public function register()
 	{
-		exit(json_encode($this->getLogic()->register(request()->param())));
+		Util::echo_json($this->getLogic()->register(request()->param()));
     }
 	
     //验证码登录
@@ -113,7 +113,7 @@ class Login extends Common
     public function miniprogram_wxlogin()
     {
 		$res = $this->getLogic()->miniprogramWxlogin(request()->param());
-        exit(json_encode($res));
+        Util::echo_json($res);
     }
     
 }

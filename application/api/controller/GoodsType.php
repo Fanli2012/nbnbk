@@ -34,20 +34,20 @@ class GoodsType extends Common
         
         $res = $this->getLogic()->getList($where, $orderby, ['content'], $offset, $limit);
 		
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     //详情
     public function detail()
 	{
         //参数
-        if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         $where['id'] = input('id');
         
 		$res = $this->getLogic()->getOne($where);
-        if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!$res){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     //添加
@@ -57,7 +57,7 @@ class GoodsType extends Common
         {
             $res = $this->getLogic()->add($_POST);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
     
@@ -66,13 +66,13 @@ class GoodsType extends Common
     {
         if(Helper::isPostRequest())
         {
-            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
             $where['id'] = input('id');
             unset($_POST['id']);
             
             $res = $this->getLogic()->edit($_POST,$where);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
     
@@ -81,12 +81,12 @@ class GoodsType extends Common
     {
         if(Helper::isPostRequest())
         {
-            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
             $where['id'] = input('id');
             
             $res = $this->getLogic()->del($where);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
 }

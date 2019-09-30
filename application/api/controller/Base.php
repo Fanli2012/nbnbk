@@ -44,13 +44,13 @@ class Base extends Common
         {
             //TOKEN验证
 			$access_token = request()->header('AccessToken') ?: request()->param('access_token');
-			if(!$access_token){exit(json_encode(ReturnData::create(ReturnData::TOKEN_ERROR)));}
+			if(!$access_token){Util::echo_json(ReturnData::create(ReturnData::TOKEN_ERROR));}
 			
 			$this->login_info = cache('access_token_'.$access_token);
 			if (!$this->login_info)
 			{
 				$token_info = logic('Token')->checkToken($access_token);
-				if ($token_info['code']!=ReturnData::SUCCESS) {exit(json_encode($token_info));}
+				if ($token_info['code']!=ReturnData::SUCCESS) {Util::echo_json($token_info);}
 				
 				//Token对应的用户信息
 				$this->login_info = logic('User')->getUserInfo(array('id'=>$token_info['data']['user_id']));

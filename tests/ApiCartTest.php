@@ -9,13 +9,21 @@
 // | Author: yunwuxin <448901948@qq.com>
 // +----------------------------------------------------------------------
 namespace tests;
-use app\index\controller\Index;
+use app\api\controller\Cart;
 
-class IndexTest extends IndexBase
+class ApiCartTest extends ApiBase
 {
-	public function testHelloWorld()
+	//购物车-列表
+	public function testIndex()
     {
-		$this->assertTrue(true);
-        //$this->visit('/index/index/hello_world_test')->see('Hello world!');
+        $get_data = array(
+            'access_token' => '123456'
+		);
+        $url = sysconfig('CMS_API_URL').'/cart/index';
+		$response = curl_request($url,$get_data,'GET');
+        
+		$this->assertTrue(!!$response); //断言结果是否为true,如果不为true则报错
+        $this->assertEquals('0', $response['code']); //断言结果是否等于0,如果不等于则报错
     }
+	
 }

@@ -3,6 +3,8 @@ namespace app\fladmin\controller;
 use app\common\lib\ReturnData;
 use app\common\lib\Helper;
 use app\common\logic\FriendlinkLogic;
+use think\Loader;
+use think\Validate;
 
 class Friendlink extends Base
 {
@@ -37,6 +39,14 @@ class Friendlink extends Base
     {
         if(Helper::isPostRequest())
         {
+			//表单令牌验证
+			$validate = new Validate([
+				['__token__', 'require|token', '非法提交|请不要重复提交表单'],
+			]);
+			if (!$validate->check($_POST)) {
+				$this->error($validate->getError());
+			}
+			
             $res = $this->getLogic()->add($_POST);
             if($res['code'] == ReturnData::SUCCESS)
             {
@@ -54,6 +64,14 @@ class Friendlink extends Base
     {
         if(Helper::isPostRequest())
         {
+			//表单令牌验证
+			$validate = new Validate([
+				['__token__', 'require|token', '非法提交|请不要重复提交表单'],
+			]);
+			if (!$validate->check($_POST)) {
+				$this->error($validate->getError());
+			}
+			
             $where['id'] = $_POST['id'];
             unset($_POST['id']);
             

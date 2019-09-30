@@ -42,6 +42,14 @@ class UserMoney extends Base
     {
         if(Helper::isPostRequest())
         {
+			//表单令牌验证
+			$validate = new Validate([
+				['__token__', 'require|token', '非法提交|请不要重复提交表单'],
+			]);
+			if (!$validate->check($_POST)) {
+				$this->error($validate->getError());
+			}
+			
             if(!is_numeric($_POST['money']) || $_POST['money']==0){$this->error('充值金额格式不正确');}
             
             $user_money_data['type'] = 1; //0增加,1减少

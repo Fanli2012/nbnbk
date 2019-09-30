@@ -43,25 +43,25 @@ class Article extends Common
             }
         }
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     //详情
     public function detail()
 	{
         //参数
-        if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         $where['id'] = input('id');
         if(input('status', '') === ''){$where['status'] = ArticleModel::ARTICLE_STATUS_NORMAL;}else{if(input('status') != -1){$where['status'] = input('status');}}
         
 		$res = $this->getLogic()->getOne($where);
-        if(!$res){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!$res){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         
         if($res['content']){$res['content'] = str_replace(' style=""', '', preg_replace('/src=\"\/uploads\//','src="'.sysconfig('CMS_SITE_CDN_ADDRESS').'/uploads/', $res['content']));}
         if($res['litpic']){$res['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$res['litpic'];}
         $res = $res->append(['type_name_text','status_text'])->toArray();
 		
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS,$res));
     }
     
     //添加
@@ -72,7 +72,7 @@ class Article extends Common
             $_POST['add_time'] = $_POST['update_time'] = time();
             $res = $this->getLogic()->add($_POST);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
     
@@ -82,14 +82,14 @@ class Article extends Common
         
         if(Helper::isPostRequest())
         {
-            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
             $where['id'] = input('id');
             unset($_POST['id']);
             $_POST['update_time'] = time();
             
             $res = $this->getLogic()->edit($_POST,$where);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
     
@@ -98,12 +98,12 @@ class Article extends Common
     {
         if(Helper::isPostRequest())
         {
-            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
             $where['id'] = input('id');
             
             $res = $this->getLogic()->del($where);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
 }

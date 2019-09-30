@@ -53,14 +53,14 @@ class Image extends Common
                 if(!in_array($type, $allow_type))
                 {
                     //如果不被允许，则直接停止程序运行
-                    exit(json_encode(ReturnData::create(ReturnData::FAIL,null,'文件格式不正确')));
+                    Util::echo_json(ReturnData::create(ReturnData::FAIL,null,'文件格式不正确'));
                 }
                 
                 //判断是否是通过HTTP POST上传的
                 if(!is_uploaded_file($file['tmp_name']))
                 {
                     //如果不是通过HTTP POST上传的
-                    exit(json_encode(ReturnData::create(ReturnData::FAIL)));
+                    Util::echo_json(ReturnData::create(ReturnData::FAIL));
                 }
                 
                 //文件小于1M
@@ -68,7 +68,7 @@ class Image extends Common
                 {
                     if ($file['error'] > 0)
                     {
-                        exit(json_encode(ReturnData::create(ReturnData::FAIL,null,$file['error'])));
+                        Util::echo_json(ReturnData::create(ReturnData::FAIL,null,$file['error']));
                     }
                     else
                     {
@@ -82,14 +82,14 @@ class Image extends Common
                 }
                 else
                 {
-                    exit(json_encode(ReturnData::create(ReturnData::FAIL,null,'文件不得超过2M')));
+                    Util::echo_json(ReturnData::create(ReturnData::FAIL,null,'文件不得超过2M'));
                 }
                 
                 $res[] = array('url' => sysconfig('CMS_SITE_CDN_ADDRESS').$image_path, 'path' => $image_path, 'name' => $file['name'], 'file_name' => $new_file_name, 'type' => $type, 'file_size' => $file['size']);
             }
         }
         
-        exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res), JSON_UNESCAPED_SLASHES)); //让json_encode不自动转义斜杠“/”的方法
+        Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res), JSON_UNESCAPED_SLASHES); //让json_encode不自动转义斜杠“/”的方法
     }
     
     //阿里云OSS图片上传，成功返回路径，不含域名
@@ -99,10 +99,10 @@ class Image extends Common
         
         if($res['code'] == 1)
         {
-            exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res['data'])));
+            Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res['data']));
         }
         
-        exit(json_encode(ReturnData::create(ReturnData::FAIL, null, $res['msg'])));
+        Util::echo_json(ReturnData::create(ReturnData::FAIL, null, $res['msg']));
     }
     
     public function aliyunOSSFileUpload($files)
@@ -215,10 +215,10 @@ class Image extends Common
         
         if($res['code'] == ReturnData::SUCCESS)
         {
-            exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res['data'])));
+            Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res['data']));
         }
         
-        exit(json_encode(ReturnData::create(ReturnData::FAIL, null, $res['msg'])));
+        Util::echo_json(ReturnData::create(ReturnData::FAIL, null, $res['msg']));
     }
     
     public function base64ImageSave($files)
@@ -320,7 +320,7 @@ class Image extends Common
 
         }
 
-        exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+        Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     /**

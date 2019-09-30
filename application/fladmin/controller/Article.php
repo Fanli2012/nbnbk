@@ -1,6 +1,7 @@
 <?php
 namespace app\fladmin\controller;
 use think\Db;
+use think\Validate;
 use app\common\lib\ReturnData;
 use app\common\lib\Helper;
 use app\common\logic\ArticleLogic;
@@ -79,6 +80,14 @@ class Article extends Base
     {
         if(Helper::isPostRequest())
         {
+			//表单令牌验证
+			$validate = new Validate([
+				['__token__', 'require|token', '非法提交|请不要重复提交表单'],
+			]);
+			if (!$validate->check($_POST)) {
+				$this->error($validate->getError());
+			}
+			
             $litpic="";if(!empty($_POST["litpic"])){$litpic = $_POST["litpic"];}else{$_POST['litpic']="";} //缩略图
             if(empty($_POST["description"])){if(!empty($_POST["content"])){$_POST['description']=cut_str($_POST["content"]);}} //description
             $content="";if(!empty($_POST["content"])){$content = $_POST["content"];}

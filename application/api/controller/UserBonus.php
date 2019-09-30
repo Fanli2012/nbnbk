@@ -33,21 +33,21 @@ class UserBonus extends Base
 		
         $res = $this->getLogic()->getList($where, $orderby, '*', $offset, $limit);
 		
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     //详情
     public function detail()
 	{
         //参数
-        if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         $where['id'] = input('id');
         $where['user_id'] = $this->login_info['id'];
 		
 		$res = $this->getLogic()->getOne($where);
-        if(!$res){exit(json_encode(ReturnData::create(ReturnData::RECORD_NOT_EXIST)));}
+        if(!$res){Util::echo_json(ReturnData::create(ReturnData::RECORD_NOT_EXIST));}
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     //用户获取优惠券
@@ -58,7 +58,7 @@ class UserBonus extends Base
 			$_POST['user_id'] = $this->login_info['id'];
             $res = $this->getLogic()->add($_POST);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
     
@@ -67,13 +67,13 @@ class UserBonus extends Base
     {
         if(Helper::isPostRequest())
         {
-            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
             $where['id'] = input('id');
             unset($_POST['id']);
 			$where['user_id'] = $this->login_info['id'];
             $res = $this->getLogic()->edit($_POST,$where);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
     
@@ -82,12 +82,12 @@ class UserBonus extends Base
     {
         if(Helper::isPostRequest())
         {
-            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
             $where['id'] = input('id');
             $where['user_id'] = $this->login_info['id'];
             $res = $this->getLogic()->del($where);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
 	
@@ -97,9 +97,9 @@ class UserBonus extends Base
         $data['user_id'] = $this->login_info['id'];
         
         $data['min_amount'] = input('min_amount','');
-        if($data['min_amount']==''){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if($data['min_amount']==''){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         
         $res = $this->getLogic()->getAvailableBonusList($data);
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
 }

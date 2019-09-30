@@ -45,7 +45,7 @@ class User extends Base
             }
         }
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     //详情
@@ -55,11 +55,11 @@ class User extends Base
         $where['id'] = $this->login_info['id'];
         
 		$res = $this->getLogic()->getUserInfo($where);
-        if(!$res){exit(json_encode(ReturnData::create(ReturnData::RECORD_NOT_EXIST)));}
+        if(!$res){Util::echo_json(ReturnData::create(ReturnData::RECORD_NOT_EXIST));}
         
 		if($res['head_img']){ $res['head_img'] = (substr($res['head_img'], 0, strlen('http')) === 'http') ? $res['head_img'] : sysconfig('CMS_SITE_CDN_ADDRESS').$res['head_img']; }
 		
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     //修改
@@ -67,13 +67,13 @@ class User extends Base
     {
         if(Helper::isPostRequest())
         {
-            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
             $where['id'] = input('id');
             unset($_POST['id']);
 			$where['user_id'] = $this->login_info['id'];
             $res = $this->getLogic()->edit($_POST,$where);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
     
@@ -97,7 +97,7 @@ class User extends Base
             if(input('refund_name', '')!==''){$data['refund_name'] = input('refund_name');}
             
 			$res = $this->getLogic()->userInfoUpdate($data, $where);
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
     
@@ -106,10 +106,10 @@ class User extends Base
     {
         $data['password'] = input('password', '');
 		$data['old_password'] = input('old_password', '');
-		if($data['password'] == $data['old_password']){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR, null, '新旧密码相同')));}
+		if($data['password'] == $data['old_password']){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR, null, '新旧密码相同'));}
         
         $res = $this->getLogic()->userPasswordUpdate($data, array('id' => $this->login_info['id']));
-		exit(json_encode($res));
+		Util::echo_json($res);
     }
     
     //修改用户支付密码
@@ -118,17 +118,17 @@ class User extends Base
         $data['pay_password'] = input('pay_password', '');
 		$data['old_pay_password'] = input('old_pay_password', '');
 		
-		if($data['pay_password'] == $data['old_pay_password']){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR, null, '新旧支付密码相同')));}
+		if($data['pay_password'] == $data['old_pay_password']){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR, null, '新旧支付密码相同'));}
         
         $res = $this->getLogic()->userPayPasswordUpdate($data, array('id' => $this->login_info['id']));
-		exit(json_encode($res));
+		Util::echo_json($res);
     }
     
     //签到
 	public function signin()
 	{
 		$res = $this->getLogic()->signin(array('id'=>$this->login_info['id']));
-		exit(json_encode($res));
+		Util::echo_json($res);
     }
     
     //用户推介赚钱-小程序二维码
@@ -151,7 +151,7 @@ class User extends Base
 			if(FileHandle::check_file_exists($data['image_path']))
 			{
 				$res = sysconfig('CMS_SITE_CDN_ADDRESS').$image_path;
-				exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+				Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
 			}
         }
         
@@ -218,7 +218,7 @@ class User extends Base
 			
         }
 
-        exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+        Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
 	
 	/**
@@ -353,7 +353,7 @@ class User extends Base
         {
             $where['id'] = $this->login_info['id'];
             $res = $this->getLogic()->changeMobile($_POST, $where);
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
     
@@ -372,19 +372,19 @@ class User extends Base
         $code = input('encryptedData', ''); */
         // 获取小程序用户手机号
         $res = $this->getLogic()->getWechatUserMobile(request()->param());
-        if($res['code'] != ReturnData::SUCCESS){exit(json_encode($res));}
+        if($res['code'] != ReturnData::SUCCESS){Util::echo_json($res);}
         
         // 判断手机号是否存在
         $user = model('User')->getOne(array('mobile'=>$res['data']['purePhoneNumber'], 'id'=>array('<>',$this->login_info['id'])));
         if($user)
         {
-            exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR, null, '该手机号已存在')));
+            Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR, null, '该手机号已存在'));
         }
         
         // 修改用户手机号
         $where_user['id'] = $this->login_info['id'];
         model('User')->edit(array('mobile'=>$res['data']['purePhoneNumber']), $where_user);
         
-        exit(json_encode($res));
+        Util::echo_json($res);
     }
 }

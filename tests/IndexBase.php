@@ -9,13 +9,11 @@
 // | Author: yunwuxin <448901948@qq.com>
 // +----------------------------------------------------------------------
 namespace tests;
-use app\index\controller\Index;
 
-class IndexTest extends IndexBase
+class IndexBase extends TestCase
 {
-	public function testHelloWorld()
-    {
-		$this->assertTrue(true);
-        //$this->visit('/index/index/hello_world_test')->see('Hello world!');
-    }
+	function __construct()
+	{
+		parent::__construct();
+	}
 }

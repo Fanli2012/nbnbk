@@ -23,7 +23,7 @@ class Index extends Common
 			'upgradeinfo'   => '描述：3.0.0' //版本更新的描述
 		);
         
-        exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+        Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
 	}
     
 	// 关于
@@ -59,7 +59,7 @@ class Index extends Common
 			'address' => '软件园二期观日路48号', //详情地址
 		);
         
-        exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+        Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
 	}
     
     /**
@@ -70,7 +70,7 @@ class Index extends Common
     public function getFileBinary()
     {
         $str = file_get_contents($_REQUEST['url']);
-        exit(json_encode(ReturnData::create(ReturnData::SUCCESS,chunk_split(base64_encode($str)))));
+        Util::echo_json(ReturnData::create(ReturnData::SUCCESS,chunk_split(base64_encode($str))));
     }
     
     public function arclist()

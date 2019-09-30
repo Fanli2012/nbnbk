@@ -32,7 +32,7 @@ class UserReferralCommission extends Base
 		
         $res = $this->getLogic()->getList($where, $orderby, '*', $offset, $limit);
 		
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     //详情
@@ -42,9 +42,9 @@ class UserReferralCommission extends Base
         $where['user_id'] = $this->login_info['id'];
 		
 		$res = $this->getLogic()->getOne($where);
-        if(!$res){exit(json_encode(ReturnData::create(ReturnData::RECORD_NOT_EXIST)));}
+        if(!$res){Util::echo_json(ReturnData::create(ReturnData::RECORD_NOT_EXIST));}
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     //添加
@@ -55,7 +55,7 @@ class UserReferralCommission extends Base
 			$_POST['user_id'] = $this->login_info['id'];
             $res = $this->getLogic()->add($_POST);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
     
@@ -64,13 +64,13 @@ class UserReferralCommission extends Base
     {
         if(Helper::isPostRequest())
         {
-            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
             $where['id'] = input('id');
             unset($_POST['id']);
 			$where['user_id'] = $this->login_info['id'];
             $res = $this->getLogic()->edit($_POST,$where);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
     
@@ -79,12 +79,12 @@ class UserReferralCommission extends Base
     {
         if(Helper::isPostRequest())
         {
-            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
             $where['id'] = input('id');
             $where['user_id'] = $this->login_info['id'];
             $res = $this->getLogic()->del($where);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
 }

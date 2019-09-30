@@ -32,21 +32,21 @@ class UserAddress extends Base
 		
         $res = $this->getLogic()->getList($where, $orderby, '*', $offset, $limit);
 		
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     //详情
     public function detail()
 	{
         //参数
-        if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         $where['id'] = input('id');
         $where['user_id'] = $this->login_info['id'];
 		
 		$res = $this->getLogic()->getOne($where);
-        if(!$res){exit(json_encode(ReturnData::create(ReturnData::RECORD_NOT_EXIST)));}
+        if(!$res){Util::echo_json(ReturnData::create(ReturnData::RECORD_NOT_EXIST));}
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS,$res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     //添加
@@ -57,7 +57,7 @@ class UserAddress extends Base
 			$_POST['user_id'] = $this->login_info['id'];
             $res = $this->getLogic()->add($_POST);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
     
@@ -66,14 +66,14 @@ class UserAddress extends Base
     {
         if(Helper::isPostRequest())
         {
-            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
             $where['id'] = input('id');
             unset($_POST['id']);
 			$where['user_id'] = $this->login_info['id'];
 			
             $res = $this->getLogic()->edit($_POST,$where);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
     
@@ -82,12 +82,12 @@ class UserAddress extends Base
     {
         if(Helper::isPostRequest())
         {
-            if(!checkIsNumber(input('id/d',0))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+            if(!checkIsNumber(input('id/d',0))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
             $where['id'] = input('id');
 			$where['user_id'] = $this->login_info['id'];
             $res = $this->getLogic()->del($where);
             
-            exit(json_encode($res));
+            Util::echo_json($res);
         }
     }
 	
@@ -95,7 +95,7 @@ class UserAddress extends Base
     public function set_default()
 	{
         //参数
-        if(!checkIsNumber(input('id', ''))){exit(json_encode(ReturnData::create(ReturnData::PARAMS_ERROR)));}
+        if(!checkIsNumber(input('id', ''))){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         $id = input('id');
         
         $where['id'] = $id;
@@ -103,10 +103,10 @@ class UserAddress extends Base
         $res = $this->getLogic()->setDefault($where);
 		if(!$res)
 		{
-			exit(json_encode(ReturnData::create(ReturnData::FAIL)));
+			Util::echo_json(ReturnData::create(ReturnData::FAIL));
 		}
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
     
     //获取用户默认地址
@@ -116,9 +116,9 @@ class UserAddress extends Base
         $res = $this->getLogic()->userDefaultAddress($where);
 		if(!$res)
 		{
-			exit(json_encode(ReturnData::create(ReturnData::FAIL)));
+			Util::echo_json(ReturnData::create(ReturnData::FAIL));
 		}
         
-		exit(json_encode(ReturnData::create(ReturnData::SUCCESS, $res)));
+		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
 }

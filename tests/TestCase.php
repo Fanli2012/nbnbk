@@ -12,5 +12,11 @@ namespace tests;
 
 class TestCase extends \think\testing\TestCase
 {
-    protected $baseUrl = 'http://www.nbnbk3.com';
+    protected $baseUrl = 'http://localhost';
+	
+	function __construct()
+	{
+		parent::__construct();
+		$this->baseUrl = sysconfig('CMS_BASEHOST');
+	}
 }

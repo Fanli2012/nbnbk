@@ -1,5 +1,6 @@
 <?php
 namespace app\fladmin\controller;
+use think\Validate;
 use app\common\lib\ReturnData;
 use app\common\lib\Helper;
 use app\common\logic\GoodsLogic;
@@ -53,6 +54,14 @@ class Goods extends Base
     {
         if(Helper::isPostRequest())
         {
+			//表单令牌验证
+			$validate = new Validate([
+				['__token__', 'require|token', '非法提交|请不要重复提交表单'],
+			]);
+			if (!$validate->check($_POST)) {
+				$this->error($validate->getError());
+			}
+			
             $_POST['add_time'] = $_POST['update_time'] = time(); //添加&更新时间
             $_POST['user_id'] = session('admin_info')['id']; // 发布者id
             

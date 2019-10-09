@@ -1,6 +1,7 @@
 <?php
 namespace app\common\logic;
 use think\Loader;
+use think\Db;
 use app\common\lib\ReturnData;
 use app\common\model\UserReferralCommissionLog;
 
@@ -77,7 +78,14 @@ class UserReferralCommissionLogLogic extends BaseLogic
         return $res;
     }
     
-    //添加
+	/**
+     * 添加一条记录，并增加或减少用户推介资金，谨慎使用
+     * @param int    $data['user_id'] 用户id
+     * @param int    $data['type'] 0增加,1减少
+     * @param float  $data['money'] 金额
+     * @param string $data['desc'] 描述
+     * @return array
+     */
     public function add($data = array(), $type=0)
     {
         if(empty($data)){return ReturnData::create(ReturnData::PARAMS_ERROR);}
@@ -88,10 +96,65 @@ class UserReferralCommissionLogLogic extends BaseLogic
         $check = $this->getValidate()->scene('add')->check($data);
         if(!$check){return ReturnData::create(ReturnData::PARAMS_ERROR,null,$this->getValidate()->getError());}
         
-        $res = $this->getModel()->add($data,$type);
-        if(!$res){return ReturnData::create(ReturnData::FAIL);}
+        if ($data['money']<=0) { return ReturnData::create(ReturnData::PARAMS_ERROR, null, '金额必须大于零'); }
         
-        return ReturnData::create(ReturnData::SUCCESS, $res);
+        $user = model('User')->getOne(['id'=>$data['user_id']]);
+        if(!$user){return ReturnData::create(ReturnData::PARAMS_ERROR, null, '用户不存在');}
+        
+        $user_referral_commission = model('UserReferralCommission')->getOne(['user_id'=>$data['user_id']]);
+        if(!$user_referral_commission)
+        {
+            $user_referral_commission['user_id'] = $data['user_id'];
+            $user_referral_commission['commission_total'] = 0;
+            $user_referral_commission['commission_available'] = 0;
+            $user_referral_commission['commission_withdraw'] = 0;
+            $user_referral_commission['add_time'] = $user_referral_commission['update_time'] = time();
+            if(!model('UserReferralCommission')->add($user_referral_commission))
+            {
+                return ReturnData::create(ReturnData::PARAMS_ERROR, null, '用户推介资金不存在');
+            }
+        }
+        
+        Db::startTrans(); //启动事务
+        
+        if($data['type'] == UserReferralCommissionLog::USER_REFERRAL_COMMISSION_LOG_INCREMENT)
+        {
+            //增加用户推介资金
+            $user_referral_commission_edit['commission_total'] = $user_referral_commission['commission_total'] + $data['money'];
+            $user_referral_commission_edit['commission_available'] = $user_referral_commission['commission_available'] + $data['money'];
+            $user_referral_commission_edit['update_time'] = time();
+            model('UserReferralCommission')->edit($user_referral_commission_edit, array('user_id'=>$data['user_id']));
+        }
+        elseif($data['type'] == UserReferralCommissionLog::USER_REFERRAL_COMMISSION_LOG_DECREMENT)
+        {
+            //判断用户推介资金是否足够
+            if($data['money'] > $user_referral_commission['commission_available'])
+            {
+                Db::rollback(); //事务回滚
+                return ReturnData::create(ReturnData::FAIL, null, '佣金不足');
+            }
+            //减少用户推介资金
+            $user_referral_commission_edit['commission_available'] = $user_referral_commission['commission_available'] - $data['money'];
+            $user_referral_commission_edit['update_time'] = time();
+            model('UserReferralCommission')->edit($user_referral_commission_edit, array('user_id'=>$data['user_id']));
+        }
+        else
+        {
+            Db::rollback(); //事务回滚
+            return ReturnData::create(ReturnData::FAIL);
+        }
+        
+        $user_commission = model('UserReferralCommission')->getValue(array('user_id'=>$data['user_id']), 'commission_available'); //用户推介资金
+        $data['user_commission'] = $user_commission;
+        $res = $this->getModel()->add($data, $type);
+        if(!$res)
+        {
+			Db::rollback(); //事务回滚
+			return ReturnData::create(ReturnData::FAIL);
+        }
+        
+		Db::commit(); //事务提交
+		return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
     //修改

@@ -87,4 +87,16 @@ class UserReferralCommission extends Base
             Util::echo_json($res);
         }
     }
+    
+    //佣金转换为帐户余额
+    public function user_referral_commission_turn_user_money()
+    {
+        if(Helper::isPostRequest())
+        {
+            $res = $this->getLogic()->userReferralCommissionTurnUserMoney($this->login_info['id'], input('money'));
+            
+            Util::echo_json($res);
+        }
+    }
+    
 }

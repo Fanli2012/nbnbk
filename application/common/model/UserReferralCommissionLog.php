@@ -16,6 +16,9 @@ class UserReferralCommissionLog extends Base
         return db('user_referral_commission_log');
     }
     
+    const USER_REFERRAL_COMMISSION_LOG_INCREMENT = 0; //用户推介资金0增加,1减少
+    const USER_REFERRAL_COMMISSION_LOG_DECREMENT = 1;
+    
     /**
      * 列表
      * @param array $where 查询条件

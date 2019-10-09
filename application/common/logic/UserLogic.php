@@ -808,4 +808,14 @@ class UserLogic extends BaseLogic
         return ReturnData::create(ReturnData::SUCCESS, $res);
     }
     
+	/**
+     * 增加累计消费金额
+     * @param int    $user_id 用户id
+     * @param float  $consumption_money 消费金额
+     * @return array
+     */
+    public function changeConsumptionMoney($user_id, $consumption_money)
+    {
+        return model('User')->setIncrement(array('id' => $user_id), 'consumption_money', $consumption_money);
+    }
 }

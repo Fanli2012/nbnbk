@@ -7,9 +7,11 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'think\\testing\\' => array($vendorDir . '/topthink/think-testing/src'),
+    'think\\mongo\\' => array($vendorDir . '/topthink/think-mongo/src'),
     'think\\helper\\' => array($vendorDir . '/topthink/think-helper/src'),
     'think\\composer\\' => array($vendorDir . '/topthink/think-installer/src'),
-    'think\\' => array($baseDir . '/thinkphp/library/think'),
+    'think\\captcha\\' => array($vendorDir . '/topthink/think-captcha/src'),
+    'think\\' => array($baseDir . '/thinkphp/library/think', $vendorDir . '/topthink/think-image/src'),
     'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/type-resolver/src', $vendorDir . '/phpdocumentor/reflection-docblock/src'),
     'app\\' => array($baseDir . '/application'),
     'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),

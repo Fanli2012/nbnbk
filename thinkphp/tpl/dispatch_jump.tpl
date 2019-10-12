@@ -7,7 +7,7 @@
     <style type="text/css">
         *{ padding: 0; margin: 0; }
         body{ background: #fff; font-family: "Microsoft Yahei","Helvetica Neue",Helvetica,Arial,sans-serif; color: #333; font-size: 16px; }
-        .system-message{ padding: 24px 48px; }
+        .system-message{ padding: 24px 48px; margin: 5% auto 0 auto; width: 50%; }
         .system-message h1{ font-size: 100px; font-weight: normal; line-height: 120px; margin-bottom: 12px; }
         .system-message .jump{ padding-top: 10px; }
         .system-message .jump a{ color: #333; }

@@ -1,5 +1,7 @@
 <?php
+
 namespace app\task\controller;
+
 use think\Controller;
 
 class Common extends Controller
@@ -9,8 +11,8 @@ class Common extends Controller
      * @param void
      * @return void
      */
-	public function _initialize()
-	{
+    public function _initialize()
+    {
         parent::_initialize();
     }
 }

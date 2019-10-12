@@ -5,7 +5,7 @@
 <div class="box mt10">
 <?php if($list['data']){ ?><ul class="goodsul" id="goods_list">
 <?php foreach($list['data'] as $k=>$v){ ?>
-<li><a href="<?php echo model('Goods')->getGoodsDetailUrl(array('id'=>$v['id'])); ?>"><img src="<?php echo $v['litpic']; ?>" alt="<?php echo $v['title']; ?>">
+<li><a class="wrap" href="<?php echo model('Goods')->getGoodsDetailUrl(array('id'=>$v['id'])); ?>"><img src="<?php echo $v['litpic']; ?>" alt="<?php echo $v['title']; ?>">
 <p class="title"><?php echo $v['title']; ?></p>
 <p class="desc"><?php echo $v['description']; ?></p>
 <div class="item-prices green"><div class="item-link">立即<br>抢购</div><div class="item-info"><div class="price"><i>¥</i><em class="J_actPrice"><span class="yen"><?php echo ceil($v['price']); ?></span></em></div>

@@ -1,6 +1,6 @@
 body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,dd,form,input,textarea,select,button{margin:0;padding:0;}em,i{font-style:normal;}
 li,ul{list-style:none;}ul{zoom:1;}img{border:none;border:0;margin:0;padding:0;vertical-align:middle;}.cl{clear:both;}.fl,.mfl{float:left;}.fr,.mfr{float:right;}.m-auto{margin:0 auto;}
-body{background-color:#f8f8f8;font-size:14px;color:#313131;font-family:"Microsoft YaHei",arial,'Hiragino Sans GB',"Lucida Grande","Lucida Sans Unicode",Helvetica,Arial,Verdana,tahoma,simsun,sans-serif;}.yaheis a,.yahei{font-family:Microsoft YaHei,"Lucida Grande","Lucida Sans Unicode",Helvetica,Arial,Verdana,tahoma,simsun,sans-serif;}
+body{background-color:#f1f1f1;font-size:14px;color:#313131;font-family:"Microsoft YaHei",arial,'Hiragino Sans GB',"Lucida Grande","Lucida Sans Unicode",Helvetica,Arial,Verdana,tahoma,simsun,sans-serif;}.yaheis a,.yahei{font-family:Microsoft YaHei,"Lucida Grande","Lucida Sans Unicode",Helvetica,Arial,Verdana,tahoma,simsun,sans-serif;}
 a{color:#313131;text-decoration:none;}a:hover{color:#22ac38;}.clear{zoom:1;}.clear:after{content:"";display:block;clear:both;}
 .mt10{margin-top:10px;}.mb10{margin-bottom:10px;}.zcs a,.zc{color:#c39;}.reds a,.red{color:#22ac38;}.blues a,.blue{color:#0078b6;}.grey,.greys a{color:#999;}.chs a:hover{color:#22ac38;}
 img:hover{filter:alpha(opacity=90);opacity:0.9;}
@@ -14,7 +14,7 @@ img:hover{filter:alpha(opacity=90);opacity:0.9;}
 .nav a{font-size:16px;float:left;display:block;padding:0 20px;color:#fff;}
 .nav a:hover,.nav a.current{background-color:#179500;color:#fff;}
 .user-login{color:#fff;font-size:16px;}.user-login:hover{color:#fff;text-decoration:underline;}
-.topbar{color:#999;height:30px;line-height:30px;background-color:#f8f8f8;border-bottom:1px solid #ebebeb;}.topbar a{color:#888;}
+.topbar{color:#999;height:30px;line-height:30px;background-color:#f1f1f1;border-bottom:1px solid #ebebeb;}.topbar a{color:#888;}
 .headertop{background-color:#fff;height:84px;padding:8px 0;}
 .headertop .left{width:300px;float:left;}
 .headertop .center{float:right;position:relative;width:400px;margin-top:24px;}
@@ -29,7 +29,7 @@ img:hover{filter:alpha(opacity=90);opacity:0.9;}
 .notice{font-family:SimSun;color:#e53333;line-height:1.5;padding:6px 10px;background:#feffe6;border:1px solid #e6d8b9;font-size:12px;}
 
 .list{margin:0 20px 0 20px;padding-top:28px;padding-bottom:30px;border-bottom:1px solid #ebebeb;}.list:hover{}.list:hover .tit a{color:#22ac38;}
-.list .tit{display:block;font-weight:700;font-size:22px;line-height:1.5;color:#333;padding-bottom:6px;}
+.list .tit{display:block;font-weight:400;font-size:22px;line-height:1.5;color:#333;padding-bottom:6px;}
 .list p{word-break:break-all;color:#777;font-size:16px;line-height:26px;}.list p a{color:#f60;}
 .info{margin-top:9px;color:#999;font-size:14px;}.info a{color:#22ac38;margin-right:8px;}.info .fr{color:#444;}.info .fl i{color:#f60;margin-right:8px;}
 .list .limg{width:169px;height:119px;float:left;margin-right:20px;}.list .limg img{width:169px;height:119px;vertical-align:top;}
@@ -67,14 +67,16 @@ img:hover{filter:alpha(opacity=90);opacity:0.9;}
 .uli3 li a{display:block;font-size:16px;line-height:1.7em;}
 
 /* 商品列表 */
-.goodsul{margin-right:-15px;font-family:"Microsoft Yahei";}.goodsul a:hover .title{text-decoration:underline;}
-.goodsul li{background-color:#fff;float:left;overflow:hidden;margin-right:15px;margin-bottom:15px;border:1px solid #dcdcdc;}.goodsul li a:hover{text-decoration:none;}
-.goodsul li img{width:308px;height:308px;display:block;margin-bottom:10px;}
-.goodsul li .title{overflow:hidden;white-space:nowrap;width:290px;height:20px;margin:0 8px 2px 10px;font-weight:400;display:block;color:#333;font-size:14px;line-height:15px;}
-.goodsul li .desc{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:288px;margin:0 10px 5px 10px;font-size:12px;line-height:16px;padding:0;color:#999;height:20px;}
+.goodsul{font-family:"Microsoft Yahei";}.goodsul a:hover .title{text-decoration:underline;}
+.goodsul li{margin-right:2%;width:32%;background-color:#fff;float:left;overflow:hidden;margin-bottom:15px;}.goodsul li a:hover{text-decoration:none;}
+.goodsul li:nth-of-type(3n+0){margin-right:0;}
+.goodsul li .wrap{display:block;border:1px solid #dcdcdc;}
+.goodsul li img{display:block;margin-bottom:10px;width:100%;}
+.goodsul li .title{overflow:hidden;white-space:nowrap;height:20px;margin:0 8px 2px 10px;font-weight:400;display:block;color:#333;font-size:14px;line-height:15px;}
+.goodsul li .desc{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin:0 10px 5px 10px;font-size:12px;line-height:16px;padding:0;color:#999;height:20px;}
 .goodsul li .desc .price-point{display:inline-block;font-weight:400;color:#e61414;}
 .goodsul .item-prices{height:50px;}.goodsul .red{background-color:#e61414;}.goodsul .green{background-color:#26a96d;}
-.goodsul .item-info{width:233px;height:50px;overflow:hidden;padding-left:5px;}
+.goodsul .item-info{height:50px;overflow:hidden;padding-left:5px;}
 .goodsul .item-link{background-color:#fff280;float:right;width:50px;height:43px;padding:7px 7px 0 7px;line-height:18px;overflow:hidden;text-align:center;font-size:14px;color:#e61414;}
 .goodsul .price {margin-right:8px;font-size:0;color:#fff;float:left;font-family:Tahoma;}
 .goodsul .price i {margin-right:3px;display:inline-block;font-size:22px;font-family:"Microsoft Yahei","Hiragino Sans GB",Arial;}
@@ -241,10 +243,10 @@ img:hover{filter:alpha(opacity=90);opacity:0.9;}
 .stx p.fl span a{display:inline-block;height:22px;line-height:22px;padding:0px 7px;margin-left:5px;background-color:#F6F6F6;color:#9F9F9F;border-radius:3px; font-size:12px;}
 .stx p.fl span a:hover{background-color:#FF5B90;color:#fff;}
 
-.r_two_column{/* border-bottom:20px solid #f8f8f8; */background-color:#f8f8f8;margin-right:-10px;}.r_two_column .r_one{width:315px;margin-right:10px;float:left;}
+.r_two_column{/* border-bottom:20px solid #f1f1f1; */background-color:#f1f1f1;margin-right:-10px;}.r_two_column .r_one{width:315px;margin-right:10px;float:left;}
 .r_two_column .side{margin-bottom:0;}.r_two_column .r_one .i_des{height:140px;word-break:break-all;color:#777;font-size:16px;line-height:26px;}
 
-.tit-h60{height:60px;line-height:60px;font-size:20px;color:#333;background-color:#f8f8f8;}
+.tit-h60{height:60px;line-height:60px;font-size:20px;color:#333;background-color:#f1f1f1;}
 
 /* 魅族bbs列表 */
 .mz-list{margin-top:20px;background-color:#fff;padding-bottom:20px;}.mz-list:first-child{margin-top:0;}
@@ -268,7 +270,7 @@ img:hover{filter:alpha(opacity=90);opacity:0.9;}
 /* 图片列表-自适应 */
 .imglist{margin-top:10px;margin-right:-8px;}.imglist li{margin-right:8px;margin-bottom:8px;position:relative;float:left;overflow:hidden;}
 .imglist span{background:#000;filter:alpha(opacity=60);opacity:0.6;bottom:0;color:#fff;font-size:14px;height:28px;line-height:28px;text-align:center;width:100%;position:absolute;overflow:hidden;white-space:nowrap;}
-.imglist p{height:28px;line-height:28px;overflow:hidden;white-space:nowrap;width:100%;}
+.imglist p{height:28px;line-height:28px;overflow:hidden;white-space:nowrap;}
 .w640 li{width:154px;}.w640 img{display:block;height:118px;width:154px;}
 .w300 li{width:146px;}.w300 img{display:block;height:118px;width:146px;}
 
@@ -278,6 +280,9 @@ img:hover{filter:alpha(opacity=90);opacity:0.9;}
 .m-sch{width:105px;margin-right:5px;}.m-sch .sch-txt{width:100px;}
 .fl_640,#header,.fr_300{width:100%;}
 #tad,#itad,#footer,#SOHUCS,.nav,.tm,.box .hdp,.topbar,.headertop{display:none;}
+.goodsul li{margin-right:2%;width:49%;}
+.goodsul li:nth-of-type(3n+0){margin-right:2%;}
+.goodsul li:nth-of-type(2n+0){margin-right:0;}
 }
 
 @media screen and (max-width:960px){
@@ -296,6 +301,8 @@ body{font-size:14px;font-family:'Microsoft YaHei',Hei,arial,sans-serif;overflow-
 .list .limg{height:52px;width:84px;float:left;margin-right:20px;}.list .limg img{height:52px;width:84px;border:none;}
 .suli .limg{width:60px;height:40px;float:left;margin-right:10px;}.suli .limg img{width:60px;height:40px;border:none;}
 .imglist li,.hotPic li{margin-left:1%;margin-right:1%;width:48%;margin-bottom:6px;}.imglist img,.hotPic img{height:32vw;width:100%;}.imglist,.hotPic{margin-right:0;}
+
+.goodsul li{margin:0;width:100%;}
 
 .fr_300{margin-top:20px;}
 .mz-list .mz-list-img-box{height:auto;}

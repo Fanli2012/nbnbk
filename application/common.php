@@ -203,11 +203,11 @@ function get_prenext(array $param)
 //根据总数与每页条数，获取总页数
 function get_totalpage(array $param)
 {
-    if (!empty($param['pagesize'] || $param['pagesize'] == 0)) {
+	$pagesize = CMS_PAGESIZE;
+    if (isset($param['pagesize']) && $param['pagesize'] > 0) {
         $pagesize = $param["pagesize"];
-    } else {
-        $pagesize = CMS_PAGESIZE;
     }
+	
     $counts = $param["counts"];
 
     //取总数据量除以每页数的余数
@@ -250,7 +250,7 @@ function get_current_url($flag = false)
 function http_host($flag = false)
 {
     $res = '';
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+    $protocol = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 
     $res = "$protocol$_SERVER[HTTP_HOST]";
     if ($flag) {

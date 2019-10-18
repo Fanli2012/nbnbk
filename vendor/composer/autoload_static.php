@@ -17,6 +17,7 @@ class ComposerStaticInitb591e55884d203c803bc4d76727cbf45
     public static $prefixLengthsPsr4 = array (
         't' => 
         array (
+            'think\\worker\\' => 13,
             'think\\testing\\' => 14,
             'think\\mongo\\' => 12,
             'think\\helper\\' => 13,
@@ -34,6 +35,7 @@ class ComposerStaticInitb591e55884d203c803bc4d76727cbf45
         ),
         'W' => 
         array (
+            'Workerman\\' => 10,
             'Webmozart\\Assert\\' => 17,
         ),
         'S' => 
@@ -55,6 +57,10 @@ class ComposerStaticInitb591e55884d203c803bc4d76727cbf45
     );
 
     public static $prefixDirsPsr4 = array (
+        'think\\worker\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/topthink/think-worker/src',
+        ),
         'think\\testing\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-testing/src',
@@ -89,6 +95,10 @@ class ComposerStaticInitb591e55884d203c803bc4d76727cbf45
         'app\\' => 
         array (
             0 => __DIR__ . '/../..' . '/application',
+        ),
+        'Workerman\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/workerman',
         ),
         'Webmozart\\Assert\\' => 
         array (

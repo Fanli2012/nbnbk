@@ -18,10 +18,11 @@
     "require": {
         "php": ">=5.4.0",
         "topthink/framework": "5.0.24",
-		"topthink/think-testing": "^1.0",
+		"topthink/think-testing": "1.0.*",
 		"topthink/think-captcha": "1.*",
 		"topthink/think-image": "1.*",
 		"topthink/think-mongo": "1.*",
+		"topthink/think-worker": "1.*",
 		"predis/predis": "^1.1"
     },
     "autoload": {

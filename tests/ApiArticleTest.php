@@ -9,33 +9,34 @@
 // | Author: yunwuxin <448901948@qq.com>
 // +----------------------------------------------------------------------
 namespace tests;
+
 use app\api\controller\Article;
 
 class ApiArticleTest extends ApiBase
 {
     //文章-列表
-	public function testIndex()
+    public function testIndex()
     {
         $get_data = array(
-            'limit'  => 10
-		);
-        $url = sysconfig('CMS_API_URL').'/article/index';
-		$response = curl_request($url,$get_data,'GET');
-        
-		$this->assertTrue(!!$response); //断言结果是否为true,如果不为true则报错
+            'limit' => 10
+        );
+        $url = sysconfig('CMS_API_URL') . '/article/index';
+        $response = curl_request($url, $get_data, 'GET');
+
+        $this->assertTrue(!!$response); //断言结果是否为true,如果不为true则报错
         $this->assertEquals('0', $response['code']); //断言结果是否等于0,如果不等于则报错
     }
-	
+
     //文章-详情
-	public function testDetail()
+    public function testDetail()
     {
         $get_data = array(
-            'id'  => 1
-		);
-        $url = sysconfig('CMS_API_URL').'/article/detail';
-		$response = curl_request($url,$get_data,'GET');
-        
-		$this->assertTrue(!!$response); //断言结果是否为true,如果不为true则报错
+            'id' => 1
+        );
+        $url = sysconfig('CMS_API_URL') . '/article/detail';
+        $response = curl_request($url, $get_data, 'GET');
+
+        $this->assertTrue(!!$response); //断言结果是否为true,如果不为true则报错
         $this->assertEquals('0', $response['code']); //断言结果是否等于0,如果不等于则报错
     }
 }

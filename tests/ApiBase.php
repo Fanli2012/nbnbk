@@ -13,8 +13,8 @@ namespace tests;
 // API接口测试基类
 class ApiBase extends TestCase
 {
-	function __construct()
-	{
-		parent::__construct();
-	}
+    function __construct()
+    {
+        parent::__construct();
+    }
 }

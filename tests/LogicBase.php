@@ -13,8 +13,8 @@ namespace tests;
 // 逻辑层类方法测试基类
 class LogicBase extends TestCase
 {
-	function __construct()
-	{
-		parent::__construct();
-	}
+    function __construct()
+    {
+        parent::__construct();
+    }
 }

@@ -20,10 +20,11 @@
 <div class="floor account">
     <div class="icon"><i class="fa fa-diamond"></i></div>
     <div class="tit">累积佣金</div>
-    <div class="money"><small>￥</small><?php echo $login_info['commission']; ?></div>
+    <div class="money"><small>￥</small><?php if($user_referral_commission['commission_available']>0){ echo $user_referral_commission['commission_available']; }else{ echo '0'; } ?></div>
+	<a style="display:block;font-size:18px;padding:10px;border-radius:2px;margin:10px;background-color:#1aad19;text-align:center;color:white;border:1px solid #179e16;" class="bottoma" href="{:url('user_referral_commission_turn_user_money')}">转换为帐户余额</a>
 </div>
 <div class="floor">
-<div class="banner_tit mt10">我的推荐</div>
+<div class="banner_tit">我的推荐</div>
 <?php if($list){ ?>
     <ul class="goods_list_s cl">
         <?php foreach($list as $k=>$v){ ?>

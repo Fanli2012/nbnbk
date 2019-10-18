@@ -12,8 +12,8 @@ namespace tests;
 
 class IndexBase extends TestCase
 {
-	function __construct()
-	{
-		parent::__construct();
-	}
+    function __construct()
+    {
+        parent::__construct();
+    }
 }

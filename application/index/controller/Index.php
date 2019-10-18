@@ -388,6 +388,12 @@ class Index extends Base
         return $this->fetch();
     }
 
+    //图文列表
+    public function piclist3()
+    {
+        return $this->fetch();
+    }
+
     public function hello_world_test()
     {
         return 'Hello world!';

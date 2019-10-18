@@ -76,6 +76,15 @@ class User extends Base
 		$res = Util::curl_request($url,$get_data,'GET');
 		$this->login_info = array_merge($this->login_info, $res['data']);
         
+		//获取用户推介资金信息
+        $get_data = array(
+            'access_token' => $this->login_info['token']['token']
+		);
+        $url = sysconfig('CMS_API_URL').'/user_referral_commission/detail';
+		$res = Util::curl_request($url,$get_data,'GET');
+		$user_referral_commission = $res['data'];
+		$assign_data['user_referral_commission'] = $user_referral_commission;
+		
         //获取直属下级会员列表
         $pagesize = 10;
         $offset = 0;
@@ -117,6 +126,13 @@ class User extends Base
     
 	//推介赚钱
     public function referral()
+	{
+		//$this->assign($assign_data);
+        return $this->fetch();
+	}
+	
+	//转换为帐户余额
+    public function user_referral_commission_turn_user_money()
 	{
 		//$this->assign($assign_data);
         return $this->fetch();

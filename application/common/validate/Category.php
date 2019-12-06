@@ -8,10 +8,10 @@ class Category extends Validate
 {
     // 验证规则
     protected $rule = [
-        ['id', 'require|number', 'ID必填|ID必须是数字'],
+        ['id', 'require|number', 'ID不能为空|ID必须是数字'],
         ['parent_id', 'number', '父级id必须是数字'],
         ['add_time', 'number', '添加时间必须是数字'],
-        ['name', 'require|max:30', '类目名称必填|类目名称不能超过30个字符'],
+        ['name', 'require|max:30', '类目名称不能为空|类目名称不能超过30个字符'],
         ['seotitle', 'max:150', 'seo标题不能超过150个字符'],
         ['keywords', 'max:60', '关键词不能超过60个字符'],
         ['description', 'max:250', '描述不能超过250个字符'],

@@ -8,10 +8,10 @@ class Kuaidi extends Validate
 {
     // 验证规则
     protected $rule = [
-        ['id', 'require|number|gt:0', 'ID必填|ID必须是数字|ID格式不正确'],
-        ['name', 'require|max:30', '快递公司名称必填|快递公司名称不能超过30个字符'],
-        ['code', 'require|max:20', '公司编码必填|公司编码不能超过20个字符'],
-        ['money', 'require|regex:/^\d{0,10}(\.\d{0,2})?$/', '快递费必填|快递费只能带2位小数的数字'],
+        ['id', 'require|number|gt:0', 'ID不能为空|ID必须是数字|ID格式不正确'],
+        ['name', 'require|max:30', '快递公司名称不能为空|快递公司名称不能超过30个字符'],
+        ['code', 'require|max:20', '公司编码不能为空|公司编码不能超过20个字符'],
+        ['money', 'require|regex:/^\d{0,10}(\.\d{0,2})?$/', '快递费不能为空|快递费只能带2位小数的数字'],
         ['country', 'max:20', '国家编码不能超过20个字符'],
         ['desc', 'max:150', '说明不能超过150个字符'],
         ['tel', 'max:60', '电话不能超过60个字符'],

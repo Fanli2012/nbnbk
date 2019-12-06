@@ -55,8 +55,12 @@ class Article extends Base
         $where['delete_time'] = 0;
         $where['status'] = 0;
         $where['add_time'] = ['<', time()];
-        $posts = $this->getLogic()->getPaginate($where, 'id desc', ['content'], 11);
-
+		$posts = cache("index_article_index_posts_{$key}_page".input('page',1));
+        if (!$posts) {
+            $posts = $this->getLogic()->getPaginate($where, 'id desc', ['content'], 11);
+            cache("index_article_index_posts_{$key}_page".input('page',1), $posts, 7200);
+        }
+		
         $page = $posts->render();
         $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
         $page = preg_replace('/&amp;key=[a-z0-9]+/', '', $page);
@@ -123,7 +127,7 @@ class Article extends Base
 
         }
         $this->assign('post', $post);
-
+		//var_dump($post);exit;
         //最新文章
         $relate_zuixin_list = cache("index_article_detail_relate_zuixin_list_$id");
         if (!$relate_zuixin_list) {

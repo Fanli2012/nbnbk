@@ -107,8 +107,12 @@ class Goods extends Base
 
         $where['delete_time'] = 0;
         $where['status'] = 0;
-        $posts = $this->getLogic()->getPaginate($where, 'id desc', ['content']);
-
+		$posts = cache("index_goods_index_posts_{$key}_page".input('page',1));
+        if (!$posts) {
+            $posts = $this->getLogic()->getPaginate($where, 'id desc', ['content'], 12);
+            cache("index_goods_index_posts_{$key}_page".input('page',1), $posts, 7200);
+        }
+		
         $page = $posts->render();
         $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
         $page = preg_replace('/&amp;key=[a-z0-9]+/', '', $page);

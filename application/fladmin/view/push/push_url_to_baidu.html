@@ -1,0 +1,18 @@
+{extend name="public/base" /}
+{block name="title"}推送链接给百度{/block}
+
+{block name="content"}
+<h5 class="sub-header">推送链接给百度</h5>
+
+<form id="addarc" method="post" action="{:url('push_url_to_baidu')}" role="form" enctype="multipart/form-data" class="table-responsive">{:token()}
+<table class="table table-striped table-bordered">
+<tbody>
+    <tr>
+        <td align="right" style="vertical-align:middle;">链接：</td>
+        <td><textarea placeholder="一行一个链接" istextarea="true" name="urls" rows="5" id="urls" style="width:80%;height:70px;vertical-align:middle;"></textarea></td>
+    </tr>
+    <tr>
+        <td colspan="2"><button type="submit" class="btn btn-success" value="Submit">提交(Submit)</button>&nbsp;&nbsp;<button type="reset" class="btn btn-default" value="Reset">重置(Reset)</button><input type="hidden"></input></td>
+    </tr>
+</tbody></table></form><!-- 表单结束 -->
+{/block}

@@ -21,19 +21,6 @@
         <td><input name="company_name" type="text" id="company_name" value="<?php echo $post["company_name"]; ?>" class="required" style="width:60%" placeholder="在此输入名称"></td>
     </tr>
     <tr>
-        <td align="right">類目：</td>
-        <td>
-            <select id="category_id" name="category_id">
-                <?php if($category_list){foreach($category_list as $k=>$v){ ?>
-                <option <?php if($v["id"]==$post['category_id']){echo 'selected = "selected"';} ?> value="<?php echo $v["id"]; ?>"><?php echo $v["name"]; ?></option>
-                <?php if($v['sub']){foreach($v['sub'] as $key=>$value){ ?>
-                <option <?php if($value["id"]==$post['category_id']){echo 'selected = "selected"';} ?> value="<?php echo $value["id"]; ?>">— <?php echo $value["name"]; ?></option>
-                <?php }} ?>
-                <?php }} ?>
-            </select>
-        </td>
-    </tr>
-    <tr>
         <td align="right">简介：</td>
         <td><textarea style="width:60%" class="required" name="introduction" rows="3"><?php echo $post["introduction"]; ?></textarea></td>
     </tr>

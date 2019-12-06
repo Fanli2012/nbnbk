@@ -1,9 +1,9 @@
 <!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
-<title><?php echo $title;if($page!=0){echo '-第'.($page+1).'页';} ?></title><meta name="keywords" content="<?php echo $post["keywords"]; ?>" /><meta name="description" content="<?php echo $post["description"]; ?>" /><link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/style.css" media="all"><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/ad.js"></script></head><body><script>site();</script>
+<title><?php echo $title; if($list['current_page']!=1){echo '-第'.$list['current_page'].'页';} ?></title><meta name="keywords" content="<?php echo $post["keywords"]; ?>" /><meta name="description" content="<?php echo $post["description"]; ?>" /><link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/style.css" media="all"><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/ad.js"></script></head><body><script>site();</script>
 {include file="common/header"/}<div id="tad"><script>tjs();</script></div>
 
 <div class="box mt10"><div class="fl_640">
-<div class="bread" style="padding:12px 20px;"><a href="/"><?php echo sysconfig('CMS_INDEXNAME'); ?></a> > <?php if(isset($bread)){echo $bread;} ?></div>
+<div class="bread" style="padding:12px 20px;"><a href="<?php echo sysconfig('CMS_BASEHOST'); ?>/"><?php echo sysconfig('CMS_INDEXNAME'); ?></a> > <?php if(isset($bread)){echo $bread;} ?></div>
 <div class="zinfo" style="padding-left:20px;padding-right:20px;"><h1><?php echo $post['name']; ?></h1><?php if(!empty($post['content'])){echo '<div class="zdes">'.$post['content'].'</div>';} ?></div><div id="lad1"><script>ljs1();</script></div>
 
 <?php if($list['data']){foreach($list['data'] as $row){ ?><div class="list"><?php if(!empty($row['litpic'])){ ?><a class="limg" href="<?php echo model('Article')->getArticleDetailUrl(array('id'=>$row['id'])); ?>"><img alt="<?php echo $row['title']; ?>" src="<?php echo $row['litpic']; ?>"></a><?php } ?>

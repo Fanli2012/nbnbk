@@ -100,7 +100,7 @@ class Login extends Controller
 
         $res = model('VerifyCode')->getVerifyCodeBySmsbao($mobile, input('type', 1));
         if ($res['code'] == ReturnData::SUCCESS) {
-            exit(json_encode(ReturnData::create(ReturnData::SUCCESS, array('code' => $res['data']['code']))));
+            exit(json_encode(ReturnData::create(ReturnData::SUCCESS)));
         }
 
         exit(json_encode(ReturnData::create(ReturnData::FAIL, null, $res['msg'])));

@@ -9,14 +9,14 @@ class User extends Validate
 {
     // 验证规则
     protected $rule = array(
-        ['id', 'require|number|max:11', 'ID必填|ID必须是数字|ID格式不正确'],
+        ['id', 'require|number|max:11', 'ID不能为空|ID必须是数字|ID格式不正确'],
         ['parent_id', 'number|max:11', '推荐人ID必须是数字|推荐人ID格式不正确'],
         ['mobile', 'isMobile', '手机号格式不正确'],
         ['email', 'email', '邮箱格式不正确'],
         ['nickname', 'max:30', '昵称不能超过30个字符'],
-        ['user_name', 'require|max:30|isUserName', '用户名必填|用户名不能超过30个字符'],
-        ['password', 'require|length:6,18|isPWD', '密码必填|密码6-18位'],
-        ['pay_password', 'require|length:6,18|isPWD', '支付密码必填|支付密码6-18位'],
+        ['user_name', 'require|max:30|isUserName', '用户名不能为空|用户名不能超过30个字符'],
+        ['password', 'require|length:6,18|isPWD', '密码不能为空|密码6-18位'],
+        ['pay_password', 'require|length:6,18|isPWD', '支付密码不能为空|支付密码6-18位'],
         ['head_img', 'max:250', '头像格式不正确'],
         ['sex', 'in:0,1,2', '性别：1男2女'],
         ['birthday', 'isDate', '生日格式不正确'],
@@ -35,10 +35,10 @@ class User extends Validate
         ['signin_time', 'number|max:11', '签到时间格式不正确|签到时间格式不正确'],
         ['group_id', 'number|max:11', '分组ID必须是数字|分组ID格式不正确'],
         ['status', 'in:0,1,2,3', '用户状态：0正常，1待审，2锁定'],
-        ['add_time', 'require|number|max:11', '添加时间必填|添加时间格式不正确|添加时间格式不正确'],
-        ['update_time', 'require|number|max:11', '更新时间必填|更新时间格式不正确|更新时间格式不正确'],
-        ['login_time', 'number|max:11', '登录时间必填|登录时间格式不正确|登录时间格式不正确'],
-        ['delete_time', 'number|max:11', '删除时间必填|删除时间格式不正确|删除时间格式不正确'],
+        ['add_time', 'require|number|max:11', '添加时间不能为空|添加时间格式不正确|添加时间格式不正确'],
+        ['update_time', 'require|number|max:11', '更新时间不能为空|更新时间格式不正确|更新时间格式不正确'],
+        ['login_time', 'number|max:11', '登录时间不能为空|登录时间格式不正确|登录时间格式不正确'],
+        ['delete_time', 'number|max:11', '删除时间不能为空|删除时间格式不正确|删除时间格式不正确'],
     );
 
     protected $scene = array(

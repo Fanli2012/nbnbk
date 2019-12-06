@@ -42,6 +42,8 @@ class Goods extends Base
     {
         if ($this->login_info['status'] == 0) {
             $this->error('请先完善资料', url('shop/Shop/setting'));
+        }elseif ($this->login_info['status'] == 3) {
+            $this->error('等待审核通过', url('shop/Index/index'));
         }
 
         $where['shop_id'] = $this->login_info['id'];
@@ -135,6 +137,8 @@ class Goods extends Base
     {
         if ($this->login_info['status'] == 0) {
             $this->error('请先完善资料', url('shop/Shop/setting'));
+        }elseif ($this->login_info['status'] == 3) {
+            $this->error('等待审核通过', url('shop/Index/index'));
         }
 
         if (!empty($_GET["id"])) {

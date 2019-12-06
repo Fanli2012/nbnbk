@@ -2,9 +2,9 @@
 
 namespace app\fladmin\controller;
 
-use think\Controller;
+use app\common\controller\CommonController;
 
-class Common extends Controller
+class Common extends CommonController
 {
     protected $admin_info;
 
@@ -27,6 +27,6 @@ class Common extends Controller
     // 设置空操作
     public function _empty()
     {
-        return $this->error('您访问的页面不存在或已被删除');
+        $this->error('您访问的页面不存在或已被删除');
     }
 }

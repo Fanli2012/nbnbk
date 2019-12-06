@@ -9,14 +9,14 @@ class EmailVerifyCode extends Validate
 {
     // 验证规则
     protected $rule = [
-        ['id', 'require|number|gt:0', 'ID必填|ID必须是数字|ID格式不正确'],
-        ['code', 'require|max:10|number', '验证码必填|验证码不能超过10个字符|验证码格式不正确'],
-        ['type', 'require|number|in:0,1,2,3,4,5,6,7,8,9', '验证码类型必填|验证码类型格式不正确|0通用，注册，1:手机绑定业务验证码，2:密码修改业务验证码'],
-        ['email', 'require|email', '邮箱必填|邮箱格式不正确'],
+        ['id', 'require|number|gt:0', 'ID不能为空|ID必须是数字|ID格式不正确'],
+        ['code', 'require|max:10|number', '验证码不能为空|验证码不能超过10个字符|验证码格式不正确'],
+        ['type', 'require|number|in:0,1,2,3,4,5,6,7,8,9', '验证码类型不能为空|验证码类型格式不正确|0通用，注册，1:手机绑定业务验证码，2:密码修改业务验证码'],
+        ['email', 'require|email', '邮箱不能为空|邮箱格式不正确'],
         ['status', 'number|in:0,1', '验证码状态格式不正确|0:未使用 1:已使用'],
-        ['add_time', 'require|number|egt:0', '添加时间必填|添加时间格式不正确|添加时间格式不正确'],
-        ['expire_time', 'require|number|egt:0', '过期时间必填|过期时间格式不正确|过期时间格式不正确'],
-        ['captcha', 'require|checkCaptcha', '验证码必填'],
+        ['add_time', 'require|number|egt:0', '添加时间不能为空|添加时间格式不正确|添加时间格式不正确'],
+        ['expire_time', 'require|number|egt:0', '过期时间不能为空|过期时间格式不正确|过期时间格式不正确'],
+        ['captcha', 'require|checkCaptcha', '验证码不能为空'],
     ];
 
     protected $scene = [

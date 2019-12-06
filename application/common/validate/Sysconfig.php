@@ -8,10 +8,10 @@ class Sysconfig extends Validate
 {
     // 验证规则
     protected $rule = [
-        ['id', 'require|number|gt:0', 'ID必填|ID必须是数字|ID格式不正确'],
-        ['varname', 'require|max:30|checkName', '变量名必填|变量名不能超过30个字符'],
-        ['info', 'require|max:100', '变量值必填|变量值不能超过100个字符'],
-        ['value', 'require', '变量说明必填'],
+        ['id', 'require|number|gt:0', 'ID不能为空|ID必须是数字|ID格式不正确'],
+        ['varname', 'require|max:30|checkName', '变量名不能为空|变量名不能超过30个字符'],
+        ['info', 'require|max:100', '变量值不能为空|变量值不能超过100个字符'],
+        ['value', 'require', '变量说明不能为空'],
     ];
 
     protected $scene = [

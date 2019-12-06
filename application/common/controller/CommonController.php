@@ -1,10 +1,13 @@
 <?php
+/**
+ * 公共控制器统一继承
+ */
 
-namespace app\task\controller;
+namespace app\common\controller;
 
-use app\common\controller\CommonController;
+use think\Controller;
 
-class Common extends CommonController
+class CommonController extends Controller
 {
     /**
      * 初始化

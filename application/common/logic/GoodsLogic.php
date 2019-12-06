@@ -93,12 +93,29 @@ class GoodsLogic extends BaseLogic
             return ReturnData::create(ReturnData::PARAMS_ERROR);
         }
 
+		//标题最多150个字符
+		if (isset($data['title']) && !empty($data['title'])) {
+			$data['title'] = mb_strcut($data['title'],0,150,'UTF-8');
+        }
+		//SEO标题最多150个字符
+		if (isset($data['seotitle']) && !empty($data['seotitle'])) {
+			$data['seotitle'] = mb_strcut($data['seotitle'],0,150,'UTF-8');
+        }
+		//关键词最多60个字符
+		if (isset($data['keywords']) && !empty($data['keywords'])) {
+			$data['keywords'] = mb_strcut($data['keywords'],0,60,'UTF-8');
+        }
+		//描述最多240个字符
+		if (isset($data['description']) && !empty($data['description'])) {
+			$data['description'] = mb_strcut($data['description'],0,240,'UTF-8');
+        }
         //添加时间、更新时间
+		$time = time();
         if (!(isset($data['add_time']) && !empty($data['add_time']))) {
-            $data['add_time'] = time();
+            $data['add_time'] = $time;
         }
         if (!(isset($data['update_time']) && !empty($data['update_time']))) {
-            $data['update_time'] = time();
+            $data['update_time'] = $time;
         }
 
         $check = $this->getValidate()->scene('add')->check($data);
@@ -129,6 +146,22 @@ class GoodsLogic extends BaseLogic
             return ReturnData::create(ReturnData::SUCCESS);
         }
 
+		//标题最多150个字符
+		if (isset($data['title']) && !empty($data['title'])) {
+			$data['title'] = mb_strcut($data['title'],0,150,'UTF-8');
+        }
+		//SEO标题最多150个字符
+		if (isset($data['seotitle']) && !empty($data['seotitle'])) {
+			$data['seotitle'] = mb_strcut($data['seotitle'],0,150,'UTF-8');
+        }
+		//关键词最多60个字符
+		if (isset($data['keywords']) && !empty($data['keywords'])) {
+			$data['keywords'] = mb_strcut($data['keywords'],0,60,'UTF-8');
+        }
+		//描述最多240个字符
+		if (isset($data['description']) && !empty($data['description'])) {
+			$data['description'] = mb_strcut($data['description'],0,240,'UTF-8');
+        }
         //更新时间
         if (!(isset($data['update_time']) && !empty($data['update_time']))) {
             $data['update_time'] = time();

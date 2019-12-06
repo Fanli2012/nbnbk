@@ -5,10 +5,10 @@ namespace app\index\controller;
 use think\Request;
 use think\Db;
 use think\Log;
-use think\Controller;
 use app\common\lib\Helper;
+use app\common\controller\CommonController;
 
-class Common extends Controller
+class Common extends CommonController
 {
     protected $login_info;
 
@@ -47,7 +47,7 @@ class Common extends Controller
         Log::info('【请求头】：' . json_encode(request()->header(), JSON_UNESCAPED_SLASHES));
     }
 
-    //设置空操作
+    // 设置空操作
     public function _empty()
     {
         Helper::http404();

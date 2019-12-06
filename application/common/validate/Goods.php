@@ -8,11 +8,11 @@ class Goods extends Validate
 {
     // 验证规则
     protected $rule = [
-        ['id', 'require|number|max:11', 'ID必填|ID必须是数字|ID格式不正确'],
-        ['type_id', 'require|number|max:11', '栏目ID必填|栏目ID必须是数字|栏目ID格式不正确'],
+        ['id', 'require|number|max:11', 'ID不能为空|ID必须是数字|ID格式不正确'],
+        ['type_id', 'require|number|max:11', '栏目ID不能为空|栏目ID必须是数字|栏目ID格式不正确'],
         ['tuijian', 'number|max:11', '推荐等级必须是数字|推荐等级格式不正确'],
         ['click', 'number|max:11', '点击量必须是数字|点击量格式不正确'],
-        ['title', 'require|max:150', '标题必填|标题不能超过150个字符'],
+        ['title', 'require|max:150', '标题不能为空|标题不能超过150个字符'],
         ['seotitle', 'max:150', 'seo标题不能超过150个字符'],
         ['keywords', 'max:60', '关键词不能超过60个字符'],
         ['description', 'max:250', '描述不能超过250个字符'],
@@ -20,8 +20,8 @@ class Goods extends Validate
         ['litpic', 'require|max:150', '请上传缩略图|缩略图不能超过150个字符'],
         ['goods_img', 'require|max:150', '请上传商品图片|商品的实际大小图片不能超过150个字符'],
         ['sn', 'require|max:60', '货号不能为空|货号不能超过60个字符'],
-        ['price', 'require|regex:/^\d{0,10}(\.\d{0,2})?$/|<=:market_price', '产品价格必填|产品价格只能带2位小数的数字|原价必须大于产品价格'],
-        ['market_price', 'require|regex:/^\d{0,10}(\.\d{0,2})?$/|>=:price', '原价必填|原价格式不正确，原价只能带2位小数的数字|原价必须大于产品价格'],
+        ['price', 'require|regex:/^\d{0,10}(\.\d{0,2})?$/|<=:market_price', '产品价格不能为空|产品价格只能带2位小数的数字|原价必须大于产品价格'],
+        ['market_price', 'require|regex:/^\d{0,10}(\.\d{0,2})?$/|>=:price', '原价不能为空|原价格式不正确，原价只能带2位小数的数字|原价必须大于产品价格'],
         ['cost_price', 'regex:/^\d{0,10}(\.\d{0,2})?$/', '成本价格格式不正确，成本价格只能带2位小数的数字'],
         ['shipping_fee', 'regex:/^\d{0,10}(\.\d{0,2})?$/', '运费格式不正确，运费只能带2位小数的数字'],
         ['goods_number', 'number|between:1,99999', '库存必须是数字|库存只能1-99999'],
@@ -38,8 +38,8 @@ class Goods extends Validate
         ['listorder', 'number|max:11', '排序必须是数字|排序格式不正确'],
         ['status', 'in:0,1,2,3', '商品状态 0正常 1已删除 2下架 3申请上架'],
         ['shop_id', 'number|max:11', '店铺ID必须是数字|店铺ID格式不正确'],
-        ['update_time', 'require|number|max:11', '更新时间必填|更新时间格式不正确|更新时间格式不正确'],
-        ['add_time', 'require|number|max:11', '添加时间必填|添加时间格式不正确|添加时间格式不正确'],
+        ['update_time', 'require|number|max:11', '更新时间不能为空|更新时间格式不正确|更新时间格式不正确'],
+        ['add_time', 'require|number|max:11', '添加时间不能为空|添加时间格式不正确|添加时间格式不正确'],
     ];
 
     protected $scene = [

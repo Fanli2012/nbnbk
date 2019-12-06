@@ -333,6 +333,6 @@ class Slide extends Base
      */
     public function getTargetTextAttr($value, $data)
     {
-        return self::$slide_status_desc[$data['target']];
+        return self::$slide_target[$data['target']];
     }
 }

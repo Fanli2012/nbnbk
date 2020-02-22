@@ -2,9 +2,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0,viewport-fit=cover">
 <title><?php if(!empty($post['seotitle'])){echo $post['seotitle'];}else{echo $post['title'];} echo '-'.sysconfig('CMS_WEBNAME'); ?></title>
 <meta name="keywords" content="<?php echo $post['keywords']; ?>" /><meta name="description" content="<?php echo $post['description']; ?>" />
-<link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/wap/weui.min.css"/>
-<link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/wap/style.css"/>
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/wap/ad.js"></script>
+<link rel="stylesheet" href="<?php echo http_host(); ?>/css/wap/weui.min.css"/>
+<link rel="stylesheet" href="<?php echo http_host(); ?>/css/wap/style.css"/>
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/wap/ad.js"></script>
 </head><body>
 <!-- Swiper -->
 <?php if($post['goods_img_list']){ ?>
@@ -18,8 +18,8 @@
     <div class="swiper-pagination swiper-pagination-white"></div>
 </div>
 <?php } ?>
-<link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/wap/swiper.min.css">
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/wap/swiper.min.js"></script>
+<link rel="stylesheet" href="<?php echo http_host(); ?>/css/wap/swiper.min.css">
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/wap/swiper.min.js"></script>
 <style>
 .swiper-container{width:100%;height:auto;}
 .swiper-slide{text-align:center;font-size:18px;background:#fff;}

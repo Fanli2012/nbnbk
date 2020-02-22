@@ -105,7 +105,7 @@ class Shop extends Base
                 $data['keywords'] = get_keywords($title);//标题分词
                 $data['keywords'] = $chinese->gb2312_to_big5($data['keywords']);
 
-                $content = replacelinks($v["内容"], array(sysconfig('CMS_BASEHOST')));
+                $content = replacelinks($v["内容"], array(http_host()));
                 $data['body'] = $chinese->gb2312_to_big5($content);
                 $data['click'] = rand(200, 500);
 

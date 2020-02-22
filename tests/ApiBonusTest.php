@@ -20,7 +20,7 @@ class ApiBonusTest extends ApiBase
         $get_data = array(
             'limit' => 10
         );
-        $url = sysconfig('CMS_API_URL') . '/bonus/index';
+        $url = get_api_url_address() . '/bonus/index';
         $response = curl_request($url, $get_data, 'GET');
 
         $this->assertTrue(!!$response); //断言结果是否为true,如果不为true则报错
@@ -33,7 +33,7 @@ class ApiBonusTest extends ApiBase
         $get_data = array(
             'id' => 1
         );
-        $url = sysconfig('CMS_API_URL') . '/bonus/detail';
+        $url = get_api_url_address() . '/bonus/detail';
         $response = curl_request($url, $get_data, 'GET');
 
         $this->assertTrue(!!$response); //断言结果是否为true,如果不为true则报错

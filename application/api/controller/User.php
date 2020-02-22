@@ -41,7 +41,7 @@ class User extends Base
         {
             foreach($res['list'] as $k=>$v)
             {
-                if(!empty($v['head_img'])){$res['list'][$k]['head_img'] = (substr($v['head_img'], 0, strlen('http')) === 'http') ? $v['head_img'] : sysconfig('CMS_SITE_CDN_ADDRESS').$v['head_img'];}
+                if(!empty($v['head_img'])){$res['list'][$k]['head_img'] = (substr($v['head_img'], 0, strlen('http')) === 'http') ? $v['head_img'] : get_site_cdn_address().$v['head_img'];}
             }
         }
         
@@ -57,7 +57,7 @@ class User extends Base
 		$res = $this->getLogic()->getUserInfo($where);
         if(!$res){Util::echo_json(ReturnData::create(ReturnData::RECORD_NOT_EXIST));}
         
-		if($res['head_img']){ $res['head_img'] = (substr($res['head_img'], 0, strlen('http')) === 'http') ? $res['head_img'] : sysconfig('CMS_SITE_CDN_ADDRESS').$res['head_img']; }
+		if($res['head_img']){ $res['head_img'] = (substr($res['head_img'], 0, strlen('http')) === 'http') ? $res['head_img'] : get_site_cdn_address().$res['head_img']; }
 		
 		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }
@@ -150,7 +150,7 @@ class User extends Base
 			//如果图片存在，直接返回
 			if(FileHandle::check_file_exists($data['image_path']))
 			{
-				$res = sysconfig('CMS_SITE_CDN_ADDRESS').$image_path;
+				$res = get_site_cdn_address().$image_path;
 				Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
 			}
         }
@@ -160,7 +160,7 @@ class User extends Base
         
         if($data['type']==0)
         {
-            $res = sysconfig('CMS_SITE_CDN_ADDRESS').$image_path;
+            $res = get_site_cdn_address().$image_path;
 			
             $headurl = model('User')->getValue(['id'=>$this->login_info['id']], 'head_img'); //获取用户头像图片地址
 			if($headurl && $is_add_avatar)
@@ -170,7 +170,7 @@ class User extends Base
 				if(strtolower(substr($headurl, 0, 4))!='http')
 				{
 					$headurl = $public_path.$headurl;
-					$remote_headurl = sysconfig('CMS_SITE_CDN_ADDRESS').$remote_headurl;
+					$remote_headurl = get_site_cdn_address().$remote_headurl;
 				}
 				
 				// php保存远程用户头像到本地

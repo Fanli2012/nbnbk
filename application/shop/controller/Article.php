@@ -41,6 +41,8 @@ class Article extends Base
     {
         if ($this->login_info['status'] == 0) {
             $this->error('请先完善资料', url('shop/Shop/setting'));
+        }elseif ($this->login_info['status'] == 3) {
+            $this->error('等待审核通过', url('shop/Index/index'));
         }
 
         $where['shop_id'] = $this->login_info['id'];
@@ -92,7 +94,7 @@ class Article extends Base
         }
 
         if (isset($_POST["dellink"]) && $_POST["dellink"] == 1 && !empty($content)) {
-            $content = logic('Article')->replacelinks($content, array(sysconfig('CMS_BASEHOST')));
+            $content = logic('Article')->replacelinks($content, array(http_host()));
         } //删除非站内链接
         $_POST['content'] = $content;
 
@@ -116,6 +118,8 @@ class Article extends Base
     {
         if ($this->login_info['status'] == 0) {
             $this->error('请先完善资料', url('shop/Shop/setting'));
+        }elseif ($this->login_info['status'] == 3) {
+            $this->error('等待审核通过', url('shop/Index/index'));
         }
 
         if (!checkIsNumber(input('id', null))) {
@@ -176,7 +180,7 @@ class Article extends Base
         }
 
         if (isset($_POST["dellink"]) && $_POST["dellink"] == 1 && !empty($content)) {
-            $content = logic('Article')->replacelinks($content, array(sysconfig('CMS_BASEHOST')));
+            $content = logic('Article')->replacelinks($content, array(http_host()));
         } //删除非站内链接
         $_POST['content'] = $content;
 

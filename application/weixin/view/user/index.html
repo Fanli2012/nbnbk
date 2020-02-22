@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html;charset=utf-8"/>
 <title>个人中心</title><meta name="keywords" content="关键词"><meta name="description" content="描述"><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
-<link href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/weixin/style.css" type="text/css" rel="stylesheet">
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script>
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/weixin/mobile.js"></script></head><body>
+<link href="<?php echo http_host(); ?>/css/weixin/style.css" type="text/css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/jquery.min.js"></script>
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/weixin/mobile.js"></script></head><body>
 <div class="myhearder" style="background:#ec5151;color:#fff;">
     <div class="person">
         <div class="personicon">
-            <a href="<?php echo url('user/setting'); ?>"><img src="<?php echo $login_info['head_img']; ?>" onerror="this.src='<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/no_user.jpg'"></a>
+            <a href="<?php echo url('user/setting'); ?>"><img src="<?php echo $login_info['head_img']; ?>" onerror="this.src='<?php echo http_host(); ?>/images/weixin/no_user.jpg'"></a>
         </div>
         <div class="lors">
             <a style="color:#fff;" href="<?php echo url('user/setting'); ?>"><?php if($login_info['user_name']){echo $login_info['user_name'];}else{echo $login_info['mobile'];} ?></a>
@@ -18,7 +18,7 @@
         <!--我的留言-->
         <!--<a class="massage" href="<?php echo url('user_message/index'); ?>"><i></i></a>-->
     </div>
-    <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/bjm.jpg" width="100%" height="100%" class="user_bg">
+    <img src="<?php echo http_host(); ?>/images/weixin/bjm.jpg" width="100%" height="100%" class="user_bg">
 </div>
 
 <div class="floor my g4">
@@ -28,7 +28,7 @@
             <div class="content30">
                 <div class="order">
                     <div class="fl">
-                        <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/mlist.png">
+                        <img src="<?php echo http_host(); ?>/images/weixin/mlist.png">
                         <span>我的订单</span>
                     </div>
                     <div class="fr">
@@ -45,28 +45,28 @@
                 <li>
                     <a href="<?php echo url('order/index').'?status=1'; ?>">
                         <!-- <span>0</span> -->
-                        <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/q1.png" alt="">
+                        <img src="<?php echo http_host(); ?>/images/weixin/q1.png" alt="">
                         <p>待付款</p>
                     </a>
                 </li>
                 <li>
                     <a href="<?php echo url('order/index').'?status=3'; ?>">
                         <!-- <span>0</span> -->
-                        <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/q2.png" alt="">
+                        <img src="<?php echo http_host(); ?>/images/weixin/q2.png" alt="">
                         <p>待收货</p>
                     </a>
                 </li>
                 <li>
                     <a href="<?php echo url('order/index').'?status=4'; ?>">
                         <!-- <span>0</span> -->
-                        <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/q3.png" alt="">
+                        <img src="<?php echo http_host(); ?>/images/weixin/q3.png" alt="">
                         <p>待评价</p>
                     </a>
                 </li>
                 <li>
                     <a href="<?php echo url('order/index').'?status=5'; ?>">
                         <!-- <span>0</span> -->
-                        <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/q4.png" alt="">
+                        <img src="<?php echo http_host(); ?>/images/weixin/q4.png" alt="">
                         <p>退款/退货</p>
                     </a>
                 </li>
@@ -79,7 +79,7 @@
             <div class="content30">
                 <div class="order">
                     <div class="fl">
-                        <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/mwallet.png">
+                        <img src="<?php echo http_host(); ?>/images/weixin/mwallet.png">
                         <span>我的钱包</span>
                     </div>
                     <div class="fr">
@@ -121,7 +121,7 @@
                     <a href="<?php echo url('user/myteam'); ?>">
                         <div class="order">
                             <div class="fl">
-                                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/w1.png">
+                                <img src="<?php echo http_host(); ?>/images/weixin/w1.png">
                                 <span>我的团队</span>
                             </div>
                             <div class="fr">
@@ -136,7 +136,7 @@
                     <a href="<?php echo url('user_goods_collect/index'); ?>">
                         <div class="order">
                             <div class="fl">
-                                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/w9.png">
+                                <img src="<?php echo http_host(); ?>/images/weixin/w9.png">
                                 <span>我的收藏</span>
                             </div>
                             <div class="fr">
@@ -151,7 +151,7 @@
                     <a href="<?php echo url('user_goods_history/index'); ?>">
                         <div class="order">
                             <div class="fl">
-                                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/w3.png">
+                                <img src="<?php echo http_host(); ?>/images/weixin/w3.png">
                                 <span>我的足迹</span>
                             </div>
                             <div class="fr">
@@ -166,7 +166,7 @@
                     <a href="<?php echo url('user_address/index'); ?>">
                         <div class="order">
                             <div class="fl">
-                                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/w10.png">
+                                <img src="<?php echo http_host(); ?>/images/weixin/w10.png">
                                 <span>地址管理</span>
                             </div>
                             <div class="fr">
@@ -181,7 +181,7 @@
                     <a href="<?php echo url('user/referral'); ?>">
                         <div class="order">
                             <div class="fl">
-                                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/w11.png"/>
+                                <img src="<?php echo http_host(); ?>/images/weixin/w11.png"/>
                                 <span>推介赚钱</span>
                             </div>
                             <div class="fr">
@@ -196,7 +196,7 @@
                     <a href="<?php echo url('page/detail').'?id=help'; ?>">
                         <div class="order">
                             <div class="fl">
-                                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/w6.png"/>
+                                <img src="<?php echo http_host(); ?>/images/weixin/w6.png"/>
                                 <span>帮助中心</span>
                             </div>
                             <div class="fr">
@@ -211,7 +211,7 @@
                     <a href="<?php echo url('feedback/add'); ?>">
                         <div class="order">
                             <div class="fl">
-                                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/w7.png"/>
+                                <img src="<?php echo http_host(); ?>/images/weixin/w7.png"/>
                                 <span>意见反馈</span>
                             </div>
                             <div class="fr">
@@ -227,7 +227,7 @@
                     <a href="/index.php/Mobile/User/comment/status/1.html">
                         <div class="order">
                             <div class="fl">
-                                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/w2.png">
+                                <img src="<?php echo http_host(); ?>/images/weixin/w2.png">
                                 <span>我的评价</span>
                             </div>
                             <div class="fr">
@@ -242,7 +242,7 @@
                     <a href="/index.php/Mobile/Goods/integralMall.html">
                         <div class="order">
                             <div class="fl">
-                                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/w5.png">
+                                <img src="<?php echo http_host(); ?>/images/weixin/w5.png">
                                 <span>积分商城</span>
                             </div>
                             <div class="fr">
@@ -257,7 +257,7 @@
                     <a href="<?php echo url('bonus/index').'?parent_id'.$login_info['id']; ?>">
                         <div class="order">
                             <div class="fl">
-                                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/w7.png">
+                                <img src="<?php echo http_host(); ?>/images/weixin/w7.png">
                                 <span>领券中心</span>
                             </div>
                             <div class="fr">

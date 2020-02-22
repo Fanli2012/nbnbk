@@ -84,7 +84,7 @@ class Shop extends Validate
      */
     protected function checkPhone($value, $rule, $data, $field)
     {
-        if (Helper::isValidMobile($value)) {
+        if (Validator::isMobile($value)) {
             return true;
         }
 
@@ -97,7 +97,7 @@ class Shop extends Validate
      */
     protected function checkEmail($value, $rule, $data, $field)
     {
-        if (Helper::isValidEmail($value)) {
+        if (Validator::isEmail($value)) {
             return true;
         }
 

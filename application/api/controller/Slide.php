@@ -38,7 +38,7 @@ class Slide extends Common
         {
             foreach($res['list'] as $k=>$v)
             {
-                if($v['pic']){$res['list'][$k]['pic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['pic'];}
+                if($v['pic']){$res['list'][$k]['pic'] = get_site_cdn_address().$v['pic'];}
             }
         }
         
@@ -55,7 +55,7 @@ class Slide extends Common
 		$res = $this->getLogic()->getOne($where);
         if(!$res){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         
-        if($res['pic']){$res['pic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$res['pic'];}
+        if($res['pic']){$res['pic'] = get_site_cdn_address().$res['pic'];}
         
 		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }

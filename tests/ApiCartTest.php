@@ -20,7 +20,7 @@ class ApiCartTest extends ApiBase
         $get_data = array(
             'access_token' => '123456'
         );
-        $url = sysconfig('CMS_API_URL') . '/cart/index';
+        $url = get_api_url_address() . '/cart/index';
         $response = curl_request($url, $get_data, 'GET');
 
         $this->assertTrue(!!$response); //断言结果是否为true,如果不为true则报错

@@ -33,7 +33,7 @@ class UserGoodsHistoryLogic extends BaseLogic
                 //$res['list'][$k] = $this->getDataView($v);
                 $goods = logic('Goods')->getOne(array('id' => $v['goods_id']), array('content'));
                 if ($goods['litpic']) {
-                    $goods['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS') . $goods['litpic'];
+                    $goods['litpic'] = get_site_cdn_address() . $goods['litpic'];
                 }
                 $res['list'][$k]['goods'] = $goods;
             }

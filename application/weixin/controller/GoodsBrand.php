@@ -24,7 +24,7 @@ class GoodsBrand extends Common
             'limit'  => $pagesize,
             'offset' => $offset
 		);
-        $url = sysconfig('CMS_API_URL').'/goods_brand/index';
+        $url = get_api_url_address().'/goods_brand/index';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['list'] = $res['data']['list'];
         //总页数
@@ -57,7 +57,7 @@ class GoodsBrand extends Common
     public function detail()
 	{
         $get_data['id'] = $id;
-        $url = sysconfig('CMS_API_URL').'/goods_brand/detail';
+        $url = get_api_url_address().'/goods_brand/detail';
 		$res = Util::curl_request($url,$postdata,'GET');
         $assign_data['post'] = $res['data'];
         if(!$assign_data['post']){Helper::http404();}

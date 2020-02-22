@@ -325,10 +325,10 @@ class Shop extends Base
         return model('Category')->getValue(array('id' => $data['category_id']), 'name');
     }
 
-    //用户状态，0待审，1正常，2锁定
+    //用户状态，0完善资料，1正常，2锁定，3待审
     public function getStatusTextAttr($value, $data)
     {
-        $arr = array(0 => '待审', 1 => '正常', 2 => '锁定');
+        $arr = array(0 => '完善资料', 1 => '正常', 2 => '锁定', 3 => '待审');
         return $arr[$data['status']];
     }
 
@@ -346,6 +346,39 @@ class Shop extends Base
         return $arr[$data['type']];
     }
 
+	/**
+     * 获取器——省份文字
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getProvinceTextAttr($value, $data)
+    {
+        return model('Region')->getValue(array('id' => $data['province_id']), 'name');
+    }
+	
+	/**
+     * 获取器——城市文字
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getCityTextAttr($value, $data)
+    {
+        return model('Region')->getValue(array('id' => $data['city_id']), 'name');
+    }
+	
+	/**
+     * 获取器——地区文字
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getDistrictTextAttr($value, $data)
+    {
+        return model('Region')->getValue(array('id' => $data['district_id']), 'name');
+    }
+	
     //文章数
     public function getArticleCountAttr($value, $data)
     {

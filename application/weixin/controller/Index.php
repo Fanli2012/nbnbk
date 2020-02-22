@@ -47,7 +47,7 @@ class Index extends Common
             'limit'  => $pagesize,
             'offset' => $offset
 		);
-        $url = sysconfig('CMS_API_URL').'/goods/index';
+        $url = get_api_url_address().'/goods/index';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['goods_list'] = $res['data']['list'];
 		//总页数
@@ -83,7 +83,7 @@ class Index extends Common
             'limit' => 5,
             'offset' => 0
 		);
-        $url = sysconfig('CMS_API_URL').'/slide/index';
+        $url = get_api_url_address().'/slide/index';
 		$res = Util::curl_request($url, $get_data, 'GET');
         $assign_data['slide_list'] = $res['data']['list'];
         
@@ -92,7 +92,7 @@ class Index extends Common
             'limit'  => 5,
             'offset' => 0
 		);
-        $url = sysconfig('CMS_API_URL').'/article/index';
+        $url = get_api_url_address().'/article/index';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['article_list'] = $res['data']['list'];
         
@@ -102,7 +102,7 @@ class Index extends Common
             'limit'  => 8,
             'offset' => 0
 		);
-        $url = sysconfig('CMS_API_URL').'/goods/index';
+        $url = get_api_url_address().'/goods/index';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['goods_sale_list'] = $res['data']['list'];
         
@@ -112,7 +112,7 @@ class Index extends Common
             'limit'  => 6,
             'offset' => 0
 		);
-        $url = sysconfig('CMS_API_URL').'/goods/index';
+        $url = get_api_url_address().'/goods/index';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['goods_recommend_list'] = $res['data']['list'];
         
@@ -122,7 +122,7 @@ class Index extends Common
             'limit'  => 4,
             'offset' => 0
 		);
-        $url = sysconfig('CMS_API_URL').'/goods/index';
+        $url = get_api_url_address().'/goods/index';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['goods_promote_list'] = $res['data']['list'];
         //dd($assign_data);

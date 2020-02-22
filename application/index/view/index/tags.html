@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport"><meta http-equiv="Cache-Control" content="no-siteapp" /><meta http-equiv="Cache-Control" content="no-transform" />
-<title>标签_<?php echo sysconfig('CMS_WEBNAME'); ?></title><meta name="keywords" content="" /><meta name="description" content="" /><link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/style.css" media="all"><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/ad.js"></script></head><body><script>site();</script>
+<title>标签_<?php echo sysconfig('CMS_WEBNAME'); ?></title><meta name="keywords" content="" /><meta name="description" content="" /><link rel="stylesheet" href="<?php echo http_host(); ?>/css/style.css" media="all"><script type="text/javascript" src="<?php echo http_host(); ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo http_host(); ?>/js/ad.js"></script></head><body><script>site();</script>
 {include file="common/header"/}<div id="tad"><script>tjs();</script></div>
 
 <div class="box mt10"><div class="fl_640">
@@ -20,7 +20,7 @@
 <script>
 function getmore(condition)
 {
-    var url = "<?php echo sysconfig('CMS_BASEHOST'); ?>/api/article/index";
+    var url = "<?php echo http_host(); ?>/api/article/index";
     //var typeid = "";
     $.post(url,condition,function(res){
         if(res.code==0)

@@ -74,7 +74,7 @@ class Order extends Base
                     $goods_list = $res['list'][$k]['goods_list'];
                     foreach($goods_list as $key=>$value)
                     {
-                        if($value['goods_img']){$goods_list[$key]['goods_img'] = sysconfig('CMS_SITE_CDN_ADDRESS').$value['goods_img'];}
+                        if($value['goods_img']){$goods_list[$key]['goods_img'] = get_site_cdn_address() . $value['goods_img'];}
                     }
                     
                     $res['list'][$k]['goods_list'] = $goods_list;
@@ -101,7 +101,7 @@ class Order extends Base
         {
             foreach($res['goods_list'] as $k=>$v)
             {
-                if($v['goods_img']){$res['goods_list'][$k]['goods_img'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['goods_img'];}
+                if($v['goods_img']){$res['goods_list'][$k]['goods_img'] =  get_site_cdn_address() . $v['goods_img'];}
             }
         }
 		

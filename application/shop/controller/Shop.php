@@ -102,9 +102,11 @@ class Shop extends Base
 
             $res = $this->getLogic()->setting($_POST, $where);
             if ($res['code'] == ReturnData::SUCCESS) {
+                //完善资料之后变更状态为【待审】
                 if ($this->login_info['status'] == 0) {
-                    $this->getLogic()->edit(['status' => 3], $where);
-                } //完善资料之后变更状态为【待审】
+                    $this->getLogic()->edit(['status' => 1], $where); //改为【正常】状态，不用审核
+                }
+                session('shop_info', model('Shop')->getOne(array('id'=>$this->login_info['id'])));
                 $this->success($res['msg']);
             }
 

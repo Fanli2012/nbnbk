@@ -37,7 +37,7 @@ class Page extends Common
         {
             foreach($res['list'] as $k=>$v)
             {
-                if(!empty($v['litpic'])){$res['list'][$k]['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['litpic'];}
+                if(!empty($v['litpic'])){$res['list'][$k]['litpic'] = get_site_cdn_address() . $v['litpic'];}
             }
         }
         
@@ -56,7 +56,7 @@ class Page extends Common
 		$res = $this->getLogic()->getOne($where);
         if(!$res){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         
-        if(!empty($res['litpic'])){$res['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$res['litpic'];}
+        if(!empty($res['litpic'])){$res['litpic'] = get_site_cdn_address() . $res['litpic'];}
         
 		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }

@@ -26,7 +26,7 @@ class UserRecharge extends Base
             'status' => 1,
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user_recharge/index';
+        $url = get_api_url_address().'/user_recharge/index';
 		$res = Util::curl_request($url, $get_data, 'GET');
         $assign_data['list'] = $res['data']['list'];
         //总页数
@@ -72,7 +72,7 @@ class UserRecharge extends Base
             'id' => $id,
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user_recharge/detail';
+        $url = get_api_url_address().'/user_recharge/detail';
 		$res = Util::curl_request($url, $get_data, 'GET');
         $user_recharge = $assign_data['post'] = $res['data'];
         

@@ -36,7 +36,7 @@ class Goodsbrand extends Common
         {
             foreach($res['list'] as $k=>$v)
             {
-                if($v['litpic']){$res['list'][$k]['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['litpic'];}
+                if($v['litpic']){$res['list'][$k]['litpic'] = get_site_cdn_address() . $v['litpic'];}
             }
         }
         

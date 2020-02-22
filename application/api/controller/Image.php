@@ -85,7 +85,7 @@ class Image extends Common
                     Util::echo_json(ReturnData::create(ReturnData::FAIL,null,'文件不得超过2M'));
                 }
                 
-                $res[] = array('url' => sysconfig('CMS_SITE_CDN_ADDRESS').$image_path, 'path' => $image_path, 'name' => $file['name'], 'file_name' => $new_file_name, 'type' => $type, 'file_size' => $file['size']);
+                $res[] = array('url' => get_site_cdn_address().$image_path, 'path' => $image_path, 'name' => $file['name'], 'file_name' => $new_file_name, 'type' => $type, 'file_size' => $file['size']);
             }
         }
         

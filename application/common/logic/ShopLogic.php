@@ -103,7 +103,8 @@ class ShopLogic extends BaseLogic
         if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/uploads/wxacode/' . $res['id'] . '.jpg')) {
             $res['wxacode'] = http_host() . '/uploads/wxacode/' . $res['id'] . '.jpg';
         }
-
+        
+        $res = $res->append(array('category_text', 'article_count', 'type_text', 'status_text', 'province_text', 'city_text', 'district_text'))->toArray();
         $this->getModel()->getDb()->where($where)->setInc('click', 1);
 
         return $res;

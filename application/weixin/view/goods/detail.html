@@ -1,8 +1,8 @@
 <!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html;charset=utf-8"/>
 <title>商品详情</title><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
-<link href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/weixin/style.css" type="text/css" rel="stylesheet">
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script>
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/weixin/mobile.js"></script>
+<link href="<?php echo http_host(); ?>/css/weixin/style.css" type="text/css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/jquery.min.js"></script>
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/weixin/mobile.js"></script>
 <meta name="keywords" content="关键词"><meta name="description" content="描述"></head><body style="background-color:#f1f1f1;">
 
 <!--商品详情-start-->
@@ -18,13 +18,13 @@
         <div class="swiper-pagination swiper-pagination-white"></div>
     </div>
 </div>
-<link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/swiper.min.css">
+<link rel="stylesheet" href="<?php echo http_host(); ?>/css/swiper.min.css">
 <style>
 .swiper-container{width:100%;height:90vw;}
 .swiper-slide{text-align:center;font-size:18px;background:#fff;}
 .swiper-slide img{width:100%;height:100vw;}
 </style>
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/swiper.min.js"></script>
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/swiper.min.js"></script>
 <script>
 //Swiper轮播
 var swiper = new Swiper('.swiper-container', {
@@ -114,7 +114,7 @@ var swiper = new Swiper('.swiper-container', {
    </div>
    <div class="mask" onclick="masterunshow()"></div>
 </div>
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/layer/mobile/layer.js"></script>
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/layer/mobile/layer.js"></script>
 <script>
 var access_token = '<?php if($login_info){echo $login_info['token']['token'];} ?>';
 function mastershow(confirm)
@@ -169,7 +169,7 @@ function cart_num_add()
 
 function dosubmit()
 {
-    var url = '<?php echo sysconfig('CMS_API_URL').'/cart/add'; ?>';
+    var url = '<?php echo get_api_url_address().'/cart/add'; ?>';
     if(access_token=='')
     {
         //提示
@@ -221,7 +221,7 @@ function dosubmit()
 
 function collect_goods()
 {
-    var url = '<?php if($post['is_collect']==1){echo sysconfig('CMS_API_URL').'/user_goods_collect/del';}else{echo sysconfig('CMS_API_URL').'/user_goods_collect/add';} ?>';
+    var url = '<?php if($post['is_collect']==1){ echo get_api_url_address() . '/user_goods_collect/del'; } else { echo get_api_url_address() . '/user_goods_collect/add';} ?>';
     var goods_id = $("#id").val();
     
     if(access_token=='')
@@ -266,11 +266,11 @@ function collect_goods()
  <div class="bottom_tool_white">
   <ul>
     <a href="tel:<?php echo sysconfig('CMS_CONSUMER_HOTLINE'); ?>"><li>
-    <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/goods_ic_kefu.png">
+    <img src="<?php echo http_host(); ?>/images/weixin/goods_ic_kefu.png">
     <p>客服</p>
     </li></a>
     <a href="<?php echo url('cart/index'); ?>"><li>
-        <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/goods_ic_cart.png">
+        <img src="<?php echo http_host(); ?>/images/weixin/goods_ic_cart.png">
         <p>购物车</p>
     </li></a>
   </ul>

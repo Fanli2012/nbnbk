@@ -45,8 +45,8 @@ wx.ready(function () {
     //var title=document.title; //分享标题
 	var title='<?php echo sysconfig('CMS_WX_SHAER_TITLE'); ?>'; //分享标题
     var desc='<?php echo sysconfig('CMS_WX_SHAER_DESC'); ?>'; //分享描述
-    var url='<?php echo sysconfig('CMS_WX_SHAER_LINK'); ?><?php if(isset($login_info)){ echo '?invite_code='.$login_info['id']; } ?>'; //分享链接
-    var img='<?php echo sysconfig('CMS_WX_SHAER_IMGURL'); ?>'; //分享图标
+    var url='<?php echo http_host() . sysconfig('CMS_WX_SHAER_LINK'); ?><?php if(isset($login_info)){ echo '?invite_code='.$login_info['id']; } ?>'; //分享链接
+    var img='<?php echo http_host() . sysconfig('CMS_WX_SHAER_IMGURL'); ?>'; //分享图标
     
     // 分享给朋友
     wx.onMenuShareAppMessage({

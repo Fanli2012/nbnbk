@@ -2,10 +2,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0,viewport-fit=cover">
 <title><?php echo $title;if($page!=0){echo '-第'.($page+1).'页';} ?></title>
 <meta name="keywords" content="<?php echo $post['keywords'];?>" /><meta name="description" content="<?php echo $post['description']; ?>" />
-<link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/wap/weui.min.css"/>
-<link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/wap/style.css"/>
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/wap/jquery.min.js"></script>
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/wap/ad.js"></script>
+<link rel="stylesheet" href="<?php echo http_host(); ?>/css/wap/weui.min.css"/>
+<link rel="stylesheet" href="<?php echo http_host(); ?>/css/wap/style.css"/>
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/wap/jquery.min.js"></script>
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/wap/ad.js"></script>
 </head><body>
 <div class="weui-panel weui-panel_access">
     <div class="weui-panel__bd" id="list">

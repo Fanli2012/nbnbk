@@ -24,7 +24,7 @@ class Bonus extends Base
             'limit'  => $pagesize,
             'offset' => $offset
 		);
-        $url = sysconfig('CMS_API_URL').'/bonus/index';
+        $url = get_api_url_address().'/bonus/index';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['list'] = $res['data']['list'];
         //总页数

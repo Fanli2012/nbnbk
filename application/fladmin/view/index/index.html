@@ -1,12 +1,12 @@
 <!DOCTYPE html><html><head><title><?php echo sysconfig('CMS_WEBNAME'); ?>后台管理</title>
 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/bootstrap.min.css"><link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/admin.css">
-<script src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script><script src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/respond.min.js"></script><script src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/ad.js"></script><script src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/bootstrap.min.js"></script></head><body>
+<link rel="stylesheet" href="<?php echo http_host(); ?>/css/bootstrap.min.css"><link rel="stylesheet" href="<?php echo http_host(); ?>/css/admin.css">
+<script src="<?php echo http_host(); ?>/js/jquery.min.js"></script><script src="<?php echo http_host(); ?>/js/respond.min.js"></script><script src="<?php echo http_host(); ?>/js/ad.js"></script><script src="<?php echo http_host(); ?>/js/bootstrap.min.js"></script></head><body>
 
 <div class="blog-masthead clearfix"><nav class="blog-nav">
 <a class="blog-nav-item active" href="{:url($module_name.'/index/index')}"><span class="glyphicon glyphicon-star"></span> <strong>后台管理中心</strong> <span class="glyphicon glyphicon-star-empty"></span></a>
-<a class="blog-nav-item" href="<?php echo sysconfig('CMS_BASEHOST'); ?>" target="_blank"><span class="glyphicon glyphicon-home"></span> 网站主页</a>
+<a class="blog-nav-item" href="<?php echo http_host(); ?>" target="_blank"><span class="glyphicon glyphicon-home"></span> 网站主页</a>
 <a class="blog-nav-item" href="{:url($module_name.'/index/upcache')}"><span class="glyphicon glyphicon-refresh"></span> 更新缓存</a>
 <a class="blog-nav-item" id="navexit" href="{:url($module_name.'/login/loginout')}"><span class="glyphicon glyphicon-off"></span> 注销</a>
 <a class="blog-nav-item pull-right" href="javascript:;"><small>您好：<span class="glyphicon glyphicon-user"></span> <?php if(isset($admin_info)){echo $admin_info['name'].' ['.$admin_info['role_name'].']';} ?></small></a>

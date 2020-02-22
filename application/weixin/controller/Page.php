@@ -82,7 +82,7 @@ class Page extends Common
         $id = input('id');
         $where = array();
         if (intval($id)) {$where['id'] = $id;}else{$where['filename'] = $id;}
-        $url = sysconfig('CMS_API_URL').'/page/detail';
+        $url = get_api_url_address().'/page/detail';
 		$res = Util::curl_request($url, $where, 'GET');
         if(empty($res['data'])){Helper::http404();}
 		

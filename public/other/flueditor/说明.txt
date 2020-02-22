@@ -1,5 +1,6 @@
 
 配置图片上传路径修改 /php/config.json
+上传图片只显示本地上传修改 /dialogs/image/image.html
 
 
 

@@ -18,6 +18,24 @@
                 <form id="myform" method="post" action="{:url('setting')}" role="form" enctype="multipart/form-data" class="form-horizontal">
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
+                            <span class="text-danger">*</span>选择身份</label>
+                        <div class="col-sm-4">
+                            <label class="radio-inline">
+								<input type="radio" name="type" value="1" <?php if($post['type']==1){ echo 'checked'; } ?> > 商家
+							</label>
+							<label class="radio-inline">
+								<input type="radio" name="type" value="0" <?php if($post['type']==0){ echo 'checked'; } ?>> 个人
+							</label>
+						</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <span class="text-danger">*</span>公司/个人/店铺名称</label>
+                        <div class="col-sm-4">
+                            <input type="text" name="company_name" id="company_name" class="form-control" placeholder="公司名称" value="<?php echo $post['company_name']; ?>" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
                             <span class="text-danger">*</span>地区</label>
                         <div class="col-sm-4 form-inline">
                             <select class="form-control" id='sheng' name="province_id"></select> <select class="form-control" id='shi' name="city_id"></select> <select class="form-control" id='qu' name="district_id"></select></div>
@@ -27,27 +45,6 @@
                             <span class="text-danger">*</span>详细地址</label>
                         <div class="col-sm-4">
                             <input type="text" name="address" id="address" class="form-control" placeholder="详细地址" value="<?php echo $post['address']; ?>" required></div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">
-                            <span class="text-danger">*</span>公司名称</label>
-                        <div class="col-sm-4">
-                            <input type="text" name="company_name" id="company_name" class="form-control" placeholder="公司名称" value="<?php echo $post['company_name']; ?>" required></div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">
-                            <span class="text-danger">*</span>类目</label>
-                        <div class="col-sm-4 form-inline">
-                            <select class="form-control" id='category_id' name="category_id">
-                                <option value="0">请选择</option>
-                                <?php if($category_list){foreach($category_list as $k=>$v){ ?>
-                                <option <?php if($v["id"]==$post['category_id']){echo 'selected = "selected"';} ?> value="<?php echo $v["id"]; ?>"><?php echo $v["name"]; ?></option>
-                                <?php if($v['sub']){foreach($v['sub'] as $key=>$value){ ?>
-                                <option <?php if($value["id"]==$post['category_id']){echo 'selected = "selected"';} ?> value="<?php echo $value["id"]; ?>">— <?php echo $value["name"]; ?></option>
-                                <?php }} ?>
-                                <?php }} ?>
-                            </select>
-                        </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
@@ -89,7 +86,7 @@
                         <label class="col-sm-3 control-label">
                             <span class="text-danger">*</span>联系方式</label>
                         <div class="col-sm-4">
-                            <input type="text" name="contact_information" id="contact_information" class="form-control" placeholder="联系方式" value="<?php echo $post['contact_information']; ?>" required></div>
+                            <input type="text" name="contact_information" id="contact_information" class="form-control" placeholder="请输入手机号" value="<?php echo $post['contact_information']; ?>" required></div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
@@ -170,13 +167,6 @@
 <!-- 配置文件 --><script type="text/javascript" src="/other/flueditor/ueditor.config.js"></script>
 <!-- 编辑器源码文件 --><script type="text/javascript" src="/other/flueditor/ueditor.all.min.js"></script>
 <!-- 实例化编辑器 --><script type="text/javascript">var ue = UE.getEditor('container',{maximumWords:2000,initialFrameHeight:320,enableAutoSave:false});</script>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label"><span class="text-danger">*</span>联系我们</label>
-                        <div class="col-sm-9">
-<!-- 加载编辑器的容器 --><script id="contactus" name="contactus" type="text/plain"><?php echo $post["contactus"]; ?></script>
-<!-- 实例化编辑器 --><script type="text/javascript">var ue = UE.getEditor('contactus',{maximumWords:2000,initialFrameHeight:320,enableAutoSave:false});</script>
                         </div>
                     </div>
                     <div class="form-group">

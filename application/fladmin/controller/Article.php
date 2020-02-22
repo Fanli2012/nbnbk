@@ -107,8 +107,8 @@ class Article extends Base
                 $update_time = strtotime($_POST['update_time']);
             } // 更新时间
             $_POST['add_time'] = $_POST['update_time'] = $update_time;
-            $_POST['user_id'] = session('admin_info')['id']; // 发布者id
-
+			$_POST['admin_id'] = $this->admin_info['id']; // 管理员发布者ID
+			
             //关键词
             if (!empty($_POST["keywords"])) {
                 $_POST['keywords'] = str_replace("，", ",", $_POST["keywords"]);
@@ -196,8 +196,6 @@ class Article extends Base
                 $update_time = $_POST['add_time'] = strtotime($_POST['update_time']);
             } // 更新时间
             $_POST['update_time'] = $update_time;
-
-            $_POST['user_id'] = session('admin_info')['id']; // 修改者id
 
             //关键词
             if (!empty($_POST["keywords"])) {

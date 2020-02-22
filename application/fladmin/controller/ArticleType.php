@@ -41,7 +41,8 @@ class ArticleType extends Base
             }
 
             $_POST['add_time'] = $_POST['update_time'] = time(); //添加时间、更新时间
-
+			$_POST['admin_id'] = $this->admin_info['id']; // 管理员发布者ID
+			
             $res = $this->getLogic()->add($_POST);
             if ($res['code'] == ReturnData::SUCCESS) {
                 $this->success($res['msg'], url('index'), '', 1);

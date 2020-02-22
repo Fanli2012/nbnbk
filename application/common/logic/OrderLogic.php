@@ -34,7 +34,7 @@ class OrderLogic extends BaseLogic
         if ($res['count'] > 0) {
             foreach ($res['list'] as $k => $v) {
                 //$res['list'][$k] = $this->getDataView($v);
-                $res['list'][$k] = $res['list'][$k]->append(array('status_text', 'country_name', 'province_name', 'city_name', 'district_name', 'invoice_text', 'place_type_text', 'district_name'))->toArray();
+                $res['list'][$k] = $res['list'][$k]->append(array('status_text', 'country_name', 'province_name', 'city_name', 'district_name', 'invoice_text', 'place_type_text'))->toArray();
                 //订单商品列表
                 $order_goods = model('OrderGoods')->getAll(array('order_id' => $v['id']));
                 $res['list'][$k]['goods_list'] = $order_goods;
@@ -51,7 +51,7 @@ class OrderLogic extends BaseLogic
 
         $res = $res->each(function ($item, $key) {
             //$item = $this->getDataView($item);
-            $item = $item->append(array('status_text', 'country_name', 'province_name', 'city_name', 'district_name', 'invoice_text', 'place_type_text', 'district_name'))->toArray();
+            $item = $item->append(array('status_text', 'country_name', 'province_name', 'city_name', 'district_name', 'invoice_text', 'place_type_text'))->toArray();
             return $item;
         });
 
@@ -66,7 +66,7 @@ class OrderLogic extends BaseLogic
         if ($res) {
             foreach ($res as $k => $v) {
                 //$res[$k] = $this->getDataView($v);
-                $res[$k] = $res[$k]->append(array('status_text', 'country_name', 'province_name', 'city_name', 'district_name', 'invoice_text', 'place_type_text', 'district_name'))->toArray();
+                $res[$k] = $res[$k]->append(array('status_text', 'country_name', 'province_name', 'city_name', 'district_name', 'invoice_text', 'place_type_text'))->toArray();
             }
         }
 
@@ -82,7 +82,7 @@ class OrderLogic extends BaseLogic
         }
 
         //$res = $this->getDataView($res);
-        $res = $res->append(array('goods_list', 'user', 'status_text', 'country_name', 'province_name', 'city_name', 'district_name', 'invoice_text', 'place_type_text', 'district_name'))->toArray();
+        $res = $res->append(array('goods_list', 'user', 'status_text', 'country_name', 'province_name', 'city_name', 'district_name', 'invoice_text', 'place_type_text'))->toArray();
 
         return $res;
     }

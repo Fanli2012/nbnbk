@@ -1,0 +1,24 @@
+
+
+chmod 755 start_nginx.sh
+
+30分钟执行一下脚本
+*/30 * * * * ./etc/profile;sh /var/www/crond/start_nginx.sh
+*/30 * * * * /usr/local/php/bin/php /var/www/crond/task_exec_time.php
+60分钟执行一下脚本
+0 * * * * /usr/local/php/bin/php /var/www/qiyexcx/networkCheck.php
+
+crontab  -l 查看该用户下的定时任务
+crontab -e 编辑添加定时任务
+
+service crond status
+service crond start //启动服务
+service crond stop //关闭服务
+service crond restart
+
+# nginx
+ps -ef | grep nginx |grep -v grep > /dev/null
+if [ $? != 0 ];then
+    killall nginx
+    sleep 2
+    service nginx restart

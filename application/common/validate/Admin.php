@@ -10,10 +10,10 @@ class Admin extends Validate
 {
     // 验证规则
     protected $rule = [
-        ['id', 'require|number|gt:0', 'ID必填|ID必须是数字|ID格式不正确'],
-        ['role_id', 'require|number|gt:0', '角色ID必填|角色ID必须是数字|角色ID格式不正确'],
-        ['name', 'require|max:30|alphaDash', '名称必填|名称不能超过30个字符|名称只能包含字母和数字、下划线及破折号'],
-        ['pwd', 'require|max:32|checkPassword', '密码必填|密码不能超过32个字符'],
+        ['id', 'require|number|gt:0', 'ID不能为空|ID必须是数字|ID格式不正确'],
+        ['role_id', 'require|number|gt:0', '角色ID不能为空|角色ID必须是数字|角色ID格式不正确'],
+        ['name', 'require|max:30|alphaDash', '名称不能为空|名称不能超过30个字符|名称只能包含字母和数字、下划线及破折号'],
+        ['pwd', 'require|max:32|checkPassword', '密码不能为空|密码不能超过32个字符'],
         ['mobile', 'max:20|checkMobile', '手机号码不能超过20个字符'],
         ['email', 'email', '邮箱格式不正确'],
         ['avatar', 'max:150', '头像不能超过150个字符'],

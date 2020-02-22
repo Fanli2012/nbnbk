@@ -34,7 +34,7 @@ trait Jump
      * @return void
      * @throws HttpResponseException
      */
-    protected function success($msg = '', $url = null, $data = '', $wait = 3, array $header = [])
+    protected function success($msg = '', $url = null, $data = '', $wait = 1, array $header = [])
     {
         if (is_null($url) && !is_null(Request::instance()->server('HTTP_REFERER'))) {
             $url = Request::instance()->server('HTTP_REFERER');

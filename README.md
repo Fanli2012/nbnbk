@@ -85,6 +85,8 @@ WAP端
 Linux系统文件/目录权限
 
  + extend/wxJsSdk目录设置成可读写777
+ + runtime目录设置成可读写777
+ + public/uploads目录设置成可读写777
  + public/index.php文件设置成只读444
 
 

@@ -5,6 +5,6 @@ class Index{$suffix}
 {
     public function index()
     {
-        return 'FLi';
+        return 'Hello World';
     }
 }

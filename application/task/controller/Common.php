@@ -2,9 +2,9 @@
 
 namespace app\task\controller;
 
-use think\Controller;
+use app\common\controller\CommonController;
 
-class Common extends Controller
+class Common extends CommonController
 {
     /**
      * 初始化

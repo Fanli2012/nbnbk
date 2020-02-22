@@ -8,11 +8,11 @@ class Article extends Validate
 {
     // 验证规则
     protected $rule = [
-        ['id', 'require|number|max:11', 'ID必填|ID必须是数字|ID格式不正确'],
-        ['type_id', 'require|number|max:11', '栏目ID必填|栏目ID必须是数字|栏目ID格式不正确'],
+        ['id', 'require|number|max:11', 'ID不能为空|ID必须是数字|ID格式不正确'],
+        ['type_id', 'require|number|max:11', '栏目ID不能为空|栏目ID必须是数字|栏目ID格式不正确'],
         ['tuijian', 'number|egt:0', '推荐等级必须是数字|推荐等级格式不正确'],
         ['click', 'number|egt:0', '点击量必须是数字|点击量格式不正确'],
-        ['title', 'require|max:150', '标题必填|标题不能超过150个字符'],
+        ['title', 'require|max:150', '标题不能为空|标题不能超过150个字符'],
         ['writer', 'max:20', '作者不能超过20个字符'],
         ['source', 'max:30', '来源不能超过30个字符'],
         ['litpic', 'max:150', '缩略图不能超过150个字符'],
@@ -23,8 +23,8 @@ class Article extends Validate
         ['type_id2', 'number|gt:0', '栏目ID必须是数字|栏目ID格式不正确'],
         ['user_id', 'number|max:11', '发布者ID必须是数字|发布者ID格式不正确'],
         ['shop_id', 'number|max:11', '店铺ID必须是数字|店铺ID格式不正确'],
-        ['add_time', 'require|number|max:11', '添加时间必填|添加时间格式不正确|添加时间格式不正确'],
-        ['update_time', 'require|number|max:11', '更新时间必填|更新时间格式不正确|更新时间格式不正确'],
+        ['add_time', 'require|number|max:11', '添加时间不能为空|添加时间格式不正确|添加时间格式不正确'],
+        ['update_time', 'require|number|max:11', '更新时间不能为空|更新时间格式不正确|更新时间格式不正确'],
     ];
 
     protected $scene = [

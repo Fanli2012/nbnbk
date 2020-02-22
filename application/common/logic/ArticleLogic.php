@@ -30,8 +30,7 @@ class ArticleLogic extends BaseLogic
 
         if ($res['count'] > 0) {
             foreach ($res['list'] as $k => $v) {
-                //$res['list'][$k] = $this->getDataView($v);
-                //$res['list'][$k]['typename'] = $this->getModel()->getTypenameAttr($v);
+                $res['list'][$k] = $res['list'][$k]->append(['type_name_text', 'status_text'])->toArray();
             }
         }
 
@@ -74,9 +73,8 @@ class ArticleLogic extends BaseLogic
             return false;
         }
 
-        //$res = $this->getDataView($res);
-        //$res['typename'] = $this->getModel()->getTypenameAttr($res);
-
+        $res = $res->append(['type_name_text', 'status_text'])->toArray();
+		
         $this->getModel()->getDb()->where($where)->setInc('click', 1);
 
         return $res;
@@ -89,12 +87,29 @@ class ArticleLogic extends BaseLogic
             return ReturnData::create(ReturnData::PARAMS_ERROR);
         }
 
+		//标题最多150个字符
+		if (isset($data['title']) && !empty($data['title'])) {
+			$data['title'] = mb_strcut($data['title'],0,150,'UTF-8');
+        }
+		//SEO标题最多150个字符
+		if (isset($data['seotitle']) && !empty($data['seotitle'])) {
+			$data['seotitle'] = mb_strcut($data['seotitle'],0,150,'UTF-8');
+        }
+		//关键词最多60个字符
+		if (isset($data['keywords']) && !empty($data['keywords'])) {
+			$data['keywords'] = mb_strcut($data['keywords'],0,60,'UTF-8');
+        }
+		//描述最多240个字符
+		if (isset($data['description']) && !empty($data['description'])) {
+			$data['description'] = mb_strcut($data['description'],0,240,'UTF-8');
+        }
         //添加时间、更新时间
+		$time = time();
         if (!(isset($data['add_time']) && !empty($data['add_time']))) {
-            $data['add_time'] = time();
+            $data['add_time'] = $time;
         }
         if (!(isset($data['update_time']) && !empty($data['update_time']))) {
-            $data['update_time'] = time();
+            $data['update_time'] = $time;
         }
 
         $check = $this->getValidate()->scene('add')->check($data);
@@ -117,6 +132,22 @@ class ArticleLogic extends BaseLogic
             return ReturnData::create(ReturnData::SUCCESS);
         }
 
+		//标题最多150个字符
+		if (isset($data['title']) && !empty($data['title'])) {
+			$data['title'] = mb_strcut($data['title'],0,150,'UTF-8');
+        }
+		//SEO标题最多150个字符
+		if (isset($data['seotitle']) && !empty($data['seotitle'])) {
+			$data['seotitle'] = mb_strcut($data['seotitle'],0,150,'UTF-8');
+        }
+		//关键词最多60个字符
+		if (isset($data['keywords']) && !empty($data['keywords'])) {
+			$data['keywords'] = mb_strcut($data['keywords'],0,60,'UTF-8');
+        }
+		//描述最多240个字符
+		if (isset($data['description']) && !empty($data['description'])) {
+			$data['description'] = mb_strcut($data['description'],0,240,'UTF-8');
+        }
         //更新时间
         if (!(isset($data['update_time']) && !empty($data['update_time']))) {
             $data['update_time'] = time();
@@ -353,4 +384,45 @@ class ArticleLogic extends BaseLogic
         return $res;
     }
 
+	/**
+     * 网址推送给百度
+     * @param  [array] $urls 要推送的链接
+     * @return [array]
+     */
+    public function push_url_to_baidu_search_engine($urls, $token = '43NVPDOFqd1wlkWy')
+    {
+		/* $urls = array(
+			'http://www.example.com/1.html',
+			'http://www.example.com/2.html',
+		); */
+		if(empty($urls)){
+			return ReturnData::create(ReturnData::FAIL,null,'参数错误');
+		}
+		
+		foreach($urls as $row){
+			$one_url = array(
+				
+			);
+			$one_url[] = $row;
+			$parse_url = parse_url($row); //解析 URL
+			$api_url = 'http://data.zz.baidu.com/urls?site='.$parse_url['host'].'&token='.$token;
+			$ch = curl_init();
+			$options =  array(
+				CURLOPT_URL => $api_url,
+				CURLOPT_POST => true,
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_POSTFIELDS => implode("\n", $one_url),
+				CURLOPT_HTTPHEADER => array('Content-Type: text/plain'),
+			);
+			curl_setopt_array($ch, $options);
+			$result = curl_exec($ch);
+		}
+		
+		$result = json_decode($result,true);
+		if(isset($result['success']) && $result['success']>0){
+			return ReturnData::create(ReturnData::SUCCESS, $result);
+		}
+		
+		return ReturnData::create(ReturnData::FAIL,null,$result['message']);
+	}
 }

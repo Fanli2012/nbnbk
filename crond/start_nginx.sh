@@ -1,3 +1,6 @@
 #!/bin/bash
 killall nginx
-service nginx start
+sleep 2
+/usr/local/nginx/sbin/nginx
+sleep 2
+/usr/local/php/bin/php /var/www/crond/task_exec_time.php

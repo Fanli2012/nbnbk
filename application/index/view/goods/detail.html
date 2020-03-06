@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
-<title><?php if(!empty($post['seotitle'])){echo $post['seotitle'];}else{echo $post['title'];} echo '-'.sysconfig('CMS_WEBNAME'); ?></title><meta name="keywords" content="<?php echo $post["keywords"]; ?>" /><meta name="description" content="<?php echo $post["description"]; ?>" /><link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/style.css" media="all"><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/ad.js"></script></head><body><script>site();</script>
+<title><?php if (!empty($post['seotitle'])) { echo $post['seotitle']; } else { echo $post['title']; } echo '-'.sysconfig('CMS_WEBNAME'); ?></title><meta name="keywords" content="<?php echo $post["keywords"]; ?>" /><meta name="description" content="<?php echo $post["description"]; ?>" /><link rel="stylesheet" href="<?php echo http_host(); ?>/css/style.css" media="all"><script type="text/javascript" src="<?php echo http_host(); ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo http_host(); ?>/js/ad.js"></script></head><body><script>site();</script>
 {include file="common/header"/}<div id="tad"><script>tjs();</script></div>
 
 <div class="box mt10"><div class="fl_640">
@@ -20,8 +20,8 @@
     </div>
 </div>
 <?php } ?>
-<link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/swiper.min.css">
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/swiper.min.js"></script>
+<link rel="stylesheet" href="<?php echo http_host(); ?>/css/swiper.min.css">
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/swiper.min.js"></script>
 <style>
 .swiper-container{width:100%;height:auto;}
 .swiper-slide{text-align:center;font-size:18px;background:#fff;}

@@ -395,7 +395,7 @@ class Goods extends Base
 
         foreach ($res as $k => $v) {
             if ($v['url']) {
-                $res[$k]['url'] = (substr($v['url'], 0, strlen('http')) === 'http') ? $v['url'] : sysconfig('CMS_SITE_CDN_ADDRESS') . $v['url'];
+                $res[$k]['url'] = (substr($v['url'], 0, strlen('http')) === 'http') ? $v['url'] : get_site_cdn_address() . $v['url'];
             }
         }
 

@@ -20,7 +20,7 @@ class ApiOrderTest extends ApiBase
         $get_data = array(
             'access_token' => '123456'
         );
-        $url = sysconfig('CMS_API_URL') . '/order/index';
+        $url = get_api_url_address() . '/order/index';
         $response = curl_request($url, $get_data, 'GET');
 
         $this->assertTrue(!!$response); //断言结果是否为true,如果不为true则报错
@@ -34,7 +34,7 @@ class ApiOrderTest extends ApiBase
             'id' => 1,
             'access_token' => '123456'
         );
-        $url = sysconfig('CMS_API_URL') . '/order/detail';
+        $url = get_api_url_address() . '/order/detail';
         $response = curl_request($url, $get_data, 'GET');
 
         $this->assertTrue(!!$response); //断言结果是否为true,如果不为true则报错

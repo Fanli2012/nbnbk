@@ -125,7 +125,7 @@ class Article extends Base
                 $_POST['keywords'] = mb_strcut($_POST['keywords'], 0, 60, 'UTF-8');
             }
             if (isset($_POST["dellink"]) && $_POST["dellink"] == 1 && !empty($content)) {
-                $content = logic('Article')->replacelinks($content, array(sysconfig('CMS_BASEHOST')));
+                $content = logic('Article')->replacelinks($content, array(http_host()));
             } //删除非站内链接
             $_POST['content'] = $content;
 
@@ -213,7 +213,7 @@ class Article extends Base
                 $_POST['keywords'] = mb_strcut($_POST['keywords'], 0, 60, 'UTF-8');
             }
             if (isset($_POST["dellink"]) && $_POST["dellink"] == 1 && !empty($content)) {
-                $content = logic('Article')->replacelinks($content, array(sysconfig('CMS_BASEHOST')));
+                $content = logic('Article')->replacelinks($content, array(http_host()));
             } //删除非站内链接
             $_POST['content'] = $content;
 

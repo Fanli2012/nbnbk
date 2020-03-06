@@ -1,13 +1,13 @@
 <!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html;charset=utf-8"/>
 <title>微商城</title><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
-<link href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/weixin/style.css" type="text/css" rel="stylesheet">
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script>
+<link href="<?php echo http_host(); ?>/css/weixin/style.css" type="text/css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/jquery.min.js"></script>
 <meta name="keywords" content="关键词"><meta name="description" content="描述"></head><body>
 <!--顶部搜索栏-start-->
 <div id="search-placeholder" class="search">
     <div class="search_box">
         <a href="<?php echo url('search/index'); ?>">
-        <span class="search_btn"><img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/search.png"></span>
+        <span class="search_btn"><img src="<?php echo http_host(); ?>/images/weixin/search.png"></span>
         <input type="text" name="keyword" value="" placeholder="搜索您想要的商品"></a>
     </div>
 </div>
@@ -28,8 +28,8 @@
     </div>
 </div>
 <?php } ?>
-<link rel="stylesheet" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/swiper.min.css">
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/swiper.min.js"></script>
+<link rel="stylesheet" href="<?php echo http_host(); ?>/css/swiper.min.css">
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/swiper.min.js"></script>
 <style>
 .swiper-container{width:100%;height:auto;}
 .swiper-slide{text-align:center;font-size:18px;background:#fff;}
@@ -74,31 +74,31 @@ var swiper = new Swiper('.swiper-nav', {
 <div class="floor home_menu" style="background-color:#fff;border-bottom:1px solid #f0f0f0;border-top:1px solid #f0f0f0;">
     <nav>
         <a href="<?php echo url('goods/category_list'); ?>">
-                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/icon_05.png" alt="全部分类" />
+                <img src="<?php echo http_host(); ?>/images/weixin/icon_05.png" alt="全部分类" />
                 <span>全部分类</span>
         </a>
         <a href="<?php echo url('goods_brand/index'); ?>">
-                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/icon_07.png" alt="品牌街" />
+                <img src="<?php echo http_host(); ?>/images/weixin/icon_07.png" alt="品牌街" />
                 <span>品牌街</span>
         </a>
         <a href="<?php echo url('goods/index').'?is_promote=1'; ?>">
-                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/icon_15.png" alt="优惠商品" />
+                <img src="<?php echo http_host(); ?>/images/weixin/icon_15.png" alt="优惠商品" />
                 <span>优惠商品</span>
         </a>
         <a href="<?php echo url('order/index'); ?>">
-                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/icon_16.png" alt="我的订单" />
+                <img src="<?php echo http_host(); ?>/images/weixin/icon_16.png" alt="我的订单" />
                 <span>我的订单</span>
         </a>
         <a href="<?php echo url('cart/index'); ?>">
-                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/icon_17.png" alt="购物车" />
+                <img src="<?php echo http_host(); ?>/images/weixin/icon_17.png" alt="购物车" />
                 <span>购物车</span>
         </a>
         <a href="<?php echo url('user/index'); ?>">
-                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/icon_19.png" alt="个人中心" />
+                <img src="<?php echo http_host(); ?>/images/weixin/icon_19.png" alt="个人中心" />
                 <span>个人中心</span>
         </a>
         <a href="javascript:;">
-                <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/icon_03.png" alt="敬请期待" />
+                <img src="<?php echo http_host(); ?>/images/weixin/icon_03.png" alt="敬请期待" />
                 <span>敬请期待</span>
         </a>
     </nav>
@@ -108,7 +108,7 @@ var swiper = new Swiper('.swiper-nav', {
 <!--资讯头条-start-->
 <div class="bggrey">
 <div class="home_toutiao" style="border-bottom:1px solid #f0f0f0;">
-    <div class="home_toutiao_tit"><img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/ad_tit.png"></div>
+    <div class="home_toutiao_tit"><img src="<?php echo http_host(); ?>/images/weixin/ad_tit.png"></div>
     <div class="home_toutiao_box">
         <ul>
           <marquee id="mar1" scrollamount="1" direction="up" height="30" style="height: 30px;">

@@ -20,7 +20,7 @@ class ApiGoodsTest extends ApiBase
         $get_data = array(
             'limit' => 10
         );
-        $url = sysconfig('CMS_API_URL') . '/goods/index';
+        $url = get_api_url_address() . '/goods/index';
         $response = curl_request($url, $get_data, 'GET');
 
         $this->assertTrue(!!$response); //断言结果是否为true,如果不为true则报错
@@ -33,7 +33,7 @@ class ApiGoodsTest extends ApiBase
         $get_data = array(
             'id' => 1
         );
-        $url = sysconfig('CMS_API_URL') . '/goods/detail';
+        $url = get_api_url_address() . '/goods/detail';
         $response = curl_request($url, $get_data, 'GET');
 
         $this->assertTrue(!!$response); //断言结果是否为true,如果不为true则报错

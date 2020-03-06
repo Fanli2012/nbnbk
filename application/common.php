@@ -203,11 +203,11 @@ function get_prenext(array $param)
 //根据总数与每页条数，获取总页数
 function get_totalpage(array $param)
 {
-	$pagesize = CMS_PAGESIZE;
+    $pagesize = CMS_PAGESIZE;
     if (isset($param['pagesize']) && $param['pagesize'] > 0) {
         $pagesize = $param["pagesize"];
     }
-	
+
     $counts = $param["counts"];
 
     //取总数据量除以每页数的余数
@@ -574,3 +574,21 @@ function toDate($time, $format = 'Y-m-d H:i:s')
 }
 
 
+// ----------其它自定义函数，主要用于真的当前项目----------
+
+// 获取API地址
+function get_api_url_address()
+{
+    return http_host() . sysconfig('CMS_API_URL');
+}
+
+// 获取静态资源CDN地址，CMS_SITE_CDN_ADDRESS为空表示本地
+function get_site_cdn_address()
+{
+    $res = sysconfig('CMS_SITE_CDN_ADDRESS');
+    if ($res) {
+        return $res;
+    }
+
+    return http_host();
+}

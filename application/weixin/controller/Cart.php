@@ -20,7 +20,7 @@ class Cart extends Base
         $get_data = array(
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/cart/index';
+        $url = get_api_url_address().'/cart/index';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['list'] = $res['data'];
         
@@ -30,7 +30,7 @@ class Cart extends Base
             'orderby'=> 1,
             'offset' => 0
 		);
-        $url = sysconfig('CMS_API_URL').'/goods/index';
+        $url = get_api_url_address().'/goods/index';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['like_goods_list'] = $res['data']['list'];
 		
@@ -48,13 +48,13 @@ class Cart extends Base
         $get_data = array(
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user/detail';
+        $url = get_api_url_address().'/user/detail';
 		$res = Util::curl_request($url, $get_data, 'GET');
 		$this->login_info = array_merge($this->login_info, $res['data']);
 		session('weixin_user_info', $this->login_info);
         
         //支付方式列表
-        $url = sysconfig('CMS_API_URL').'/payment/index';
+        $url = get_api_url_address().'/payment/index';
 		$res = Util::curl_request($url, array(),'GET');
         $assign_data['payment_list'] = $res['data'];
         
@@ -63,7 +63,7 @@ class Cart extends Base
             'limit'  => 10,
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user_address/index';
+        $url = get_api_url_address().'/user_address/index';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['address_list'] = $res['data']['list'];
         
@@ -84,7 +84,7 @@ class Cart extends Base
             'cartids' => $cartids,
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/cart/cart_checkout_goods_list';
+        $url = get_api_url_address().'/cart/cart_checkout_goods_list';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['checkout_goods'] = $res['data'];
         if(empty($assign_data['checkout_goods']['list'])){$this->error('没有要结算的商品');}
@@ -99,7 +99,7 @@ class Cart extends Base
             'min_amount' => $assign_data['checkout_goods']['total_price'],
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user_bonus/user_available_bonus_list';
+        $url = get_api_url_address().'/user_bonus/user_available_bonus_list';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['user_bonus_list'] = $res['data'];
         
@@ -131,7 +131,7 @@ class Cart extends Base
             'message' => $message,
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/order/add';
+        $url = get_api_url_address().'/order/add';
 		$res = Util::curl_request($url,$post_data,'POST');
         if($res['code'] != ReturnData::SUCCESS)
         {

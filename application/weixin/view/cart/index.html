@@ -1,13 +1,13 @@
 <!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html;charset=utf-8"/>
 <title>购物车</title><meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
-<link href="<?php echo sysconfig('CMS_BASEHOST'); ?>/css/weixin/style.css" type="text/css" rel="stylesheet">
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/jquery.min.js"></script>
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/weixin/mobile.js"></script>
+<link href="<?php echo http_host(); ?>/css/weixin/style.css" type="text/css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/jquery.min.js"></script>
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/weixin/mobile.js"></script>
 <meta name="keywords" content="关键词"><meta name="description" content="描述"></head><body style="background-color:#ffffff;">
 <div class="classreturn loginsignup">
-    <div class="ds-in-bl return"><a href="javascript:history.back(-1);"><img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/return.png" alt="返回"></a></div>
+    <div class="ds-in-bl return"><a href="javascript:history.back(-1);"><img src="<?php echo http_host(); ?>/images/weixin/return.png" alt="返回"></a></div>
     <div class="ds-in-bl tit center"><span>购物车</span></div>
-    <div class="ds-in-bl nav_menu"><a href="javascript:void(0);"><img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/class1.png" alt="菜单"></a></div>
+    <div class="ds-in-bl nav_menu"><a href="javascript:void(0);"><img src="<?php echo http_host(); ?>/images/weixin/class1.png" alt="菜单"></a></div>
 </div>
 
 {include file="common/headerNav"/}
@@ -37,7 +37,7 @@
                 <!--商品名-->
                 <p class="tit"><?php echo $v['title']; ?></p>
                 <!--删除按钮-->
-                <a href="javascript:void(0);" class="delescj deleteGoods" data-cart-id="<?php echo $v['id']; ?>"><img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/dele.png"></a>
+                <a href="javascript:void(0);" class="delescj deleteGoods" data-cart-id="<?php echo $v['id']; ?>"><img src="<?php echo http_host(); ?>/images/weixin/dele.png"></a>
             </div>
             <!--商品属性，规格-->
             <p class="weight"></p>
@@ -80,7 +80,7 @@
 <!--购物车没有商品-start-->
 <div class="cart_list">
     <div class="nonenothing">
-        <img src="<?php echo sysconfig('CMS_BASEHOST'); ?>/images/weixin/nothing.png">
+        <img src="<?php echo http_host(); ?>/images/weixin/nothing.png">
         <p>购物车暂无商品</p>
         <a href="<?php echo '/weixin'; ?>">去逛逛</a>
     </div><br><br>
@@ -105,7 +105,7 @@
 {include file="common/footer"/}
 <?php } ?>
 
-<script type="text/javascript" src="<?php echo sysconfig('CMS_BASEHOST'); ?>/js/layer/mobile/layer.js"></script>
+<script type="text/javascript" src="<?php echo http_host(); ?>/js/layer/mobile/layer.js"></script>
 <script>
 var access_token = '<?php echo $login_info['token']['token']; ?>';
 function cart_submit()
@@ -144,7 +144,7 @@ function change_goods_number(type, id)
     if(!/^[0-9]*$/.test(goods_number)){goods_number = document.getElementById('goods_number'+id).value;}
     var goods_number2 = goods_number;
 	
-	var url = '<?php echo sysconfig('CMS_API_URL').'/cart/add'; ?>';
+	var url = '<?php echo get_api_url_address().'/cart/add'; ?>';
     $.post(url,{access_token:access_token,goods_id:id,goods_number:goods_number},function(res)
 	{
         if (res.code == 0)
@@ -182,7 +182,7 @@ $(function () {
                 layer.close(index);
                 $.ajax({
                     type : "POST",
-                    url:"<?php echo sysconfig('CMS_API_URL').'/cart/del'; ?>",
+                    url:"<?php echo get_api_url_address().'/cart/del'; ?>",
                     dataType:'json',
                     data: {access_token:access_token, id:cart_id},
                     success: function(res){

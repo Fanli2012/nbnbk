@@ -25,7 +25,7 @@ class UserWithdraw extends Base
             'offset' => $offset,
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user_withdraw/index';
+        $url = get_api_url_address().'/user_withdraw/index';
 		$res = Util::curl_request($url,$postdata,'GET');
         $assign_data['list'] = $res['data']['list'];
         //总页数
@@ -61,7 +61,7 @@ class UserWithdraw extends Base
         $get_data = array(
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user/detail';
+        $url = get_api_url_address().'/user/detail';
 		$res = Util::curl_request($url, $get_data, 'GET');
 		$this->login_info = array_merge($this->login_info, $res['data']);
 		session('weixin_user_info', $this->login_info);

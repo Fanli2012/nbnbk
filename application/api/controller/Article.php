@@ -39,7 +39,7 @@ class Article extends Common
         {
             foreach($res['list'] as $k=>$v)
             {
-                if(!empty($v['litpic'])){$res['list'][$k]['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['litpic'];}
+                if(!empty($v['litpic'])){$res['list'][$k]['litpic'] = get_site_cdn_address().$v['litpic'];}
             }
         }
         
@@ -57,8 +57,8 @@ class Article extends Common
 		$res = $this->getLogic()->getOne($where);
         if(!$res){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         
-        if($res['content']){$res['content'] = str_replace(' style=""', '', preg_replace('/src=\"\/uploads\//','src="'.sysconfig('CMS_SITE_CDN_ADDRESS').'/uploads/', $res['content']));}
-        if($res['litpic']){$res['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$res['litpic'];}
+        if($res['content']){$res['content'] = str_replace(' style=""', '', preg_replace('/src=\"\/uploads\//','src="'.get_site_cdn_address().'/uploads/', $res['content']));}
+        if($res['litpic']){$res['litpic'] = get_site_cdn_address().$res['litpic'];}
         $res = $res->append(['type_name_text','status_text'])->toArray();
 		
 		Util::echo_json(ReturnData::create(ReturnData::SUCCESS,$res));

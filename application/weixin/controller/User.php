@@ -25,7 +25,7 @@ class User extends Base
         $get_data = array(
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user/detail';
+        $url = get_api_url_address().'/user/detail';
 		$res = Util::curl_request($url, $get_data, 'GET');
 		if(!($res['code']==ReturnData::SUCCESS && $res['data']))
 		{
@@ -43,7 +43,7 @@ class User extends Base
 		$get_data = array(
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user/detail';
+        $url = get_api_url_address().'/user/detail';
 		$res = Util::curl_request($url, $get_data, 'GET');
 		$this->login_info = array_merge($this->login_info, $res['data']);
 		session('weixin_user_info', $this->login_info);
@@ -57,7 +57,7 @@ class User extends Base
         $get_data = array(
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user/detail';
+        $url = get_api_url_address().'/user/detail';
 		$res = Util::curl_request($url, $get_data, 'GET');
 		$this->login_info = array_merge($this->login_info, $res['data']);
 		session('weixin_user_info', $this->login_info);
@@ -72,7 +72,7 @@ class User extends Base
         $get_data = array(
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user/detail';
+        $url = get_api_url_address().'/user/detail';
 		$res = Util::curl_request($url,$get_data,'GET');
 		$this->login_info = array_merge($this->login_info, $res['data']);
         
@@ -80,7 +80,7 @@ class User extends Base
         $get_data = array(
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user_referral_commission/detail';
+        $url = get_api_url_address().'/user_referral_commission/detail';
 		$res = Util::curl_request($url,$get_data,'GET');
 		$user_referral_commission = $res['data'];
 		$assign_data['user_referral_commission'] = $user_referral_commission;
@@ -95,7 +95,7 @@ class User extends Base
             'offset' => $offset,
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user/myteam';
+        $url = get_api_url_address().'/user/myteam';
 		$res = Util::curl_request($url, $get_data, 'GET');
         $assign_data['list'] = $res['data']['list'];
         //总页数

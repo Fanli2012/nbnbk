@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /><meta http-equiv="Cache-Control" content="no-siteapp" /><meta http-equiv="Cache-Control" content="no-transform" /><meta name="mobile-agent" content="format=xhtml;url=http://m.bnbni.com<?php echo GetCurUrl(); ?>">
-<title><?php if(empty($post["title"])){echo $post["tag"];}else{echo $post["title"];}if($page!=0){echo ' '.($page+1);} ?></title><meta name="keywords" content="<?php echo $post["keywords"]; ?>" /><meta name="description" content="<?php echo $post["description"]; ?>" /><link rel="stylesheet" href="<?php echo CMS_BASEHOST; ?>/css/style.css" media="all"><script type="text/javascript" src="<?php echo CMS_BASEHOST; ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo CMS_BASEHOST; ?>/js/ad.js"></script><script>uaredirect("http://m.bnbni.com/cat{dede:type}[field:ID /]{/dede:type}");</script></head><body><script>site();</script>
+<title><?php if(empty($post["title"])){echo $post["tag"];}else{echo $post["title"];}if($page!=0){echo ' '.($page+1);} ?></title><meta name="keywords" content="<?php echo $post["keywords"]; ?>" /><meta name="description" content="<?php echo $post["description"]; ?>" /><link rel="stylesheet" href="<?php echo http_host(); ?>/css/style.css" media="all"><script type="text/javascript" src="<?php echo http_host(); ?>/js/jquery.min.js"></script><script type="text/javascript" src="<?php echo http_host(); ?>/js/ad.js"></script><script>uaredirect("http://m.bnbni.com/cat{dede:type}[field:ID /]{/dede:type}");</script></head><body><script>site();</script>
 {include file="common/header"/}<div id="tad"><script>tjs();</script></div>
 
 <div class="box mt10"><div class="fl_640"><div class="zinfo"><h1><?php echo $post["tag"]; ?></h1><?php if(!empty($post['content'])){echo '<div class="zdes">'.$post['content'].'</div>';} ?></div><div id="lad1"><script>ljs1();</script></div></div><!-- fl_640 end -->
@@ -16,7 +16,7 @@
 <script>
 function getmore(condition)
 {
-    var url = "<?php echo CMS_BASEHOST; ?>/api/listarc";
+    var url = "<?php echo http_host(); ?>/api/listarc";
     //var typeid = "";
     $.post(url,condition,function(res){
         if(res.code==0)

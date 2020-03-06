@@ -27,7 +27,7 @@ class Order extends Base
             'status' => $status, //0或者不传表示全部，1待付款，2待发货,3待收货,4待评价,5退款/售后
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/order/index';
+        $url = get_api_url_address().'/order/index';
 		$res = Util::curl_request($url, $get_data, 'GET');
         $assign_data['list'] = $res['data']['list'];
         //总页数
@@ -50,7 +50,7 @@ class Order extends Base
 						foreach($v['goods_list'] as $key => $value)
 						{
 							$html .= '<li>';
-							$html .= '<img src="'.$value['goods_img'].'" onerror="this.src=\''.sysconfig('CMS_BASEHOST').'/images/weixin/no_pic.jpg\'">';
+							$html .= '<img src="'.$value['goods_img'].'" onerror="this.src=\'' . http_host() .'/images/weixin/no_pic.jpg\'">';
 							$html .= '<p><b>'.$value['goods_name'].'</b><span>￥'.$value['goods_price'].'<i>x'.$value['goods_number'].'</i></span></p>';
 							$html .= '</li>';
 						}
@@ -87,7 +87,7 @@ class Order extends Base
             'id'  => $id,
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/order/detail';
+        $url = get_api_url_address().'/order/detail';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['post'] = $res['data'];
         if(empty($assign_data['post'])){$this->error('订单不存在');}
@@ -119,7 +119,7 @@ class Order extends Base
                 'comment' => json_encode($_POST['comment']),
                 'access_token' => $this->login_info['token']['token']
             );
-            $url = sysconfig('CMS_API_URL').'/comment/batch_add_goods_comment';
+            $url = get_api_url_address().'/comment/batch_add_goods_comment';
             $res = Util::curl_request($url, $post_data, 'POST');
             if($res['code'] != ReturnData::SUCCESS){$this->error($res['msg']);}
             
@@ -135,7 +135,7 @@ class Order extends Base
             'refund_status' => 0,
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/order/detail';
+        $url = get_api_url_address().'/order/detail';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['post'] = $res['data'];
         if(empty($assign_data['post'])){$this->error('您访问的页面不存在或已被删除');}
@@ -157,7 +157,7 @@ class Order extends Base
             'pay_status' => 0,
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/order/detail';
+        $url = get_api_url_address().'/order/detail';
 		$res = Util::curl_request($url,$get_data,'GET');
         if($res['code']!=ReturnData::SUCCESS || empty($res['data'])){$this->error('订单不存在或已过期');}
         $assign_data['order'] = $res['data'];
@@ -166,7 +166,7 @@ class Order extends Base
         $get_data = array(
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user/detail';
+        $url = get_api_url_address().'/user/detail';
 		$res = Util::curl_request($url, $get_data, 'GET');
 		$this->login_info = array_merge($this->login_info, $res['data']);
 		session('weixin_user_info', $this->login_info);
@@ -215,7 +215,7 @@ class Order extends Base
             'id' => $order_id,
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/order/order_yuepay';
+        $url = get_api_url_address().'/order/order_yuepay';
 		$res = Util::curl_request($url, $post_data, 'POST');
         if($res['code'] != ReturnData::SUCCESS){ $this->error('支付失败：'.$res['msg']); }
         
@@ -233,7 +233,7 @@ class Order extends Base
             'id' => $order_id, //要支付的订单ID
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/order/detail';
+        $url = get_api_url_address().'/order/detail';
 		$res = Util::curl_request($url, $get_data, 'GET');
         if($res['code'] != ReturnData::SUCCESS || empty($res['data'])){ $this->error('订单不存在'); }
 		$assign_data['order'] = $res['data'];

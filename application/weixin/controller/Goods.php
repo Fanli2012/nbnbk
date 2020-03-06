@@ -33,7 +33,7 @@ class Goods extends Common
         $get_data = $param;
         $get_data['limit'] = $pagesize;
         $get_data['offset'] = $offset;
-        $url = sysconfig('CMS_API_URL').'/goods/index';
+        $url = get_api_url_address().'/goods/index';
 		$res = Util::curl_request($url, $get_data, 'GET');
         $assign_data['goods_list'] = $res['data']['list'];
         $assign_data['request_param'] = $param;
@@ -77,7 +77,7 @@ class Goods extends Common
         $get_data = array(
             'id'  => $id
 		);
-        $url = sysconfig('CMS_API_URL').'/goods/detail';
+        $url = get_api_url_address().'/goods/detail';
 		$res = Util::curl_request($url, $get_data, 'GET');
 		if(empty($res['data'])){Helper::http404();}
         $post = $res['data'];
@@ -89,7 +89,7 @@ class Goods extends Common
 				'goods_id' => $id,
 				'access_token' => $this->login_info['token']['token']
 			);
-			$url = sysconfig('CMS_API_URL').'/user_goods_collect/detail';
+			$url = get_api_url_address().'/user_goods_collect/detail';
 			$res = Util::curl_request($url, $get_data, 'GET');
 			if($res['code'] == ReturnData::SUCCESS || !empty($res['data'])){$post['is_collect'] = 1;}
 		}
@@ -100,7 +100,7 @@ class Goods extends Common
                 'goods_id'  => $id,
                 'access_token' => $this->login_info['token']['token']
             );
-            $url = sysconfig('CMS_API_URL').'/user_goods_history/add';
+            $url = get_api_url_address().'/user_goods_history/add';
             Util::curl_request($url, $post_data, 'POST');
         }
         
@@ -124,7 +124,7 @@ class Goods extends Common
             'limit'  => $pagesize,
             'offset' => $offset
 		);
-        $url = sysconfig('CMS_API_URL').'/goods/index';
+        $url = get_api_url_address().'/goods/index';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['list'] = $res['data']['list'];
         //总页数
@@ -172,7 +172,7 @@ class Goods extends Common
             'limit'     => 15,
             'offset'    => 0
 		);
-        $url = sysconfig('CMS_API_URL').'/goods_type/index';
+        $url = get_api_url_address().'/goods_type/index';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['goods_type_list'] = $res['data']['list'];
 		

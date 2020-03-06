@@ -17,6 +17,6 @@ class TestCase extends \think\testing\TestCase
     function __construct()
     {
         parent::__construct();
-        $this->baseUrl = sysconfig('CMS_BASEHOST');
+        $this->baseUrl = 'http://www.nbnbk3.com';
     }
 }

@@ -242,7 +242,7 @@ class Index extends Base
 
         $counts = db("taglist")->where("tid=$tag")->count('aid');
         if ($counts > sysconfig('CMS_LIST_MAX_TOTAL')) {
-            $counts = sysconfig('CMS_BASEHOST');
+            $counts = sysconfig('CMS_LIST_MAX_TOTAL');
         }
         $pagesize = sysconfig('CMS_PAGESIZE');
         $page = 0;
@@ -303,7 +303,7 @@ class Index extends Base
 
         $counts = db("article")->where($where)->count();
         if ($counts > sysconfig('CMS_LIST_MAX_TOTAL')) {
-            $counts = sysconfig('CMS_BASEHOST');
+            $counts = sysconfig('CMS_LIST_MAX_TOTAL');
         }
         $pagesize = sysconfig('CMS_PAGESIZE');
         $page = 0;

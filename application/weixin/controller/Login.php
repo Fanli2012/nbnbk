@@ -50,7 +50,7 @@ class Login extends Common
                 'password' => $_POST['password'],
                 'from' => 2
             );
-            $url = sysconfig('CMS_API_URL').'/login/index';
+            $url = get_api_url_address().'/login/index';
             $res = Util::curl_request($url,$postdata,'POST');
             
             if($res['code'] != ReturnData::SUCCESS){$this->error('登录失败');}
@@ -126,7 +126,7 @@ class Login extends Common
             'parent_mobile' => '',
             'mobile' => ''
         );
-        $url = sysconfig('CMS_API_URL').'/login/wx_login';
+        $url = get_api_url_address().'/login/wx_login';
         $res = Util::curl_request($url, $post_data, 'POST');
         if($res['code'] != ReturnData::SUCCESS){$this->error('操作失败');}
         

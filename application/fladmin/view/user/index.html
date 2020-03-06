@@ -20,7 +20,7 @@
 <tbody>
 <?php if($list){foreach($list as $row){ ?><tr>
 <td><?php echo $row['id']; ?></td>
-<td><img src="<?php echo $row['head_img']; ?>" style="width:24px;height:24px;" onerror="this.src='<?php echo sysconfig('CMS_BASEHOST'); ?>/images/no_pic.jpg'"></td>
+<td><img src="<?php echo $row['head_img']; ?>" style="width:24px;height:24px;" onerror="this.src='<?php echo http_host(); ?>/images/no_pic.jpg'"></td>
 <td><?php if($row['user_name']){echo $row['user_name'];}else{echo $row['mobile'];} ?></td>
 <td><?php echo $row['sex_text']; ?></td>
 <td><?php echo $row['money']; ?></td>

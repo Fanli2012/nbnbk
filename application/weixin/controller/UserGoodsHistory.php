@@ -25,7 +25,7 @@ class UserGoodsHistory extends Base
             'offset' => $offset,
             'access_token' => $this->login_info['token']['token']
 		);
-        $url = sysconfig('CMS_API_URL').'/user_goods_history/index';
+        $url = get_api_url_address().'/user_goods_history/index';
 		$res = Util::curl_request($url,$get_data,'GET');
         $assign_data['list'] = $res['data']['list'];
         //总页数

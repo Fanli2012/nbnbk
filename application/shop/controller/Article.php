@@ -94,7 +94,7 @@ class Article extends Base
         }
 
         if (isset($_POST["dellink"]) && $_POST["dellink"] == 1 && !empty($content)) {
-            $content = logic('Article')->replacelinks($content, array(sysconfig('CMS_BASEHOST')));
+            $content = logic('Article')->replacelinks($content, array(http_host()));
         } //删除非站内链接
         $_POST['content'] = $content;
 
@@ -180,7 +180,7 @@ class Article extends Base
         }
 
         if (isset($_POST["dellink"]) && $_POST["dellink"] == 1 && !empty($content)) {
-            $content = logic('Article')->replacelinks($content, array(sysconfig('CMS_BASEHOST')));
+            $content = logic('Article')->replacelinks($content, array(http_host()));
         } //删除非站内链接
         $_POST['content'] = $content;
 

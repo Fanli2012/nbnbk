@@ -20,7 +20,7 @@ class Search extends Common
             'limit'  => 50,
             'offset' => 0
 		);
-        $url = sysconfig('CMS_API_URL').'/goods_searchword/index';
+        $url = get_api_url_address().'/goods_searchword/index';
 		$res = Util::curl_request($url, $get_data, 'GET');
         $assign_data['goods_searchword_list'] = $res['data']['list'];
 		

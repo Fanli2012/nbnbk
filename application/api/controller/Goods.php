@@ -82,8 +82,8 @@ class Goods extends Common
         {
             foreach($res['list'] as $k=>$v)
             {
-                if($v['litpic']){$res['list'][$k]['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['litpic'];}
-				if($v['goods_img']){$res['list'][$k]['goods_img'] = sysconfig('CMS_SITE_CDN_ADDRESS').$v['goods_img'];}
+                if($v['litpic']){$res['list'][$k]['litpic'] = get_site_cdn_address() . $v['litpic'];}
+				if($v['goods_img']){$res['list'][$k]['goods_img'] = get_site_cdn_address() . $v['goods_img'];}
             }
         }
         
@@ -100,9 +100,9 @@ class Goods extends Common
 		$res = $this->getLogic()->getOne($where);
         if(!$res){Util::echo_json(ReturnData::create(ReturnData::RECORD_NOT_EXIST));}
         
-		if($res['content']){$res['content'] = str_replace(' style=""', '', preg_replace('/src=\"\/uploads\//','src="'.sysconfig('CMS_SITE_CDN_ADDRESS').'/uploads/', $res['content']));}
-        if($res['litpic']){$res['litpic'] = sysconfig('CMS_SITE_CDN_ADDRESS').$res['litpic'];}
-        if($res['goods_img']){$res['goods_img'] = sysconfig('CMS_SITE_CDN_ADDRESS').$res['goods_img'];}
+		if($res['content']){$res['content'] = str_replace(' style=""', '', preg_replace('/src=\"\/uploads\//','src="' . get_site_cdn_address() . '/uploads/', $res['content']));}
+        if($res['litpic']){$res['litpic'] = get_site_cdn_address().$res['litpic'];}
+        if($res['goods_img']){$res['goods_img'] = get_site_cdn_address().$res['goods_img'];}
 		
 		Util::echo_json(ReturnData::create(ReturnData::SUCCESS, $res));
     }

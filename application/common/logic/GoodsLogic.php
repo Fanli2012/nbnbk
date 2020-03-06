@@ -96,18 +96,22 @@ class GoodsLogic extends BaseLogic
 		//标题最多150个字符
 		if (isset($data['title']) && !empty($data['title'])) {
 			$data['title'] = mb_strcut($data['title'],0,150,'UTF-8');
+			$data['title'] = trim($data['title']);
         }
 		//SEO标题最多150个字符
 		if (isset($data['seotitle']) && !empty($data['seotitle'])) {
 			$data['seotitle'] = mb_strcut($data['seotitle'],0,150,'UTF-8');
+			$data['seotitle'] = trim($data['seotitle']);
         }
 		//关键词最多60个字符
 		if (isset($data['keywords']) && !empty($data['keywords'])) {
 			$data['keywords'] = mb_strcut($data['keywords'],0,60,'UTF-8');
+			$data['keywords'] = trim($data['keywords']);
         }
 		//描述最多240个字符
 		if (isset($data['description']) && !empty($data['description'])) {
 			$data['description'] = mb_strcut($data['description'],0,240,'UTF-8');
+			$data['description'] = trim($data['description']);
         }
         //添加时间、更新时间
 		$time = time();
@@ -149,18 +153,22 @@ class GoodsLogic extends BaseLogic
 		//标题最多150个字符
 		if (isset($data['title']) && !empty($data['title'])) {
 			$data['title'] = mb_strcut($data['title'],0,150,'UTF-8');
+			$data['title'] = trim($data['title']);
         }
 		//SEO标题最多150个字符
 		if (isset($data['seotitle']) && !empty($data['seotitle'])) {
 			$data['seotitle'] = mb_strcut($data['seotitle'],0,150,'UTF-8');
+			$data['seotitle'] = trim($data['seotitle']);
         }
 		//关键词最多60个字符
 		if (isset($data['keywords']) && !empty($data['keywords'])) {
 			$data['keywords'] = mb_strcut($data['keywords'],0,60,'UTF-8');
+			$data['keywords'] = trim($data['keywords']);
         }
 		//描述最多240个字符
 		if (isset($data['description']) && !empty($data['description'])) {
 			$data['description'] = mb_strcut($data['description'],0,240,'UTF-8');
+			$data['description'] = trim($data['description']);
         }
         //更新时间
         if (!(isset($data['update_time']) && !empty($data['update_time']))) {

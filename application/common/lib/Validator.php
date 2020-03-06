@@ -17,6 +17,7 @@ class Validator
      */
     public static function isPWD($value, $minLen = 6, $maxLen = 18)
     {
+		// $match = '/(?=[-_a-zA-Z0-9]*?[A-Z])(?=[-_a-zA-Z0-9]*?[a-z])(?=[-_a-zA-Z0-9]*?[0-9])[-_a-zA-Z0-9]{6,18}/'; // 密码6-18位，至少一个大写字母，一个小写字母和一个数字
         $match = '/^[-_a-zA-Z0-9]{' . $minLen . ',' . $maxLen . '}$/i';
         $v = trim($value);
         if (empty($v))

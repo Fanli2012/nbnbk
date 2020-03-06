@@ -26,6 +26,11 @@ class Article extends Base
         $where = [];
         $title = '';
 
+		// page参数不能为1
+		if (isset($_GET['page']) && $_GET['page'] == 1) {
+			Helper::http404();
+		}
+        $uri = $_SERVER["REQUEST_URI"]; //获取当前url的参数
         $key = input('key', null);
         if ($key != null) {
             $arr_key = logic('Article')->getArrByString($key);
@@ -55,12 +60,12 @@ class Article extends Base
         $where['delete_time'] = 0;
         $where['status'] = 0;
         $where['add_time'] = ['<', time()];
-		$posts = cache("index_article_index_posts_{$key}_page".input('page',1));
+        $posts = cache("index_article_index_posts_" . md5($uri));
         if (!$posts) {
             $posts = $this->getLogic()->getPaginate($where, 'id desc', ['content'], 11);
-            cache("index_article_index_posts_{$key}_page".input('page',1), $posts, 7200);
+            cache("index_article_index_posts_" . md5($uri), $posts, 7200);
         }
-		
+
         $page = $posts->render();
         $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
         $page = preg_replace('/&amp;key=[a-z0-9]+/', '', $page);
@@ -110,10 +115,49 @@ class Article extends Base
     //详情
     public function detail()
     {
-        if (!checkIsNumber(input('id', null))) {
+        if (!checkIsNumber(input('id/d', null))) {
             Helper::http404();
         }
         $id = input('id');
+
+        if (Helper::isPostRequest()) {
+            $user_info = session('user_info');
+            if (!$user_info) {
+                $this->error('请先登录', '/user/login?return_url=' . http_host(true), '', 1);
+            }
+
+			// 点赞
+			if (isset($_POST['type']) && $_POST['type'] == 'like') {
+				$dianzan_data['id_value'] = input('parent_id/d', 0);
+				$dianzan_data['user_id'] = $user_info['id'];
+				$dianzan_data['type'] = 0;
+				$res = logic('Dianzan')->add($dianzan_data);
+				if ($res['code'] != ReturnData::SUCCESS) {
+					$this->error($res['msg']);
+				}
+				$this->success($res['msg']);
+			}
+			
+			// 评论/回复
+            $comment_data['parent_id'] = input('post.parent_id/d', 0);
+            $comment_data['user_id'] = $user_info['id'];
+            $comment_data['comment_type'] = 1;
+            $comment_data['id_value'] = $id;
+            $comment_data['content'] = input('post.comment_text/s', '', 'htmlspecialchars,strip_tags');
+            $res = logic('Comment')->addCommonComment($comment_data);
+            if ($res['code'] != ReturnData::SUCCESS) {
+                $this->error($res['msg']);
+            }
+
+            $this->success($res['msg']);
+            // 刷新当前页面
+            echo "<script language=JavaScript>location.replace(location.href);</script>";
+            exit;
+            header('location: ' . $_SERVER['HTTP_REFERER']);
+            exit;
+            header("Refresh:0");
+            exit;
+        }
 
         $post = cache("index_article_detail_$id");
         if (!$post) {
@@ -127,7 +171,7 @@ class Article extends Base
 
         }
         $this->assign('post', $post);
-		//var_dump($post);exit;
+        //var_dump($post);exit;
         //最新文章
         $relate_zuixin_list = cache("index_article_detail_relate_zuixin_list_$id");
         if (!$relate_zuixin_list) {
@@ -162,6 +206,10 @@ class Article extends Base
         //上一篇、下一篇
         $this->assign($this->getPreviousNextArticle(['article_id' => $id]));
 
+		//获取评论列表30条
+		$comment_list = logic('Comment')->getAll(array('id_value' => $id, 'comment_type' => 1, 'delete_time' => 0), 'add_time desc', '*', 30);
+		$this->assign('comment_list', $comment_list);
+		//var_dump($comment_list);exit;
         return $this->fetch();
     }
 

@@ -42,7 +42,7 @@ class Image extends Common
             foreach($files as $key=>$file)
             {
                 $type = strtolower(substr(strrchr($file['name'], '.'), 1)); //文件后缀
-                $new_file_name = date('Ymdhis',time()).rand(1000,9999);
+                $new_file_name = date('YmdHis',time()).rand(1000,9999);
 				
                 $image_path = $this->path.'/'.$new_file_name.'.'.$type;
                 $uploads_path = $this->path; //存储路径
@@ -121,7 +121,7 @@ class Image extends Common
             {
                 $type = strtolower(substr(strrchr($file['name'], '.'), 1)); //文件后缀
                 
-                $image_path = $path.'/'.date('Ymdhis',time()).rand(1000,9999).'.'.$type;
+                $image_path = $path.'/'.date('YmdHis',time()).rand(1000,9999).'.'.$type;
                 $uploads_path = $path; //存储路径
                 
                 $allow_type = array('jpg','jpeg','gif','png','doc','docx','txt','pdf'); //定义允许上传的类型
@@ -233,7 +233,7 @@ class Image extends Common
                 $type = $result[2];
                 if(in_array($type, array('jpeg','jpg','gif','bmp','png')))
                 {
-                    $image_path = $this->path.'/'.date('Ymdhis',time()).rand(1000,9999).'.'.$type;
+                    $image_path = $this->path.'/'.date('YmdHis',time()).rand(1000,9999).'.'.$type;
                     $uploads_path = $this->path; //存储路径
                     
                     if(!file_exists($this->public_path.$uploads_path))

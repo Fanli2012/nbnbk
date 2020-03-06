@@ -1,0 +1,50 @@
+{extend name="public/base" /}
+{block name="title"}设置中心{/block}
+
+{block name="content"}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel-body" style="padding: 15px 0;">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="{:url('setting')}">设置中心</a></li>
+                    <li><a href="{:url('change_password')}">密码修改</a></li>
+                    <li><a href="{:url('setavatar')}">头像</a></li>
+                </ul>
+            </div>
+            <div class="panel-body">
+                <form id="myform" method="post" action="{:url('setting')}" role="form" enctype="multipart/form-data" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <span class="text-danger">*</span>用户名</label>
+                        <div class="col-sm-4"><label class="control-label" style="font-weight:400;"><?php echo $post['user_name']; ?></label></div>
+                    </div>
+					<div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <span class="text-danger">*</span>性别</label>
+                        <div class="col-sm-4">
+                            <label class="radio-inline">
+								<input type="radio" name="sex" value="1" <?php if($post['sex']==1){ echo 'checked'; } ?> > 男
+							</label>
+							<label class="radio-inline">
+								<input type="radio" name="sex" value="2" <?php if($post['sex']==2){ echo 'checked'; } ?>> 女
+							</label>
+						</div>
+                    </div>
+					<div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <span class="text-danger">*</span>昵称</label>
+                        <div class="col-sm-4">
+                            <input type="text" name="nickname" id="nickname" class="form-control" placeholder="昵称" value="<?php echo $post['nickname']; ?>" required></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-8">
+                            <button type="submit" onclick="" class="btn btn-success">保存</button></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{/block}

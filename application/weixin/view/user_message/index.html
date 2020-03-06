@@ -22,7 +22,7 @@
         <li>
         <?php if($v['title']){ ?><p class="tit"><?php echo $v['title']; ?></p><?php } ?>
         <?php if($v['desc']){ ?><p class="des"><?php echo $v['desc']; ?></p><?php } ?>
-        <p class="time"><?php echo date('Y-m-d H:i',$v['add_time']); ?></p>
+        <p class="time"><?php echo date('Y-m-d H:i',$v['add_time']); ?><span style="color:#00A11D;float:right;"><?php echo $v['status_text']; ?></span></p>
         </li>
         <?php } ?>
     </ul>

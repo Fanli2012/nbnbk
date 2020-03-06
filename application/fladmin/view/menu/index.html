@@ -17,7 +17,7 @@
 <td><?php echo $row['id']; ?></td>
 <td><?php echo $row['name']; ?></td>
 <td><?php echo $row['module'].'/'.$row['controller'].'/'.$row['action']; ?></td>
-<td><?php echo $row['status_text']; ?></td>
+<td><a href="{:url('index')}?status=<?php echo $row['status']; ?>"><?php echo $row['status_text']; ?></a></td>
 <td><a href="{:url('add')}?parent_id=<?php echo $row['id']; ?>">添加子菜单</a> | <a href="{:url('edit')}?id=<?php echo $row['id']; ?>">修改</a> | <a onclick="delconfirm('{:url('del')}?id=<?php echo $row['id']; ?>')" href="javascript:;">删除</a></td>
 </tr><?php }} ?>
 </tbody></table></div><!-- 表格结束 --></form><!-- 表单结束 -->

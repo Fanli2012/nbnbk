@@ -76,7 +76,7 @@ class Goods extends Base
         } //缩略图
         if (empty($_POST["description"])) {
             if (!empty($_POST["content"])) {
-                $_POST['description'] = cut_str($_POST["content"]);
+                $_POST['description'] = cut_str(input('post.content/s'));
             }
         } //description
         $_POST['shop_id'] = $this->login_info['id']; // 发布者id
@@ -85,10 +85,10 @@ class Goods extends Base
 
         //关键词
         if (!empty($_POST["keywords"])) {
-            $_POST['keywords'] = str_replace("，", ",", $_POST["keywords"]);
+            $_POST['keywords'] = str_replace("，", ",", input('post.keywords/s'));
         } else {
             if (!empty($_POST["title"])) {
-                $title = $_POST["title"];
+                $title = input('post.title/s');
                 $title = str_replace("，", "", $title);
                 $title = str_replace(",", "", $title);
                 $_POST['keywords'] = get_participle($title); // 标题分词
@@ -108,6 +108,7 @@ class Goods extends Base
             $goods_img = $_POST['goods_img'];
             $_POST['goods_img'] = $_POST['goods_img'][0];
         }
+		$_POST['content'] = input('post.content/s');
 
         // 启动事务
         Db::startTrans();
@@ -218,6 +219,7 @@ class Goods extends Base
             $goods_img = $_POST['goods_img'];
             $_POST['goods_img'] = $_POST['goods_img'][0];
         }
+		$_POST['content'] = input('post.content/s');
 
         // 启动事务
         Db::startTrans();

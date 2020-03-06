@@ -1,0 +1,35 @@
+<!-- 导航 -->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <!--小屏幕导航按钮和logo-->
+        <div class="navbar-header">
+            <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="{:url('user/Index/index')}" class="navbar-brand"> 个人中心</a>
+        </div>
+        <!--小屏幕导航按钮和logo-->
+        <!--导航-->
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="{:url('index/User/detail')}?id={$login_info['id']}" target="_blank"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;我的主页</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;<?php if($login_info['mobile']){echo $login_info['mobile'];}else{echo $login_info['user_name'];} ?>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dLabel">
+                        <li><a href="{:url('user/User/setting')}"><span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;设置中心</a></li>
+                    </ul>
+                </li>
+                <li><a href="{:url('user/Login/loginout')}"><span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;退出</a></li>
+            </ul>
+        </div>
+        <!--导航-->
+    </div>
+</nav>
+<!-- 导航 -->

@@ -1,0 +1,40 @@
+{extend name="public/base" /}
+{block name="title"}首页{/block}
+
+{block name="content"}
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="list-group">
+				<a href="#" class="list-group-item active" style="background:#0088cc;">评论</a>
+				<a href="#" class="list-group-item">收藏</a>
+				<a href="#" class="list-group-item">通知</a>
+				<a href="#" class="list-group-item">帮助</a>
+			</div>
+        </div>
+        <div class="col-md-10">
+			<div>
+				<ol class="breadcrumb">
+					<li><a style="color:#337ab7;" href="/" target="_blank">网站首页</a></li>
+					<li><a style="color:#337ab7;" href="{:url('user/Index/index')}">个人中心</a></li>
+					<li class="active">我的评论</li>
+				</ol>
+			</div>
+			<div class="list-group">
+				<div class="list-group-item">
+					<h4 class="list-group-item-heading"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 评论</h4>
+					<p class="list-group-item-text">我的评论共<span style="color:#f33;">0</span>条。</p>
+				</div>
+				<div class="list-group-item">
+					<h4 class="list-group-item-heading"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> 收藏</h4>
+					<p class="list-group-item-text">我共收藏<span style="color:#f33;">10</span>条。</p>
+				</div>
+				<div class="list-group-item">
+					<h4 class="list-group-item-heading"><span class="glyphicon glyphicon-bell" aria-hidden="true"></span> 通知</h4>
+					<p class="list-group-item-text">我共收藏<span style="color:#f33;">10</span>条。</p>
+				</div>
+			</div>
+        </div>
+    </div>
+</div>
+{/block}

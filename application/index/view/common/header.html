@@ -5,7 +5,7 @@
             <a href="<?php echo model('Page')->getPageDetailUrl(array('id'=>'jianjie')); ?>" rel="nofollow">公司简介</a> | <span>收藏本网页请按Ctrl+D</span></div>
         </div>
         <div class="sitebar_fr fr">
-            <a href="http://wpa.qq.com/msgrd?v=3&amp;uin=277023115&amp;site=qq&amp;menu=yes" rel="nofollow">QQ咨询</a> | <a href="<?php echo model('Page')->getPageDetailUrl(array('id'=>'contact')); ?>" rel="nofollow">联系我们</a>
+            &nbsp;<?php $user_info = session('user_info'); if (isset($user_info['mobile']) && !empty($user_info['mobile'])) { echo '<a href="/user/index/index">您好，'.$user_info['mobile'].'</a>'; } else { echo '<a href="/user/login">你好，请登录/注册</a>'; } ?>&nbsp;<a href="http://wpa.qq.com/msgrd?v=3&amp;uin=277023115&amp;site=qq&amp;menu=yes" rel="nofollow">QQ咨询</a>&nbsp;<a href="<?php echo model('Page')->getPageDetailUrl(array('id'=>'contact')); ?>" rel="nofollow">联系我们</a>&nbsp;<?php $shop_info = session('shop_info'); if (isset($shop_info['mobile']) && !empty($shop_info['mobile'])) { echo '<a href="/shop/index/index">您好，'.$shop_info['mobile'].'</a>'; } else { echo '<a href="/shop/login">商户中心</a>'; } ?>
         </div>
         <div class="cl"></div>
     </div>
@@ -27,4 +27,4 @@
     </div>
 </div>
 
-<div id="header"><div id="navlink" class="box"><a class="webname" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/"><?php echo sysconfig('CMS_WEBNAME'); ?></a><span class="nav"><a <?php if(request()->url()=='/articlelist/f1'){echo 'class="current" ';} ?>href="/articlelist/f1">企业新闻</a><a <?php if(request()->url()=='/goodslist/f1'){echo 'class="current" ';} ?>href="/goodslist/f1">产品中心</a><a <?php if(request()->url()=='/articlelist/f2'){echo 'class="current" ';} ?>href="/articlelist/f2">案例中心</a><a <?php if(request()->url()==model('Page')->getPageDetailUrl(array('id'=>'about'))){echo 'class="current" ';} ?>href="<?php echo model('Page')->getPageDetailUrl(array('id'=>'about')); ?>">关于我们</a><script>navjs();</script></span><a href="/shop/login" class="user-login fr">登录/注册</a><div class="cl"></div></div></div>
+<div id="header"><div id="navlink" class="box"><a class="webname" href="<?php echo sysconfig('CMS_BASEHOST'); ?>/"><?php echo sysconfig('CMS_WEBNAME'); ?></a><span class="nav"><a <?php if(request()->url()=='/articlelist/f1'){echo 'class="current" ';} ?>href="/articlelist/f1">企业新闻</a><a <?php if(request()->url()=='/goodslist/f1'){echo 'class="current" ';} ?>href="/goodslist/f1">产品中心</a><a <?php if(request()->url()=='/articlelist/f2'){echo 'class="current" ';} ?>href="/articlelist/f2">案例中心</a><a <?php if(request()->url()==model('Page')->getPageDetailUrl(array('id'=>'about'))){echo 'class="current" ';} ?>href="<?php echo model('Page')->getPageDetailUrl(array('id'=>'about')); ?>">关于我们</a><script>navjs();</script></span><div class="cl"></div></div></div>

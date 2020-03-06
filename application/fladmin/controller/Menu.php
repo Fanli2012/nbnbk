@@ -24,6 +24,9 @@ class Menu extends Base
         if (!empty($_REQUEST["keyword"])) {
             $where['name'] = array('like', '%' . $_REQUEST['keyword'] . '%');
         }
+		if (isset($_REQUEST["status"]) && $_REQUEST["status"] != '') {
+            $where['status'] = $_REQUEST["status"];
+        }
 
         $list = $this->getLogic()->getPaginate($where, ['id' => 'desc']);
 

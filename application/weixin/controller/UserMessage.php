@@ -40,17 +40,17 @@ class UserMessage extends Base
                 foreach($res['data']['list'] as $k => $v)
                 {
                     $html .= '<li>';
-                    if($v['title']==0)
+                    if(!empty($v['title']))
                     {
                         $html .= '<p class="tit">'.$v['title'].'</p>';
                     }
                     
-                    if($v['des']==0)
+                    if(!empty($v['desc']))
                     {
                         $html .= '<p class="des">'.$v['desc'].'</p>';
                     }
                     
-                    $html .= '<p class="time">'.date('Y-m-d H:i:s',$v['add_time']).'</p>';
+                    $html .= '<p class="time">' . date('Y-m-d H:i:s', $v['add_time']) . '<span style="color:#00A11D;float:right;">' . $v['status_text'] . '</span></p>';
                     $html .= '</li>';
                 }
             }

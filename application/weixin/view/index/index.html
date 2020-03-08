@@ -13,8 +13,8 @@
 </div>
 <!--顶部搜索栏-end-->
 
+<?php if ($slide_list) { ?>
 <!--顶部滚动广告栏-start-->
-<?php if($slide_list){ ?>
 <div class="tbanner">
     <!-- Swiper -->
     <div class="swiper-container">
@@ -27,7 +27,6 @@
         <div class="swiper-pagination swiper-pagination-white"></div>
     </div>
 </div>
-<?php } ?>
 <link rel="stylesheet" href="<?php echo http_host(); ?>/css/swiper.min.css">
 <script type="text/javascript" src="<?php echo http_host(); ?>/js/swiper.min.js"></script>
 <style>
@@ -51,6 +50,7 @@ var swiper = new Swiper('.swiper-container', {
 });
 </script>
 <!--顶部滚动广告栏-end-->
+<?php } ?>
 
 <!--导航左右滑动-start-->
 <!--<div class="swiper-nav">

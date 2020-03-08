@@ -42,7 +42,7 @@ class Index extends Base
                     if (!empty($v['litpic'])) {
                         $html .= '<a class="limg" href="' . model('Article')->getArticleDetailUrl(array('id' => $v['id'])) . '"><img alt="' . $v['title'] . '" src="' . $v['litpic'] . '"></a>';
                     }
-                    $html .= '<strong class="tit"><a href="' . model('Article')->getArticleDetailUrl(array('id' => $v['id'])) . '" target="_blank">' . $v['title'] . '</a></strong><p>' . mb_strcut($v['description'], 0, 150, 'UTF-8') . '..</p>';
+                    $html .= '<strong class="tit"><a href="' . model('Article')->getArticleDetailUrl(array('id' => $v['id'])) . '">' . $v['title'] . '</a></strong><p>' . mb_strcut($v['description'], 0, 150, 'UTF-8') . '..</p>';
                     $html .= '<div class="info"><span class="fl"><em>' . date("m-d H:i", $v['update_time']) . '</em></span><span class="fr"><em>' . $v['click'] . '</em>人阅读</span></div>';
                     $html .= '<div class="cl"></div></div>';
                 }
@@ -398,4 +398,92 @@ class Index extends Base
     {
         return 'Hello world!';
     }
+    
+    /**
+     * 获取验证码图片
+     * @param int $type 0字母+数字，1纯数字，2字母
+     * @param int $length 位数
+     * @param int $width 验证码图片宽度
+     * @param int $height 验证码图片高度
+     */
+	public function get_verifycode_image()
+	{
+		$config = [
+			// 验证码字体大小
+			'fontSize'    =>    16,
+			// 是否添加杂点
+			'useNoise'    => input('use_noise', false),
+			// 是否画混淆曲线
+			'useCurve'    => input('use_curve', false),
+			// 验证码位数
+			'length'      =>    input('length', 4),
+			// 验证码图片宽度，设置为0为自动计算
+			'imageW'      =>    input('width', 0),
+			// 验证码图片高度，设置为0为自动计算
+			'imageH'      =>    input('height', 0),
+		];
+		$captcha = new \think\captcha\Captcha($config);
+		$captcha->codeSet = '0123456789';
+		return $captcha->entry();
+	}
+
+	/**
+     * 获取验证码图片
+     * @param int $type 0字母+数字，1纯数字，2字母
+     * @param int $length 位数
+     * @param int $width 验证码图片宽度
+     * @param int $height 验证码图片高度
+     */
+	public function verifycode($type = 1,$length = 4, $width = 80, $height = 30)
+	{
+		$img = imagecreate($width, $height);
+
+		$red = imagecolorallocate($img, 255, 0, 0);
+		$white = imagecolorallocate($img, 255, 255, 255);
+
+		// \Session::flash('captcha_math', $num1 + $num2); // 一次性使用
+		// \Cookie::queue('captcha_math', $num1 + $num2, 10); // 10 分钟
+		// \Cookie::queue('captcha_math', null , -1);     // 销毁
+		$gray = imagecolorallocate($img, 118, 151, 199);
+		$black = imagecolorallocate($img, mt_rand(0, 100), mt_rand(0, 100), mt_rand(0, 100));
+
+		// 画背景
+		imagefilledrectangle($img, 0, 0, $width, $height, $white);
+
+		// 在画布上随机生成大量点，起干扰作用;
+		for ($i = 0; $i < 30; $i++) {
+			imagesetpixel($img, rand(0, $width), rand(0, $height), $gray);
+		}
+
+		//设置干扰线
+		for ($i = 0; $i < 3; $i++) {
+			$linecolor = imagecolorallocate($img, mt_rand(50, 200), mt_rand(50, 200), mt_rand(50, 200));
+			imageline($img, mt_rand(1, 99), mt_rand(1, 29), mt_rand(1, 99), mt_rand(1, 29), $linecolor);
+		}
+
+		$content = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		if ($type == 1) { $content = "0123456789"; } else if ($type == 2) { $content = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; }
+		//创建一个变量存储产生的验证码数据，便于用户提交核对
+		$captcha = "";
+		for ($i = 0; $i < $length; $i++) {
+			// 字体大小
+			$fontsize = 10;
+			// 字体颜色
+			$fontcolor = imagecolorallocate($img, mt_rand(0, 120), mt_rand(0, 120), mt_rand(0, 120));
+			// 设置字体内容
+			$fontcontent = substr($content, mt_rand(0, strlen($content)), 1);
+			$captcha .= $fontcontent;
+			// 显示的坐标
+			$x = $i * (($width * 3 / 4) / $length) + mt_rand(5, 10);
+			$y = mt_rand(5, ($height / 2));
+			// 填充内容到画布中
+			imagestring($img, $fontsize, $x, $y, $fontcontent, $fontcolor);
+		}
+		session('verifyimg', $captcha);
+
+		header("Content-type: image/png");
+		imagepng($img);
+		imagedestroy($img);
+		die;
+	}
 }

@@ -116,10 +116,6 @@ class AdminLogLogic extends BaseLogic
             return ReturnData::create(ReturnData::PARAMS_ERROR, null, $this->getValidate()->getError());
         }
 
-        if (!isset($data['update_time'])) {
-            $data['update_time'] = time();
-        }
-
         $admin = $this->getModel()->getOne($where);
         if (!$record) {
             return ReturnData::create(ReturnData::RECORD_NOT_EXIST);

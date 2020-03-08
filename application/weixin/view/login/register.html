@@ -102,8 +102,8 @@ function submit()
                 ,skin: 'msg'
                 ,time: 2 //2秒后自动关闭
             });
-            
-            setInterval(function(){location.href = '<?php echo url('login/index'); ?>';},2000);
+
+            setTimeout(function(){location.href = '<?php echo url('login/index'); ?>';},2000);
 		}
 		else
 		{

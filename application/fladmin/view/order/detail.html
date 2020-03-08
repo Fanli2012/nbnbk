@@ -43,7 +43,7 @@ function fahuo_layer(order_id)
                         if(res.code==0)
                         {
                             layer.msg('操作成功');
-                            setInterval(function(){ window.location.reload(); }, 1000);
+                            setTimeout(function(){ window.location.reload(); }, 1000);
                         }
                         else
                         {
@@ -81,7 +81,7 @@ function change_status(order_id,status)
             if(res.code==0)
             {
                 layer.msg('操作成功');
-                setInterval(function(){ window.location.reload(); }, 1000);
+                setTimeout(function(){ window.location.reload(); }, 1000);
             }
             else
             {

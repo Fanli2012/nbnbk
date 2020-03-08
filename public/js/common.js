@@ -1,10 +1,7 @@
-function messageNotice(message)
-{
-	$("#messageBox").html(message);
-	$("#messageBox").show();
-	setInterval(function(){$("#messageBox").hide();},3000);
-}
-
+/**
+ * 该文件要放在JQuery后面
+ */
+ 
 /**
  * 时间戳转日期格式
  * @param {int} timestamp 时间戳
@@ -40,7 +37,51 @@ function formatDateTime(timestamp,format='Y-m-d H:i:s')
     return newTime;
 }
 
-
+$(function () {
+    //AJAX POST提交，不包括文件上传信息
+    $("form.ajax_post_submit").submit(function () {
+        $.ajax({
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            type: 'POST',
+            dataType: 'json',
+            success: function (data) {
+                if (data.code == 0) {
+                    if (data.msg) {
+                        //alert(data.msg);
+                        //提示
+                        layer.open({
+                            content: data.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        setTimeout(function () {
+                            if (data.url) {
+                                location.href = data.url;
+                            } else {
+                                location.reload();
+                            }
+                        }, 1000);
+                    } else {
+                        document.location.href = data.url;
+                    }
+                } else {
+                    //alert(data.msg);
+                    //提示
+                    layer.open({
+                        content: data.msg
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                }
+            },
+            error: function () {
+                alert('系统出错，请稍后再试');
+            }
+        });
+        return false;
+    });
+});
 
 
 

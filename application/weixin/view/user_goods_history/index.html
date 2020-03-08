@@ -109,8 +109,8 @@ function del_history(goods_id)
 					,skin: 'msg'
 					,time: 1 //2秒后自动关闭
 				});
-				
-				setInterval(function(){ location.reload(); }, 1000);
+
+                setTimeout(function(){ location.reload(); }, 1000);
 			},'json');
 			layer.close(index);
 		}

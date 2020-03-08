@@ -60,8 +60,8 @@ $(function(){
                             });
                         }
                     },'json');
-					
-					setInterval(function(){ window.location.reload(); }, 1000);
+
+                    setTimeout(function(){ window.location.reload(); }, 1000);
 				}
 			},
 			error:function(res){
@@ -117,8 +117,8 @@ function update_username()
                             ,skin: 'msg'
                             ,time: 2 //2秒后自动关闭
                         });
-						
-						setInterval(function(){ location.reload(); }, 1000);
+
+                        setTimeout(function(){ location.reload(); }, 1000);
                     }
                     else
                     {
@@ -187,8 +187,8 @@ function update_nickname()
                         });
                     }
                 },'json');
-                
-                setInterval(function(){ window.location.reload(); }, 1000);
+
+                setTimeout(function(){ window.location.reload(); }, 1000);
             }
             
             layer.close(index);
@@ -238,8 +238,8 @@ function update_sex(sex)
             });
         }
     },'json');
-    
-    setInterval(function(){ window.location.reload(); }, 1000);
+
+    setTimeout(function(){ window.location.reload(); }, 1000);
 }
 </script>
     <a href="javascript:qrcode_layer();"><li>
@@ -314,8 +314,8 @@ function update_refund_account()
                         });
                     }
                 },'json');
-                
-                setInterval(function(){ window.location.reload(); }, 1000);
+
+                setTimeout(function(){ window.location.reload(); }, 1000);
             }
             
             layer.close(index);
@@ -381,8 +381,8 @@ function update_password()
                         });
 						
 						//密码修改成功，重新登录
-						
-						setInterval(function(){ location.href = '<?php echo url('login/relogin'); ?>'; }, 1000);
+
+                        setTimeout(function(){ location.href = '<?php echo url('login/relogin'); ?>'; }, 1000);
                     }
                     else
                     {
@@ -442,8 +442,8 @@ function set_pay_password()
                             ,skin: 'msg'
                             ,time: 2 //2秒后自动关闭
                         });
-						
-						setInterval(function(){ window.location.reload(); }, 1000);
+
+                        setTimeout(function(){ window.location.reload(); }, 1000);
                     }
                     else
                     {
@@ -516,8 +516,8 @@ function update_pay_password()
                         });
                     }
                 },'json');
-                
-                setInterval(function(){ window.location.reload(); }, 1000);
+
+                setTimeout(function(){ window.location.reload(); }, 1000);
             }
             
             layer.close(index);

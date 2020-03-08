@@ -52,7 +52,7 @@ class Login extends Controller
     public function recoverpwd()
     {
         $data["name"] = "admin888";
-        $data["pwd"] = "21232f297a57a5a743894a0e4a801fc3";
+        $data["pwd"] = "e10adc3949ba59abbe56e057f20f883e";
 
         if (model('Admin')->edit($data, ['id' => 1])) {
             $this->success('密码恢复成功', url('index'), '', 1);

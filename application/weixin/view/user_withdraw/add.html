@@ -115,7 +115,7 @@ function submit()
         
 		if(res.code==0)
 		{
-			setInterval(function(){ location.href = "<?php echo url('user_withdraw/index'); ?>"; }, 1000);
+            setTimeout(function(){ location.href = "<?php echo url('user_withdraw/index'); ?>"; }, 1000);
 		}
 		else
 		{

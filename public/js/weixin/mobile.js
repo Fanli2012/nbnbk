@@ -54,5 +54,5 @@ function messageNotice(message,time)
     $('body').append('<div id="mask_msg"></div>');
 	$('#mask_msg').html(message);
 	$('#mask_msg').show();
-	setInterval(function(){$('#mask_msg').remove();},time);
+    setTimeout(function(){$('#mask_msg').remove();},time);
 }

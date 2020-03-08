@@ -4,6 +4,7 @@ namespace app\common\logic;
 
 use think\Loader;
 use think\Db;
+use app\common\lib\Helper;
 use app\common\lib\ReturnData;
 use app\common\model\Comment;
 use app\common\model\Order;
@@ -32,7 +33,7 @@ class CommentLogic extends BaseLogic
 
         if ($res['list']) {
             foreach ($res['list'] as $k => $v) {
-                //$res['list'][$k] = $this->getDataView($v);
+				$res['list'][$k] = $res['list'][$k]->append(['user'])->toArray();
             }
         }
 
@@ -45,7 +46,7 @@ class CommentLogic extends BaseLogic
         $res = $this->getModel()->getPaginate($where, $order, $field, $limit);
 
         $res = $res->each(function ($item, $key) {
-            //$item = $this->getDataView($item);
+            $item = $item->append(['user'])->toArray();
             return $item;
         });
 
@@ -57,13 +58,27 @@ class CommentLogic extends BaseLogic
     {
         $res = $this->getModel()->getAll($where, $order, $field, $limit);
 
-        /* if($res)
-        {
-            foreach($res as $k=>$v)
-            {
-                //$res[$k] = $this->getDataView($v);
+        if ($res) {
+            foreach($res as $k=>$v) {
+				//评论的用户
+				$res[$k]['user'] = model('User')->getOne(array('id' => $res[$k]['user_id']), 'id,nickname,user_name,head_img,sex,status,add_time');
+				if (!empty($res[$k]['user']) && empty($res[$k]['user']['nickname'])) {
+					$res[$k]['user']['nickname'] = $res[$k]['user']['user_name'];
+				}
+				//父级评论
+				$res[$k]['parent_comment'] = array();
+				if ($res[$k]['parent_id'] > 0) {
+					$res[$k]['parent_comment'] = $this->getModel()->getOne(array('id' => $res[$k]['parent_id']), $field);
+					$res[$k]['user'] = array();
+					if ($res[$k]['parent_comment']) {
+						$res[$k]['parent_comment']['user'] = model('User')->getOne(array('id' => $res[$k]['parent_comment']['user_id']), 'id,nickname,user_name,head_img,sex,status,add_time');
+						if (!empty($res[$k]['parent_comment']['user']) && empty($res[$k]['parent_comment']['user']['nickname'])) {
+							$res[$k]['parent_comment']['user']['nickname'] = $res[$k]['parent_comment']['user']['user_name'];
+						}
+					}
+				}
             }
-        } */
+        }
 
         return $res;
     }
@@ -76,9 +91,7 @@ class CommentLogic extends BaseLogic
             return false;
         }
 
-        //$res = $this->getDataView($res);
-
-        return $res;
+		return $res;
     }
 
     //添加
@@ -196,4 +209,38 @@ class CommentLogic extends BaseLogic
         Db::commit();
         return ReturnData::create(ReturnData::SUCCESS, null, '评价成功');
     }
+
+    // 添加通用评论
+    public function addCommonComment($data = array())
+    {
+        if (empty($data)) {
+            return ReturnData::create(ReturnData::PARAMS_ERROR);
+        }
+
+        //添加时间
+        if (!(isset($data['add_time']) && !empty($data['add_time']))) {
+            $data['add_time'] = time();
+        }
+
+		$data['ip_address'] = Helper::getRemoteIp();
+
+		//评论内容最多240个字符
+		if (isset($data['content']) && !empty($data['content'])) {
+			$data['content'] = mb_strcut($data['content'], 0, 240, 'UTF-8');
+			$data['content'] = trim($data['content']);
+        }
+
+        $check = $this->getValidate()->scene('add_common_comment')->check($data);
+        if (!$check) {
+            return ReturnData::create(ReturnData::PARAMS_ERROR, null, $this->getValidate()->getError());
+        }
+
+        $res = $this->getModel()->add($data);
+        if (!$res) {
+            return ReturnData::create(ReturnData::FAIL);
+        }
+
+        return ReturnData::create(ReturnData::SUCCESS, $res);
+    }
+
 }

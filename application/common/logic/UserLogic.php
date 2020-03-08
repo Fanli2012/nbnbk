@@ -517,7 +517,7 @@ class UserLogic extends BaseLogic
             ['parent_id', 'number|max:11', '推荐人ID必须是数字|推荐人ID格式不正确'],
             ['email', 'email', '邮箱格式不正确'],
             ['nickname', 'max:30', '昵称不能超过30个字符'],
-            ['user_name', 'max:30|regex:/^[-_a-zA-Z0-9]{2,18}$/i', '用户名不能超过30个字符|用户名2-18个字符'],
+            ['user_name', 'max:30|regex:/^[-_a-zA-Z0-9]{2,18}$/i', '用户名不能超过30个字符|用户名2-18个字符，包含数字，大小写字母'],
             ['head_img', 'max:250', '头像格式不正确'],
             ['sex', 'in:0,1,2', '性别：1男2女'],
             ['birthday', 'regex:/\d{4}-\d{2}-\d{2}/', '生日格式不正确'],
@@ -892,5 +892,64 @@ class UserLogic extends BaseLogic
     public function changeConsumptionMoney($user_id, $consumption_money)
     {
         return model('User')->setIncrement(array('id' => $user_id), 'consumption_money', $consumption_money);
+    }
+
+    //注册
+    public function pcRegister($data)
+    {
+        if (empty($data)) {
+            return ReturnData::create(ReturnData::SUCCESS);
+        }
+
+        $check = $this->getValidate()->scene('pc_mobile_reg')->check($data);
+        if (!$check) {
+            return ReturnData::create(ReturnData::PARAMS_ERROR, null, $this->getValidate()->getError());
+        }
+
+        //判断手机号
+        if (isset($data['mobile']) && !empty($data['mobile'])) {
+            $where_mobile['mobile'] = $data['mobile'];
+            if ($this->getModel()->getOne($where_mobile)) {
+                return ReturnData::create(ReturnData::FAIL, null, '该手机号已被占用');
+            }
+        }
+
+        $data['user_name'] = $data['mobile'];
+        $data['add_time'] = $data['update_time'] = time();
+        $data['password'] = $this->passwordEncrypt($data['password']);
+        $res = $this->getModel()->add($data);
+        if (!$res) {
+            return ReturnData::create(ReturnData::FAIL);
+        }
+
+        return ReturnData::create(ReturnData::SUCCESS, $res);
+    }
+
+    //重置密码
+    public function pcResetPwd($data)
+    {
+        if (empty($data)) {
+            return ReturnData::create(ReturnData::SUCCESS);
+        }
+
+        $check = $this->getValidate()->scene('pc_resetpwd')->check($data);
+        if (!$check) {
+            return ReturnData::create(ReturnData::PARAMS_ERROR, null, $this->getValidate()->getError());
+        }
+
+        $where_mobile['mobile'] = $data['mobile'];
+        $record = $this->getModel()->getOne($where_mobile);
+        if (!$record) {
+            return ReturnData::create(ReturnData::FAIL, null, '手机号码不存在');
+        }
+
+        $data['update_time'] = time();
+        $data['password'] = $this->passwordEncrypt($data['password']);
+        $res = $this->getModel()->edit($data, ['id' => $record['id']]);
+        if (!$res) {
+            return ReturnData::create(ReturnData::FAIL);
+        }
+
+        return ReturnData::create(ReturnData::SUCCESS, $res);
     }
 }

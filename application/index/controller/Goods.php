@@ -26,6 +26,11 @@ class Goods extends Base
         $where = [];
         $title = '';
 
+		// page参数不能为1
+		if (isset($_GET['page']) && $_GET['page'] == 1) {
+			Helper::http404();
+		}
+        $uri = $_SERVER["REQUEST_URI"]; //获取当前url的参数
         $key = input('key', null);
         if ($key != null) {
             $arr_key = logic('Article')->getArrByString($key);
@@ -107,12 +112,12 @@ class Goods extends Base
 
         $where['delete_time'] = 0;
         $where['status'] = 0;
-		$posts = cache("index_goods_index_posts_{$key}_page".input('page',1));
+        $posts = cache("index_goods_index_posts_" . md5($uri));
         if (!$posts) {
             $posts = $this->getLogic()->getPaginate($where, 'id desc', ['content'], 12);
-            cache("index_goods_index_posts_{$key}_page".input('page',1), $posts, 7200);
+            cache("index_goods_index_posts_" . md5($uri), $posts, 7200);
         }
-		
+
         $page = $posts->render();
         $page = preg_replace('/key=[a-z0-9]+&amp;/', '', $page);
         $page = preg_replace('/&amp;key=[a-z0-9]+/', '', $page);

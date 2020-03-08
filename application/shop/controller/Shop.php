@@ -100,6 +100,8 @@ class Shop extends Base
         if (Helper::isPostRequest()) {
             $where['id'] = $this->login_info['id'];
 
+			if (!empty($_POST['introduction'])) { $_POST['introduction'] = input('post.introduction/s'); }
+			if (!empty($_POST['content'])) { $_POST['content'] = input('post.content/s'); }
             $res = $this->getLogic()->setting($_POST, $where);
             if ($res['code'] == ReturnData::SUCCESS) {
                 //完善资料之后变更状态为【待审】

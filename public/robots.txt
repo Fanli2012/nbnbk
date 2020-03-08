@@ -1,2 +1,11 @@
-User-agent: *
-Disallow:
+User-agent: MJ12bot
+Disallow: /
+User-agent: BLEXBot
+Disallow: /
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: * 
+Allow: /
+
+Sitemap: /sitemap.xml

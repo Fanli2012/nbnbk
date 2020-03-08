@@ -39,6 +39,10 @@ class User extends Validate
         ['update_time', 'require|number|max:11', '更新时间不能为空|更新时间格式不正确|更新时间格式不正确'],
         ['login_time', 'number|max:11', '登录时间不能为空|登录时间格式不正确|登录时间格式不正确'],
         ['delete_time', 'number|max:11', '删除时间不能为空|删除时间格式不正确|删除时间格式不正确'],
+        ['re_password', 'require|max:20|confirm:password', '确认密码不能为空|确认密码不能超过20个字符|密码与确认密码不一致'],
+        ['captcha', 'require|checkCaptcha', '图形验证码不能为空'],
+        ['smscode', 'require|checkSmsCode', '短信验证码不能为空'],
+        ['smstype', 'require|number|egt:0', '短信验证码类型不能为空|短信验证码类型格式不正确|短信验证码类型格式不正确'],
     );
 
     protected $scene = array(
@@ -48,7 +52,20 @@ class User extends Validate
         'user_password_update' => ['password'],
         'user_pay_password_update' => ['pay_password'],
         'del' => ['id'],
+        'pc_mobile_reg' => ['mobile', 'password', 're_password', 'smscode', 'smstype'],
+        'pc_email_reg' => ['email', 'password', 're_password', 'smscode', 'smstype'],
+        'pc_resetpwd' => ['mobile', 'password', 're_password', 'smscode', 'smstype'],
     );
+
+    // 图形验证码验证
+    protected function checkCaptcha($value)
+    {
+        if (!captcha_check($value)) {
+            return '图形验证码错误';
+        }
+
+        return true;
+    }
 
     // 用户名校验
     protected function isUserName($value, $rule, $data)
@@ -105,5 +122,40 @@ class User extends Validate
         }
 
         return '生日格式不正确';
+    }
+	
+    /**
+     * 邮箱验证
+     * 参数依次为验证数据，验证规则，全部数据(数组)，字段名
+     */
+    protected function checkEmail($value, $rule, $data, $field)
+    {
+        if (Validator::isEmail($value)) {
+            return true;
+        }
+
+        return '邮箱格式不正确';
+    }
+
+	// 邮箱验证码验证
+    protected function checkEmailCode($value, $rule, $data)
+    {
+        $verifyCode = model('EmailVerifyCode')->isVerify(['email' => $data['email'], 'type' => $data['smstype'], 'code' => $value]);
+        if (!$verifyCode) {
+            return '邮箱验证码不正确或已过期';
+        }
+
+        return true;
+    }
+	
+    // 短信验证码验证
+    protected function checkSmsCode($value, $rule, $data)
+    {
+        $verifyCode = model('VerifyCode')->isVerify(['mobile' => $data['mobile'], 'type' => $data['smstype'], 'code' => $value]);
+        if (!$verifyCode) {
+            return '短信验证码不正确或已过期';
+        }
+
+        return true;
     }
 }

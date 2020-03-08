@@ -7,7 +7,67 @@
 <h1 class="arct" style="padding-left:20px;padding-right:20px;"><?php echo $post["title"]; ?></h1><?php if(false){ ?><div class="timely"><?php if(!empty($post['writer'])){ echo '<span id="awriter">'.$post['writer'].'</span> '; } ?><span id="atime"><?php echo date("Y-m-d H:i",$post['pubdate']); ?></span> <?php if(!empty($post['source'])){ ?><?php echo '<span id="asource">'.$post['source'].'</span> '; ?><?php } ?><span id="aclick">阅读:<?php echo $post["click"]; ?>次</span> <span id="akeyword">关键词:<?php echo $post["keywords"]; ?></span></div><?php } ?><div class="dad1"><script>djs1();</script></div>
 <div class="content"><?php echo $post["content"]; ?><div class="dad2"><script>djs2();</script></div>
 <div class="dinfo"><span class="fr">下一篇：<?php if($previous_article){ ?><a href="/p/<?php echo $previous_article["id"]; ?>"><?php echo $previous_article["title"]; ?></a><?php }else{echo '没有了';} ?></span><div class="cl"></div></div>
-</div><div class="dad3"><script>djs3(<?php echo $post["id"]; ?>);</script></div></div><!-- fl_640 end -->
+</div><div class="dad3"><script>djs3(<?php echo $post["id"]; ?>);</script></div>
+
+<div id="comment-box" class="comment-box">
+<form action="" method="POST" name="comment_form" id="comment_form">
+<input id="id" name="id" type="hidden" value="<?php echo $post["id"]; ?>">
+<input id="parent_id" name="parent_id" type="hidden" value="0">
+<input id="type" name="type" type="hidden" value="">
+<div class="comment-header">
+<div class="fl c-opinion"><em class="c-line"></em>评论</div>
+</div>
+<div class="comment-textbox cl"><textarea rows="3" name="comment_text" id="comment_text"<?php if (isset($user_info['mobile']) && !empty($user_info['mobile'])) { echo ' placeholder="发表评论..."'; } else { echo ' readonly="readonly" placeholder="请先登录再评论..."'; } ?>></textarea></div>
+<div class="comment-tools">
+<div class="func_area">
+<?php if (isset($user_info['mobile']) && !empty($user_info['mobile'])) { ?><a href="javascript:;" onclick="submit_comment();" class="btn_30px">发布</a><?php } else { ?><a class="btn_30px" href="/user/login?return_url=<?php echo http_host(true); ?>">登录/注册</a><?php } ?>
+</div>
+</div>
+<?php if ($comment_list) { ?>
+<div class="comment-content cl">
+<?php foreach ($comment_list as $k => $v) { ?>
+<div class="comment-item">
+	<a href="javascript:;" class="avatar">
+		<img src="<?php echo $v['user']['head_img']; ?>" onerror="this.src='<?php echo sysconfig('CMS_BASEHOST'); ?>/images/default-avatar-gray.png'">
+	</a>
+	<div class="cntwrap">
+		<div class="info"><a class="name" href="javascript:;"><?php echo $v['user']['nickname']; ?></a></div>
+		<div class="time"><?php echo date('m-d H:i', $v['add_time']); ?></div>
+		<div class="detail">
+			<div class="reply"><?php echo str_replace("\r\n", "<br/>", $v['content']); ?></div>
+			<?php if ($v['parent_comment'] && !empty($v['parent_comment']['content'])) { ?><div class="replied"><a class="replied-name" href="javascript:;"><?php echo $v['parent_comment']['user']['nickname']; ?></a>: <?php echo str_replace("\r\n", "<br/>", $v['parent_comment']['content']); ?></div><?php } ?>
+		</div>
+		<div class="tools"><a class="zan_btn" href="javascript:;" onclick="is_good(<?php echo $v['id']; ?>)">赞<?php if ($v['click'] > 0) { echo '(' . $v['click'] . ')'; } ?></a><a class="reply_btn" href="javascript:;" onclick="reply_prompt(<?php echo $v['id']; ?>, '<?php echo $v['user']['nickname']; ?>')">回复</a></div>
+	</div>
+</div>
+<?php } ?></div><?php } ?>
+</form>
+</div><!-- comment end -->
+<style>
+.comment-box{padding:15px 20px;}
+.comment-box .comment-header{padding:0 0 12px;height:24px;line-height:24px;font-size:16px;}
+.comment-box .comment-header .c-opinion{padding-top: 2px;font-size: 18px;color: #191919;}
+.comment-box .comment-header .c-line{float:left;margin-top:2px;width:4px;height:20px;background:#ec7259;border-radius:2px;margin-right:12px;}
+.comment-box .comment-textbox{border:1px solid #e5e5e5;padding:8px 10px;overflow:hidden;background-color:#fff;}
+.comment-box .comment-textbox textarea{padding:0;margin:0;width:100%;line-height:22px;font-size:14px;resize:none;overflow-x:hidden;overflow-y:auto;background-image:none;color:#666;background-attachment:scroll;border:0;outline:0;}
+.comment-box .comment-tools{padding:10px 0 0;text-align:right;}
+.comment-box .comment-tools .btn_30px{border-radius:2px;padding:0 20px;height:28px;line-height:28px;display:inline-block;font-size:14px;background:#ec7259;border:1px solid #f77c3d;color:#fff;box-shadow:none;cursor:default;}
+.comment-content{margin-top:15px;}
+.comment-item{position:relative;}
+.comment-box .comment-item:last-child .cntwrap{border-bottom:0;margin-bottom:0;}
+.comment-box .avatar{position:absolute;}
+.comment-box .avatar img{width:40px;height:40px;border:1px solid #eee;border-radius:50%;overflow:hidden;}
+.comment-box .cntwrap{margin-left:52px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #eee;}
+.comment-box .cntwrap .info{font-size:15px;font-weight:500;margin-top:2px;}
+.comment-box .cntwrap .name{color:#0c73c2;}
+.comment-box .time{margin-top:2px;font-size:12px;color:#969696;}
+.comment-box .detail{margin-top:10px;font-size:16px;line-height:1.5;word-break:break-word;}
+.comment-box .replied{background-color:#f1f1f4;padding:8px 10px;margin-top:12px;color:#666666;font-size:14px;}
+.comment-box .replied-name{color:#0c73c2;}
+.comment-box .tools{margin-top:12px;font-size:15px;}
+.comment-box .tools .reply_btn,.comment-box .tools .zan_btn{cursor:pointer;margin-right:8px;color:#b0b0b0;}
+</style>
+</div><!-- fl_640 end -->
 
 <div class="fr_300"><div id="rad1"><script>rjs1();</script></div>
 <div class="side"><div class="stit"><h2>推荐阅读</h2><a href="javascript:getmore({limit:5,type_id:<?php echo $post['type_id']; ?>,mode:1,orderby:'rand()'});" class="more">换一换</a><div class="cl"></div></div>	
@@ -19,6 +79,43 @@
 
 <div id="rad2"><script>rjs2();</script></div></div><!-- fr_300 end --></div><!-- box end -->
 <script>
+// 评论提交
+function submit_comment()
+{
+	var comment_text = document.getElementById("comment_text").value;
+	if (comment_text == '') { alert("请输入内容"); return false; }
+	if (comment_text.length > 240) { alert("评论内容不能超过240个字符"); return false; }
+	document.getElementById('comment_form').submit();
+}
+// 评论回复
+function reply_prompt(id, name)
+{
+	var reply = prompt("回复 " + name + ":", "");
+
+	if (reply) {
+		//填写内容并"确定"
+		console.log(1);
+		if (reply.length > 240) { alert("评论内容不能超过240个字符"); return false; }
+		
+		document.getElementById("parent_id").value = id;
+		document.getElementById("comment_text").value = reply;
+		document.getElementById("comment_form").submit();
+	} else if (reply === "") {
+		//未填写但"确定"
+		console.log(2);
+	} else {
+		//"取消"事件
+		console.log(3);
+	}
+}
+// 评论点赞
+function is_good(id)
+{
+	document.getElementById("parent_id").value = id;
+	document.getElementById("type").value = "like";
+	document.getElementById('comment_form').submit();
+}
+
 function getmore(condition)
 {
     var url = "<?php echo http_host(); ?>/api/article/index";

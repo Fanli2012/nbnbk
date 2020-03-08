@@ -28,9 +28,9 @@ class UserMessageLogic extends BaseLogic
     {
         $res = $this->getModel()->getList($where, $order, $field, $offset, $limit);
 
-        if ($res['list']) {
+        if ($res['count'] > 0) {
             foreach ($res['list'] as $k => $v) {
-                //$res['list'][$k] = $this->getDataView($v);
+                $res['list'][$k] = $res['list'][$k]->append(['status_text'])->toArray();
             }
         }
 
@@ -74,7 +74,7 @@ class UserMessageLogic extends BaseLogic
             return false;
         }
 
-        //$res = $this->getDataView($res);
+        $res = $res->append(['status_text'])->toArray();
 
         return $res;
     }

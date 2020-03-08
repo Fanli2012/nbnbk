@@ -69,12 +69,12 @@ class Article extends Base
         } //缩略图
         if (empty($_POST["description"])) {
             if (!empty($_POST["content"])) {
-                $_POST['description'] = cut_str($_POST["content"]);
+                $_POST['description'] = cut_str(input('post.content/s'));
             }
         } //description
         $content = "";
         if (!empty($_POST["content"])) {
-            $content = $_POST["content"];
+            $content = input('post.content/s');
         }
 
         $_POST['add_time'] = $_POST['update_time'] = time(); // 更新时间
@@ -83,10 +83,10 @@ class Article extends Base
 
         //关键词
         if (!empty($_POST["keywords"])) {
-            $_POST['keywords'] = str_replace("，", ",", $_POST["keywords"]);
+            $_POST['keywords'] = str_replace("，", ",", input('post.keywords/s'));
         } else {
             if (!empty($_POST["title"])) {
-                $title = $_POST["title"];
+                $title = input('post.title/s');
                 $title = str_replace("，", "", $title);
                 $title = str_replace(",", "", $title);
                 $_POST['keywords'] = get_participle($title); // 标题分词
@@ -157,22 +157,22 @@ class Article extends Base
         } //缩略图
         if (empty($_POST["description"])) {
             if (!empty($_POST["content"])) {
-                $_POST['description'] = cut_str($_POST["content"]);
+                $_POST['description'] = cut_str(input('post.content/s'));
             }
         } //description
         $content = "";
         if (!empty($_POST["content"])) {
-            $content = $_POST["content"];
+            $content = input('post.content/s');
         }
         $_POST['update_time'] = time();//更新时间
         $where['shop_id'] = $this->login_info['id']; // 发布者ID
 
         //关键词
         if (!empty($_POST["keywords"])) {
-            $_POST['keywords'] = str_replace("，", ",", $_POST["keywords"]);
+            $_POST['keywords'] = str_replace("，", ",", input('post.keywords/s'));
         } else {
             if (!empty($_POST["title"])) {
-                $title = $_POST["title"];
+                $title = input('post.title/s');
                 $title = str_replace("，", "", $title);
                 $title = str_replace(",", "", $title);
                 $_POST['keywords'] = get_participle($title); // 标题分词

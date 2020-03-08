@@ -306,4 +306,15 @@ class Comment extends Base
         return self::getLastSql();
     }
 
+    /**
+     * 获取器——用户信息
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getUserAttr($value, $data)
+    {
+        return model('User')->getOne(array('id' => $data['user_id']), 'id,nickname,user_name,head_img,sex,add_time');
+    }
+
 }

@@ -301,4 +301,19 @@ class UserMessage extends Base
         return self::getLastSql();
     }
 
+    /**
+     * 获取器——消息查看状态：0未读，1已读
+     * @param int $value
+     * @param array $data
+     * @return string
+     */
+    public function getStatusTextAttr($value, $data)
+    {
+        $arr = array(0 => '未读', 1 => '已读');
+        if (isset($arr[$data['status']])) {
+            return $arr[$data['status']];
+        }
+
+        return '';
+    }
 }

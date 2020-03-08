@@ -25,7 +25,8 @@ class Index extends Base
 
     public function upcache()
     {
-        dir_delete(APP_PATH . '../runtime/');
+        dir_delete(APP_PATH . '../runtime/cache/');
+		dir_delete(APP_PATH . '../runtime/temp/');
         $this->success('缓存更新成功');
     }
 

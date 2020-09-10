@@ -15,7 +15,7 @@
 </tr>
 </thead>
 <tbody>
-<?php if($list){foreach($list as $row){ ?>
+<?php if ($list) { foreach ($list as $row) { ?>
 <tr>
   <td><?php echo $row["id"]; ?></td>
   <td><a href="{:url('edit')}?id=<?php echo $row["id"]; ?>"><?php echo $row["title"]; ?></a></td>
@@ -23,7 +23,7 @@
   <td><?php echo date('Y-m-d',$row["update_time"]); ?></td>
   <td><a target="_blank" href="/page/<?php echo $row["filename"]; ?>.html">预览</a>&nbsp;<a href="{:url('edit')}?id=<?php echo $row["id"]; ?>">修改</a>&nbsp;<a onclick="delconfirm('{:url('del')}?id=<?php echo $row["id"]; ?>')" href="javascript:;">删除</a></td>
 </tr>
-<?php }} ?>
+<?php } } ?>
 </tbody>
 </table></div><!-- 表格结束 --></form><!-- 表单结束 -->
 

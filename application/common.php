@@ -563,15 +563,6 @@ function logic($name = '', $config = [])
     return $instance[$guid];
 }
 
-//时间戳转日期
-function toDate($time, $format = 'Y-m-d H:i:s')
-{
-    if (empty ($time)) {
-        return '';
-    }
-    $format = str_replace('#', ':', $format);
-    return date($format, $time);
-}
 
 
 // ----------其它自定义函数，主要用于真的当前项目----------

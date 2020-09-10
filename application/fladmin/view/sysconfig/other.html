@@ -1,0 +1,37 @@
+{extend name="public/base" /}
+{block name="title"}其它设置{/block}
+
+{block name="content"}
+<h5 class="sub-header"><a href="{:url('index')}">系统配置参数</a> > 其它设置</h5>
+
+<form id="addarc" method="post" action="{:url('other')}" role="form" enctype="multipart/form-data" class="table-responsive">
+<table class="table table-striped table-bordered">
+<tbody>
+<!-- 配置文件 --><script type="text/javascript" src="/other/flueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 --><script type="text/javascript" src="/other/flueditor/ueditor.all.min.js"></script>
+    <tr>
+        <td align="right">网站名称：</td>
+        <td><input name="CMS_WEBNAME" type="text" value="<?php echo sysconfig('CMS_WEBNAME'); ?>"></td>
+    </tr>
+    <tr>
+        <td align="right">统计代码：</td>
+        <td><textarea name="CMS_SITE_ANALYTICS" rows="5" style="width:80%;height:70px;vertical-align:middle;"><?php echo sysconfig('CMS_SITE_ANALYTICS'); ?></textarea></td>
+    </tr>
+    <tr>
+        <td align="right">公司名称：</td>
+        <td><input name="CMS_COMPANY_NAME" type="text" value="<?php echo sysconfig('CMS_COMPANY_NAME'); ?>"></td>
+    </tr>
+    <tr>
+        <td align="right">公司地址：</td>
+        <td><input name="CMS_COMPANY_ADDRESS" type="text" value="<?php echo sysconfig('CMS_COMPANY_ADDRESS'); ?>" style="width:60%;"></td>
+    </tr>
+    <tr>
+        <td align="right">公司联系方式：</td>
+        <td><input name="CMS_COMPANY_CONTACT" type="text" value="<?php echo sysconfig('CMS_COMPANY_CONTACT'); ?>"></td>
+    </tr>
+    <tr>
+        <td colspan="2"><button type="submit" class="btn btn-success" value="Submit">保存(Submit)</button>&nbsp;&nbsp;<button type="reset" class="btn btn-default" value="Reset">重置(Reset)</button><input type="hidden"></input></td>
+    </tr>
+</tbody></table></form><!-- 表单结束 -->
+
+{/block}

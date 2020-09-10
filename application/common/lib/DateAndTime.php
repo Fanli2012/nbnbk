@@ -5,11 +5,32 @@ namespace app\common\lib;
 class DateAndTime
 {
     /**
-     *  * 返回一定位数的时间戳，多少位由参数决定
-     *  *
-     *  * @param digits 多少位的时间戳
-     *  * @return 时间戳
-     *  */
+     * 判断是否是日期格式
+     * date函数会给月和日补零，所以最终用unix时间戳来校验
+     */
+    public static function is_date($date_string, $format = 'Y-m-d H:i:s')
+    {
+        return strtotime(date($format, strtotime($date_string))) === strtotime($date_string);
+    }
+
+    /**
+     * 判断是否是时间戳格式
+     * date函数会给月和日补零，所以最终用unix时间戳来校验
+     */
+    public static function is_timestamp($timestamp)
+    {
+        if (strtotime(date('Y-m-d H:i:s', $timestamp)) === $timestamp) {
+            return $timestamp;
+        }
+        return false;
+    }
+
+    /**
+     * 返回一定位数的时间戳，多少位由参数决定
+     *
+     * @param digits 多少位的时间戳
+     * @return 时间戳
+     */
     public static function getTimestamp($digits = 10)
     {
         $digits = $digits > 10 ? $digits : 10;
@@ -21,11 +42,11 @@ class DateAndTime
     }
 
     /**
-     *  * 获取指定日期之间的所有月份
+     * 获取指定日期之间的所有月份
      * @param string $old_date 为开始日期 例2017-11-01 00:00:00
      * @param string $new_date 为结束日期 例2018-12-01 00:00:00
-     *  * @return array
-     *  */
+     * @return array
+     */
     public function getTwoDateAllMonth($new_date = '', $old_date = '')
     {
         $arr = array();

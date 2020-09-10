@@ -26,9 +26,24 @@ class UserRecharge extends Base
         if (isset($_REQUEST['keyword']) && !empty($_REQUEST['keyword'])) {
             $where['recharge_sn'] = array('like', '%' . $_REQUEST['keyword'] . '%');
         }
+		//起止时间
+        if (!empty($_REQUEST['start_date']) && !empty($_REQUEST['end_date'])) {
+            $start_date = strtotime(date($_REQUEST['start_date']));
+			$end_date = strtotime(date($_REQUEST['end_date']));
+			if ($start_date > $end_date) {
+				$this->error('起止时间不正确');
+			}
+			
+			$end_date = $end_date + 24 * 3600;
+			$where['add_time'] = [['>=',$start_date],['<=', $end_date]];
+        }
         //用户ID
         if (isset($_REQUEST['user_id']) && $_REQUEST['user_id'] > 0) {
             $where['user_id'] = $_REQUEST['user_id'];
+        }
+        //充值状态：0处理中，1成功，2失败
+        if (isset($_REQUEST['status'])) {
+            $where['status'] = $_REQUEST['status'];
         }
         //充值类型：1微信，2支付宝
         if (isset($_REQUEST['pay_type']) && $_REQUEST['pay_type'] > 0) {

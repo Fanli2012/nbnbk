@@ -23,12 +23,39 @@ class User extends Base
     public function index()
     {
         $where = array();
+		//起止时间
+        if (!empty($_REQUEST['start_date']) && !empty($_REQUEST['end_date'])) {
+            $start_date = strtotime(date($_REQUEST['start_date']));
+			$end_date = strtotime(date($_REQUEST['end_date']));
+			if ($start_date > $end_date) {
+				$this->error('起止时间不正确');
+			}
+			
+			$end_date = $end_date + 24 * 3600;
+			$where['add_time'] = [['>=',$start_date],['<=', $end_date]];
+        }
+        //是否在线
+        if (isset($_REQUEST['is_online']) && $_REQUEST['is_online'] == 1) {
+            $where['login_time'] = ['>', (time() - 300)];
+        }
         if (isset($_REQUEST['keyword']) && $_REQUEST['keyword'] != '') {
-            $where['nickname'] = array('like', '%' . $_REQUEST['keyword'] . '%');
+            $where['mobile|true_name'] = array('like', '%' . $_REQUEST['keyword'] . '%');
+        }
+        //推荐人ID
+        if (isset($_REQUEST['parent_id'])) {
+            $where['parent_id'] = $_REQUEST['parent_id'];
         }
         //用户状态
         if (isset($_REQUEST['status'])) {
             $where['status'] = $_REQUEST['status'];
+        }
+        //用户等级
+        if (isset($_REQUEST['user_rank'])) {
+            $where['user_rank'] = $_REQUEST['user_rank'];
+        }
+        //登录终端
+        if (isset($_REQUEST['user_agent']) && $_REQUEST['user_agent'] != '') {
+            $where['user_agent'] = $_REQUEST['user_agent'];
         }
         $list = $this->getLogic()->getPaginate($where, 'id desc');
 

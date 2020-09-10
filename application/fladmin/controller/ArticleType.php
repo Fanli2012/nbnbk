@@ -57,7 +57,7 @@ class ArticleType extends Base
             } else {
                 $this->error('参数错误');
             }
-            $this->assign('parent_article_type', model('ArticleType')->getOne("id=$parent_id", ['content']));
+            $this->assign('parent_article_type', model('ArticleType')->getOne(['id' => $parent_id], ['content']));
         }
         $this->assign('parent_id', $parent_id);
 

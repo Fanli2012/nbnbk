@@ -38,11 +38,11 @@ class Sysconfig extends Base
     {
         if (Helper::isPostRequest()) {
             $res = $this->getLogic()->add($_POST);
-            if ($res['code'] == ReturnData::SUCCESS) {
-                $this->success($res['msg'], url('index'), '', 1);
+            if ($res['code'] != ReturnData::SUCCESS) {
+                $this->error($res['msg']);
             }
-
-            $this->error($res['msg']);
+			cache('sysconfig', NULL);
+            $this->success($res['msg'], url('index'), '', 1);
         }
 
         return $this->fetch();
@@ -56,11 +56,12 @@ class Sysconfig extends Base
             unset($_POST['id']);
 
             $res = $this->getLogic()->edit($_POST, $where);
-            if ($res['code'] == ReturnData::SUCCESS) {
-                $this->success($res['msg'], url('index'), '', 1);
+            if ($res['code'] != ReturnData::SUCCESS) {
+                $this->error($res['msg']);
             }
 
-            $this->error($res['msg']);
+			cache('sysconfig', NULL);
+            $this->success($res['msg'], url('index'), '', 1);
         }
 
         if (!checkIsNumber(input('id', null))) {
@@ -84,10 +85,26 @@ class Sysconfig extends Base
         $where['id'] = input('id');
 
         $res = $this->getLogic()->del($where);
-        if ($res['code'] == ReturnData::SUCCESS) {
-            $this->success("删除成功");
+        if ($res['code'] != ReturnData::SUCCESS) {
+			$this->error($res['msg']);
+        }
+		cache('sysconfig', NULL);
+        $this->success("删除成功");
+    }
+
+	//其它配置
+    public function other()
+    {
+		if (Helper::isPostRequest()) {
+			$post_data = input('post.');
+			foreach ($post_data as $k=>$v) {
+				model('Sysconfig')->edit(['value' => $v], ['varname' => $k]);
+			}
+			// 删除缓存数据
+			cache('sysconfig', NULL);
+            $this->success('操作成功');
         }
 
-        $this->error($res['msg']);
+        return $this->fetch();
     }
 }

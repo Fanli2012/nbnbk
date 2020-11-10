@@ -33,8 +33,7 @@ class Login extends Common
         if(isset($_REQUEST['return_url']) && !empty($_REQUEST['return_url'])){$return_url = $_REQUEST['return_url']; session('weixin_history_back_url', $return_url);}
         if($return_url == '' && session('weixin_history_back_url')){ $return_url = session('weixin_history_back_url'); }
 		
-        if($_SERVER['REQUEST_METHOD'] == 'POST')
-        {
+        if($_SERVER['REQUEST_METHOD'] == 'POST') {
             if($_POST['user_name'] == '')
             {
                 $this->error('账号不能为空');
@@ -50,7 +49,7 @@ class Login extends Common
                 'password' => $_POST['password'],
                 'from' => 2
             );
-            $url = get_api_url_address().'/login/index';
+            $url = get_api_url_address() . '/login/index';
             $res = Util::curl_request($url,$postdata,'POST');
             
             if($res['code'] != ReturnData::SUCCESS){$this->error('登录失败');}

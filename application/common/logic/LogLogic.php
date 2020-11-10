@@ -3,11 +3,10 @@
 namespace app\common\logic;
 
 use think\Loader;
-use think\Validate;
 use app\common\lib\ReturnData;
-use app\common\model\AdminLog;
+use app\common\model\Log;
 
-class AdminLogLogic extends BaseLogic
+class LogLogic extends BaseLogic
 {
     protected function initialize()
     {
@@ -16,12 +15,12 @@ class AdminLogLogic extends BaseLogic
 
     public function getModel()
     {
-        return new AdminLog();
+        return new Log();
     }
 
     public function getValidate()
     {
-        return Loader::validate('AdminLog');
+        return Loader::validate('Log');
     }
 
     //列表
@@ -87,13 +86,13 @@ class AdminLogLogic extends BaseLogic
             return ReturnData::create(ReturnData::PARAMS_ERROR);
         }
 
+        if (!isset($data['add_time'])) {
+            $data['add_time'] = $data['update_time'] = time();
+        }
+
         $check = $this->getValidate()->scene('add')->check($data);
         if (!$check) {
             return ReturnData::create(ReturnData::PARAMS_ERROR, null, $this->getValidate()->getError());
-        }
-
-        if (!isset($data['add_time'])) {
-            $data['add_time'] = $data['update_time'] = time();
         }
 
         $res = $this->getModel()->add($data, $type);
@@ -116,7 +115,7 @@ class AdminLogLogic extends BaseLogic
             return ReturnData::create(ReturnData::PARAMS_ERROR, null, $this->getValidate()->getError());
         }
 
-        $admin = $this->getModel()->getOne($where);
+        $record = $this->getModel()->getOne($where);
         if (!$record) {
             return ReturnData::create(ReturnData::RECORD_NOT_EXIST);
         }

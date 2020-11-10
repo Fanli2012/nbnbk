@@ -3,5 +3,5 @@
 ps -ef | grep nginx |grep -v grep > /dev/null
 if [ $? != 0 ];then
     killall nginx
-    sleep 2
+    sleep 1
     /usr/local/nginx/sbin/nginx

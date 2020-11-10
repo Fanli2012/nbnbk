@@ -1,0 +1,30 @@
+{extend name="public/base" /}
+{block name="title"}广告管理{/block}
+
+{block name="content"}
+<h2 class="sub-header">广告管理 <small class="badge"><?php echo $list->total(); ?> 条</small></h2>[ <a href="{:url('add')}">添加广告</a> ]<br><br>
+
+<form name="listarc"><div class="table-responsive"><table class="table table-striped table-hover">
+<thead><tr>
+<th>ID</th>
+<th>名称</th>
+<th>是否限时</th>
+<th>结束时间</th>
+<th>管理</th>
+</tr></thead>
+<tbody>
+<?php if ($list) { foreach ($list as $row) { ?><tr>
+<td><?php echo $row["id"]; ?></td>
+<td><?php echo $row["name"]; ?></td>
+<td><?php if ($row["is_expire"] == 0) { echo '不限时间'; } else { echo '限时标记'; } ?></td>
+<td><?php if ($row["end_time"] > 0) { echo date('Y-m-d', $row["end_time"]); } ?></td>
+<td><a href="{:url('edit')}?id=<?php echo $row["id"]; ?>">修改</a> | <a onclick="delconfirm('{:url('del')}?id=<?php echo $row["id"]; ?>')" href="javascript:;">删除</a></td>
+</tr><?php } } ?>
+</tbody></table></div><!-- 表格结束 --></form><!-- 表单结束 -->
+
+<form id="searcharc" class="navbar-form" action="{:url('index')}" method="get">
+<div class="form-group"><input type="text" name="keyword" id="keyword" class="form-control required" placeholder="搜索关键词..."></div>
+<button type="submit" class="btn btn-info" value="Submit">搜索一下</button></form>
+
+<div class="backpages">{$page}</div>
+{/block}

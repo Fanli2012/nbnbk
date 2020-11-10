@@ -355,7 +355,7 @@ class Smtp
 if (network_check("http://fc.xyabb.com")) {
     echo "Website OK";
 } else {
-	$text = date('Y-m-d H:i:s').'服务器挂了，有效期30分钟。';
+	$text = date('Y-m-d H:i') . '服务器挂了，有效期30分钟。';
 	//发送邮件
 	$smtpserver = 'smtp.sina.com';//SMTP服务器
 	$smtpserverport = 25;//SMTP服务器端口

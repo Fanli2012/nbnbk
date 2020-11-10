@@ -45,7 +45,7 @@ class Shop extends Base
         $posts = $this->getLogic()->getPaginate($where, 'id desc', ['body'], 15);
 
         $this->assign('page', $posts->render());
-        $this->assign('posts', $posts);
+        $this->assign('list', $posts);
 
         return $this->fetch();
     }

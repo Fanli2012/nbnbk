@@ -84,10 +84,16 @@ function delconfirm(url)
 	}
 }
 
+function confirm_prompt(href, desc)
+{
+	desc = desc || '确定要执行此操作吗';
+	if (confirm(desc)) { window.location.href = href; }
+}
+
 //复选框反选
 function selAll(arcID)
 {
-	var checkboxs=document.getElementsByName(arcID);
+	var checkboxs = document.getElementsByName(arcID);
 	
 	for (var i=0;i<checkboxs.length;i++)
 	{
@@ -99,14 +105,14 @@ function selAll(arcID)
 //获取选中的复选框的值
 function getItems(arcID)
 {
-	if(!arcID){arcID='arcID';}
-	var checkboxs=document.getElementsByName(arcID);
+	if (!arcID) { arcID = 'arcID'; }
+	var checkboxs = document.getElementsByName( arcID );
 	
 	var value = new Array();
 	
 	for(var i = 0; i < checkboxs.length; i++)
 	{
-		if(checkboxs[i].checked) value.push(checkboxs[i].value);
+		if (checkboxs[i].checked) value.push(checkboxs[i].value);
 	}
 	
 	return value;

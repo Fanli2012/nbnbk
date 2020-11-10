@@ -2,12 +2,13 @@
 
 namespace app\fladmin\controller;
 
-use think\Db;
 use app\common\lib\ReturnData;
 use app\common\lib\Helper;
-use app\common\logic\AdminLogLogic;
+use app\common\logic\AdLogic;
+use think\Loader;
+use think\Validate;
 
-class AdminLog extends Base
+class Ad extends Base
 {
     public function _initialize()
     {
@@ -16,7 +17,7 @@ class AdminLog extends Base
 
     public function getLogic()
     {
-        return new AdminLogLogic();
+        return new AdLogic();
     }
 
     //列表
@@ -24,7 +25,7 @@ class AdminLog extends Base
     {
         $where = array();
         if (!empty($_REQUEST["keyword"])) {
-            $where['content'] = array('like', '%' . $_REQUEST['keyword'] . '%');
+            $where['name'] = array('like', '%' . $_REQUEST['keyword'] . '%');
         }
         $list = $this->getLogic()->getPaginate($where, ['id' => 'desc']);
 
@@ -38,6 +39,19 @@ class AdminLog extends Base
     public function add()
     {
         if (Helper::isPostRequest()) {
+            //表单令牌验证
+            $validate = new Validate([
+                ['__token__', 'require|token', '非法提交|请不要重复提交表单'],
+            ]);
+            if (!$validate->check($_POST)) {
+                $this->error($validate->getError());
+            }
+
+            if ($_POST['start_time'] && $_POST['end_time']) {
+                $_POST['start_time'] = strtotime($_POST['start_time']);
+                $_POST['end_time'] = strtotime($_POST['end_time']);
+            }
+
             $res = $this->getLogic()->add($_POST);
             if ($res['code'] == ReturnData::SUCCESS) {
                 $this->success($res['msg'], url('index'), '', 1);
@@ -56,12 +70,16 @@ class AdminLog extends Base
             $where['id'] = $_POST['id'];
             unset($_POST['id']);
 
-            $res = $this->getLogic()->edit($_POST, $where);
-            if ($res['code'] == ReturnData::SUCCESS) {
-                $this->success($res['msg'], url('index'), '', 1);
+            if ($_POST['start_time'] && $_POST['end_time']) {
+                $_POST['start_time'] = strtotime($_POST['start_time']);
+                $_POST['end_time'] = strtotime($_POST['end_time']);
             }
 
-            $this->error($res['msg']);
+            $res = $this->getLogic()->edit($_POST, $where);
+            if ($res['code'] != ReturnData::SUCCESS) {
+                $this->error($res['msg']);
+            }
+			$this->success($res['msg'], url('index'));
         }
 
         if (!checkIsNumber(input('id', null))) {
@@ -71,6 +89,19 @@ class AdminLog extends Base
         $this->assign('id', $where['id']);
 
         $post = $this->getLogic()->getOne($where);
+
+        //时间戳转日期格式
+        if ($post['start_time'] > 0) {
+            $post['start_time'] = date('Y-m-d H:i:s', $post['start_time']);
+        } else {
+            $post['start_time'] = '';
+        }
+        if ($post['end_time'] > 0) {
+            $post['end_time'] = date('Y-m-d H:i:s', $post['end_time']);
+        } else {
+            $post['end_time'] = '';
+        }
+
         $this->assign('post', $post);
 
         return $this->fetch();
@@ -86,17 +117,9 @@ class AdminLog extends Base
 
         $res = $this->getLogic()->del($where);
         if ($res['code'] == ReturnData::SUCCESS) {
-            $this->success('删除成功');
+            $this->success("删除成功");
         }
 
         $this->error($res['msg']);
-    }
-
-    //清空
-    public function clear()
-    {
-        // 截断表
-        Db::execute('truncate table `fl_admin_log`');
-        $this->success('操作成功', url('index'), '', 1);
     }
 }

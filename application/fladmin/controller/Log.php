@@ -97,17 +97,16 @@ class Log extends Base
     //删除
     public function del()
     {
-        if (!checkIsNumber(input('id', null))) {
-            $this->error('删除失败！请重新提交');
+		if (empty($_GET["id"])) {
+            $this->error('参数错误');
         }
-        $where['id'] = input('id');
-
-        $res = $this->getLogic()->del($where);
-        if ($res['code'] == ReturnData::SUCCESS) {
-            $this->success('删除成功');
+		$id = $_GET["id"];
+        $res = model('Log')->del("id in ($id)");
+        if (!$res) {
+            $this->error('删除失败');
         }
 
-        $this->error($res['msg']);
+        $this->success("$id ,删除成功", url('index'), '', 1);
     }
 
     //清空

@@ -15,8 +15,8 @@ class Sysconfig extends Validate
     ];
 
     protected $scene = [
-        'add' => ['varname', 'info', 'value'],
-        'edit' => ['varname', 'info', 'value'],
+        'add' => ['varname', 'info'],
+        'edit' => ['varname', 'info'],
         'del' => ['id'],
     ];
 

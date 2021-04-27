@@ -15,6 +15,7 @@ class Common extends CommonController
      */
     public function _initialize()
     {
+		parent::_initialize();
         // 未登录
         if (!session('admin_info')) {
             $this->error('您访问的页面不存在或已被删除', '/', '', 3);

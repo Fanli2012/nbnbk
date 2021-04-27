@@ -35,7 +35,10 @@ class Operation
         if ($data['http_method'] != 'GET') { $data['content'] = mb_strcut(json_encode(input(), JSON_UNESCAPED_SLASHES), 0, 255, 'UTF-8'); }
 		if (!empty($_SERVER['HTTP_REFERER'])) { $data['http_referer'] = mb_strcut($_SERVER['HTTP_REFERER'], 0, 255, 'UTF-8'); }
         $data['add_time'] = $time;
-        logic('Log')->add($data);
+        //url不包含log
+		if (strpos($data['url'], 'get_recharge_withdrawal_info') === false && strpos($data['url'], '/log') === false) {
+			logic('Log')->add($data);
+		}
     }
 
     /**

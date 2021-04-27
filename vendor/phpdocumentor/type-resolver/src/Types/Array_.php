@@ -1,12 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 /**
  * This file is part of phpDocumentor.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @copyright 2010-2015 Mike van Riel<mike@phpdoc.org>
- * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
 
@@ -20,6 +21,8 @@ namespace phpDocumentor\Reflection\Types;
  * 1. Untyped (`array`), where the key and value type is unknown and hence classified as 'Mixed_'.
  * 2. Types (`string[]`), where the value type is provided by preceding an opening and closing square bracket with a
  *    type name.
+ *
+ * @psalm-immutable
  */
 final class Array_ extends AbstractList
 {

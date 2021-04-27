@@ -15,6 +15,13 @@
         <td align="right">上级目录：</td>
         <td><?php if($parent_id==0){echo "顶级栏目";}else{echo $parent_goods_type["name"];} ?><input style="display:none;" type="text" name="parent_id" id="parent_id" value="<?php echo $parent_id; ?>"></td>
     </tr>
+	<tr>
+        <td align="right">状态：</td>
+        <td>
+			<input type="radio" value='1' name="status" checked />&nbsp;正常&nbsp;&nbsp;
+			<input type="radio" value='0' name="status" />&nbsp;隐藏
+		</td>
+    </tr>
     <tr>
         <td align="right"><font color="red">*</font>别名：</td>
         <td><input name="filename" type="text" value="" id="filename" class="required" size="20"> <small>(包含字母或数字，字母开头)</small></td>

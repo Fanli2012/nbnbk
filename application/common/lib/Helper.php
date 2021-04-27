@@ -10,38 +10,26 @@ class Helper
         return sprintf("%.2f", $price);
     }
 
-    //随机字母
-    public static function randLetter($len)
-    {
-        $letter = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-        $result = '';
-
-        for ($i = 0; $i < $len; $i++) {
-            $result .= $letter[array_rand($letter, 1)];
-        }
-
-        return $result;
-    }
-
     /**
      * 取得随机字符串
      *
      * @param int $length 生成随机数的长度
-     * @param int $numeric 是否只产生数字随机数 1是0否
+     * @param int $numeric 是否只产生数字随机数 0字母数字，1纯数字，2纯字母
      * @return string
      */
     public static function getRandomString($length, $numeric = 0)
     {
-        $seed = base_convert(md5(microtime() . $_SERVER['DOCUMENT_ROOT']), 16, $numeric ? 10 : 35);
-        $seed = $numeric ? (str_replace('0', '', $seed) . '012340567890') : ($seed . 'zZ' . strtoupper($seed));
-        $hash = '';
-        $max = strlen($seed) - 1;
-
-        for ($i = 0; $i < $length; $i++) {
-            $hash .= $seed{mt_rand(0, $max)};
+        $letter = ['0', 'a', '1', 'b', '2', 'c', '3', 'd', '4', 'e', '5', 'f', '6', 'g', '7', 'h', '8', 'i', '9', 'j', '2', 'k', '3', 'l', '4', 'm', '5', 'n', '6', 'o', '7', 'p', '8', 'q', '9', 'r', '2', 's', '3', 't', '4', 'u', 'v', 'w', 'x', 'y', 'z'];
+        if ($numeric == 1) {
+            $letter = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        } elseif ($numeric == 2) {
+            $letter = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
         }
-
-        return $hash;
+        $result = '';
+        for ($i = 0; $i < $length; $i++) {
+            $result .= $letter[array_rand($letter, 1)];
+        }
+        return $result;
     }
 
     //生成二维码
@@ -362,4 +350,69 @@ class Helper
 
         return false;
     }
+
+    /**
+     * IP/域名校验 支持 IP(单IP,多IP,*通配符,IP段) 域名(单域名,多域名,*通配符)
+     * 根据判断实现IP地址 白名单黑名单
+     * 测试示例
+        // 限制域名测试
+        $domain = '2.baidu.com';
+        $domain_list = '*.baidu.com,qq.com';
+        if (in_host ( $domain, $domain_list )) {
+            echo ('domain in');
+        } else {
+            echo ('domain is not in');
+        }
+        // 限制IP测试
+        $host = '127.1.1.88';
+        $list = '127.0.0.*,192.168.1.1,192.168.1.70,127.1.1.33-127.1.1.100';
+        if (in_host ( $host, $list )) {
+            echo ('ip in');
+        } else {
+            echo ('ip is not in');
+        }
+     * @param unknown $host 当前host 127.0.0.2
+     * @param unknown $list 允许的host列表 127.0.0.*,192.168.1.1,192.168.1.70,127.1.1.33-127.1.1.100
+     * @return boolean
+     */
+    public static function ip_domain_check($host, $list)
+    {
+        $list = ',' . $list . ',';
+        $is_in = false;
+        // 1.判断最简单的情况
+        $is_in = strpos($list, ',' . $host . ',') === false ? false : true;
+        // 2.判断通配符情况
+        if (!$is_in && strpos($list, '*') !== false) {
+            $hosts = array();
+            $hosts = explode('.', $host);
+            // 组装每个 * 通配符的情况
+            foreach ($hosts as $k1 => $v1) {
+                $host_now = '';
+                foreach ($hosts as $k2 => $v2) {
+                    $host_now .= ($k2 == $k1 ? '*' : $v2) . '.';
+                }
+                // 组装好后进行判断
+                if (strpos($list, ',' . substr($host_now, 0, -1) . ',') !== false) {
+                    $is_in = true;
+                    break;
+                }
+            }
+        }
+        // 3.判断IP段限制
+        if (!$is_in && strpos($list, '-') !== false) {
+            $lists = explode(',', trim($list, ','));
+            $host_long = ip2long($host);
+            foreach ($lists as $k => $v) {
+                if (strpos($v, '-') !== false) {
+                    list ($host1, $host2) = explode('-', $v);
+                    if ($host_long >= ip2long($host1) && $host_long <= ip2long($host2)) {
+                        $is_in = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return $is_in;
+    }
+
 }

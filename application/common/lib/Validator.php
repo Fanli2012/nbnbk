@@ -2,7 +2,6 @@
 /**
  * 验证类
  */
-
 namespace app\common\lib;
 
 class Validator

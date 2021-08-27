@@ -42,6 +42,17 @@ class DateAndTime
     }
 
     /**
+     * 返回13位的时间戳
+     *
+     * @return 时间戳
+     */
+	public static function getMillisecond()
+	{
+		list($t1, $t2) = explode(' ', microtime());
+		return (float)sprintf('%.0f',(floatval($t1)+floatval($t2))*1000);
+	}
+
+    /**
      * 获取指定日期之间的所有月份
      * @param string $old_date 为开始日期 例2017-11-01 00:00:00
      * @param string $new_date 为结束日期 例2018-12-01 00:00:00

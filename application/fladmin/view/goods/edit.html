@@ -18,7 +18,7 @@
     </tr>
     <tr>
         <td align="right"><font color="red">*</font>商品价格：</td>
-        <td colspan="2"><input name="price" type="text" id="price" style="width:100px" value="<?php echo $post["price"]; ?>">&nbsp;&nbsp; <font color="red">*</font>原价：<input name="market_price" type="text" id="market_price" style="width:100px" value="<?php echo $post["market_price"]; ?>">&nbsp;&nbsp; <font color="red">*</font>库存：<input name="goods_number" type="text" id="goods_number" style="width:60px" value="<?php echo $post["goods_number"]; ?>">&nbsp;&nbsp; 浏览次数：<input type="text" name="click" id="click" value="<?php echo $post["click"]; ?>" style="width:60px;"></td>
+        <td colspan="2"><input class="required" name="price" type="text" id="price" style="width:100px" value="<?php echo $post["price"]; ?>">&nbsp;&nbsp; <font color="red">*</font>原价：<input class="required" name="market_price" type="text" id="market_price" style="width:100px" value="<?php echo $post["market_price"]; ?>">&nbsp;&nbsp; <font color="red">*</font>库存：<input name="goods_number" type="text" id="goods_number" style="width:60px" value="<?php echo $post["goods_number"]; ?>">&nbsp;&nbsp; 浏览次数：<input type="text" name="click" id="click" value="<?php echo $post["click"]; ?>" style="width:60px;"></td>
     </tr>
 	<tr>
         <td align="right">上架：</td>
@@ -42,8 +42,28 @@
         </td>
     </tr>
     <tr>
+        <td align="right">规格：</td>
+        <td id="spec"><button type="button" id="add_spec_button">+添加规格</button>
+        <?php if(!empty($post['spec'])) { $spec = json_decode($post['spec'], true); foreach ($spec as $k => $v) { ?>
+        <div style="margin-top:5px;"><input class="required" required="required" name="spec_name[]" type="text" value="<?php echo $k; ?>" style="width:120px" placeholder="颜色"> <input class="required" placeholder="黑,白" name="spec_data[]" type="text" value="<?php echo $v; ?>" style="width:200px" required="required"> <button class="del_btn" type="button">删除</button></div>
+        <?php } } ?>
+        </td>
+        <script>
+        $("#add_spec_button").click(function(){
+			$('#spec').append('<div style="margin-top:5px;"><input class="required" required="required" name="spec_name[]" type="text" value="" style="width:120px" placeholder="颜色"> <input class="required" placeholder="黑,白" name="spec_data[]" type="text" value="" style="width:200px" required="required"> <button class="del_btn" type="button">删除</button></div>');
+			
+			$(".del_btn").click(function(){
+				$(this).parent().remove();
+			});
+		});
+        $(".del_btn").click(function(){
+			$(this).parent().remove();
+		});
+        </script>
+    </tr>
+    <tr>
         <td align="right" style="vertical-align:middle;"><font color="red">*</font>缩略图：</td>
-        <td style="vertical-align:middle;"><button type="button" onclick="upImage();">选择图片</button> <input name="litpic" type="text" id="litpic" value="{$post["litpic"]}" style="width:40%"> <img style="margin-left:20px;<?php if(empty($post["litpic"]) || !imgmatch($post["litpic"])){ echo "display:none;"; } ?>" src="<?php if(imgmatch($post["litpic"])){echo $post["litpic"];} ?>" width="120" height="80" id="picview" name="picview"></td>
+        <td style="vertical-align:middle;"><button type="button" onclick="upImage();">选择图片</button> <input class="required" name="litpic" type="text" id="litpic" value="{$post["litpic"]}" style="width:40%"> <img style="margin-left:20px;<?php if(empty($post["litpic"]) || !imgmatch($post["litpic"])){ echo "display:none;"; } ?>" src="<?php if(imgmatch($post["litpic"])){echo $post["litpic"];} ?>" width="120" height="80" id="picview" name="picview"></td>
     </tr>
 <script type="text/javascript">
 var _editor;

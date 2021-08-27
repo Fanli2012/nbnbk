@@ -3,7 +3,7 @@
 namespace app\common\lib;
 
 /**
- * 字符串类
+ * Http 请求类
  */
 class Http
 {
@@ -124,9 +124,10 @@ class Http
         $parts['query'] = isset($parts['query']) && $parts['query'] ? '?' . $parts['query'] : '';
         //发送socket请求,获得连接句柄
         $fp = fsockopen($parts['host'], isset($parts['port']) ? $parts['port'] : 80, $errno, $errstr, 3);
-        if (!$fp)
-            return FALSE;
-        //设置超时时间
+        if (!$fp) {
+            return false;
+        }
+		//设置超时时间
         stream_set_timeout($fp, 3);
         $out = "{$method} {$parts['path']}{$parts['query']} HTTP/1.1\r\n";
         $out .= "Host: {$parts['host']}\r\n";
@@ -139,7 +140,7 @@ class Http
         //不用关心服务器返回结果
         //echo fread($fp, 1024);
         fclose($fp);
-        return TRUE;
+        return true;
     }
 
     /**

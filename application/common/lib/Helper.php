@@ -127,11 +127,19 @@ class Helper
      */
     public static function getRemoteIp()
     {
-        $ip = '';
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) $ip = $_SERVER['HTTP_CLIENT_IP']; //客户端IP 或 NONE
-        if (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
-        if (!empty($_SERVER["REMOTE_ADDR"])) $ip = $_SERVER["REMOTE_ADDR"];
-
+        $ip = '0.0.0.0';
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $pos = array_search('unknown', $arr);
+            if (false !== $pos) {
+                unset($arr[$pos]);
+            }
+            $ip = trim(current($arr));
+        } elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
         return $ip;
     }
 
@@ -415,4 +423,19 @@ class Helper
         return $is_in;
     }
 
+	/**
+	 * 二维数组根据某个字段排序
+	 * @param array $array 要排序的数组
+	 * @param string $keys 要排序的键字段
+	 * @param string $sort 排序类型 SORT_ASC SORT_DESC 
+	 * @return array 排序后的数组
+	 */
+	public static function arraySort($array, $keys, $sort = SORT_DESC) {
+		$keysValue = [];
+		foreach ($array as $k => $v) {
+			$keysValue[$k] = $v[$keys];
+		}
+		array_multisort($keysValue, $sort, $array);
+		return $array;
+	}
 }

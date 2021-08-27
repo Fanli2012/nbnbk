@@ -228,18 +228,20 @@ class Article extends Base
             $res = $this->getLogic()->edit($_POST, $where);
             if ($res['code'] == ReturnData::SUCCESS) {
                 //Tag添加
-                if (isset($_POST['tags']) && $_POST["tags"] != '') {
-                    $tags = $_POST['tags'];
-                    $tags = explode(',', str_replace('，', ',', $tags));
+                if (isset($_POST['tags'])) {
                     model('Taglist')->del(array('article_id' => $id));
-                    foreach ($tags as $row) {
-                        $tag_id = model('Tag')->getValue(array('name' => $row), 'id');
-                        if ($tag_id) {
-                            $data2['tag_id'] = $tag_id;
-                            $data2['article_id'] = $id;
-                            logic('Taglist')->add($data2);
-                        }
-                    }
+					if (!empty($_POST['tags'])) {
+						$tags = $_POST['tags'];
+						$tags = explode(',', str_replace('，', ',', $tags));
+						foreach ($tags as $row) {
+							$tag_id = model('Tag')->getValue(array('name' => $row), 'id');
+							if ($tag_id) {
+								$data2['tag_id'] = $tag_id;
+								$data2['article_id'] = $id;
+								logic('Taglist')->add($data2);
+							}
+						}
+					}
                 }
 
                 $this->success($res['msg'], url('index'), '', 1);

@@ -98,6 +98,16 @@ class Goods extends Base
                 $goods_img = $_POST['goods_img'];
                 $_POST['goods_img'] = $_POST['goods_img'][0];
             }
+            //商品规格
+            if (!empty($_POST['spec_name']) && !empty($_POST['spec_data'])) {
+                $goods_attr = [];
+                foreach ($_POST['spec_name'] as $k => $v) {
+                    $goods_attr[$_POST['spec_name'][$k]] = str_replace("，",",",$_POST['spec_data'][$k]);
+                }
+                if ($goods_attr) {
+                    $_POST['spec'] = json_encode($goods_attr);
+                }
+            }
 
             $res = $this->getLogic()->add($_POST);
             if ($res['code'] == ReturnData::SUCCESS) {
@@ -165,6 +175,16 @@ class Goods extends Base
             if (!empty($_POST['goods_img'])) {
                 $goods_img = $_POST['goods_img'];
                 $_POST['goods_img'] = $_POST['goods_img'][0];
+            }
+            //商品规格
+            if (!empty($_POST['spec_name']) && !empty($_POST['spec_data'])) {
+                $goods_attr = [];
+                foreach ($_POST['spec_name'] as $k => $v) {
+                    $goods_attr[$_POST['spec_name'][$k]] = str_replace("，",",",$_POST['spec_data'][$k]);
+                }
+                if ($goods_attr) {
+                    $_POST['spec'] = json_encode($goods_attr);
+                }
             }
 
             $res = $this->getLogic()->edit($_POST, $where);

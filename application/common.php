@@ -829,6 +829,18 @@ function str_reversal($str)
     return $t2;
 }
 
+// 判断是否是https
+function is_https($str)
+{
+	if ((isset($_SERVER['HTTPS']) && (($_SERVER['HTTPS'] == 'on') || ($_SERVER['HTTPS'] == '1'))) || $_SERVER['SERVER_PORT'] == 443) {
+		return true;
+	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+		$protocol = 'https://';
+		return true;
+	} else {
+		return false;
+	}
+}
 
 // ----------其它自定义函数，主要用于真的当前项目----------
 

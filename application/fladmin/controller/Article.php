@@ -147,7 +147,7 @@ class Article extends Base
                         $tag_id = model('Tag')->getValue(array('name' => $row), 'id');
                         if ($tag_id) {
                             $data2['tag_id'] = $tag_id;
-                            $data2['article_id'] = $id;
+                            $data2['article_id'] = $res['data'];
                             logic('Taglist')->add($data2);
                         }
                     }

@@ -4,8 +4,6 @@ use app\common\lib\ReturnData;
 
 class Base extends Common
 {
-	protected $login_info = array();
-    
 	/**
      * 初始化
      * @param void
@@ -13,12 +11,12 @@ class Base extends Common
      */
 	public function _initialize()
 	{
-        parent::_initialize();
-		
 		//Token验证
 		$this->checkToken();
+		
+        parent::_initialize();
     }
-	
+
     /**
      * Token验证
      * @param access_token
@@ -44,16 +42,22 @@ class Base extends Common
         {
             //TOKEN验证
 			$access_token = request()->header('AccessToken') ?: request()->param('access_token');
-			if(!$access_token){Util::echo_json(ReturnData::create(ReturnData::TOKEN_ERROR));}
+			if (!$access_token) {
+				$this->operation_log_add([]);
+				Util::echo_json(ReturnData::create(ReturnData::TOKEN_ERROR));
+			}
 			
 			$this->login_info = cache('access_token_'.$access_token);
 			if (!$this->login_info)
 			{
 				$token_info = logic('Token')->checkToken($access_token);
-				if ($token_info['code']!=ReturnData::SUCCESS) {Util::echo_json($token_info);}
+				if ($token_info['code'] != ReturnData::SUCCESS) {
+					$this->operation_log_add([]);
+					Util::echo_json($token_info);
+				}
 				
 				//Token对应的用户信息
-				$this->login_info = logic('User')->getUserInfo(array('id'=>$token_info['data']['user_id']));
+				$this->login_info = logic('User')->getUserInfo(array('id' => $token_info['data']['user_id']));
 				cache('access_token_'.$access_token, $this->login_info, 3600); //文件缓存60分钟
 			}
         }

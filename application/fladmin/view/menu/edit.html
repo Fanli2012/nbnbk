@@ -50,6 +50,10 @@
         <td><input name="desc" type="text" id="desc" value="<?php echo $post["desc"]; ?>" style="width:50%"></td>
     </tr>
     <tr>
+        <td align="right">排序：</td>
+        <td><input autocomplete="off" name="listorder" type="text" id="listorder" value="<?php echo $post["listorder"]; ?>" style="width:30%"></td>
+    </tr>
+    <tr>
         <td align="right">状态：</td>
         <td>
             <input type="radio" value='0' name="status" <?php if($post['status']==0){echo 'checked';} ?> />&nbsp;正常&nbsp;&nbsp;

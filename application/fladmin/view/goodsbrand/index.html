@@ -2,7 +2,7 @@
 {block name="title"}商品品牌{/block}
 
 {block name="content"}
-<h2 class="sub-header">商品品牌管理</h2>[ <a href="{:url('add')}">品牌添加</a> ]<br><br>
+<h2 class="sub-header">商品品牌管理 <small class="badge"><?php echo $list->total(); ?> 条</small></h2>[ <a href="{:url('add')}">品牌添加</a> ]<br><br>
 
 <form name="listarc"><div class="table-responsive">
 <table class="table table-striped table-hover">

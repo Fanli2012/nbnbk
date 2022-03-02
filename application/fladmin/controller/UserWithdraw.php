@@ -27,6 +27,25 @@ class UserWithdraw extends Base
         if (!empty($_REQUEST['keyword'])) {
             $where['name'] = array('like', '%' . $_REQUEST['keyword'] . '%');
         }
+		//起止时间
+        if (!empty($_REQUEST['start_date']) && !empty($_REQUEST['end_date'])) {
+            $start_date = strtotime(date($_REQUEST['start_date']));
+			$end_date = strtotime(date($_REQUEST['end_date']));
+			if ($start_date > $end_date) {
+				$this->error('起止时间不正确');
+			}
+			
+			$end_date = $end_date + 24 * 3600;
+			$where['add_time'] = [['>=',$start_date],['<=', $end_date]];
+        }
+        //用户ID
+        if (isset($_REQUEST['user_id'])) {
+            $where['user_id'] = $_REQUEST['user_id'];
+        }
+        //提现状态：0未处理,1处理中,2成功,3取消，4拒绝
+        if (isset($_REQUEST['status'])) {
+            $where['status'] = $_REQUEST['status'];
+        }
         $list = $this->getLogic()->getPaginate($where, 'id desc');
 
         $this->assign('page', $list->render());

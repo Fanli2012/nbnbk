@@ -7,10 +7,22 @@ class ReturnData
     //通用
     const SUCCESS = 0;    //操作成功
     const FAIL = 1;    //操作失败
+
+	const HTTP_METHOD_INCORRECT = 400; //HTTP Method不正确
+	const NOT_FOUND = 404; //找不到指定的资源
+	const UNKNOWN = 500; //未知的服务器错误
+	const CALL_LIMIT_EXCEEDED = 503; //调用额度已超出限制
+	const INVALID_ARGUMENT = 4000; //请求参数非法
+	const REQUEST_EXPIRED = 4200; //请求过期
+	const ACCESS_DENIED = 4300; //拒绝访问
+	const PROTOCOL_NOT_SUPPORTED = 4600; //协议不支持
+	const SERVER_INTERNAL_ERROR = 6000; //服务器内部错误
+	const VERSION_NOT_SUPPORTED = 6100; //版本暂不支持
+	const INTERFACE_INACCESSIBLE = 6200; //接口暂时无法访问
+
     const FORBIDDEN = 8001; //权限不足
     const SYSTEM_FAIL = 8002; //系统错误，如数据写入失败之类的
     const PARAMS_ERROR = 8003; //参数错误
-    const NOT_FOUND = 8004; //资源未找到
     const TOKEN_ERROR = 8005; //Token错误
     const SIGN_ERROR = 8006; //签名错误
     const RECORD_EXIST = 8007; //记录已存在
@@ -26,14 +38,11 @@ class ReturnData
     const MOBILE_HAS_MORE = 8205; //存在多个手机号码
     const NAME_EXIST = 8206; //名称已被使用
     const MOBILE_EXIST = 8207; //手机号已存在
-    const NOT_UP_GRADE = 8208; //不符合升级条件
-    const NOT_DOWN_GRADE = 8209; //不符合降级条件
 
     //登录、账号相关
     const USERNAME_REQUIRED = 8401; //登录账号为必填
     const PASSWORD_REQUIRED = 8402; //登录密码为必填
     const USERNAME_EXIST = 8403; //登录账号已被使用
-    const ADMINNAME_REQUIRED = 8404; //管理员姓名不能为空
     const PASSWORD_NOT_MATCH = 8405; //密码错误
     const OLD_PASSWORD_NOT_MATCH = 8406; //旧密码不匹配
     const PASSWORD_CONFIRM_FAIL = 8407; //两次输入的密码不匹配
@@ -57,10 +66,22 @@ class ReturnData
     public static $codeTexts = array(
         0 => '操作成功',
         1 => '操作失败',
+
+		400 => 'HTTP Method不正确',
+		404 => '找不到指定的资源',
+		500 => '未知的服务器错误',
+		503 => '调用额度已超出限制',
+		4000 => '请求参数非法',
+		4200 => '请求过期',
+		4300 => '拒绝访问',
+		4600 => '协议不支持',
+		6000 => '服务器内部错误',
+		6100 => '版本暂不支持',
+		6200 => '接口暂时无法访问',
+
         8001 => '权限不足',
         8002 => '系统错误，请联系管理员',
         8003 => '参数错误',
-        8004 => '资源未找到',
         8005 => 'Token错误',
         8006 => '签名错误',
         8007 => '记录已存在',
@@ -76,13 +97,10 @@ class ReturnData
         8205 => '存在多个手机号码',
         8206 => '名称已被使用',
         8207 => '手机号已存在',
-        8208 => '不符合升级条件',
-        8209 => '不符合降级条件',
         //登录、账号相关
         8401 => '登录账号为必填',
         8402 => '登录密码为必填',
         8403 => '登录账号已被使用',
-        8404 => '管理员姓名不能为空',
         8405 => '登录失败',
         8406 => '原密码不匹配',
         8407 => '两次输入的密码不匹配',

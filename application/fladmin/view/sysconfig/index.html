@@ -2,7 +2,7 @@
 {block name="title"}系统配置参数{/block}
 
 {block name="content"}
-<h2 class="sub-header">系统配置参数</h2>[ <a href="{:url('add')}">添加参数</a> ] [ <a href="{:url('fladmin/Index/upcache')}">更新配置缓存</a> ]<br><br>
+<h2 class="sub-header">系统配置参数 <small class="badge"><?php echo $list->total(); ?> 条</small></h2>[ <a href="{:url('add')}">添加参数</a> ] [ <a href="{:url('fladmin/Index/upcache')}">更新配置缓存</a> ] [ <a href="{:url('other')}">其它配置</a> ]<br><br>
 
 <form name="listarc"><div class="table-responsive"><table class="table table-striped table-hover">
 <thead><tr>

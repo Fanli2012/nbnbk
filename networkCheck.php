@@ -12,7 +12,7 @@ function network_check($url)
     curl_setopt($ch, CURLOPT_USERAGENT, $agent);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_VERBOSE, false);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($ch, CURLOPT_SSLVERSION, 3);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
@@ -22,7 +22,7 @@ function network_check($url)
     $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     //curl_close()函数的作用是关闭一个curl会话，唯一的参数是curl_init()函数返回的句柄。
     curl_close($ch);
-    if ($httpcode >= 200 && $httpcode < 300) {
+    if ($httpcode >= 200 && $httpcode < 400) {
         return true;
     }
     return false;
@@ -355,7 +355,7 @@ class Smtp
 if (network_check("http://fc.xyabb.com")) {
     echo "Website OK";
 } else {
-	$text = date('Y-m-d H:i:s').'服务器挂了，有效期30分钟。';
+	$text = date('Y-m-d H:i') . '服务器挂了，有效期30分钟。';
 	//发送邮件
 	$smtpserver = 'smtp.sina.com';//SMTP服务器
 	$smtpserverport = 25;//SMTP服务器端口

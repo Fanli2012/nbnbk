@@ -45,9 +45,9 @@ return [
     // 是否开启多语言
     'lang_switch_on'         => false,
     // 默认全局过滤方法 用逗号分隔多个
-    'default_filter'         => '',
+    'default_filter'         => 'htmlspecialchars,strip_tags',
     // 默认语言
-    'default_lang'           => 'zh-cn',
+    'default_lang'           => 'zh-cn,en-us',
     // 应用类库后缀
     'class_suffix'           => false,
     // 控制器类后缀
@@ -147,7 +147,7 @@ return [
     'exception_tmpl'         => THINK_PATH . 'tpl' . DS . 'think_exception.tpl',
 
     // 错误显示信息,非调试模式有效
-    'error_message'          => '服务器内部错误HTTP-Internal Server Error',
+    'error_message'          => 'HTTP-Internal Server Error',
     // 显示错误信息
     'show_error_msg'         => false,
     // 异常处理handle类 留空使用 \think\exception\Handle

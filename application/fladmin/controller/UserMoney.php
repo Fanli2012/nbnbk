@@ -26,6 +26,17 @@ class UserMoney extends Base
         if (isset($_REQUEST['keyword'])) {
             $where['desc'] = array('like', '%' . $_REQUEST['keyword'] . '%');
         }
+		//起止时间
+        if (!empty($_REQUEST['start_date']) && !empty($_REQUEST['end_date'])) {
+            $start_date = strtotime(date($_REQUEST['start_date']));
+			$end_date = strtotime(date($_REQUEST['end_date']));
+			if ($start_date > $end_date) {
+				$this->error('起止时间不正确');
+			}
+			
+			$end_date = $end_date + 24 * 3600;
+			$where['add_time'] = [['>=',$start_date],['<=', $end_date]];
+        }
         if (isset($_REQUEST['user_id'])) {
             $where['user_id'] = $_REQUEST["user_id"];
         }

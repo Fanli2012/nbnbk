@@ -10,19 +10,6 @@ class Helper
         return sprintf("%.2f", $price);
     }
 
-    //随机字母
-    public static function randLetter($len)
-    {
-        $letter = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-        $result = '';
-
-        for ($i = 0; $i < $len; $i++) {
-            $result .= $letter[array_rand($letter, 1)];
-        }
-
-        return $result;
-    }
-
     /**
      * 取得随机字符串
      *
@@ -32,7 +19,7 @@ class Helper
      */
     public static function getRandomString($length, $numeric = 0)
     {
-        $letter = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+        $letter = ['0', 'a', '1', 'b', '2', 'c', '3', 'd', '4', 'e', '5', 'f', '6', 'g', '7', 'h', '8', 'i', '9', 'j', '2', 'k', '3', 'l', '4', 'm', '5', 'n', '6', 'o', '7', 'p', '8', 'q', '9', 'r', '2', 's', '3', 't', '4', 'u', 'v', 'w', 'x', 'y', 'z'];
         if ($numeric == 1) {
             $letter = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
         } elseif ($numeric == 2) {
@@ -140,11 +127,19 @@ class Helper
      */
     public static function getRemoteIp()
     {
-        $ip = '';
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) $ip = $_SERVER['HTTP_CLIENT_IP']; //客户端IP 或 NONE
-        if (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
-        if (!empty($_SERVER["REMOTE_ADDR"])) $ip = $_SERVER["REMOTE_ADDR"];
-
+        $ip = '0.0.0.0';
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $pos = array_search('unknown', $arr);
+            if (false !== $pos) {
+                unset($arr[$pos]);
+            }
+            $ip = trim(current($arr));
+        } elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
         return $ip;
     }
 
@@ -334,7 +329,7 @@ class Helper
             return true;
         }
         //此条摘自TPM智能切换模板引擎，适合TPM开发
-        if(isset ($_SERVER['HTTP_CLIENT']) &&'PhoneClient'==$_SERVER['HTTP_CLIENT']) {
+        if (isset ($_SERVER['HTTP_CLIENT']) && 'PhoneClient' == $_SERVER['HTTP_CLIENT']) {
             return true;
         }
         //如果via信息含有wap则一定是移动设备,部分服务商会屏蔽该信息
@@ -345,7 +340,7 @@ class Helper
         //判断手机发送的客户端标志,兼容性有待提高
         if (isset ($_SERVER['HTTP_USER_AGENT'])) {
             $clientkeywords = array(
-                'nokia','sony','ericsson','mot','samsung','htc','sgh','lg','sharp','sie-','philips','panasonic','alcatel','lenovo','iphone','ipod','blackberry','meizu','android','netfront','symbian','ucweb','windowsce','palm','operamini','operamobi','openwave','nexusone','cldc','midp','wap','mobile'
+                'nokia', 'sony', 'ericsson', 'mot', 'samsung', 'htc', 'sgh', 'lg', 'sharp', 'sie-', 'philips', 'panasonic', 'alcatel', 'lenovo', 'iphone', 'ipod', 'blackberry', 'meizu', 'android', 'netfront', 'symbian', 'ucweb', 'windowsce', 'palm', 'operamini', 'operamobi', 'openwave', 'nexusone', 'cldc', 'midp', 'wap', 'mobile'
             );
             //从HTTP_USER_AGENT中查找手机浏览器的关键字
             if (preg_match("/(" . implode('|', $clientkeywords) . ")/i", strtolower($_SERVER['HTTP_USER_AGENT']))) {
@@ -363,4 +358,84 @@ class Helper
 
         return false;
     }
+
+    /**
+     * IP/域名校验 支持 IP(单IP,多IP,*通配符,IP段) 域名(单域名,多域名,*通配符)
+     * 根据判断实现IP地址 白名单黑名单
+     * 测试示例
+        // 限制域名测试
+        $domain = '2.baidu.com';
+        $domain_list = '*.baidu.com,qq.com';
+        if (in_host ( $domain, $domain_list )) {
+            echo ('domain in');
+        } else {
+            echo ('domain is not in');
+        }
+        // 限制IP测试
+        $host = '127.1.1.88';
+        $list = '127.0.0.*,192.168.1.1,192.168.1.70,127.1.1.33-127.1.1.100';
+        if (in_host ( $host, $list )) {
+            echo ('ip in');
+        } else {
+            echo ('ip is not in');
+        }
+     * @param unknown $host 当前host 127.0.0.2
+     * @param unknown $list 允许的host列表 127.0.0.*,192.168.1.1,192.168.1.70,127.1.1.33-127.1.1.100
+     * @return boolean
+     */
+    public static function ip_domain_check($host, $list)
+    {
+        $list = ',' . $list . ',';
+        $is_in = false;
+        // 1.判断最简单的情况
+        $is_in = strpos($list, ',' . $host . ',') === false ? false : true;
+        // 2.判断通配符情况
+        if (!$is_in && strpos($list, '*') !== false) {
+            $hosts = array();
+            $hosts = explode('.', $host);
+            // 组装每个 * 通配符的情况
+            foreach ($hosts as $k1 => $v1) {
+                $host_now = '';
+                foreach ($hosts as $k2 => $v2) {
+                    $host_now .= ($k2 == $k1 ? '*' : $v2) . '.';
+                }
+                // 组装好后进行判断
+                if (strpos($list, ',' . substr($host_now, 0, -1) . ',') !== false) {
+                    $is_in = true;
+                    break;
+                }
+            }
+        }
+        // 3.判断IP段限制
+        if (!$is_in && strpos($list, '-') !== false) {
+            $lists = explode(',', trim($list, ','));
+            $host_long = ip2long($host);
+            foreach ($lists as $k => $v) {
+                if (strpos($v, '-') !== false) {
+                    list ($host1, $host2) = explode('-', $v);
+                    if ($host_long >= ip2long($host1) && $host_long <= ip2long($host2)) {
+                        $is_in = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return $is_in;
+    }
+
+	/**
+	 * 二维数组根据某个字段排序
+	 * @param array $array 要排序的数组
+	 * @param string $keys 要排序的键字段
+	 * @param string $sort 排序类型 SORT_ASC SORT_DESC 
+	 * @return array 排序后的数组
+	 */
+	public static function arraySort($array, $keys, $sort = SORT_DESC) {
+		$keysValue = [];
+		foreach ($array as $k => $v) {
+			$keysValue[$k] = $v[$keys];
+		}
+		array_multisort($keysValue, $sort, $array);
+		return $array;
+	}
 }

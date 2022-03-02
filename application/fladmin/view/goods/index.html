@@ -2,7 +2,8 @@
 {block name="title"}商品列表{/block}
 
 {block name="content"}
-<h5 class="sub-header"><a href="{:url('fladmin/Goodstype/index')}">商品分类</a> > <a href="{:url('index')}">商品列表</a> [ <a href="{:url('add')}<?php if(!empty($_GET["id"])){echo '?catid='.$_GET["id"];}?>">发布商品</a> ]</h5>
+<h2 class="sub-header">商品列表 <small class="badge"><?php echo $list->total(); ?> 条</small></h2>
+<a href="{:url('fladmin/Goodstype/index')}">商品分类</a> > <a href="{:url('index')}">商品列表</a> [ <a href="{:url('add')}<?php if(!empty($_GET["id"])){echo '?catid='.$_GET["id"];}?>">发布商品</a> ]
 
 <div class="table-responsive">
 <table class="table table-striped table-hover">
@@ -16,7 +17,7 @@
 	</tr>
   </thead>
   <tbody>
-  <?php if($list){foreach($list as $row){ ?>
+  <?php if ($list) { foreach ($list as $row) { ?>
 	<tr>
 	  <td><?php echo $row["id"]; ?></td>
 	  <td><input name="arcID" type="checkbox" value="<?php echo $row["id"]; ?>" class="np"></td>

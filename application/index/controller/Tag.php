@@ -39,6 +39,7 @@ class Tag extends Base
             $where_tuijian['delete_time'] = 0;
             $where_tuijian['status'] = 0;
             $where_tuijian['tuijian'] = 1;
+			$where_tuijian['add_time'] = ['<', time()];
             $relate_tuijian_list = logic('Article')->getAll($where_tuijian, 'update_time desc', ['content'], 5);
             cache("index_tag_index_relate_tuijian_list_$key", $relate_tuijian_list, 2592000);
         }
@@ -50,6 +51,7 @@ class Tag extends Base
             $where_zuixin['delete_time'] = 0;
             $where_zuixin['status'] = 0;
             $where_zuixin['tuijian'] = 0;
+			$where_zuixin['add_time'] = ['<', time()];
             $relate_zuixin_list = logic('Article')->getAll($where_zuixin, 'update_time desc', ['content'], 5);
             cache("index_tag_index_relate_zuixin_list_$key", $relate_zuixin_list, 2592000);
         }
@@ -112,6 +114,7 @@ class Tag extends Base
         if (!$relate_zuixin_list) {
             $where_zuixin['delete_time'] = 0;
             $where_zuixin['status'] = 0;
+			$where_zuixin['add_time'] = ['<', time()];
             $relate_zuixin_list = logic('Article')->getAll($where_zuixin, 'update_time desc', ['content'], 5);
             cache("index_tag_detail_relate_zuixin_list_$id", $relate_zuixin_list, 2592000);
         }
@@ -122,6 +125,7 @@ class Tag extends Base
         if (!$relate_rand_list) {
             $where_rand['delete_time'] = 0;
             $where_rand['status'] = 0;
+			$where_rand['add_time'] = ['<', time()];
             $relate_rand_list = logic('Article')->getAll($where_rand, ['orderRaw', 'rand()'], ['content'], 5);
             cache("index_tag_detail_relate_rand_list_$id", $relate_rand_list, 2592000);
         }

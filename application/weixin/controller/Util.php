@@ -20,4 +20,29 @@ class Util
 		
 		return $res;
 	}
+
+	/**
+     * 设置Cookie
+     * @access public
+	 * @param $name Cookie名称
+     * @param $value Cookie值
+     * @param int $expire Cookie的过期时间，如果设置成零或者忽略参数，Cookie会在会话结束时过期(也就是关掉浏览器时)，time()+60*60*24*30就是设置Cookie 30天后过期
+     * @return bool
+     */
+    public static function set_cookie($name, $value, $expire = 0)
+    {
+		setcookie($name, $value, $expire, '/');
+    }
+
+    /**
+     * 数据集为JSON字符串
+     * @access public
+     * @param array $data 数据
+     * @param integer $options json参数
+     * @return string
+     */
+    public static function echo_json($data, $options = JSON_UNESCAPED_UNICODE)
+    {
+        exit(json_encode($data, $options));
+    }
 }

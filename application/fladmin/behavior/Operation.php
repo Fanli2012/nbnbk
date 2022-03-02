@@ -13,20 +13,32 @@ class Operation
 
     public function action_begin()
     {
-        // 记录操作
-        $controller = strtolower(request()->controller());
-        $action = strtolower(request()->action());
-        if ($controller != 'login' && $menu_name = model('Menu')->getValue(['module' => 'fladmin', 'controller' => $this->uncamelize(request()->controller()), 'action' => $action], 'name')) {
-            $admin_info = session('admin_info');
-            $data['content'] = $admin_info['name'] . $menu_name;
-            $data['ip'] = request()->ip();
-            $data['admin_id'] = $admin_info['id'];
-            $data['admin_name'] = $admin_info['name'];
-            $data['route'] = 'fladmin/' . $this->uncamelize(request()->controller()) . '/' . $action;
-            $data['http_method'] = request()->method();
-            $data['add_time'] = time();
-            logic('AdminLog')->add($data);
+        // 添加管理员操作记录
+		$this->operation_log_add();
+    }
+	
+	// 添加管理员操作记录
+	public function operation_log_add()
+    {
+		$time = time();
+		// 记录操作
+		$admin_info = session('admin_info');
+        if ($admin_info) {
+            $data['login_id'] = $admin_info['id'];
+            $data['login_name'] = $admin_info['name'];
         }
+        $data['type'] = 1;
+        $data['ip'] = request()->ip();
+        $data['url'] = mb_strcut(request()->url(), 0, 255, 'UTF-8');
+        $data['http_method'] = request()->method();
+        $data['domain_name'] = mb_strcut($_SERVER['SERVER_NAME'], 0, 60, 'UTF-8');
+        if ($data['http_method'] != 'GET') { $data['content'] = mb_strcut(json_encode(input(), JSON_UNESCAPED_SLASHES), 0, 255, 'UTF-8'); }
+		if (!empty($_SERVER['HTTP_REFERER'])) { $data['http_referer'] = mb_strcut($_SERVER['HTTP_REFERER'], 0, 255, 'UTF-8'); }
+        $data['add_time'] = $time;
+        //url不包含log
+		if (strpos($data['url'], 'get_recharge_withdrawal_info') === false && strpos($data['url'], '/log') === false) {
+			logic('Log')->add($data);
+		}
     }
 
     /**

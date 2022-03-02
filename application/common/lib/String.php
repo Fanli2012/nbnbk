@@ -184,4 +184,14 @@ class String
     {
         return mb_convert_case($value, MB_CASE_TITLE, 'UTF-8');
     }
+
+    // 转换字符编码为utf-8
+    public static function str_to_utf8($str)
+    {
+        $encode = mb_detect_encoding($str, array("ASCII", 'UTF-8', "GB2312", "GBK", 'BIG5'));
+        if ($encode == 'UTF-8') {
+            return $str;
+        }
+		return mb_convert_encoding($str, 'UTF-8', $encode);
+    }
 }

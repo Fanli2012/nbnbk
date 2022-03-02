@@ -35,4 +35,5 @@ class Common extends CommonController
     {
         Helper::http404();
     }
+
 }

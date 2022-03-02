@@ -31,7 +31,7 @@ class Goods extends Validate
         ['point', 'number|between:1,99999', '购买该商品时每笔成功交易赠送的积分数量必须是数字|购买该商品时每笔成功交易赠送的积分数量只能1-99999'],
         ['comment_number', 'number|max:11', '评论次数必须是数字|评论次数格式不正确'],
         ['promote_price', 'regex:/^\d{0,10}(\.\d{0,2})?$/|<=:price', '促销价格格式不正确，促销价格只能带2位小数的数字|促销价格必须小于产品价格'],
-        ['promote_start_date', 'number|egt:0|<:promote_end_date', '促销价格开始日期必须是数字|促销价格开始日期格式不正确|促销价格开始日期必须小于结束时间'],
+        ['promote_start_date', 'number|egt:0', '促销价格开始日期必须是数字|促销价格开始日期格式不正确'],
         ['promote_end_date', 'number|egt:0|>:promote_start_date', '促销价格结束日期必须是数字|促销价格结束日期格式不正确|促销价格开始日期必须小于结束时间'],
         ['brand_id', 'number|max:11', '商品品牌ID必须是数字|商品品牌ID格式不正确'],
         ['user_id', 'number|max:11', '发布者ID必须是数字|发布者ID格式不正确'],

@@ -1,5 +1,11 @@
 
 
+*/5 * * * * /usr/bin/rdate -s time.nist.gov
+*/30 * * * * ./etc/profile;sh /var/www/crond/start_nginx.sh
+*/7 * * * * ./etc/profile;sh /var/www/crond/crond_5minute.sh
+*/11 * * * * ./etc/profile;sh /var/www/crond/restart_phpfpm.sh
+
+
 chmod 755 start_nginx.sh
 
 30分钟执行一下脚本

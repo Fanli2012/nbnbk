@@ -153,57 +153,10 @@ function get_listnav(array $param)
     return $plist;
 }
 
-/**
- * 获取列表上一页、下一页
- * @param $param ['pagenow'] 当前第几页
- * @param $param ['counts'] 总条数
- * @param $param ['pagesize'] 每页显示数量
- * @param $param ['catid'] 栏目id
- * @return array
- */
-function get_prenext(array $param)
-{
-    $counts = $param['counts'];
-    $pagenow = $param["pagenow"];
-    $prepage = $nextpage = '';
-    $prepagenum = $pagenow - 1;
-    $nextpagenum = $pagenow + 1;
-    $cat = $param['catid'];
-
-    if (!empty($param["urltype"])) {
-        $urltype = $param["urltype"];
-    } else {
-        $urltype = 'cat';
-    }
-
-    $totalpage = get_totalpage(array("counts" => $counts, "pagesize" => $param["pagesize"]));
-
-    //获取上一页
-    if ($pagenow == 1) {
-
-    } elseif ($pagenow == 2) {
-        $prepage = '<a class="prep" href="/' . $urltype . $cat . '.html">上一页</a> &nbsp; ';
-    } else {
-        $prepage = '<a class="prep" href="/' . $urltype . $cat . '/' . $prepagenum . '.html">上一页</a> &nbsp; ';
-    }
-
-    //获取下一页
-    if ($pagenow < $totalpage && $totalpage > 1) {
-        $nextpage = '<a class="nextp" href="/' . $urltype . $cat . '/' . $nextpagenum . '.html">下一页</a>';
-    }
-
-    $plist = '';
-    $plist .= $indexpage; //首页链接
-    $plist .= $prepage; //上一页链接
-    $plist .= $nextpage; //下一页链接
-
-    return $plist;
-}
-
 //根据总数与每页条数，获取总页数
 function get_totalpage(array $param)
 {
-    $pagesize = CMS_PAGESIZE;
+    $pagesize = sysconfig('CMS_PAGESIZE');
     if (isset($param['pagesize']) && $param['pagesize'] > 0) {
         $pagesize = $param["pagesize"];
     }
@@ -563,16 +516,331 @@ function logic($name = '', $config = [])
     return $instance[$guid];
 }
 
-//时间戳转日期
-function toDate($time, $format = 'Y-m-d H:i:s')
+/**
+ * 格式化文件大小显示
+ *
+ * @param int $size
+ * @return string
+ */
+function format_bytes($size)
 {
-    if (empty ($time)) {
-        return '';
+    $prec = 3;
+    $size = round(abs($size));
+    $units = array(
+        0 => " B ",
+        1 => " KB",
+        2 => " MB",
+        3 => " GB",
+        4 => " TB"
+    );
+    if ($size == 0) {
+        return str_repeat(" ", $prec) . "0$units[0]";
     }
-    $format = str_replace('#', ':', $format);
-    return date($format, $time);
+    $unit = min(4, floor(log($size) / log(2) / 10));
+    $size = $size * pow(2, -10 * $unit);
+    $digi = $prec - 1 - floor(log($size) / log(10));
+    $size = round($size * pow(10, $digi)) * pow(10, -$digi);
+
+    return $size . $units[$unit];
 }
 
+/**
+ * 转义textarea值
+ *
+ * @param string $text
+ * @return string
+ */
+function esc_textarea($text)
+{
+    $safe_text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+    return $safe_text;
+}
+
+/**
+ * Converts a number of special characters into their HTML entities.
+ *
+ * Specifically deals with: &, <, >, ", and '.
+ *
+ * $quote_style can be set to ENT_COMPAT to encode " to
+ * &quot;, or ENT_QUOTES to do both. Default is ENT_NOQUOTES where no quotes are encoded.
+ *
+ * @since 5.5.0 `$quote_style` also accepts `ENT_XML1`.
+ * @access private
+ *
+ * @param string $string The text which is to be encoded.
+ * @param int|string $quote_style Optional. Converts double quotes if set to ENT_COMPAT,
+ *                                    both single and double if set to ENT_QUOTES or none if set to ENT_NOQUOTES.
+ *                                    Converts single and double quotes, as well as converting HTML
+ *                                    named entities (that are not also XML named entities) to their
+ *                                    code points if set to ENT_XML1. Also compatible with old values;
+ *                                    converting single quotes if set to 'single',
+ *                                    double if set to 'double' or both if otherwise set.
+ *                                    Default is ENT_NOQUOTES.
+ * @param false|string $charset Optional. The character encoding of the string. Default false.
+ * @param bool $double_encode Optional. Whether to encode existing HTML entities. Default false.
+ * @return string The encoded text with HTML entities.
+ */
+function _wp_specialchars($string, $quote_style = ENT_NOQUOTES, $charset = 'UTF-8', $double_encode = false)
+{
+    $string = (string)$string;
+
+    if (0 === strlen($string)) {
+        return '';
+    }
+
+    // Don't bother if there are no specialchars - saves some processing.
+    if (!preg_match('/[&<>"\']/', $string)) {
+        return $string;
+    }
+
+    // Account for the previous behaviour of the function when the $quote_style is not an accepted value.
+    if (empty($quote_style)) {
+        $quote_style = ENT_NOQUOTES;
+    } elseif (ENT_XML1 === $quote_style) {
+        $quote_style = ENT_QUOTES | ENT_XML1;
+    } elseif (!in_array($quote_style, array(ENT_NOQUOTES, ENT_COMPAT, ENT_QUOTES, 'single', 'double'), true)) {
+        $quote_style = ENT_QUOTES;
+    }
+
+    if (in_array($charset, array('utf8', 'utf-8', 'UTF8'), true)) {
+        $charset = 'UTF-8';
+    }
+
+    $_quote_style = $quote_style;
+
+    if ('double' === $quote_style) {
+        $quote_style = ENT_COMPAT;
+        $_quote_style = ENT_COMPAT;
+    } elseif ('single' === $quote_style) {
+        $quote_style = ENT_NOQUOTES;
+    }
+
+    $string = htmlspecialchars($string, $quote_style, $charset, $double_encode);
+
+    // Back-compat.
+    if ('single' === $_quote_style) {
+        $string = str_replace("'", '&#039;', $string);
+    }
+
+    return $string;
+}
+
+/**
+ * Converts a number of HTML entities into their special characters.
+ *
+ * Specifically deals with: &, <, >, ", and '.
+ *
+ * $quote_style can be set to ENT_COMPAT to decode " entities,
+ * or ENT_QUOTES to do both " and '. Default is ENT_NOQUOTES where no quotes are decoded.
+ *
+ * @param string $string The text which is to be decoded.
+ * @param string|int $quote_style Optional. Converts double quotes if set to ENT_COMPAT,
+ *                                both single and double if set to ENT_QUOTES or
+ *                                none if set to ENT_NOQUOTES.
+ *                                Also compatible with old _wp_specialchars() values;
+ *                                converting single quotes if set to 'single',
+ *                                double if set to 'double' or both if otherwise set.
+ *                                Default is ENT_NOQUOTES.
+ * @return string The decoded text without HTML entities.
+ */
+function _wp_specialchars_decode($string, $quote_style = ENT_NOQUOTES)
+{
+    $string = (string)$string;
+
+    if (0 === strlen($string)) {
+        return '';
+    }
+
+    // Don't bother if there are no entities - saves a lot of processing.
+    if (strpos($string, '&') === false) {
+        return $string;
+    }
+
+    // Match the previous behaviour of _wp_specialchars() when the $quote_style is not an accepted value.
+    if (empty($quote_style)) {
+        $quote_style = ENT_NOQUOTES;
+    } elseif (!in_array($quote_style, array(0, 2, 3, 'single', 'double'), true)) {
+        $quote_style = ENT_QUOTES;
+    }
+
+    // More complete than get_html_translation_table( HTML_SPECIALCHARS ).
+    $single = array(
+        '&#039;' => '\'',
+        '&#x27;' => '\'',
+    );
+    $single_preg = array(
+        '/&#0*39;/' => '&#039;',
+        '/&#x0*27;/i' => '&#x27;',
+    );
+    $double = array(
+        '&quot;' => '"',
+        '&#034;' => '"',
+        '&#x22;' => '"',
+    );
+    $double_preg = array(
+        '/&#0*34;/' => '&#034;',
+        '/&#x0*22;/i' => '&#x22;',
+    );
+    $others = array(
+        '&lt;' => '<',
+        '&#060;' => '<',
+        '&gt;' => '>',
+        '&#062;' => '>',
+        '&amp;' => '&',
+        '&#038;' => '&',
+        '&#x26;' => '&',
+    );
+    $others_preg = array(
+        '/&#0*60;/' => '&#060;',
+        '/&#0*62;/' => '&#062;',
+        '/&#0*38;/' => '&#038;',
+        '/&#x0*26;/i' => '&#x26;',
+    );
+
+    if (ENT_QUOTES === $quote_style) {
+        $translation = array_merge($single, $double, $others);
+        $translation_preg = array_merge($single_preg, $double_preg, $others_preg);
+    } elseif (ENT_COMPAT === $quote_style || 'double' === $quote_style) {
+        $translation = array_merge($double, $others);
+        $translation_preg = array_merge($double_preg, $others_preg);
+    } elseif ('single' === $quote_style) {
+        $translation = array_merge($single, $others);
+        $translation_preg = array_merge($single_preg, $others_preg);
+    } elseif (ENT_NOQUOTES === $quote_style) {
+        $translation = $others;
+        $translation_preg = $others_preg;
+    }
+
+    // Remove zero padding on numeric entities.
+    $string = preg_replace(array_keys($translation_preg), array_values($translation_preg), $string);
+
+    // Replace characters according to translation table.
+    return strtr($string, $translation);
+}
+
+/**
+ * Checks for invalid UTF8 in a string.
+ *
+ * @param string $string The text which is to be checked.
+ * @param bool $strip Optional. Whether to attempt to strip out invalid UTF8. Default false.
+ * @return string The checked text.
+ */
+function check_invalid_utf8($string, $strip = false)
+{
+    $string = (string)$string;
+
+    if (0 === strlen($string)) {
+        return '';
+    }
+    // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- preg_match fails when it encounters invalid UTF8 in $string.
+    if (1 === @preg_match('/^./us', $string)) {
+        return $string;
+    }
+
+    // Attempt to strip the bad chars if requested (not recommended).
+    if ($strip && function_exists('iconv')) {
+        return iconv('utf-8', 'utf-8', $string);
+    }
+
+    return '';
+}
+
+/**
+ * Properly strip all HTML tags including script and style
+ *
+ * This differs from strip_tags() because it removes the contents of
+ * the `<script>` and `<style>` tags. E.g. `strip_tags( '<script>something</script>' )`
+ * will return 'something'. _strip_all_tags will return ''
+ *
+ * @param string $string String containing HTML tags
+ * @param bool $remove_breaks Optional. Whether to remove left over line breaks and white space chars
+ * @return string The processed string.
+ */
+function _strip_all_tags($string, $remove_breaks = false)
+{
+    $string = preg_replace('@<(script|style)[^>]*?>.*?</\\1>@si', '', $string);
+    $string = strip_tags($string);
+
+    if ($remove_breaks) {
+        $string = preg_replace('/[\r\n\t ]+/', ' ', $string);
+    }
+
+    return trim($string);
+}
+
+/**
+ * 清除用户输入或数据库中的字符串
+ *
+ * @access private
+ *
+ * @param string $str String to sanitize.
+ * @param bool $keep_newlines Optional. Whether to keep newlines. Default: false.
+ * @return string Sanitized string.
+ */
+function _sanitize_text_field($str, $keep_newlines = false)
+{
+    if (is_object($str) || is_array($str)) {
+        return '';
+    }
+
+    $str = (string)$str;
+
+    $filtered = check_invalid_utf8($str);
+
+    if (strpos($filtered, '<') !== false) {
+        if (false === strpos($filtered, '>')) {
+            $filtered = _wp_specialchars($filtered);
+        }
+        // This will strip extra whitespace for us.
+        $filtered = _strip_all_tags($filtered, false);
+
+        // Use HTML entities in a special case to make sure no later
+        // newline stripping stage could lead to a functional tag.
+        $filtered = str_replace("<\n", "&lt;\n", $filtered);
+    }
+
+    if (!$keep_newlines) {
+        $filtered = preg_replace('/[\r\n\t ]+/', ' ', $filtered);
+    }
+    $filtered = trim($filtered);
+
+    $found = false;
+    while (preg_match('/%[a-f0-9]{2}/i', $filtered, $match)) {
+        $filtered = str_replace($match[0], '', $filtered);
+        $found = true;
+    }
+
+    if ($found) {
+        // Strip out the whitespace that may now exist after removing the octets.
+        $filtered = trim(preg_replace('/ +/', ' ', $filtered));
+    }
+
+    return $filtered;
+}
+
+// 字符串倒叙
+function str_reversal($str)
+{
+    $len = mb_strlen($str);
+    $t2 = '';
+    for ($i = $len - 1; $i >= 0; $i--) {
+        $t2 = $t2 . mb_substr($str, $i, 1, 'utf-8');
+    }
+    return $t2;
+}
+
+// 判断是否是https
+function is_https($str)
+{
+	if ((isset($_SERVER['HTTPS']) && (($_SERVER['HTTPS'] == 'on') || ($_SERVER['HTTPS'] == '1'))) || $_SERVER['SERVER_PORT'] == 443) {
+		return true;
+	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+		$protocol = 'https://';
+		return true;
+	} else {
+		return false;
+	}
+}
 
 // ----------其它自定义函数，主要用于真的当前项目----------
 

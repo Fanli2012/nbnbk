@@ -49,8 +49,7 @@ class Page extends Common
 	{
         //参数
         $where = array();
-        if(input('id', '') !== ''){$where['id'] = input('id');}
-        if(input('filename', '') !== ''){$where['filename'] = input('filename');}
+        if(input('id', '') !== ''){$where['id|filename'] = input('id');}
         if(!$where){Util::echo_json(ReturnData::create(ReturnData::PARAMS_ERROR));}
         
 		$res = $this->getLogic()->getOne($where);

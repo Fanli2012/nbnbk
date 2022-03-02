@@ -79,8 +79,7 @@ class VerifyCode extends Base
             $text = '【' . sysconfig('CMS_WEBNAME') . '】您的验证码是' . $data['code'] . '，有效期30分钟。';
         }
         //短信发送验证码
-        //$smsbao = new Smsbao('whhmk', 'whhmk8888');
-        $smsbao = new Smsbao('xmzjt2017', 'zhengkai123');
+        $smsbao = new Smsbao('xmzjt', '123456');
         $res = $smsbao->sms($text, $mobile);
         if ($res['code'] != ReturnData::SUCCESS) {
             return ReturnData::create(ReturnData::PARAMS_ERROR, null, $res['msg']);

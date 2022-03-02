@@ -27,21 +27,22 @@ class Helper
      * 取得随机字符串
      *
      * @param int $length 生成随机数的长度
-     * @param int $numeric 是否只产生数字随机数 1是0否
+     * @param int $numeric 是否只产生数字随机数 0字母数字，1纯数字，2纯字母
      * @return string
      */
     public static function getRandomString($length, $numeric = 0)
     {
-        $seed = base_convert(md5(microtime() . $_SERVER['DOCUMENT_ROOT']), 16, $numeric ? 10 : 35);
-        $seed = $numeric ? (str_replace('0', '', $seed) . '012340567890') : ($seed . 'zZ' . strtoupper($seed));
-        $hash = '';
-        $max = strlen($seed) - 1;
-
-        for ($i = 0; $i < $length; $i++) {
-            $hash .= $seed{mt_rand(0, $max)};
+        $letter = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+        if ($numeric == 1) {
+            $letter = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        } elseif ($numeric == 2) {
+            $letter = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
         }
-
-        return $hash;
+        $result = '';
+        for ($i = 0; $i < $length; $i++) {
+            $result .= $letter[array_rand($letter, 1)];
+        }
+        return $result;
     }
 
     //生成二维码

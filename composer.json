@@ -25,7 +25,8 @@
         "topthink/think-queue": "^1.0",
         "topthink/think-migration": "^1.0",
         "topthink/think-angular": "^1.0",
-		"predis/predis": "^1.1"
+		"predis/predis": "^1.1",
+        "paypal/rest-api-sdk-php": "1.5.1"
     },
     "autoload": {
         "psr-4": {
@@ -36,7 +37,10 @@
         "think-path": "thinkphp"
     },
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "topthink/think-installer": true
+        }
     },
     "repositories": {
         "packagist": {

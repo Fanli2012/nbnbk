@@ -6,6 +6,7 @@
 namespace app\common\controller;
 
 use think\Controller;
+use think\Lang;
 use app\common\lib\Helper;
 
 class CommonController extends Controller
@@ -18,6 +19,8 @@ class CommonController extends Controller
     public function _initialize()
     {
         parent::_initialize();
+		$this->load_language_pack(); //加载语言包
+		
         $server_name = trim($_SERVER['SERVER_NAME']);
         /* $allow_domain = array('tzlc.');
         foreach ($allow_domain as $value) {
@@ -76,33 +79,53 @@ class CommonController extends Controller
         }
         $lang = substr($think_var, 0, 4); // 只取前 4 位，这样只判断最优先的语言。如果取前 5 位，可能出现 en,zh 的情况，影响判断。
         if (preg_match("/zh-c/i", $lang)) {
-            $res = "简体中文";
+            $language = "简体中文";
             $think_var = 'zh-cn';
         } elseif (preg_match("/zh/i", $lang)) {
-            $res = "繁體中文";
+            $language = "繁體中文";
             $think_var = 'zh-tw';
         } elseif (preg_match("/en/i", $lang)) {
-            $res = "English";
+            $language = "English";
             $think_var = 'en-us';
         } elseif (preg_match("/fr/i", $lang)) {
-            $res = "French";
+            $language = "French";
+            $think_var = 'fr-fr';
         } elseif (preg_match("/de/i", $lang)) {
-            $res = "German";
-        } elseif (preg_match("/jp/i", $lang)) {
-            $res = "Japanese";
+            $language = "German";
+            $think_var = 'de-de';
+        } elseif (preg_match("/ja/i", $lang)) {
+            $language = "Japanese";
+            $think_var = 'ja-jp';
         } elseif (preg_match("/ko/i", $lang)) {
-            $res = "Korean";
+            $language = "Korean";
+            $think_var = 'ko-kr';
         } elseif (preg_match("/es/i", $lang)) {
-            $res = "Spanish";
+            $language = "Spanish";
+            $think_var = 'es-es';
         } elseif (preg_match("/sv/i", $lang)) {
-            $res = "Swedish";
+            $language = "Swedish";
+            $think_var = 'sv-se';
         } elseif (preg_match("/ru/i", $lang)) {
-            $res = "Russia";
+            $language = "Russia";
+            $think_var = 'ru-ru';
+        } elseif (preg_match("/pt/i", $lang)) {
+            $language = "Portuguese";
+            $think_var = 'pt-pt';
+        } elseif (preg_match("/en-id/i", $lang)) {
+            $language = "Indonesian";
+            $think_var = 'en-id';
+        } elseif (preg_match("/ar/i", $lang)) {
+            $language = "Arabic";
+            $think_var = 'ar-sa';
+        } elseif (preg_match("/tr/i", $lang)) {
+            $language = "Turkish";
+            $think_var = 'tr-tr';
         } else {
-            $res = '语言切换';
-            $think_var = 'zh-cn';
+            $language = 'Language';
+            $think_var = config('default_lang');
         }
-        cookie('think_var', $think_var);
+        $this->assign('current_lang', $language);
+		cookie('think_var', $think_var);
         \think\Lang::load(APP_PATH . 'common/lang/' . $think_var . '.php');
     }
 
